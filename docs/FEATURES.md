@@ -3,6 +3,7 @@
 - basic auth
     - email
     - username
+    - leetcode username
     - password
     - handle OAuth (is_first_login)
 - start just one group for the MVP
@@ -13,3 +14,4 @@
 - section for sharing solutions
     - add a button to share solutions
     - the button only shows up after checking for progress
+- user press "check" and refetch user stats from gql leetcode api
