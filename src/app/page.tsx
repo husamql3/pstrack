@@ -1,9 +1,13 @@
-import Logo from '@/components/components/logo'
+import Sidebar from '@/components/layout/sidebar'
+import Table from '@/components/components/table'
 
-export default function Home() {
+const Home = () => {
   return (
-    <div>
-      <Logo />
+    <div className="flex h-svh w-svw overflow-hidden">
+      <Sidebar />
+      <Table />
     </div>
   )
 }
+
+export default Home
