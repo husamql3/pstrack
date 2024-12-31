@@ -1,4 +1,4 @@
-import Sidebar from '@/components/layout/sidebar'
+import Sidebar from '@/components/sidebar/sidebar'
 import Table from '@/components/components/table'
 
 const Home = () => {
