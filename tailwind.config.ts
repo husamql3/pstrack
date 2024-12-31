@@ -10,6 +10,10 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['var(--font-geist-sans)', 'sans-serif'], // default: geist
+        spartan: ['var(--font-league-spartan)', 'sans-serif'], // league spartan
+      },
       colors: {
         background: 'var(--background)',
         foreground: 'var(--foreground)',

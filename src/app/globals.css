@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+	--font-geist-sans: 'GeistSans', sans-serif;
+	--font-league-spartan: 'League Spartan', sans-serif;
+}
+
+/* for dark mode */
 @media (prefers-color-scheme: dark) {
 	html {
 		color-scheme: dark;
