@@ -1,19 +1,51 @@
 'use client'
 
+import { useActionState, useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { Eye, EyeOff } from 'lucide-react'
+
+import { signIn } from '@/db/supabase/services/auth.service'
+import { toast } from '@/hooks/use-toast'
+
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
-import { useState } from 'react'
-import { Eye, EyeOff } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { TbLoader2 } from 'react-icons/tb'
 
-const SigninForm = () => {
+const SignInForm = () => {
+  const router = useRouter()
+  const [state, action, isPending] = useActionState(signIn, {
+    success: false,
+    message: '',
+  })
+
   const [isVisible, setIsVisible] = useState<boolean>(false)
   const [password, setPassword] = useState('')
 
   const toggleVisibility = () => setIsVisible((prevState) => !prevState)
 
+  useEffect(() => {
+    if (state.message) {
+      if (!state.success) {
+        toast({
+          description: state.message,
+          variant: 'destructive',
+        })
+      } else {
+        toast({
+          description: state.message,
+          variant: 'success',
+        })
+        router.push('/')
+      }
+    }
+  }, [state.message, state.success, router])
+
   return (
-    <form className="w-full space-y-4">
+    <form
+      action={action}
+      className="w-full space-y-4"
+    >
       <div className="space-y-1">
         <Label htmlFor="email">Email</Label>
         <Input
@@ -60,9 +92,15 @@ const SigninForm = () => {
         </div>
       </div>
 
-      <Button className="w-full">Login</Button>
+      <Button
+        className="w-full"
+        disabled={isPending}
+      >
+        {isPending && <TbLoader2 className="mr-2 h-4 w-4 animate-spin" />}
+        Login
+      </Button>
     </form>
   )
 }
 
-export default SigninForm
+export default SignInForm

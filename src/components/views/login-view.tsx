@@ -1,7 +1,7 @@
 import Link from 'next/link'
 
 import Logo from '@/components/components/logo'
-import SigninForm from '@/components/auth/signin-form'
+import SignInForm from '@/components/auth/signin-form'
 import GoogleSignInButton from '@/components/auth/google-signIn-button'
 import GithubSigninButton from '@/components/auth/github-signIn-button'
 
@@ -34,7 +34,7 @@ const SigninView = () => {
           <span className="text-muted-foreground relative z-10 bg-zinc-950 px-2">Or</span>
         </div>
 
-        <SigninForm />
+        <SignInForm />
       </div>
     </div>
   )
