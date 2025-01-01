@@ -1,5 +1,7 @@
 import { UserRound } from 'lucide-react'
 
+import { getUser } from '@/hooks/get-user'
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,7 +12,9 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 
-const UserMenu = () => {
+const UserMenu = async () => {
+  const user = await getUser()
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -28,7 +32,7 @@ const UserMenu = () => {
       <DropdownMenuContent className="max-w-64">
         <DropdownMenuLabel className="flex flex-col">
           <span className="font-semibold">Signed in as</span>
-          <span className="text-xs font-normal text-foreground">k.kennedy@originui.com</span>
+          <span className="text-foreground text-xs font-normal">{user?.email}</span>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem>Logout</DropdownMenuItem>

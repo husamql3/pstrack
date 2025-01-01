@@ -1,9 +1,9 @@
 import type { Metadata } from 'next'
 import { Geist, League_Spartan } from 'next/font/google'
 
+import { Toaster } from '@/components/ui/toaster'
 import { cn } from '@/lib/utils'
 import './globals.css'
-import { Toaster } from '@/components/ui/toaster'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
