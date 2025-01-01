@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Geist, League_Spartan } from 'next/font/google'
 
+import { Toaster } from '@/components/ui/toaster'
 import { cn } from '@/lib/utils'
 import './globals.css'
 
@@ -20,8 +21,10 @@ export const metadata: Metadata = {
   description: '',
 }
 
-export default function RootLayout({ children }: Readonly<{
-  children: React.ReactNode;
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode
 }>) {
   return (
     <html
@@ -29,9 +32,10 @@ export default function RootLayout({ children }: Readonly<{
       className="dark"
       suppressHydrationWarning
     >
-    <body className={cn('bg-zinc-950 font-sans', geistSans.className, leagueSpartan.className)}>
-    {children}
-    </body>
+      <body className={cn('bg-zinc-950 font-sans', geistSans.className, leagueSpartan.className)}>
+        {children}
+        <Toaster />
+      </body>
     </html>
   )
 }

@@ -1,11 +1,33 @@
+import { getUser } from '@/hooks/get-user'
+
 import Logo from '@/components/components/logo'
 import UserMenu from '@/components/sidebar/user-menu'
+import Link from 'next/link'
+import { Button } from '@/components/ui/button'
+import { LogIn } from 'lucide-react'
 
-const Sidebar = () => {
+const Sidebar = async () => {
+  const user = await getUser()
+
   return (
-    <aside className="flex flex-col items-center justify-between py-5 pl-2 pr-1">
+    <aside className="flex flex-col items-center justify-between px-3 py-5">
       <Logo />
-      <UserMenu />
+
+      {user ? (
+        <UserMenu user={user!} />
+      ) : (
+        <Link
+          href="/login"
+          prefetch
+        >
+          <Button className="h-10 w-10 rounded-full">
+            <LogIn
+              size={18}
+              className="h-10 w-10"
+            />
+          </Button>
+        </Link>
+      )}
     </aside>
   )
 }

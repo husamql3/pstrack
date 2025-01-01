@@ -19,3 +19,13 @@
 		color-scheme: dark;
 	}
 }
+
+@layer utilities {
+	.ps {
+		@apply font-spartan text-5xl font-bold tracking-[-5px] text-zinc-50
+	}
+
+	.track {
+		@apply font-spartan text-5xl font-bold tracking-[-1px]  text-zinc-50
+	}
+}

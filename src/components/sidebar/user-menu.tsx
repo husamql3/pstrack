@@ -1,23 +1,33 @@
 import { UserRound } from 'lucide-react'
 
+import { User } from '@supabase/auth-js'
+
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import LogoutButton from '@/components/sidebar/logout-button'
 
-const UserMenu = () => {
+const UserMenu = ({ user }: { user: User }) => {
+  const {
+    user_metadata: { email, avatar_url, name },
+  } = user
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Avatar className="cursor-pointer">
+          <AvatarImage
+            src={avatar_url}
+            alt={name}
+          />
           <AvatarFallback>
             <UserRound
-              size={16}
+              size={18}
               strokeWidth={2}
               className="text-zinc-50"
               aria-hidden="true"
@@ -28,10 +38,10 @@ const UserMenu = () => {
       <DropdownMenuContent className="max-w-64">
         <DropdownMenuLabel className="flex flex-col">
           <span className="font-semibold">Signed in as</span>
-          <span className="text-xs font-normal text-foreground">k.kennedy@originui.com</span>
+          <span className="text-foreground text-xs font-normal">{email}</span>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>Logout</DropdownMenuItem>
+        <LogoutButton />
       </DropdownMenuContent>
     </DropdownMenu>
   )

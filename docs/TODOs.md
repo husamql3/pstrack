@@ -1,0 +1,3 @@
+- [ ] implement confirm email
+- [ ] implement password reset
+- [ ] change fontfamily to geist
