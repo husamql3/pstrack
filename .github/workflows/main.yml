@@ -1,0 +1,36 @@
+on:
+  pull_request:
+    branches:
+      - main # TODO: remove
+      - dev
+  push:
+    branches:
+      - main # TODO: remove
+      - dev
+
+jobs:
+  prettier:
+    name: Run Prettier, Eslint and TS type checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup node env
+        uses: actions/setup-node@v4
+        with:
+          node-version: '>=16'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Run Prettier
+        run: yarn format
+
+      - name: Run Eslint
+        run: yarn lint
+
+      - name: Run TS type checks
+        run: yarn tsc --noEmit
