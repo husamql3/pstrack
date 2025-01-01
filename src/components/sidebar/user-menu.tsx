@@ -1,7 +1,5 @@
 import { UserRound } from 'lucide-react'
 
-import { getUser } from '@/hooks/get-user'
-
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,16 +10,14 @@ import {
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import LogoutButton from '@/components/sidebar/logout-button'
 
-const UserMenu = async () => {
-  const user = await getUser()
-
+const UserMenu = ({ email }: { email: string }) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Avatar className="cursor-pointer">
           <AvatarFallback>
             <UserRound
-              size={16}
+              size={18}
               strokeWidth={2}
               className="text-zinc-50"
               aria-hidden="true"
@@ -32,7 +28,7 @@ const UserMenu = async () => {
       <DropdownMenuContent className="max-w-64">
         <DropdownMenuLabel className="flex flex-col">
           <span className="font-semibold">Signed in as</span>
-          <span className="text-foreground text-xs font-normal">{user?.email}</span>
+          <span className="text-foreground text-xs font-normal">{email}</span>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <LogoutButton />

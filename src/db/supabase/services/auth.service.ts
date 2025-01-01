@@ -144,3 +144,30 @@ export const logout = async () => {
     }
   }
 }
+
+export const oauthLogin = async (provider: 'google' | 'github') => {
+  const supabase = await createClient()
+
+  try {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider,
+      options: {
+        redirectTo: process.env.NEXT_PUBLIC_AUTH_CALLBACK_URL,
+      },
+    })
+
+    if (error) {
+      console.error('Signin error:', error)
+      return { error: error.message }
+    }
+
+    if (data.url) {
+      return { url: data.url }
+    }
+
+    return { error: 'No URL returned from OAuth provider' }
+  } catch (error) {
+    console.error('Signin error:', error)
+    return { error: 'An unexpected error occurred' }
+  }
+}

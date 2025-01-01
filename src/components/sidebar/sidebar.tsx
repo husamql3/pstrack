@@ -1,11 +1,15 @@
+import { getUser } from '@/hooks/get-user'
+
 import Logo from '@/components/components/logo'
 import UserMenu from '@/components/sidebar/user-menu'
 
-const Sidebar = () => {
+const Sidebar = async () => {
+  const user = await getUser()
+
   return (
-    <aside className="flex flex-col items-center justify-between px-2 py-5">
+    <aside className="flex flex-col items-center justify-between px-3 py-5">
       <Logo />
-      <UserMenu />
+      {user ? <UserMenu email={user.email!} /> : null}
     </aside>
   )
 }

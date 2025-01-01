@@ -1,9 +1,27 @@
-import { Button } from '@/components/ui/button'
+'use client'
+
 import { IoLogoGoogle } from 'react-icons/io5'
 
+import { oauthLogin } from '@/db/supabase/services/auth.service'
+
+import { Button } from '@/components/ui/button'
+
 const GoogleSigninButton = () => {
+  const handleGoogleLogin = async () => {
+    const { url, error } = await oauthLogin('google')
+
+    if (error) {
+      console.error('Signin error:', error)
+      return
+    }
+
+    if (url) {
+      window.location.href = url
+    }
+  }
+
   return (
-    <form>
+    <form action={handleGoogleLogin}>
       <Button
         variant="outline"
         className="w-full"
