@@ -57,7 +57,7 @@ export const InputPassword = () => {
             id="password"
             className="pe-9"
             name="password"
-            placeholder="Password"
+            placeholder="Enter password"
             type={isVisible ? 'text' : 'password'}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -65,7 +65,7 @@ export const InputPassword = () => {
             aria-describedby="password-strength"
           />
           <button
-            className="text-muted-foreground/80 focus-visible:outline-ring/70 absolute inset-y-0 end-0 flex h-full w-9 items-center justify-center rounded-e-lg outline-offset-2 transition-colors hover:text-foreground focus:z-10 focus-visible:outline focus-visible:outline-2 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
+            className="text-muted-foreground/80 focus-visible:outline-ring/70 hover:text-foreground absolute inset-y-0 end-0 flex h-full w-9 items-center justify-center rounded-e-lg outline-offset-2 transition-colors focus:z-10 focus-visible:outline focus-visible:outline-2 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
             type="button"
             onClick={toggleVisibility}
             aria-label={isVisible ? 'Hide password' : 'Show password'}
@@ -107,7 +107,7 @@ export const InputPassword = () => {
       {/* Password strength description */}
       <p
         id="password-strength"
-        className="mb-2 text-sm font-medium text-foreground"
+        className="text-foreground mb-2 text-sm font-medium"
       >
         {getStrengthText(strengthScore)}. Must contain:
       </p>

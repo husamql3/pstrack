@@ -126,3 +126,21 @@ export const signIn = async (prevState: ActionResponse | null, formData: FormDat
     }
   }
 }
+
+export const logout = async () => {
+  const supabase = await createClient()
+
+  try {
+    await supabase.auth.signOut()
+    return {
+      success: true,
+      message: 'Logout successful',
+    }
+  } catch (error) {
+    console.error('Signout error:', error)
+    return {
+      success: false,
+      message: 'An unexpected error occurred. Please try again later.',
+    }
+  }
+}

@@ -51,6 +51,8 @@ const SignInForm = () => {
         <Input
           id="email"
           name="email"
+          type="email"
+          placeholder="Enter email"
           required
         />
       </div>
@@ -62,6 +64,7 @@ const SignInForm = () => {
             id="password"
             className="pe-9"
             name="password"
+            placeholder="Enter password"
             type={isVisible ? 'text' : 'password'}
             value={password}
             onChange={(e) => setPassword(e.target.value)}

@@ -5,12 +5,12 @@ import { getUser } from '@/hooks/get-user'
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import LogoutButton from '@/components/sidebar/logout-button'
 
 const UserMenu = async () => {
   const user = await getUser()
@@ -35,7 +35,7 @@ const UserMenu = async () => {
           <span className="text-foreground text-xs font-normal">{user?.email}</span>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>Logout</DropdownMenuItem>
+        <LogoutButton />
       </DropdownMenuContent>
     </DropdownMenu>
   )
