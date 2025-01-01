@@ -1,6 +1,7 @@
+import Link from 'next/link'
+
 import SignUpForm from '@/components/auth/signup-from'
 import Logo from '@/components/components/logo'
-import Link from 'next/link'
 
 const SignupView = () => {
   return (
@@ -15,6 +16,7 @@ const SignupView = () => {
             <Link
               className="underline underline-offset-4"
               href="/login"
+              prefetch
             >
               Sign in
             </Link>
