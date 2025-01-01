@@ -1,55 +1,65 @@
 'use server'
 
-import { z } from 'zod'
-
-export type ActionResponse = {
-  success: boolean
-  message: string
-  errors?: {
-    [K in keyof SignupFormData]?: string[]
-  }
-}
-
-type SignupFormData = z.infer<typeof signUpSchema>
-
-const signUpSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8),
-})
+import { createClient } from '@/db/supabase/server'
+import { signUpSchema } from '@/types/schema/auth.schema'
+import { SignupActionResponse } from '@/types/auth.type'
 
 export const signUp = async (
-  prevState: ActionResponse | null,
+  prevState: SignupActionResponse | null,
   formData: FormData
-): Promise<ActionResponse> => {
-  await new Promise((resolve) => setTimeout(resolve, 1000))
-
+): Promise<SignupActionResponse> => {
   try {
-    const rawData: SignupFormData = {
-      email: formData.get('email') as string,
-      password: formData.get('password') as string,
+    const rawData = {
+      email: String(formData.get('email')).trim().toLowerCase(),
+      password: String(formData.get('password')),
     }
 
-    const parsedData = signUpSchema.safeParse(rawData)
+    const result = signUpSchema.safeParse(rawData)
 
-    if (!parsedData.success) {
-      console.log('parsedData.error', parsedData.error)
+    if (!result.success) {
       return {
         success: false,
-        message: 'Please fix the errors in the form',
-        errors: parsedData.error.flatten().fieldErrors,
+        message: 'Validation failed',
+        errors: result.error.flatten().fieldErrors,
       }
     }
 
-    console.log('Sign up successful!', parsedData.data)
+    const supabase = await createClient()
+
+    const { error } = await supabase.auth.signUp({
+      email: rawData.email,
+      password: rawData.password,
+    })
+
+    if (error) {
+      console.error('Signup error:', error)
+      switch (error.status) {
+        case 400:
+          return {
+            success: false,
+            message: 'Invalid email or password format',
+          }
+        case 422:
+          return { success: false, message: 'Email already registered' }
+        case 429:
+          return {
+            success: false,
+            message: 'Too many attempts. Please try again later',
+          }
+        default:
+          return { success: false, message: 'Something went wrong' }
+      }
+    }
+
     return {
       success: true,
-      message: 'Sign up successful!',
+      message: 'Signup successful',
     }
   } catch (error) {
-    console.error('An unexpected error occurred', error)
+    console.error('Signup error:', error)
     return {
       success: false,
-      message: 'An unexpected error occurred',
+      message: 'An unexpected error occurred. Please try again later.',
     }
   }
 }
