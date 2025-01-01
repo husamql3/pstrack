@@ -1,12 +1,18 @@
 {
 	"name": "pstrack",
+	"author": {
+		"name": "Hüsam",
+		"email": "developer.husam@gmail.com"
+	},
 	"version": "0.1.0",
 	"private": true,
 	"scripts": {
 		"dev": "next dev --turbopack",
 		"build": "next build",
 		"start": "next start",
-		"lint": "next lint"
+		"lint": "next lint",
+		"format": "prettier --write .",
+		"tsc": "tsc --noEmit"
 	},
 	"dependencies": {
 		"@radix-ui/react-avatar": "^1.1.2",
