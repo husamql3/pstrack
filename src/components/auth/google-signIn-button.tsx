@@ -32,7 +32,9 @@ const GoogleSigninButton = () => {
       <Button
         variant="outline"
         className="w-full"
+        disabled={isLoading}
       >
+        {isLoading && <TbLoader2 className="mr-2 h-4 w-4 animate-spin" />}
         <IoLogoGoogle />
         <span>Sign in with Google</span>
       </Button>
