@@ -1,25 +1,11 @@
-import { type NextRequest, NextResponse } from 'next/server'
-import { betterFetch } from '@better-fetch/fetch'
-import { auth } from '@/db/better-auth/server'
+import { type NextRequest } from 'next/server'
 
-type Session = typeof auth.$Infer.Session
+import { updateSession } from '@/db/supabase/middleware'
 
-export default async function authMiddleware(request: NextRequest) {
-  const { data: session } = await betterFetch<Session>('/api/auth/get-session', {
-    baseURL: request.nextUrl.origin,
-    headers: {
-      cookie: request.headers.get('cookie') || '',
-    },
-  })
-  console.log('session', session?.user)
-
-  if (!session) {
-    console.log('no session')
-    return NextResponse.redirect(new URL('/sign-in', request.url))
-  }
-  return NextResponse.next()
+export async function middleware(request: NextRequest) {
+  return await updateSession(request)
 }
 
 export const config = {
-  matcher: ['/dashboard'],
+  matcher: ['/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)'],
 }

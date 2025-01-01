@@ -27,7 +27,6 @@ const SignUpForm = () => {
           id="email"
           name="email"
           placeholder="Enter email"
-          className={state?.errors?.email ? 'border border-red-500' : ''}
           required
         />
         {state.errors?.email && <p className="text-sm text-red-500">{state.errors.email}</p>}
