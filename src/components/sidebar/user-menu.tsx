@@ -1,5 +1,7 @@
 import { UserRound } from 'lucide-react'
 
+import { User } from '@supabase/auth-js'
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -7,14 +9,22 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import LogoutButton from '@/components/sidebar/logout-button'
 
-const UserMenu = ({ email }: { email: string }) => {
+const UserMenu = ({ user }: { user: User }) => {
+  const {
+    user_metadata: { email, avatar_url, name },
+  } = user
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Avatar className="cursor-pointer">
+          <AvatarImage
+            src={avatar_url}
+            alt={name}
+          />
           <AvatarFallback>
             <UserRound
               size={18}
