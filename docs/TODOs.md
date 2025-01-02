@@ -1,3 +1,4 @@
 - [ ] implement confirm email
 - [ ] implement password reset
-- [ ] change fontfamily to geist
+- [ ] add API docs
+- [x] change fontfamily to geist

@@ -1,33 +1,32 @@
 export type User = {
   id: string
-  fname: string
-  lname: string
+  name: string
   username: string
-  gh_username: string
-  lc_username: string
-  group_id: number
+  ghUsername: string
+  lcUsername: string
+  groupId: number
 }
 
 export type Problem = {
   id: number
-  p_number: number
-  p_link: string
-  p_topic: string
+  pNumber: number
+  pLink: string
+  pTopic: string
   difficulty: 'Easy' | 'Medium' | 'Hard'
 }
 
 export type Submission = {
   id: number
-  user_id: string
-  problem_id: number
+  createdAt: string
+  userId: string
+  pId: number
   solved: boolean
   language: string
-  solution_link: string
-  created_at: string
+  solutionLink: string
 }
 
 export type TableRow = {
   user: User
   problem: Problem
-  submissions: { [key: string]: Submission | null } // date -> submission mapping
+  submissions: { [key: string]: Submission | null }
 }

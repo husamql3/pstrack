@@ -7,29 +7,29 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+
+import { Problem, Submission, TableRow, User } from '@/types/table.type'
+import { cn } from '@/lib/utils'
+
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
-import { cn } from '@/lib/utils'
-import { Problem, Submission, TableRow, User } from '@/types/table.type'
 
 const dummyUsers: User[] = [
   {
     id: 'u1',
-    fname: 'Osama',
-    lname: 'Ahmed',
+    name: 'Osama',
     username: 'osama',
-    gh_username: 'osama',
-    lc_username: 'osama_lc',
-    group_id: 1,
+    ghUsername: 'osama',
+    lcUsername: 'osama_lc',
+    groupId: 1,
   },
   {
     id: 'u2',
-    fname: 'Ward',
-    lname: 'Mohamed',
+    name: 'Ward',
     username: 'ward',
-    gh_username: 'ward',
-    lc_username: 'ward_lc',
-    group_id: 1,
+    ghUsername: 'ward',
+    lcUsername: 'ward_lc',
+    groupId: 1,
   },
   // Add more users as needed
 ]
@@ -37,16 +37,16 @@ const dummyUsers: User[] = [
 const dummyProblems: Problem[] = [
   {
     id: 1,
-    p_number: 735,
-    p_link: 'https://leetcode.com/problems/two-sum/',
-    p_topic: 'stack',
+    pNumber: 735,
+    pLink: 'https://leetcode.com/problems/two-sum/',
+    pTopic: 'stack',
     difficulty: 'Medium',
   },
   {
     id: 2,
-    p_number: 22,
-    p_link: 'https://leetcode.com/problems/two-sum/',
-    p_topic: 'stack',
+    pNumber: 22,
+    pLink: 'https://leetcode.com/problems/two-sum/',
+    pTopic: 'stack',
     difficulty: 'Easy',
   },
   // Add more problems as needed
@@ -55,12 +55,12 @@ const dummyProblems: Problem[] = [
 const dummySubmissions: Submission[] = [
   {
     id: 1,
-    user_id: 'u1',
-    problem_id: 1,
+    userId: 'u1',
+    pId: 1,
     solved: true,
     language: 'javascript',
-    solution_link: 'https://github.com/solution1',
-    created_at: '2024-02-23',
+    solutionLink: 'https://github.com/solution1',
+    createdAt: '2024-02-23',
   },
   // Add more submissions as needed
 ]
@@ -86,9 +86,9 @@ const defaultData: TableRow[] = dummyUsers.map((user) => ({
       acc[date] =
         dummySubmissions.find(
           (s) =>
-            s.user_id === user.id &&
-            s.problem_id === dummyProblems[0].id &&
-            s.created_at === date.split('/').reverse().join('-')
+            s.userId === user.id &&
+            s.pId === dummyProblems[0].id &&
+            s.createdAt === date.split('/').reverse().join('-')
         ) || null
       return acc
     },
@@ -103,7 +103,7 @@ const columns = [
     header: 'LeetCoders',
     cell: (info) => <div>@{info.getValue().username}</div>,
   }),
-  columnHelper.accessor((row) => `${row.problem.p_number} ${row.problem.p_link}`, {
+  columnHelper.accessor((row) => `${row.problem.pNumber} ${row.problem.pLink}`, {
     header: 'Problem',
     cell: (info) => {
       return (
@@ -118,7 +118,7 @@ const columns = [
       )
     },
   }),
-  columnHelper.accessor((row) => row.problem.p_topic, {
+  columnHelper.accessor((row) => row.problem.pTopic, {
     header: 'Type',
     cell: (info) => <span className="text-sm text-gray-400">{info.getValue()}</span>,
   }),
