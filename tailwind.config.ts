@@ -11,7 +11,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['var(--font-geist-sans)', 'sans-serif'], // default: geist
+        roboto: ['var(--font-roboto)', 'sans-serif'],
         spartan: ['var(--font-league-spartan)', 'sans-serif'], // league spartan
       },
     },
