@@ -1,7 +1,7 @@
 import Sidebar from '@/components/sidebar/sidebar'
 import Table from '@/components/components/table'
 
-const Home = async () => {
+const MainView = () => {
   return (
     <div className="flex h-svh w-svw overflow-hidden">
       <Sidebar />
@@ -10,4 +10,4 @@ const Home = async () => {
   )
 }
 
-export default Home
+export default MainView
