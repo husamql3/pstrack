@@ -1,19 +1,20 @@
 import type { Metadata } from 'next'
-import { Geist, League_Spartan } from 'next/font/google'
+import { League_Spartan, Roboto } from 'next/font/google'
 
 import { Toaster } from '@/components/ui/toaster'
 import { cn } from '@/lib/utils'
 import './globals.css'
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
-  weight: ['100', '300', '400', '700', '900'],
-  subsets: ['latin'],
-})
-
 const leagueSpartan = League_Spartan({
   weight: ['700', '900'],
   subsets: ['latin'],
+})
+
+const roboto = Roboto({
+  weight: ['100', '300', '400', '700', '900'],
+  subsets: ['latin'],
+  display: 'swap',
+  fallback: ['Arial', 'sans-serif'],
 })
 
 export const metadata: Metadata = {
@@ -32,7 +33,13 @@ export default function RootLayout({
       className="dark"
       suppressHydrationWarning
     >
-      <body className={cn('bg-zinc-950 font-sans', geistSans.className, leagueSpartan.className)}>
+      <body
+        className={cn(
+          'font-roboto bg-zinc-950',
+          roboto.className,
+          leagueSpartan.className
+        )}
+      >
         {children}
         <Toaster />
       </body>

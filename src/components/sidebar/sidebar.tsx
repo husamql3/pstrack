@@ -1,10 +1,11 @@
+import Link from 'next/link'
+import { LogIn } from 'lucide-react'
+
 import { getUser } from '@/hooks/get-user'
 
 import Logo from '@/components/components/logo'
 import UserMenu from '@/components/sidebar/user-menu'
-import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { LogIn } from 'lucide-react'
 
 const Sidebar = async () => {
   const user = await getUser()
