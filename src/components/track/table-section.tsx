@@ -1,12 +1,15 @@
 import { LeetCoder, Problem } from '@/types/table.type'
 import TrackTable from '@/components/track/track-table'
 import { RequestToJoin } from '@/components/track/request-to-join'
+import { User } from '@supabase/auth-js'
 
 const TableSection = ({
+  user,
   leetcoders,
   problems,
   groupId,
 }: {
+  user: User
   leetcoders: LeetCoder[]
   problems: Problem[]
   groupId: string
@@ -19,7 +22,13 @@ const TableSection = ({
         {/* table header */}
         <div className="flex items-center justify-between p-4">
           <p>Group {groupId}</p>
-          <RequestToJoin />
+
+          {user && (
+            <RequestToJoin
+              user={user}
+              groupId={groupId}
+            />
+          )}
         </div>
 
         <TrackTable

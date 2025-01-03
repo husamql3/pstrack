@@ -23,6 +23,7 @@ const GroupView = ({
         leetcoders={leetcoders}
         problems={problems}
         groupId={groupId}
+        user={user}
       />
     </div>
   )
