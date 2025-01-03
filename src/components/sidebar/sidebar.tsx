@@ -1,21 +1,18 @@
 import Link from 'next/link'
 import { LogIn } from 'lucide-react'
-
-import { getUser } from '@/hooks/get-user'
+import { User } from '@supabase/auth-js'
 
 import Logo from '@/components/components/logo'
 import UserMenu from '@/components/sidebar/user-menu'
 import { Button } from '@/components/ui/button'
 
-const Sidebar = async () => {
-  const user = await getUser()
-
+const Sidebar = async ({ user }: { user: User }) => {
   return (
     <aside className="flex flex-col items-center justify-between px-3 py-5">
       <Logo />
 
       {user ? (
-        <UserMenu user={user!} />
+        <UserMenu user={user} />
       ) : (
         <Link
           href="/login"
