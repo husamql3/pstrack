@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useMemo } from 'react'
 import {
   createColumnHelper,
   flexRender,
@@ -8,62 +8,11 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 
-import { Problem, Submission, TableRow, User } from '@/types/table.type'
+import { LeetCoder, Problem, Submission, TableRow } from '@/types/table.type'
 import { cn } from '@/lib/utils'
 
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
-
-const dummyUsers: User[] = [
-  {
-    id: 'u1',
-    name: 'Osama',
-    username: 'osama',
-    ghUsername: 'osama',
-    lcUsername: 'osama_lc',
-    groupId: 1,
-  },
-  {
-    id: 'u2',
-    name: 'Ward',
-    username: 'ward',
-    ghUsername: 'ward',
-    lcUsername: 'ward_lc',
-    groupId: 1,
-  },
-  // Add more users as needed
-]
-
-const dummyProblems: Problem[] = [
-  {
-    id: 1,
-    pNumber: 735,
-    pLink: 'https://leetcode.com/problems/two-sum/',
-    pTopic: 'stack',
-    difficulty: 'Medium',
-  },
-  {
-    id: 2,
-    pNumber: 22,
-    pLink: 'https://leetcode.com/problems/two-sum/',
-    pTopic: 'stack',
-    difficulty: 'Easy',
-  },
-  // Add more problems as needed
-]
-
-const dummySubmissions: Submission[] = [
-  {
-    id: 1,
-    userId: 'u1',
-    pId: 1,
-    solved: true,
-    language: 'javascript',
-    solutionLink: 'https://github.com/solution1',
-    createdAt: '2024-02-23',
-  },
-  // Add more submissions as needed
-]
 
 const dates = [
   '29/02',
@@ -75,26 +24,7 @@ const dates = [
   '18/02',
   '17/02',
   '16/02',
-  '16/02',
 ]
-
-const defaultData: TableRow[] = dummyUsers.map((user) => ({
-  user,
-  problem: dummyProblems[0],
-  submissions: dates.reduce(
-    (acc, date) => {
-      acc[date] =
-        dummySubmissions.find(
-          (s) =>
-            s.userId === user.id &&
-            s.pId === dummyProblems[0].id &&
-            s.createdAt === date.split('/').reverse().join('-')
-        ) || null
-      return acc
-    },
-    {} as { [key: string]: Submission | null }
-  ),
-}))
 
 const columnHelper = createColumnHelper<TableRow>()
 
@@ -103,28 +33,31 @@ const columns = [
     header: 'LeetCoders',
     cell: (info) => <div>@{info.getValue().username}</div>,
   }),
-  columnHelper.accessor((row) => `${row.problem.pNumber} ${row.problem.pLink}`, {
+  columnHelper.accessor('problem', {
     header: 'Problem',
-    cell: (info) => {
-      return (
-        <div>
-          <a
-            href={info.getValue().split(' ')[1]}
-            target="_blank"
-          >
-            {info.getValue().split(' ')[0]}
-          </a>
-        </div>
-      )
-    },
+    cell: (info) => (
+      <div>
+        <a
+          href={info.getValue().pLink}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {info.getValue().pNumber}
+        </a>
+      </div>
+    ),
   }),
-  columnHelper.accessor((row) => row.problem.pTopic, {
+  columnHelper.accessor('problem.pTopic', {
     header: 'Type',
-    cell: (info) => <span className="text-sm text-gray-400">{info.getValue()}</span>,
+    cell: (info) => (
+      <span className="text-sm text-gray-400">{info.getValue()}</span>
+    ),
   }),
-  columnHelper.accessor((row) => row.problem.difficulty, {
+  columnHelper.accessor('problem.difficulty', {
     header: 'Difficulty',
-    cell: (info) => <Badge className={cn('font-normal')}>{info.getValue()}</Badge>,
+    cell: (info) => (
+      <Badge className={cn('font-normal')}>{info.getValue()}</Badge>
+    ),
   }),
   ...dates.map((date) =>
     columnHelper.accessor((row) => row.submissions[date]?.solved || false, {
@@ -140,8 +73,30 @@ const columns = [
   ),
 ]
 
-const TrackTable = () => {
-  const [data] = useState(() => [...defaultData])
+const TrackTable = ({
+  problems,
+  users,
+}: {
+  problems: Problem[]
+  users: LeetCoder[]
+}) => {
+  const data = useMemo(() => {
+    return users
+      .map((user) => {
+        return problems.map((problem) => ({
+          user,
+          problem,
+          submissions: dates.reduce(
+            (acc, date) => {
+              acc[date] = null // Replace with actual submission data if available
+              return acc
+            },
+            {} as { [key: string]: Submission | null }
+          ),
+        }))
+      })
+      .flat()
+  }, [problems, users])
 
   const table = useReactTable({
     data,
@@ -165,7 +120,10 @@ const TrackTable = () => {
                 >
                   {header.isPlaceholder
                     ? null
-                    : flexRender(header.column.columnDef.header, header.getContext())}
+                    : flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
                 </th>
               ))}
             </tr>

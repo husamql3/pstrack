@@ -1,7 +1,13 @@
-import MainView from '@/components/views/main-view'
+import Sidebar from '@/components/sidebar/sidebar'
+import Table from '@/components/components/table'
 
-const Main = async () => {
-  return <MainView />
+const Home = async () => {
+  return (
+    <div className="flex h-svh w-svw overflow-hidden">
+      <Sidebar />
+      <Table />
+    </div>
+  )
 }
 
-export default Main
+export default Home

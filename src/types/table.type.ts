@@ -1,4 +1,4 @@
-export type User = {
+export type LeetCoder = {
   id: string
   name: string
   username: string
@@ -7,12 +7,14 @@ export type User = {
   groupId: number
 }
 
+export type Difficulty = 'Easy' | 'Medium' | 'Hard'
+
 export type Problem = {
   id: number
   pNumber: number
   pLink: string
   pTopic: string
-  difficulty: 'Easy' | 'Medium' | 'Hard'
+  difficulty: Difficulty
 }
 
 export type Submission = {
@@ -26,7 +28,7 @@ export type Submission = {
 }
 
 export type TableRow = {
-  user: User
+  user: LeetCoder
   problem: Problem
   submissions: { [key: string]: Submission | null }
 }

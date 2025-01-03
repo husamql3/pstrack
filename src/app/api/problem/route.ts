@@ -15,6 +15,7 @@ export async function GET(req: NextRequest) {
 
     const data = id ? await getProblem(Number(id)) : await getProblems()
 
+    console.log('getProblem data:', data)
     return NextResponse.json(
       {
         success: true,
@@ -42,6 +43,7 @@ export async function POST(req: NextRequest) {
 
     const data = await createProblem(validatedData)
 
+    console.log('createProblem data:', data)
     return NextResponse.json(
       {
         success: true,
@@ -79,6 +81,7 @@ export async function DELETE(req: NextRequest) {
 
     const data = await deleteProblem(Number(id))
 
+    console.log('deleteProblem data:', data)
     return NextResponse.json(
       {
         success: true,

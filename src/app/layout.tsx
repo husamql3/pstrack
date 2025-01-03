@@ -14,6 +14,7 @@ const roboto = Roboto({
   weight: ['100', '300', '400', '700', '900'],
   subsets: ['latin'],
   display: 'swap',
+  fallback: ['Arial', 'sans-serif'],
 })
 
 export const metadata: Metadata = {
@@ -32,7 +33,13 @@ export default function RootLayout({
       className="dark"
       suppressHydrationWarning
     >
-      <body className={cn('font-roboto bg-zinc-950', roboto.className, leagueSpartan.className)}>
+      <body
+        className={cn(
+          'font-roboto bg-zinc-950',
+          roboto.className,
+          leagueSpartan.className
+        )}
+      >
         {children}
         <Toaster />
       </body>
