@@ -10,9 +10,9 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import LogoutButton from '@/components/sidebar/logout-button'
+import { LogoutButton } from '@/components/sidebar/logout-button'
 
-const UserMenu = ({ user, ...props }: { user: User }) => {
+const UserMenu = ({ user }: { user: User }) => {
   const {
     user_metadata: { email, avatar_url, name },
   } = user

@@ -23,4 +23,4 @@ const LogoutButton = () => {
   )
 }
 
-export default LogoutButton
+export { LogoutButton }
