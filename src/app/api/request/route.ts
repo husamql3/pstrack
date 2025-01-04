@@ -1,20 +1,20 @@
 import { ZodError } from 'zod'
 import { NextRequest, NextResponse } from 'next/server'
 
-import { RequestInsertSchema } from '@/types/schema/request.schema'
-import { insertRequest } from '@/db/supabase/services/request.service'
-import { RequestInsert } from '@/types/supabase.type'
+import { LeetcoderInsert } from '@/types/supabase.type'
+import { LeetcoderInsertSchema } from '@/types/schema/leetcoder.schema'
+import { insertLeetcoder } from '@/db/supabase/services/leetcoder.service'
 
 export async function POST(req: NextRequest) {
   try {
-    const body = (await req.json()) as RequestInsert
+    const body = (await req.json()) as LeetcoderInsert
     body.group_no = Number(body.group_no)
 
-    const validatedData = RequestInsertSchema.parse(body)
+    const validatedData = LeetcoderInsertSchema.parse(body)
 
-    const data = await insertRequest(validatedData)
+    const data = await insertLeetcoder(validatedData)
 
-    console.log('insertRequest data:', data)
+    console.log('insertLeetcoder data:', data)
     return NextResponse.json(
       {
         success: true,
@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: JSON.stringify(error.errors),
+          error: error.errors.map((e) => e.message).join(', '),
         },
         { status: 400 }
       )

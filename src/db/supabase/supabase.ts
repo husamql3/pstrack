@@ -29,28 +29,37 @@ export type Database = {
       }
       leetcoders: {
         Row: {
+          created_at: string | null
           email: string
           gh_username: string | null
           group_no: number | null
           id: string
           lc_username: string | null
           name: string
+          status: string
+          username: string | null
         }
         Insert: {
+          created_at?: string | null
           email: string
           gh_username?: string | null
           group_no?: number | null
           id?: string
           lc_username?: string | null
           name: string
+          status?: string
+          username?: string | null
         }
         Update: {
+          created_at?: string | null
           email?: string
           gh_username?: string | null
           group_no?: number | null
           id?: string
           lc_username?: string | null
           name?: string
+          status?: string
+          username?: string | null
         }
         Relationships: [
           {

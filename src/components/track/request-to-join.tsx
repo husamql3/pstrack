@@ -21,6 +21,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 
 const RequestToJoin = ({ user, groupId }: { user: User; groupId: string }) => {
+  const [isOpen, setIsOpen] = useState(false)
   const [isPending, setIsPending] = useState(false)
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -33,7 +34,7 @@ const RequestToJoin = ({ user, groupId }: { user: User; groupId: string }) => {
       username: formData.get('username'),
       email: user.email,
       group_no: groupId,
-      user_id: user.id,
+      id: user.id,
       gh_username: formData.get('gh_username') || '',
       lc_username: formData.get('lc_username') || '',
       status: 'pending',
@@ -47,6 +48,7 @@ const RequestToJoin = ({ user, groupId }: { user: User; groupId: string }) => {
           'Your request is under review. You will be notified once it is approved.',
         variant: 'success',
       })
+      setIsOpen(false)
     } catch (error) {
       console.error('Error submitting request:', error)
 
@@ -72,7 +74,10 @@ const RequestToJoin = ({ user, groupId }: { user: User; groupId: string }) => {
   }
 
   return (
-    <Dialog>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => setIsOpen(open)}
+    >
       <DialogTrigger>
         <Button
           size="sm"

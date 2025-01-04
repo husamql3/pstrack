@@ -1,5 +1,27 @@
 import { createClient } from '@/db/supabase/server'
 import { LeetCoder } from '@/types/table.type'
+import { LeetcoderInsert, LeetcoderRow } from '@/types/supabase.type'
+
+export const insertLeetcoder = async (
+  request: Omit<LeetcoderInsert, 'id' | 'created_at'>
+): Promise<LeetcoderRow> => {
+  try {
+    const supabase = await createClient()
+
+    const { data, error } = await supabase
+      .from('leetcoders')
+      .insert([request])
+      .select()
+      .single()
+
+    if (error) throw error
+
+    return data as LeetcoderRow
+  } catch (error) {
+    console.error('catch insertLeetcoder error:', error)
+    throw error
+  }
+}
 
 export const getLeetcoders = async (): Promise<LeetCoder[] | undefined> => {
   try {

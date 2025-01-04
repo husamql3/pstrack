@@ -63,7 +63,7 @@ export const requestsColumns: ColumnDef<RequestRow>[] = [
       return (
         <form
           onSubmit={handleApprove}
-          className="flex gap-2"
+          className="flex gap-2 self-center"
         >
           <Button
             variant="outline"
