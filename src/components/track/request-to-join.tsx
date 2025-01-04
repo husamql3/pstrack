@@ -25,8 +25,14 @@ const RequestToJoin = ({ user, groupId }: { user: User; groupId: string }) => {
 
   return (
     <Dialog>
-      <DialogTrigger asChild>
-        <Button size="sm">Request to join</Button>
+      <DialogTrigger>
+        <Button
+          size="sm"
+          variant="ghost"
+          className="px-3"
+        >
+          Request to join
+        </Button>
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-[425px]">
@@ -52,7 +58,7 @@ const RequestToJoin = ({ user, groupId }: { user: User; groupId: string }) => {
             <Input
               id="name"
               name="name"
-              defaultValue={user.user_metadata?.full_name || ''}
+              defaultValue={user?.user_metadata?.full_name || ''}
               placeholder="Enter your name"
               required
             />
@@ -65,7 +71,7 @@ const RequestToJoin = ({ user, groupId }: { user: User; groupId: string }) => {
             <Input
               id="username"
               name="username"
-              defaultValue={user.user_metadata?.username || ''}
+              defaultValue={user?.user_metadata?.username || ''}
               placeholder="Enter your username (will be visible to the table)"
               required
             />
@@ -92,7 +98,7 @@ const RequestToJoin = ({ user, groupId }: { user: User; groupId: string }) => {
           <input
             hidden
             name="id"
-            value={user.id}
+            value={user?.id}
             type="text"
           />
           <input

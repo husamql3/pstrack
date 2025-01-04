@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { LogIn } from 'lucide-react'
 import { User } from '@supabase/auth-js'
 
-import Logo from '@/components/components/logo'
+import { Logo } from '@/components/components/logo'
 import UserMenu from '@/components/sidebar/user-menu'
 import { Button } from '@/components/ui/button'
 
