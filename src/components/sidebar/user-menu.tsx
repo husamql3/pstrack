@@ -1,6 +1,6 @@
 import { UserRound } from 'lucide-react'
 
-import { User } from '@supabase/auth-js'
+import { type User } from '@supabase/auth-js'
 
 import {
   DropdownMenu,

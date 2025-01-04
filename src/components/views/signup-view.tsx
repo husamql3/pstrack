@@ -1,13 +1,13 @@
 import Link from 'next/link'
 
 import SignUpForm from '@/components/auth/signup-from'
-import Logo from '@/components/components/logo'
+import { Logo } from '@/components/components/logo'
 
 const SignupView = () => {
   return (
     <div className="grid h-full w-full place-items-center">
       <div className="flex w-full max-w-sm flex-col items-center justify-center">
-        <Logo size="lg" />
+        <Logo />
 
         <div className="flex flex-col">
           <p className="text-2xl font-semibold">Welcome to PSTrack</p>
