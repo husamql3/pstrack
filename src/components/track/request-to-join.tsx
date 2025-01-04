@@ -1,11 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { ZodError } from 'zod'
 import { User } from '@supabase/auth-js'
-
-import { fetcher } from '@/lib/fetcher'
-import { toast } from '@/hooks/use-toast'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -19,58 +15,25 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { handleInsertLeetcoder } from '@/lib/handleInsertLeetcoder'
+import { TbLoader2 } from 'react-icons/tb'
 
 const RequestToJoin = ({ user, groupId }: { user: User; groupId: string }) => {
   const [isOpen, setIsOpen] = useState(false)
-  const [isPending, setIsPending] = useState(false)
+  const [isPending, setIsPending] = useState(true)
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     setIsPending(true)
 
     const formData = new FormData(event.currentTarget)
-    const data = {
-      name: formData.get('name'),
-      username: formData.get('username'),
-      email: user.email,
-      group_no: groupId,
-      id: user.id,
-      gh_username: formData.get('gh_username') || '',
-      lc_username: formData.get('lc_username') || '',
-      status: 'pending',
-    }
+    const success = await handleInsertLeetcoder(formData, user, groupId)
 
-    try {
-      await fetcher('/api/request', 'POST', data)
-      toast({
-        title: 'Request submitted!',
-        description:
-          'Your request is under review. You will be notified once it is approved.',
-        variant: 'success',
-      })
-      setIsOpen(false)
-    } catch (error) {
-      console.error('Error submitting request:', error)
-
-      if (error instanceof ZodError) {
-        toast({
-          title: 'Validation Error',
-          description: error.errors.map((err) => err.message).join(', '),
-          variant: 'destructive',
-        })
-      } else {
-        toast({
-          title: 'Submission failed',
-          description:
-            error instanceof Error
-              ? error.message
-              : 'An error occurred while submitting your request.',
-          variant: 'destructive',
-        })
-      }
-    } finally {
+    if (success) {
       setIsPending(false)
     }
+
+    setIsPending(false)
   }
 
   return (
@@ -90,12 +53,11 @@ const RequestToJoin = ({ user, groupId }: { user: User; groupId: string }) => {
 
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle className="font-medium">
-            Request to join{' '}
-            <span className="font-semibold">Group {groupId}</span>
+          <DialogTitle className="font-normal">
+            Request to join <span className="font-medium">Group {groupId}</span>
           </DialogTitle>
           <DialogDescription className="sr-only">
-            Make changes to your profile here. Click save when you&#39;re done.
+            Request to join
           </DialogDescription>
         </DialogHeader>
 
@@ -166,9 +128,11 @@ const RequestToJoin = ({ user, groupId }: { user: User; groupId: string }) => {
           <Button
             type="submit"
             form="request-to-join-form"
+            className="space-x-2"
             disabled={isPending}
           >
-            {isPending ? 'Requesting...' : 'Request'}
+            {isPending ? 'Requesting' : 'Request'}
+            {isPending && <TbLoader2 className="mr-2 size-3 animate-spin" />}
           </Button>
         </DialogFooter>
       </DialogContent>

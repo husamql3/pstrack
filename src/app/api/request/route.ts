@@ -35,6 +35,19 @@ export async function POST(req: NextRequest) {
       )
     }
 
+    if (
+      error instanceof Error &&
+      error.message === 'You are already registered.'
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: error.message,
+        },
+        { status: 409 }
+      )
+    }
+
     return NextResponse.json(
       {
         success: false,

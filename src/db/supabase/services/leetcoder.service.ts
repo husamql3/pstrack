@@ -14,7 +14,10 @@ export const insertLeetcoder = async (
       .select()
       .single()
 
-    if (error) throw error
+    if (error) {
+      if (error.code === '23505') throw new Error('You are already registered.')
+      else throw error
+    }
 
     return data as LeetcoderRow
   } catch (error) {
