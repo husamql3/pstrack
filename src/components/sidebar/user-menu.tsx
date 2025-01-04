@@ -12,14 +12,17 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import LogoutButton from '@/components/sidebar/logout-button'
 
-const UserMenu = ({ user }: { user: User }) => {
+const UserMenu = ({ user, ...props }: { user: User }) => {
   const {
     user_metadata: { email, avatar_url, name },
   } = user
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
+      <DropdownMenuTrigger
+        asChild
+        className="h-8 w-8"
+      >
         <Avatar className="cursor-pointer">
           <AvatarImage
             src={avatar_url}
@@ -27,7 +30,7 @@ const UserMenu = ({ user }: { user: User }) => {
           />
           <AvatarFallback>
             <UserRound
-              size={18}
+              size={15}
               strokeWidth={2}
               className="text-zinc-50"
               aria-hidden="true"
@@ -47,4 +50,4 @@ const UserMenu = ({ user }: { user: User }) => {
   )
 }
 
-export default UserMenu
+export { UserMenu }

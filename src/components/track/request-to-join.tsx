@@ -1,8 +1,11 @@
 'use client'
 
+import { useState } from 'react'
+import { ZodError } from 'zod'
 import { User } from '@supabase/auth-js'
-import { useActionState } from 'react'
-import { requestGroup } from '@/db/supabase/services/group.service'
+
+import { fetcher } from '@/lib/fetcher'
+import { toast } from '@/hooks/use-toast'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -18,15 +21,66 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 
 const RequestToJoin = ({ user, groupId }: { user: User; groupId: string }) => {
-  const [state, action, isPending] = useActionState(requestGroup, {
-    success: false,
-    message: '',
-  })
+  const [isPending, setIsPending] = useState(false)
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    setIsPending(true)
+
+    const formData = new FormData(event.currentTarget)
+    const data = {
+      name: formData.get('name'),
+      username: formData.get('username'),
+      email: user.email,
+      group_no: groupId,
+      user_id: user.id,
+      gh_username: formData.get('gh_username') || '',
+      lc_username: formData.get('lc_username') || '',
+      status: 'pending',
+    }
+
+    try {
+      await fetcher('/api/request', 'POST', data)
+      toast({
+        title: 'Request submitted!',
+        description:
+          'Your request is under review. You will be notified once it is approved.',
+        variant: 'success',
+      })
+    } catch (error) {
+      console.error('Error submitting request:', error)
+
+      if (error instanceof ZodError) {
+        toast({
+          title: 'Validation Error',
+          description: error.errors.map((err) => err.message).join(', '),
+          variant: 'destructive',
+        })
+      } else {
+        toast({
+          title: 'Submission failed',
+          description:
+            error instanceof Error
+              ? error.message
+              : 'An error occurred while submitting your request.',
+          variant: 'destructive',
+        })
+      }
+    } finally {
+      setIsPending(false)
+    }
+  }
 
   return (
     <Dialog>
-      <DialogTrigger asChild>
-        <Button size="sm">Request to join</Button>
+      <DialogTrigger>
+        <Button
+          size="sm"
+          variant="ghost"
+          className="px-3"
+        >
+          Request to join
+        </Button>
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-[425px]">
@@ -41,9 +95,9 @@ const RequestToJoin = ({ user, groupId }: { user: User; groupId: string }) => {
         </DialogHeader>
 
         <form
-          action={action}
+          onSubmit={handleSubmit}
           className="grid gap-4 py-4"
-          id="request-to-join-form" // Add an ID to the form
+          id="request-to-join-form"
         >
           <div className="flex flex-col gap-2">
             <Label htmlFor="name">
@@ -52,7 +106,7 @@ const RequestToJoin = ({ user, groupId }: { user: User; groupId: string }) => {
             <Input
               id="name"
               name="name"
-              defaultValue={user.user_metadata?.full_name || ''}
+              defaultValue={user?.user_metadata?.full_name || ''}
               placeholder="Enter your name"
               required
             />
@@ -65,26 +119,26 @@ const RequestToJoin = ({ user, groupId }: { user: User; groupId: string }) => {
             <Input
               id="username"
               name="username"
-              defaultValue={user.user_metadata?.username || ''}
+              defaultValue={user?.user_metadata?.username || ''}
               placeholder="Enter your username (will be visible to the table)"
               required
             />
           </div>
 
           <div className="flex flex-col gap-2">
-            <Label htmlFor="ghUsername">GitHub Username</Label>
+            <Label htmlFor="gh_username">GitHub Username</Label>
             <Input
-              id="ghUsername"
-              name="ghUsername"
+              id="gh_username"
+              name="gh_username"
               placeholder="Enter your GitHub username"
             />
           </div>
 
           <div className="flex flex-col gap-2">
-            <Label htmlFor="lcUsername">LeetCode Username</Label>
+            <Label htmlFor="lc_username">LeetCode Username</Label>
             <Input
-              id="lcUsername"
-              name="lcUsername"
+              id="lc_username"
+              name="lc_username"
               placeholder="Enter your Leetcode username"
             />
           </div>
@@ -92,7 +146,7 @@ const RequestToJoin = ({ user, groupId }: { user: User; groupId: string }) => {
           <input
             hidden
             name="id"
-            value={user.id}
+            value={user?.id}
             type="text"
           />
           <input
