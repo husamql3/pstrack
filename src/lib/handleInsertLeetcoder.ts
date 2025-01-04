@@ -1,9 +1,10 @@
 'use client'
 
+import { ZodError } from 'zod'
 import { User } from '@supabase/auth-js'
+
 import { fetcher } from '@/lib/fetcher'
 import { toast } from '@/hooks/use-toast'
-import { ZodError } from 'zod'
 
 export const handleInsertLeetcoder = async (
   formData: FormData,

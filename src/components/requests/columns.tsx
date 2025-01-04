@@ -3,11 +3,11 @@
 import { ColumnDef } from '@tanstack/react-table'
 
 import { toast } from '@/hooks/use-toast'
+import { LeetcoderRow } from '@/types/supabase.type'
 
 import { Button } from '@/components/ui/button'
-import { RequestRow } from '@/types/supabase.type'
 
-export const requestsColumns: ColumnDef<RequestRow>[] = [
+export const requestsColumns: ColumnDef<LeetcoderRow>[] = [
   {
     accessorKey: 'username',
     header: 'Username',
@@ -27,6 +27,30 @@ export const requestsColumns: ColumnDef<RequestRow>[] = [
   {
     accessorKey: 'status',
     header: 'Status',
+  },
+  {
+    accessorKey: 'created_at',
+    header: 'Requested At',
+    // cell: ({ row }) => {
+    //   const date = new Date(row.original.created_at || '')
+    //   // Format the date as "M/D hA" (e.g., "1/1 3AM")
+    //   return date.toLocaleString('en-US', {
+    //     month: 'numeric', // "1" for January
+    //     day: 'numeric',   // "1" for the 1st
+    //     hour: 'numeric',  // "3" for 3 AM
+    //     hour12: true,     // Use 12-hour format
+    //   })
+    // },
+    cell: ({ row }) => {
+      const date = new Date(row.original.created_at || '')
+      return date.toLocaleString('en-US', {
+        month: 'numeric',
+        day: 'numeric',
+        hour: 'numeric',
+        hour12: true,
+      })
+    },
+    sortingFn: 'datetime', // Use the built-in datetime sorting function
   },
   {
     accessorKey: 'actions',
