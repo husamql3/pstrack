@@ -1,11 +1,17 @@
 'use client'
 
 import { ColumnDef } from '@tanstack/react-table'
+import { BiShowAlt } from 'react-icons/bi'
 
 import { toast } from '@/hooks/use-toast'
 import { LeetcoderRow } from '@/types/supabase.type'
 
 import { Button } from '@/components/ui/button'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
 
 export const requestsColumns: ColumnDef<LeetcoderRow>[] = [
   {
@@ -31,16 +37,6 @@ export const requestsColumns: ColumnDef<LeetcoderRow>[] = [
   {
     accessorKey: 'created_at',
     header: 'Requested At',
-    // cell: ({ row }) => {
-    //   const date = new Date(row.original.created_at || '')
-    //   // Format the date as "M/D hA" (e.g., "1/1 3AM")
-    //   return date.toLocaleString('en-US', {
-    //     month: 'numeric', // "1" for January
-    //     day: 'numeric',   // "1" for the 1st
-    //     hour: 'numeric',  // "3" for 3 AM
-    //     hour12: true,     // Use 12-hour format
-    //   })
-    // },
     cell: ({ row }) => {
       const date = new Date(row.original.created_at || '')
       return date.toLocaleString('en-US', {
@@ -51,6 +47,26 @@ export const requestsColumns: ColumnDef<LeetcoderRow>[] = [
       })
     },
     sortingFn: 'datetime', // Use the built-in datetime sorting function
+  },
+  {
+    accessorKey: 'details',
+    header: 'Details',
+    cell: ({ row }) => {
+      const request = row.original
+      return (
+        <Popover>
+          <PopoverTrigger>
+            <BiShowAlt className="cursor-pointer" />{' '}
+            {/* Add a pointer cursor */}
+          </PopoverTrigger>
+          <PopoverContent className="w-[500px] p-4">
+            <pre className="whitespace-pre-wrap break-words text-sm">
+              {JSON.stringify(request, null, 2)}
+            </pre>
+          </PopoverContent>
+        </Popover>
+      )
+    },
   },
   {
     accessorKey: 'actions',
@@ -69,11 +85,11 @@ export const requestsColumns: ColumnDef<LeetcoderRow>[] = [
             throw new Error('Failed to approve request')
           }
 
-          const result = await response.json()
-          console.log('Request approved:', result)
+          await response.json()
           toast({
             title: 'Request Approved',
           })
+          window.location.reload()
         } catch (error) {
           console.error('Error approving request:', error)
           toast({

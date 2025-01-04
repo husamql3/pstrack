@@ -1,32 +1,11 @@
-import { RequestsTable } from '@/components/requests/requests-table'
-import { LeetcoderRow } from '@/types/supabase.type'
-import { requestsColumns } from '@/components/requests/columns'
+import { LeetcodeRowType } from '@/types/supabase.type'
+import { fetchPendingLeetcoders } from '@/db/supabase/services/leetcoder.service'
 
-const DashboardView = () => {
-  const requestsData: LeetcoderRow[] = [
-    {
-      created_at: '2023-01-01T00:00:00.000Z',
-      id: 'f07e0ca7-4a29-4f7d-9e39-220f95f204b9',
-      name: 'Hüsam',
-      username: 'husamahmud',
-      email: 'husamahmud@gmail.com',
-      status: 'pending',
-      group_no: 1,
-      gh_username: null,
-      lc_username: null,
-    },
-    {
-      created_at: '2023-01-01T00:00:00.000Z',
-      id: 'f07e0ca7-4a29-4f7d-9e39-220f95f204b9',
-      name: 'Sebastian',
-      username: 'husamahmud',
-      email: 'husamahmud@gmail.com',
-      status: 'pending',
-      group_no: 1,
-      gh_username: null,
-      lc_username: null,
-    },
-  ]
+import { requestsColumns } from '@/components/requests/columns'
+import { RequestsTable } from '@/components/requests/requests-table'
+
+const DashboardView = async () => {
+  const requestsData: LeetcodeRowType = (await fetchPendingLeetcoders()) ?? []
 
   return (
     <div className="h-svh w-full p-5">

@@ -26,6 +26,51 @@ export const insertLeetcoder = async (
   }
 }
 
+export const fetchPendingLeetcoders = async (): Promise<
+  LeetcoderRow[] | undefined
+> => {
+  try {
+    const supabase = await createClient()
+
+    const { data, error } = await supabase
+      .from('leetcoders')
+      .select('*')
+      .eq('status', 'pending')
+
+    if (error) {
+      console.error('fetchPendingLeetcoders error:', error)
+      return undefined
+    }
+
+    return data
+  } catch (error) {
+    console.error('catch fetchPendingLeetcoders error:', error)
+  }
+}
+
+export const approveLeetcoder = async (id: string): Promise<LeetcoderRow> => {
+  try {
+    const supabase = await createClient()
+
+    const { data, error } = await supabase
+      .from('leetcoders')
+      .update({ status: 'approved' })
+      .eq('id', id)
+      .select()
+      .single()
+
+    if (error) {
+      console.error('approveLeetcoder error:', error)
+      throw error
+    }
+
+    return data as LeetcoderRow
+  } catch (error) {
+    console.error('catch approveLeetcoder error:', error)
+    throw error
+  }
+}
+
 export const getLeetcoders = async (): Promise<LeetCoder[] | undefined> => {
   try {
     const supabase = await createClient()

@@ -3,7 +3,11 @@ import { NextRequest, NextResponse } from 'next/server'
 
 import { LeetcoderInsert } from '@/types/supabase.type'
 import { LeetcoderInsertSchema } from '@/types/schema/leetcoder.schema'
-import { insertLeetcoder } from '@/db/supabase/services/leetcoder.service'
+import {
+  approveLeetcoder,
+  insertLeetcoder,
+} from '@/db/supabase/services/leetcoder.service'
+import { revalidatePath } from 'next/cache'
 
 export async function POST(req: NextRequest) {
   try {
@@ -59,14 +63,38 @@ export async function POST(req: NextRequest) {
 }
 
 export async function PUT(req: NextRequest) {
-  const { searchParams } = new URL(req.url)
-  const id = searchParams.get('id')
+  try {
+    const { searchParams } = new URL(req.url)
+    const id = searchParams.get('id')
 
-  return NextResponse.json(
-    {
-      success: true,
-      data: id,
-    },
-    { status: 201 }
-  )
+    if (!id) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Missing id',
+        },
+        { status: 400 }
+      )
+    }
+
+    const data = await approveLeetcoder(id)
+    console.log('approveLeetcoder data:', data)
+
+    return NextResponse.json(
+      {
+        success: true,
+        data: data,
+      },
+      { status: 201 }
+    )
+  } catch (error) {
+    console.error('/api/request PUT API Error:', error)
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Internal server error',
+      },
+      { status: 500 }
+    )
+  }
 }

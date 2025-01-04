@@ -20,7 +20,7 @@ import { TbLoader2 } from 'react-icons/tb'
 
 const RequestToJoin = ({ user, groupId }: { user: User; groupId: string }) => {
   const [isOpen, setIsOpen] = useState(false)
-  const [isPending, setIsPending] = useState(true)
+  const [isPending, setIsPending] = useState(false)
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -31,6 +31,7 @@ const RequestToJoin = ({ user, groupId }: { user: User; groupId: string }) => {
 
     if (success) {
       setIsPending(false)
+      setIsOpen(false)
     }
 
     setIsPending(false)
