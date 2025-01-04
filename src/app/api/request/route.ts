@@ -44,3 +44,16 @@ export async function POST(req: NextRequest) {
     )
   }
 }
+
+export async function PUT(req: NextRequest) {
+  const { searchParams } = new URL(req.url)
+  const id = searchParams.get('id')
+
+  return NextResponse.json(
+    {
+      success: true,
+      data: id,
+    },
+    { status: 201 }
+  )
+}
