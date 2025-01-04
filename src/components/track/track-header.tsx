@@ -16,7 +16,7 @@ const TrackHeader = ({ user, groupId }: { user: User; groupId: string }) => {
       </div>
 
       {/* User Menu or Login Button */}
-      <div className="flex h-full flex-row-reverse items-center border-l border-zinc-900">
+      <div className="flex h-full flex-row-reverse items-center">
         {user ? (
           <>
             <div className="flex h-full items-center border-l border-zinc-900 px-3">
@@ -32,7 +32,7 @@ const TrackHeader = ({ user, groupId }: { user: User; groupId: string }) => {
         ) : (
           <Link
             href="/login"
-            className="flex h-full items-center px-3"
+            className="flex h-full items-center justify-center border-l border-zinc-900 px-3"
             prefetch
           >
             <Button

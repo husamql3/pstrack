@@ -1,4 +1,5 @@
 import { getUser } from '@/hooks/get-user'
+
 import { TrackHeader } from '@/components/track/track-header'
 
 const TrackPage = async ({
