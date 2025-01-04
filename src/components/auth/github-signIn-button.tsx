@@ -42,4 +42,4 @@ const GithubSigninButton = () => {
   )
 }
 
-export default GithubSigninButton
+export { GithubSigninButton }

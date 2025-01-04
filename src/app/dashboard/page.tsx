@@ -1,6 +1,6 @@
 import DashboardView from '@/components/views/dashboard-view'
 
-const DashboardPage = () => {
+const DashboardPage = async () => {
   return <DashboardView />
 }
 

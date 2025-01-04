@@ -71,52 +71,35 @@ export type Database = {
           },
         ]
       }
-      requests: {
+      roadmap: {
         Row: {
-          created_at: string | null
-          email: string
-          gh_username: string | null
-          group_no: number | null
+          created_at: string
+          difficulty: string
           id: string
-          lc_username: string | null
-          name: string
-          status: string
-          user_id: string | null
-          username: string | null
+          link: string
+          problem_no: string
+          problem_order: number
+          topic: string
         }
         Insert: {
-          created_at?: string | null
-          email: string
-          gh_username?: string | null
-          group_no?: number | null
+          created_at?: string
+          difficulty?: string
           id?: string
-          lc_username?: string | null
-          name: string
-          status?: string
-          user_id?: string | null
-          username?: string | null
+          link: string
+          problem_no: string
+          problem_order: number
+          topic: string
         }
         Update: {
-          created_at?: string | null
-          email?: string
-          gh_username?: string | null
-          group_no?: number | null
+          created_at?: string
+          difficulty?: string
           id?: string
-          lc_username?: string | null
-          name?: string
-          status?: string
-          user_id?: string | null
-          username?: string | null
+          link?: string
+          problem_no?: string
+          problem_order?: number
+          topic?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "requests_group_no_fkey"
-            columns: ["group_no"]
-            isOneToOne: false
-            referencedRelation: "groups"
-            referencedColumns: ["group_no"]
-          },
-        ]
+        Relationships: []
       }
     }
     Views: {

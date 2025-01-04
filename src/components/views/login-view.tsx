@@ -1,9 +1,9 @@
 import Link from 'next/link'
 
 import { Logo } from '@/components/components/logo'
-import SignInForm from '@/components/auth/signin-form'
-import GoogleSignInButton from '@/components/auth/google-signIn-button'
-import GithubSigninButton from '@/components/auth/github-signIn-button'
+import { SignInForm } from '@/components/auth/signin-form'
+import { GoogleSigninButton } from '@/components/auth/google-signIn-button'
+import { GithubSigninButton } from '@/components/auth/github-signIn-button'
 
 const SigninView = () => {
   return (
@@ -27,7 +27,7 @@ const SigninView = () => {
 
         <div className="w-full space-y-3">
           <GithubSigninButton />
-          <GoogleSignInButton />
+          <GoogleSigninButton />
         </div>
 
         <div className="after:border-border relative w-full text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">

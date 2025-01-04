@@ -42,4 +42,4 @@ const GoogleSigninButton = () => {
   )
 }
 
-export default GoogleSigninButton
+export { GoogleSigninButton }

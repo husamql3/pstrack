@@ -7,7 +7,6 @@ import {
   approveLeetcoder,
   insertLeetcoder,
 } from '@/db/supabase/services/leetcoder.service'
-import { revalidatePath } from 'next/cache'
 
 export async function POST(req: NextRequest) {
   try {

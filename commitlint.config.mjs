@@ -16,6 +16,7 @@ export default {
         'lint',
         'build',
         'ci',
+        'db',
       ],
     ],
     'type-case': [2, 'always', 'lower-case'],
