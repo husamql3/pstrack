@@ -9,7 +9,7 @@ import { toast } from '@/hooks/use-toast'
 export const handleInsertLeetcoder = async (
   formData: FormData,
   user: User,
-  groupId: string
+  groupId: number
 ): Promise<boolean> => {
   const data = {
     name: formData.get('name'),
@@ -26,7 +26,8 @@ export const handleInsertLeetcoder = async (
     await fetcher('/api/request', 'POST', data)
     toast({
       title: 'Request submitted!',
-      description: 'Your request is under review. You will be notified once it is approved.',
+      description:
+        'Your request is under review. You will be notified once it is approved.',
       variant: 'success',
     })
     return true
@@ -55,7 +56,9 @@ export const handleInsertLeetcoder = async (
     toast({
       title: 'Submission failed',
       description:
-        error instanceof Error ? error.message : 'An error occurred while submitting your request.',
+        error instanceof Error
+          ? error.message
+          : 'An error occurred while submitting your request.',
       variant: 'destructive',
     })
     return false

@@ -7,7 +7,7 @@ import { UserMenu } from '@/components/sidebar/user-menu'
 import { Button } from '@/components/ui/button'
 import { RequestToJoin } from '@/components/track/request-to-join'
 
-const TrackHeader = ({ user, groupId }: { user: User; groupId: string }) => {
+const TrackHeader = ({ user, groupId }: { user: User; groupId: number }) => {
   return (
     <header className="flex h-12 items-center justify-between border-b border-zinc-900">
       {/* Logo Section */}

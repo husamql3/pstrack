@@ -1,8 +1,28 @@
-import { group_progres, roadmap, submission } from '@/data/dummy'
+import { GroupProgressRow, RoadmapRow, SubmissionRow } from '@/types/supabase.type'
 
-export const generateData = () => {
+export type TableRow = {
+  group_no: number
+  roadmap: RoadmapRow[]
+  submission: SubmissionRow[]
+  group_progress: GroupProgressRow[]
+}
+
+export type TableData = {
+  problemOrder: number // problem_order from roadmap
+  problem: RoadmapRow // The entire roadmap row
+  totalSolved: number // Number of solved submissions
+  userSubmissions: SubmissionRow[] // Array of submissions for the problem
+  groupProgressDate: string | null // Formatted date (MM/DD) or null
+}[]
+
+export const generateData = ({
+  group_no,
+  roadmap,
+  submission,
+  group_progress,
+}: TableRow): TableData => {
   // Find the group progress entry for the group (assuming group_no is 1)
-  const groupProgress = group_progres.find((progress) => progress.group_no === 1)
+  const groupProgress = group_progress.find((progress) => progress.group_no === group_no)
 
   // Format the created_at date to MM/DD format
   const formattedDate = groupProgress

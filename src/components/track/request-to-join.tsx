@@ -19,7 +19,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 
-const RequestToJoin = ({ user, groupId }: { user: User; groupId: string }) => {
+const RequestToJoin = ({ user, groupId }: { user: User; groupId: number }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [isPending, setIsPending] = useState(false)
 

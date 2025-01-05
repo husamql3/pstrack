@@ -7,7 +7,11 @@ export const insertLeetcoder = async (
   try {
     const supabase = await createClient()
 
-    const { data, error } = await supabase.from('leetcoders').insert([request]).select().single()
+    const { data, error } = await supabase
+      .from('leetcoders')
+      .insert([request])
+      .select()
+      .single()
 
     if (error) {
       if (error.code === '23505') throw new Error('You are already registered.')
@@ -25,7 +29,10 @@ export const fetchPendingLeetcoders = async (): Promise<LeetcoderRow[] | undefin
   try {
     const supabase = await createClient()
 
-    const { data, error } = await supabase.from('leetcoders').select('*').eq('status', 'pending')
+    const { data, error } = await supabase
+      .from('leetcoders')
+      .select('*')
+      .eq('status', 'pending')
 
     if (error) {
       console.error('fetchPendingLeetcoders error:', error)
@@ -35,6 +42,28 @@ export const fetchPendingLeetcoders = async (): Promise<LeetcoderRow[] | undefin
     return data
   } catch (error) {
     console.error('catch fetchPendingLeetcoders error:', error)
+  }
+}
+
+export const fetchGroupLeetcoders = async (group_no: number): Promise<LeetcoderRow[]> => {
+  try {
+    const supabase = await createClient()
+
+    const { data, error } = await supabase
+      .from('leetcoders')
+      .select('*')
+      .eq('group_no', group_no)
+      .eq('status', 'approved')
+
+    if (error) {
+      console.error('fetchLeetcoders error:', error)
+      return []
+    }
+
+    return data ?? []
+  } catch (error) {
+    console.error('catch fetchLeetcoders error:', error)
+    return []
   }
 }
 
