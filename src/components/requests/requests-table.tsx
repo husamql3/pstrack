@@ -24,7 +24,10 @@ interface DataTableProps<TData, TValue> {
   data: TData[]
 }
 
-export function RequestsTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
+export function RequestsTable<TData, TValue>({
+  columns,
+  data,
+}: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([{ id: 'created_at', desc: true }])
 
   const table = useReactTable({

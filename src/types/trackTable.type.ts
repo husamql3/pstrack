@@ -1,3 +1,5 @@
+import { GroupProgressRow, RoadmapRow, SubmissionRow } from '@/types/supabase.type'
+
 export type TrackTableType = {
   problemOrder: number
   problem: {
@@ -14,3 +16,18 @@ export type TrackTableType = {
   }[]
   groupProgressDate: string | null
 }
+
+export type TableRow = {
+  group_no: number
+  roadmap: RoadmapRow[]
+  submission: SubmissionRow[]
+  group_progress: GroupProgressRow[]
+}
+
+export type TableData = {
+  problemOrder: number
+  problem: RoadmapRow
+  totalSolved: number
+  userSubmissions: SubmissionRow[]
+  groupProgressDate: string | null
+}[]

@@ -135,7 +135,9 @@ export const InputPassword = () => {
                 aria-hidden="true"
               />
             )}
-            <span className={`text-xs ${req.met ? 'text-emerald-600' : 'text-muted-foreground'}`}>
+            <span
+              className={`text-xs ${req.met ? 'text-emerald-600' : 'text-muted-foreground'}`}
+            >
               {req.text}
               <span className="sr-only">
                 {req.met ? ' - Requirement met' : ' - Requirement not met'}

@@ -1,9 +1,10 @@
 'use client'
 
-import { TrackTable } from '@/components/track/track-table'
-import { TableData } from '@/data/generateData'
-import { getColumns } from '@/components/track/track-columns'
 import { LeetcoderRow } from '@/types/supabase.type'
+import { TableData } from '@/types/trackTable.type'
+
+import { TrackTable } from '@/components/track/track-table'
+import { getColumns } from '@/components/track/track-columns'
 
 const TrackView = ({
   userId,

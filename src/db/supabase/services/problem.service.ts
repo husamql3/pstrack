@@ -45,7 +45,9 @@ export const getProblem = async (pNumber: number): Promise<Problem | undefined> 
   }
 }
 
-export const createProblem = async (problem: CreateProblemInput): Promise<Problem | undefined> => {
+export const createProblem = async (
+  problem: CreateProblemInput
+): Promise<Problem | undefined> => {
   try {
     const validatedProblem = CreateProblemDto.parse(problem)
 
@@ -77,7 +79,11 @@ export const deleteProblem = async (pNumber: number): Promise<Problem | undefine
   try {
     const supabase = await createClient()
 
-    const { data, error } = await supabase.from('problems').delete().eq('pNumber', pNumber).single()
+    const { data, error } = await supabase
+      .from('problems')
+      .delete()
+      .eq('pNumber', pNumber)
+      .single()
 
     if (error) {
       console.error('deleteProblem error:', error)

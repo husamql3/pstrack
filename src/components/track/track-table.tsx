@@ -24,7 +24,10 @@ interface DataTableProps<TData, TValue> {
   data: TData[]
 }
 
-export function TrackTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
+export function TrackTable<TData, TValue>({
+  columns,
+  data,
+}: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([
     {
       id: 'problem_no',

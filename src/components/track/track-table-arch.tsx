@@ -14,7 +14,17 @@ import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
 
-const dates = ['29/02', '23/02', '22/02', '21/02', '20/02', '19/02', '18/02', '17/02', '16/02']
+const dates = [
+  '29/02',
+  '23/02',
+  '22/02',
+  '21/02',
+  '20/02',
+  '19/02',
+  '18/02',
+  '17/02',
+  '16/02',
+]
 
 const columnHelper = createColumnHelper<TableRow>()
 
@@ -59,7 +69,13 @@ const columns = [
   ),
 ]
 
-const TrackTableArch = ({ problems, users }: { problems: Problem[]; users: LeetCoder[] }) => {
+const TrackTableArch = ({
+  problems,
+  users,
+}: {
+  problems: Problem[]
+  users: LeetCoder[]
+}) => {
   const data = useMemo(() => {
     return users
       .map((user) => {

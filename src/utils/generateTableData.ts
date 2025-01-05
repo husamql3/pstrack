@@ -1,21 +1,6 @@
-import { GroupProgressRow, RoadmapRow, SubmissionRow } from '@/types/supabase.type'
+import { TableData, TableRow } from '@/types/trackTable.type'
 
-export type TableRow = {
-  group_no: number
-  roadmap: RoadmapRow[]
-  submission: SubmissionRow[]
-  group_progress: GroupProgressRow[]
-}
-
-export type TableData = {
-  problemOrder: number // problem_order from roadmap
-  problem: RoadmapRow // The entire roadmap row
-  totalSolved: number // Number of solved submissions
-  userSubmissions: SubmissionRow[] // Array of submissions for the problem
-  groupProgressDate: string | null // Formatted date (MM/DD) or null
-}[]
-
-export const generateData = ({
+export const generateTableData = ({
   group_no,
   roadmap,
   submission,
