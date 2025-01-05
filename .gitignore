@@ -43,3 +43,4 @@ next-env.d.ts
 .idea
 /src/types/supabase.ts
 /src/types/schema.sql
+package-lock.json
