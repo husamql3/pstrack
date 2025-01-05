@@ -3,10 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 
 import { LeetcoderInsert } from '@/types/supabase.type'
 import { LeetcoderInsertSchema } from '@/types/schema/leetcoder.schema'
-import {
-  approveLeetcoder,
-  insertLeetcoder,
-} from '@/db/supabase/services/leetcoder.service'
+import { approveLeetcoder, insertLeetcoder } from '@/db/supabase/services/leetcoder.service'
 
 export async function POST(req: NextRequest) {
   try {
@@ -38,10 +35,7 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    if (
-      error instanceof Error &&
-      error.message === 'You are already registered.'
-    ) {
+    if (error instanceof Error && error.message === 'You are already registered.') {
       return NextResponse.json(
         {
           success: false,

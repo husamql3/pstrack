@@ -14,17 +14,7 @@ import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
 
-const dates = [
-  '29/02',
-  '23/02',
-  '22/02',
-  '21/02',
-  '20/02',
-  '19/02',
-  '18/02',
-  '17/02',
-  '16/02',
-]
+const dates = ['29/02', '23/02', '22/02', '21/02', '20/02', '19/02', '18/02', '17/02', '16/02']
 
 const columnHelper = createColumnHelper<TableRow>()
 
@@ -49,15 +39,11 @@ const columns = [
   }),
   columnHelper.accessor('problem.pTopic', {
     header: 'Type',
-    cell: (info) => (
-      <span className="text-sm text-gray-400">{info.getValue()}</span>
-    ),
+    cell: (info) => <span className="text-sm text-gray-400">{info.getValue()}</span>,
   }),
   columnHelper.accessor('problem.difficulty', {
     header: 'Difficulty',
-    cell: (info) => (
-      <Badge className={cn('font-normal')}>{info.getValue()}</Badge>
-    ),
+    cell: (info) => <Badge className={cn('font-normal')}>{info.getValue()}</Badge>,
   }),
   ...dates.map((date) =>
     columnHelper.accessor((row) => row.submissions[date]?.solved || false, {
@@ -73,13 +59,7 @@ const columns = [
   ),
 ]
 
-const TrackTableArch = ({
-  problems,
-  users,
-}: {
-  problems: Problem[]
-  users: LeetCoder[]
-}) => {
+const TrackTableArch = ({ problems, users }: { problems: Problem[]; users: LeetCoder[] }) => {
   const data = useMemo(() => {
     return users
       .map((user) => {
@@ -120,10 +100,7 @@ const TrackTableArch = ({
                 >
                   {header.isPlaceholder
                     ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
+                    : flexRender(header.column.columnDef.header, header.getContext())}
                 </th>
               ))}
             </tr>

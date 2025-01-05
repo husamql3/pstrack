@@ -26,8 +26,7 @@ export const handleInsertLeetcoder = async (
     await fetcher('/api/request', 'POST', data)
     toast({
       title: 'Request submitted!',
-      description:
-        'Your request is under review. You will be notified once it is approved.',
+      description: 'Your request is under review. You will be notified once it is approved.',
       variant: 'success',
     })
     return true
@@ -43,10 +42,7 @@ export const handleInsertLeetcoder = async (
       return false
     }
 
-    if (
-      error instanceof Error &&
-      error.message === 'You are already registered.'
-    ) {
+    if (error instanceof Error && error.message === 'You are already registered.') {
       toast({
         title: 'Registration Error',
         description: error.message,
@@ -59,9 +55,7 @@ export const handleInsertLeetcoder = async (
     toast({
       title: 'Submission failed',
       description:
-        error instanceof Error
-          ? error.message
-          : 'An error occurred while submitting your request.',
+        error instanceof Error ? error.message : 'An error occurred while submitting your request.',
       variant: 'destructive',
     })
     return false

@@ -33,13 +33,7 @@ export default function RootLayout({
       className="dark"
       suppressHydrationWarning
     >
-      <body
-        className={cn(
-          'font-roboto bg-zinc-950',
-          roboto.className,
-          leagueSpartan.className
-        )}
-      >
+      <body className={cn('bg-zinc-950 font-roboto', roboto.className, leagueSpartan.className)}>
         {children}
         <Toaster />
       </body>

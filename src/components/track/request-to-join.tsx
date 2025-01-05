@@ -2,6 +2,9 @@
 
 import { useState } from 'react'
 import { User } from '@supabase/auth-js'
+import { TbLoader2 } from 'react-icons/tb'
+
+import { handleInsertLeetcoder } from '@/lib/handleInsertLeetcoder'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -15,8 +18,6 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { handleInsertLeetcoder } from '@/lib/handleInsertLeetcoder'
-import { TbLoader2 } from 'react-icons/tb'
 
 const RequestToJoin = ({ user, groupId }: { user: User; groupId: string }) => {
   const [isOpen, setIsOpen] = useState(false)

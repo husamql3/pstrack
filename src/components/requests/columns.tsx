@@ -7,11 +7,7 @@ import { toast } from '@/hooks/use-toast'
 import { LeetcoderRow } from '@/types/supabase.type'
 
 import { Button } from '@/components/ui/button'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 
 export const requestsColumns: ColumnDef<LeetcoderRow>[] = [
   {
@@ -56,8 +52,7 @@ export const requestsColumns: ColumnDef<LeetcoderRow>[] = [
       return (
         <Popover>
           <PopoverTrigger>
-            <BiShowAlt className="cursor-pointer" />{' '}
-            {/* Add a pointer cursor */}
+            <BiShowAlt className="cursor-pointer" /> {/* Add a pointer cursor */}
           </PopoverTrigger>
           <PopoverContent className="w-[500px] p-4">
             <pre className="whitespace-pre-wrap break-words text-sm">
