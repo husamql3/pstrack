@@ -1,7 +1,7 @@
 import { Database } from '@/types/supabase'
 
 // Dummy data for the `groups` table
-export const groups: Database['public']['Tables']['groups']['Insert'][] = [
+export const groups: Database['public']['Tables']['groups']['Row'][] = [
   {
     id: '1',
     group_name: 'Group A',
@@ -10,12 +10,12 @@ export const groups: Database['public']['Tables']['groups']['Insert'][] = [
 ]
 
 // Dummy data for the `leetcoders` table
-export const leetcoders: Database['public']['Tables']['leetcoders']['Insert'][] = [
+export const leetcoders: Database['public']['Tables']['leetcoders']['Row'][] = [
   {
-    id: '1',
-    name: 'John Doe',
+    id: 'f07e0ca7-4a29-4f7d-9e39-220f95f204b9',
+    name: 'Hüsam',
     email: 'john.doe@example.com',
-    username: 'johndoe',
+    username: 'husam',
     group_no: 1,
     status: 'approved',
     gh_username: 'johndoe',
@@ -47,10 +47,10 @@ export const leetcoders: Database['public']['Tables']['leetcoders']['Insert'][] 
 ]
 
 // Dummy data for the `roadmap` table
-export const roadmap: Database['public']['Tables']['roadmap']['Insert'][] = [
+export const roadmap: Database['public']['Tables']['roadmap']['Row'][] = [
   {
     id: '1',
-    topic: 'Two Sum',
+    topic: 'array-hashmap',
     difficulty: 'Easy',
     link: 'https://leetcode.com/problems/two-sum',
     problem_no: 1,
@@ -59,7 +59,7 @@ export const roadmap: Database['public']['Tables']['roadmap']['Insert'][] = [
   },
   {
     id: '2',
-    topic: 'Add Two Numbers',
+    topic: 'linked-list',
     difficulty: 'Medium',
     link: 'https://leetcode.com/problems/add-two-numbers',
     problem_no: 2,
@@ -68,7 +68,7 @@ export const roadmap: Database['public']['Tables']['roadmap']['Insert'][] = [
   },
   {
     id: '3',
-    topic: 'Longest Substring Without Repeating Characters',
+    topic: 'string',
     difficulty: 'Medium',
     link: 'https://leetcode.com/problems/longest-substring-without-repeating-characters',
     problem_no: 3,
@@ -78,7 +78,7 @@ export const roadmap: Database['public']['Tables']['roadmap']['Insert'][] = [
 ]
 
 // Dummy data for the `group_progres` table
-export const group_progres: Database['public']['Tables']['group_progres']['Insert'][] = [
+export const group_progres: Database['public']['Tables']['group_progres']['Row'][] = [
   {
     id: '1',
     group_no: 1,
@@ -88,11 +88,11 @@ export const group_progres: Database['public']['Tables']['group_progres']['Inser
 ]
 
 // Dummy data for the `submission` table
-export const submission: Database['public']['Tables']['submission']['Insert'][] = [
+export const submission: Database['public']['Tables']['submission']['Row'][] = [
   // John Doe's submissions
   {
     id: '1',
-    user_id: '1', // John Doe
+    user_id: 'f07e0ca7-4a29-4f7d-9e39-220f95f204b9', // John Doe
     group_id: '1', // Group A
     problem_id: '1', // Two Sum
     solved: true,
@@ -100,7 +100,7 @@ export const submission: Database['public']['Tables']['submission']['Insert'][] 
   },
   {
     id: '2',
-    user_id: '1', // John Doe
+    user_id: 'f07e0ca7-4a29-4f7d-9e39-220f95f204b9', // John Doe
     group_id: '1', // Group A
     problem_id: '2', // Add Two Numbers
     solved: false,

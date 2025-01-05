@@ -3,11 +3,7 @@ import { getUser } from '@/hooks/get-user'
 import { TrackHeader } from '@/components/track/track-header'
 import { TrackView } from '@/components/track/track-view'
 
-const TrackPage = async ({
-  params,
-}: {
-  params: Promise<{ groupId: string }>
-}) => {
+const TrackPage = async ({ params }: { params: Promise<{ groupId: string }> }) => {
   const groupId = (await params).groupId
   const user = await getUser()
 
@@ -18,7 +14,7 @@ const TrackPage = async ({
         groupId={groupId}
       />
 
-      <TrackView />
+      <TrackView userId={user?.id} />
     </>
   )
 }

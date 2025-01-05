@@ -42,7 +42,7 @@ const RequestToJoin = ({ user, groupId }: { user: User; groupId: string }) => {
       open={isOpen}
       onOpenChange={(open) => setIsOpen(open)}
     >
-      <DialogTrigger>
+      <DialogTrigger asChild>
         <Button
           size="sm"
           variant="ghost"
@@ -57,9 +57,7 @@ const RequestToJoin = ({ user, groupId }: { user: User; groupId: string }) => {
           <DialogTitle className="font-normal">
             Request to join <span className="font-medium">Group {groupId}</span>
           </DialogTitle>
-          <DialogDescription className="sr-only">
-            Request to join
-          </DialogDescription>
+          <DialogDescription className="sr-only">Request to join</DialogDescription>
         </DialogHeader>
 
         <form

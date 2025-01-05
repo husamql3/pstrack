@@ -73,7 +73,7 @@ export type Database = {
           lc_username: string | null
           name: string
           status: string
-          username: string | null
+          username: string
         }
         Insert: {
           created_at?: string | null
@@ -84,7 +84,7 @@ export type Database = {
           lc_username?: string | null
           name: string
           status?: string
-          username?: string | null
+          username: string
         }
         Update: {
           created_at?: string | null
@@ -95,7 +95,7 @@ export type Database = {
           lc_username?: string | null
           name?: string
           status?: string
-          username?: string | null
+          username?: string
         }
         Relationships: [
           {

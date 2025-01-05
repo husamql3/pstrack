@@ -4,6 +4,8 @@ import {
   ColumnDef,
   flexRender,
   getCoreRowModel,
+  getSortedRowModel,
+  SortingState,
   useReactTable,
 } from '@tanstack/react-table'
 
@@ -15,26 +17,36 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { useState } from 'react'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
 }
 
-export function TrackTable<TData, TValue>({
-  columns,
-  data,
-}: DataTableProps<TData, TValue>) {
+export function TrackTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
+  const [sorting, setSorting] = useState<SortingState>([
+    {
+      id: 'problem_no',
+      desc: false,
+    },
+  ]) // todo: fix sorting
+
   const table = useReactTable({
     data,
     columns,
+    state: {
+      sorting,
+    },
+    onSortingChange: setSorting,
+    getSortedRowModel: getSortedRowModel(),
     getCoreRowModel: getCoreRowModel(),
   })
 
   return (
     <div className="w-full">
       <Table>
-        <TableHeader>
+        <TableHeader className="">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow
               className="max-w-5"
@@ -45,10 +57,7 @@ export function TrackTable<TData, TValue>({
                   <TableHead key={header.id}>
                     {header.isPlaceholder
                       ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                      : flexRender(header.column.columnDef.header, header.getContext())}
                   </TableHead>
                 )
               })}
