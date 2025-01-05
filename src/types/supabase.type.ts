@@ -1,4 +1,4 @@
-import { Database } from '../../supabase/supabase'
+import { Database } from './supabase'
 
 // leetcoders
 export type LeetcoderRow = Database['public']['Tables']['leetcoders']['Row']

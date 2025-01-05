@@ -41,4 +41,5 @@ yarn-error.log*
 next-env.d.ts
 
 .idea
-supabase
+/src/types/supabase.ts
+/src/types/schema.sql

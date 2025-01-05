@@ -11,14 +11,14 @@ on:
 jobs:
   prettier:
     name: Run Prettier, Eslint and TS type checks
-    runs-on: blacksmith-4vcpu-ubuntu-2204
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Setup node env
-        uses: useblacksmith/setup-node@v5
+        uses: actions/setup-node@v4
         with:
           node-version: '>=16'
           cache: 'yarn'
@@ -31,6 +31,9 @@ jobs:
 
       - name: Run Eslint
         run: yarn lint
+
+      - name: Generate schema
+        run: npx supabase gen types typescript --project-id ${{ secrets.SUPABASE_PROJECT_ID }} > src/types/supabase.ts
 
       - name: Run TS type checks
         run: yarn tsc --noEmit
