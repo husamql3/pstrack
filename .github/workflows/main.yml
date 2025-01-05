@@ -35,12 +35,14 @@ jobs:
         run: yarn lint
 
       - name: Install Supabase CLI
-        run: npm install -g supabase
+        run: |
+          curl -fsSL https://github.com/supabase/cli/raw/main/install.sh | bash
+          echo "$HOME/.supabase/bin" >> $GITHUB_PATH
 
       - name: Generate Supabase types
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-        run: npx supabase gen types typescript --project-id ${{ secrets.SUPABASE_PROJECT_ID }} > src/types/supabase.ts
+        run: supabase gen types typescript --project-id ${{ secrets.SUPABASE_PROJECT_ID }} > src/types/supabase.ts
 
       - name: Run TS type checks
         run: yarn tsc --noEmit
