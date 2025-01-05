@@ -1,103 +1,30 @@
 'use client'
 
-import { useMemo } from 'react'
 import {
-  createColumnHelper,
+  ColumnDef,
   flexRender,
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
 
-import { LeetCoder, Problem, Submission, TableRow } from '@/types/table.type'
-import { cn } from '@/lib/utils'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 
-import { Badge } from '@/components/ui/badge'
-import { Checkbox } from '@/components/ui/checkbox'
+interface DataTableProps<TData, TValue> {
+  columns: ColumnDef<TData, TValue>[]
+  data: TData[]
+}
 
-const dates = [
-  '29/02',
-  '23/02',
-  '22/02',
-  '21/02',
-  '20/02',
-  '19/02',
-  '18/02',
-  '17/02',
-  '16/02',
-]
-
-const columnHelper = createColumnHelper<TableRow>()
-
-const columns = [
-  columnHelper.accessor('user', {
-    header: 'LeetCoders',
-    cell: (info) => <div>@{info.getValue().username}</div>,
-  }),
-  columnHelper.accessor('problem', {
-    header: 'Problem',
-    cell: (info) => (
-      <div>
-        <a
-          href={info.getValue().pLink}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          {info.getValue().pNumber}
-        </a>
-      </div>
-    ),
-  }),
-  columnHelper.accessor('problem.pTopic', {
-    header: 'Type',
-    cell: (info) => (
-      <span className="text-sm text-gray-400">{info.getValue()}</span>
-    ),
-  }),
-  columnHelper.accessor('problem.difficulty', {
-    header: 'Difficulty',
-    cell: (info) => (
-      <Badge className={cn('font-normal')}>{info.getValue()}</Badge>
-    ),
-  }),
-  ...dates.map((date) =>
-    columnHelper.accessor((row) => row.submissions[date]?.solved || false, {
-      id: date,
-      header: date,
-      cell: (info) => (
-        <Checkbox
-          checked={info.getValue()}
-          className="data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
-        />
-      ),
-    })
-  ),
-]
-
-const TrackTable = ({
-  problems,
-  users,
-}: {
-  problems: Problem[]
-  users: LeetCoder[]
-}) => {
-  const data = useMemo(() => {
-    return users
-      .map((user) => {
-        return problems.map((problem) => ({
-          user,
-          problem,
-          submissions: dates.reduce(
-            (acc, date) => {
-              acc[date] = null // Replace with actual submission data if available
-              return acc
-            },
-            {} as { [key: string]: Submission | null }
-          ),
-        }))
-      })
-      .flat()
-  }, [problems, users])
-
+export function TrackTable<TData, TValue>({
+  columns,
+  data,
+}: DataTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
     columns,
@@ -106,49 +33,55 @@ const TrackTable = ({
 
   return (
     <div className="w-full">
-      <table className="border-t border-zinc-700">
-        <thead>
+      <Table>
+        <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
-            <tr
+            <TableRow
+              className="max-w-5"
               key={headerGroup.id}
-              className="border-b border-zinc-700"
             >
-              {headerGroup.headers.map((header) => (
-                <th
-                  key={header.id}
-                  className="h-12 w-20 px-3 text-left align-middle font-normal"
-                >
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
-                </th>
-              ))}
-            </tr>
+              {headerGroup.headers.map((header) => {
+                return (
+                  <TableHead key={header.id}>
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </TableHead>
+                )
+              })}
+            </TableRow>
           ))}
-        </thead>
-        <tbody>
-          {table.getRowModel().rows.map((row) => (
-            <tr
-              key={row.id}
-              className="border-b border-zinc-700"
-            >
-              {row.getVisibleCells().map((cell) => (
-                <td
-                  key={cell.id}
-                  className="p-3 align-middle"
-                >
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
+        </TableHeader>
+        <TableBody>
+          {table.getRowModel().rows?.length ? (
+            table.getRowModel().rows.map((row) => (
+              <TableRow
+                className="max-w-5"
+                key={row.id}
+                data-state={row.getIsSelected() && 'selected'}
+              >
+                {row.getVisibleCells().map((cell) => (
+                  <TableCell key={cell.id}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell
+                colSpan={columns.length}
+                className="h-24 text-center"
+              >
+                No results.
+              </TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
     </div>
   )
 }
-
-export default TrackTable

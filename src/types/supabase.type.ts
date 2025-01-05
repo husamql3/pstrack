@@ -1,18 +1,14 @@
-import { Database } from '@/db/supabase/supabase'
+import { Database } from '@/types/supabase'
 
 // leetcoders
-type LeetcoderRow = Database['public']['Tables']['leetcoders']['Row']
-type LeetcoderInsert = Database['public']['Tables']['leetcoders']['Insert']
-type LeetcodeRowType = LeetcoderRow[] | undefined
+export type LeetcoderRow = Database['public']['Tables']['leetcoders']['Row']
+export type LeetcoderInsert = Database['public']['Tables']['leetcoders']['Insert']
+export type LeetcodeRowType = LeetcoderRow[] | undefined
 
-// requests
-type RequestRow = Database['public']['Tables']['requests']['Row']
-type RequestInsert = Database['public']['Tables']['requests']['Insert']
+// groups
+export type GroupRow = Database['public']['Tables']['groups']['Row']
+export type GroupInsert = Database['public']['Tables']['groups']['Insert']
 
-export type {
-  LeetcoderRow,
-  LeetcoderInsert,
-  LeetcodeRowType,
-  RequestRow,
-  RequestInsert,
-}
+// roadmap
+export type RoadmapRow = Database['public']['Tables']['roadmap']['Row']
+export type RoadmapInsert = Database['public']['Tables']['roadmap']['Insert']

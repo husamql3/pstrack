@@ -1,5 +1,5 @@
 import { LeetCoder, Problem } from '@/types/table.type'
-import TrackTable from '@/components/track/track-table'
+import TrackTableArch from '@/components/track/track-table-arch'
 import { RequestToJoin } from '@/components/track/request-to-join'
 import { User } from '@supabase/auth-js'
 
@@ -29,7 +29,7 @@ const TableSection = ({
           )}
         </div>
 
-        <TrackTable
+        <TrackTableArch
           problems={problems}
           users={leetcoders}
         />

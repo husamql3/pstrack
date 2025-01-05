@@ -38,7 +38,7 @@ export const requestsColumns: ColumnDef<LeetcoderRow>[] = [
     accessorKey: 'created_at',
     header: 'Requested At',
     cell: ({ row }) => {
-      const date = new Date(row.original.created_at || '')
+      const date = new Date(row.original.created_at || '') // todo: Jan 01, hh:mm AM
       return date.toLocaleString('en-US', {
         month: 'numeric',
         day: 'numeric',

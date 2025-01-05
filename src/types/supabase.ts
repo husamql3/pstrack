@@ -9,6 +9,42 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      group_progres: {
+        Row: {
+          created_at: string
+          current_problem: number | null
+          group_no: number | null
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          current_problem?: number | null
+          group_no?: number | null
+          id?: string
+        }
+        Update: {
+          created_at?: string
+          current_problem?: number | null
+          group_no?: number | null
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_progres_current_problem_fkey"
+            columns: ["current_problem"]
+            isOneToOne: false
+            referencedRelation: "roadmap"
+            referencedColumns: ["problem_order"]
+          },
+          {
+            foreignKeyName: "group_progres_group_no_fkey"
+            columns: ["group_no"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["group_no"]
+          },
+        ]
+      }
       groups: {
         Row: {
           group_name: string
@@ -77,7 +113,7 @@ export type Database = {
           difficulty: string
           id: string
           link: string
-          problem_no: string
+          problem_no: number
           problem_order: number
           topic: string
         }
@@ -86,7 +122,7 @@ export type Database = {
           difficulty?: string
           id?: string
           link: string
-          problem_no: string
+          problem_no: number
           problem_order: number
           topic: string
         }
@@ -95,11 +131,60 @@ export type Database = {
           difficulty?: string
           id?: string
           link?: string
-          problem_no?: string
+          problem_no?: number
           problem_order?: number
           topic?: string
         }
         Relationships: []
+      }
+      submission: {
+        Row: {
+          created_at: string
+          group_id: string | null
+          id: string
+          problem_id: string | null
+          solved: boolean
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          group_id?: string | null
+          id?: string
+          problem_id?: string | null
+          solved?: boolean
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          group_id?: string | null
+          id?: string
+          problem_id?: string | null
+          solved?: boolean
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "submission_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "leetcoders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "submission_problem_id_fkey"
+            columns: ["problem_id"]
+            isOneToOne: false
+            referencedRelation: "roadmap"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "submission_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "leetcoders"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
