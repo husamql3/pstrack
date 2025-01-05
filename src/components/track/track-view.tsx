@@ -5,7 +5,7 @@ import { TableData } from '@/data/generateData'
 import { getColumns } from '@/components/track/track-columns'
 import { LeetcoderRow } from '@/types/supabase.type'
 
-const TrackView = async ({
+const TrackView = ({
   userId,
   leetcoders,
   tableData,
