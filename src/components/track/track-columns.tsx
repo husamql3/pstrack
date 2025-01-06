@@ -5,14 +5,14 @@ import { ColumnDef } from '@tanstack/react-table'
 import { LeetcoderRow } from '@/types/supabase.type'
 import { TrackTableType } from '@/types/trackTable.type'
 
-import { Checkbox } from '@/components/ui/checkbox'
+import { Checkbox } from '@/components/luxe/checkbox'
 
 // Function to generate user columns with conditional disabling
 export const getUserColumns = (
   currentUserId: string | undefined,
   leetcoders: LeetcoderRow[]
-) =>
-  leetcoders.map((user) => ({
+) => {
+  return leetcoders.map((user) => ({
     id: user.id,
     header: () => <div className="">@{user.username}</div>,
     cell: ({ row }: { row: { original: TrackTableType } }) => {
@@ -29,6 +29,7 @@ export const getUserColumns = (
       )
     },
   }))
+}
 
 // Define the columns for the table
 export const getColumns = (
