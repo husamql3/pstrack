@@ -23,6 +23,8 @@ export const handleInsertLeetcoder = async (
   }
 
   try {
+    // todo: before submitting, check if the leetcode username exists using gql leetcode api
+
     await fetcher('/api/request', 'POST', data)
     toast({
       title: 'Request submitted!',
