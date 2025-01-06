@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { User } from '@supabase/auth-js'
 import { TbLoader2 } from 'react-icons/tb'
 
-import { handleInsertLeetcoder } from '@/lib/handleInsertLeetcoder'
+import { handleInsertLeetcoder } from '@/utils/handleInsertLeetcoder'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -93,20 +93,23 @@ const RequestToJoin = ({ user, groupId }: { user: User; groupId: number }) => {
           </div>
 
           <div className="flex flex-col gap-2">
+            <Label htmlFor="lc_username">
+              LeetCode Username <span className="text-sm text-red-500">*</span>
+            </Label>
+            <Input
+              id="lc_username"
+              name="lc_username"
+              placeholder="Enter your Leetcode username"
+              required
+            />
+          </div>
+
+          <div className="flex flex-col gap-2">
             <Label htmlFor="gh_username">GitHub Username</Label>
             <Input
               id="gh_username"
               name="gh_username"
               placeholder="Enter your GitHub username"
-            />
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="lc_username">LeetCode Username</Label>
-            <Input
-              id="lc_username"
-              name="lc_username"
-              placeholder="Enter your Leetcode username"
             />
           </div>
 

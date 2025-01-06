@@ -3,7 +3,7 @@
 import { ZodError } from 'zod'
 import { User } from '@supabase/auth-js'
 
-import { fetcher } from '@/lib/fetcher'
+import { fetcher } from '@/utils/fetcher'
 import { toast } from '@/hooks/use-toast'
 
 export const handleInsertLeetcoder = async (
@@ -23,6 +23,8 @@ export const handleInsertLeetcoder = async (
   }
 
   try {
+    // todo: before submitting, check if the leetcode username exists using gql leetcode api
+
     await fetcher('/api/request', 'POST', data)
     toast({
       title: 'Request submitted!',

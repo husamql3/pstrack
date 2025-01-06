@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import {
   ColumnDef,
   flexRender,
@@ -17,7 +18,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { useState } from 'react'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -30,7 +30,7 @@ export function TrackTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([
     {
-      id: 'problem_no',
+      id: 'problemOrder',
       desc: false,
     },
   ]) // todo: fix sorting

@@ -4,7 +4,7 @@ export const LeetcoderInsertSchema = z.object({
   email: z.string().email(),
   gh_username: z.string().nullable().optional(),
   group_no: z.number().nullable().optional(),
-  lc_username: z.string().nullable().optional(),
+  lc_username: z.string(),
   name: z.string().min(1, { message: 'Name is required' }),
   status: z.enum(['pending', 'approved', 'rejected']),
   user_id: z.string().uuid().nullable().optional(),
