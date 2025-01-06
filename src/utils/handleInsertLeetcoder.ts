@@ -3,7 +3,7 @@
 import { ZodError } from 'zod'
 import { User } from '@supabase/auth-js'
 
-import { fetcher } from '@/lib/fetcher'
+import { fetcher } from '@/utils/fetcher'
 import { toast } from '@/hooks/use-toast'
 
 export const handleInsertLeetcoder = async (

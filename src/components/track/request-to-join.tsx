@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { User } from '@supabase/auth-js'
 import { TbLoader2 } from 'react-icons/tb'
 
-import { handleInsertLeetcoder } from '@/lib/handleInsertLeetcoder'
+import { handleInsertLeetcoder } from '@/utils/handleInsertLeetcoder'
 
 import { Button } from '@/components/ui/button'
 import {

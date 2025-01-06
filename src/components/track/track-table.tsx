@@ -30,7 +30,7 @@ export function TrackTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([
     {
-      id: 'problem_no',
+      id: 'problemOrder',
       desc: false,
     },
   ]) // todo: fix sorting
