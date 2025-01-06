@@ -23,33 +23,29 @@ export const getUserColumns = (
     id: user.id,
     header: () => <div className="">@{user.username}</div>, // todo: replace with hover card
     cell: ({ row }: { row: { original: TrackTableType } }) => {
-      const handleSubmit = async ({
-        user_id,
-        problem_id,
-        group_no,
-      }: SubmitDailyProblem) => {
-        await submitDailyProblem({ user_id, problem_id, group_no })
-      }
-
       const userSubmission = row.original.userSubmissions.find(
         (sub: { user_id: string; solved: boolean }) => sub.user_id === user.id
       )
+
+      const handleSubmit = async () => {
+        const result = await submitDailyProblem({
+          user_id: user.id,
+          problem_id: row.original.problem.id,
+          group_no: groupId,
+        })
+        if (!result) {
+          throw new Error('Failed to submit daily problem')
+        }
+      }
+
       return (
         <Checkbox
           checked={userSubmission?.solved || false}
           disabled={
-            // isLoading || // Disable during loading
             (currentUserId && user.id !== currentUserId) || // Disable if not the current user
             userSubmission?.solved // Disable if already solved
           }
-          onChange={() => {
-            // Programmatically submit the form when the checkbox changes
-            handleSubmit({
-              user_id: user.id,
-              problem_id: row.original.problem.id,
-              group_no: groupId,
-            })
-          }}
+          onChange={handleSubmit}
         />
       )
     },
