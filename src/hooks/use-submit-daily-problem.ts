@@ -1,7 +1,6 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-
 import { fetcher } from '@/utils/fetcher'
 import {
   SubmitDailyProblem,

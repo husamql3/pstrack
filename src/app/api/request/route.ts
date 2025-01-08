@@ -1,6 +1,5 @@
 import { ZodError } from 'zod'
 import { NextRequest, NextResponse } from 'next/server'
-
 import { LeetcoderInsert } from '@/types/supabase.type'
 import { LeetcoderInsertSchema } from '@/types/schema/leetcoder.schema'
 import {
@@ -94,3 +93,4 @@ export async function PUT(req: NextRequest) {
     )
   }
 }
+
