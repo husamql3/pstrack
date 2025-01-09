@@ -37,7 +37,7 @@ export const getUserColumns = (
           group_no: groupId,
         })
         if (!result) {
-          // show toast instead of throwing error
+          // todo: show toast instead of throwing error
           throw new Error('Failed to submit daily problem')
         }
       }

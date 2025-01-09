@@ -9,8 +9,6 @@ export const generateTableData = ({
   // Find the group progress entry for the group (assuming group_no is 1)
   const groupProgress = group_progress.find((progress) => progress.group_no === group_no)
 
-  console.log('group_no', group_no)
-
   // Format the created_at date to MM/DD/YYYY format
   const formattedDate = groupProgress
     ? new Date(groupProgress.created_at).toLocaleDateString('en-US', {
