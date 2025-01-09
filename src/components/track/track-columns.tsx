@@ -65,14 +65,29 @@ export const getColumns = (
   groupId: number
 ): ColumnDef<TrackTableType>[] => [
   {
+    accessorKey: 'groupProgressDate',
+    header: 'Date',
+    cell: ({ row }: { row: { original: TrackTableType } }) => {
+      const groupProgressDate = row.original.groupProgressDate
+      return <span className="text-xs text-zinc-100">{groupProgressDate}</span>
+    },
+  },
+  {
     accessorKey: 'problemOrder',
     header: 'Problem',
     sortingFn: 'alphanumeric',
     enableSorting: true,
-  },
-  {
-    accessorKey: 'groupProgressDate',
-    header: 'Date',
+    cell: ({ row }: { row: { original: TrackTableType } }) => {
+      const problem = row.original.problem
+      return (
+        <a
+          href={problem.link}
+          className="text-xs font-medium text-blue-600 underline"
+        >
+          {problem.problem_no}
+        </a>
+      )
+    },
   },
   {
     accessorKey: 'problem.topic',
@@ -96,7 +111,6 @@ export const getColumns = (
     header: 'Difficulty',
     cell: ({ row }: { row: { original: TrackTableType } }) => {
       const difficulty = row.original.problem.difficulty as Difficulty
-
       return (
         <span
           className={cn(
@@ -115,7 +129,6 @@ export const getColumns = (
   },
   {
     id: 'userSubmissions',
-    header: '',
     columns: getUserColumns(currentUserId, leetcoders, submitDailyProblem, groupId),
   },
 ]

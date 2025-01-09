@@ -14,6 +14,7 @@ export const generateTableData = ({
     ? new Date(groupProgress.created_at).toLocaleDateString('en-US', {
         month: '2-digit',
         day: '2-digit',
+        year: 'numeric',
       })
     : null
 
