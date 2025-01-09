@@ -3,6 +3,7 @@
 import { useActionState, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Eye, EyeOff } from 'lucide-react'
+import { TbLoader2 } from 'react-icons/tb'
 
 import { signIn } from '@/db/supabase/services/auth.service'
 import { toast } from '@/hooks/use-toast'
@@ -10,8 +11,6 @@ import { toast } from '@/hooks/use-toast'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { TbLoader2 } from 'react-icons/tb'
-import Link from 'next/link'
 
 const SignInForm = () => {
   const router = useRouter()
