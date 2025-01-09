@@ -1,14 +1,20 @@
-import { ActionResponse } from '@/types/auth.type'
+import { createClient } from '@/db/supabase/server'
 
-export const requestGroup = async (
-  prevState: ActionResponse | null,
-  formData: FormData
-) => {
-  await new Promise((resolve) => setTimeout(resolve, 1000))
-  console.log(formData)
+export const checkGroupExists = async (id: number): Promise<boolean> => {
+  try {
+    const supabase = await createClient()
 
-  return {
-    success: true,
-    message: 'success',
+    const { data, error } = await supabase
+      .from('groups')
+      .select('*')
+      .eq('group_no', id)
+      .single()
+
+    if (error) return false
+
+    return !!data
+  } catch (error) {
+    console.error('catch fetchGroups error:', error)
+    return false
   }
 }
