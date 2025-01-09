@@ -96,7 +96,7 @@ export const getColumns = (
     header: 'Topic',
     cell: ({ row }: { row: { original: TrackTableType } }) => {
       const topic = row.original.problem.topic as NeetCodeTopic
-      console.log('problem.topic', topic, getTopicColor(topic))
+
       return (
         <div
           className={cn(
@@ -129,6 +129,17 @@ export const getColumns = (
   {
     accessorKey: 'totalSolved',
     header: 'Count',
+    cell: ({ row }: { row: { original: TrackTableType } }) => {
+      const totalSolved = row.original.totalSolved
+      const totalUsers = leetcoders.length
+
+      return (
+        <div className="flex items-baseline">
+          <span className="font-medium">{totalUsers}</span>
+          <span className="text-xs text-zinc-500">/{totalSolved}</span>
+        </div>
+      )
+    },
   },
   {
     id: 'userSubmissions',

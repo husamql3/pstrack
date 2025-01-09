@@ -25,7 +25,7 @@ const TrackPage = async ({ params }: { params: Promise<{ groupId: string }> }) =
     submission: submissions,
     group_progress: groupProgress,
   })
-  console.log('tableData:', data)
+  // console.log('tableData:', data)
 
   return (
     <>
