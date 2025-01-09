@@ -39,6 +39,7 @@ export const getUserColumns = (
           group_no: groupId,
         })
         if (!result) {
+          // show toast instead of throwing error
           throw new Error('Failed to submit daily problem')
         }
       }
@@ -48,7 +49,8 @@ export const getUserColumns = (
           checked={userSubmission?.solved || false}
           disabled={
             (currentUserId && user.id !== currentUserId) || // Disable if not the current user
-            userSubmission?.solved // Disable if already solved
+            userSubmission?.solved || // Disable if already solved
+            !Boolean(user.id) // Disable if there is no user id (user is not logged in)
           }
           onChange={handleSubmit}
         />
@@ -94,6 +96,7 @@ export const getColumns = (
     header: 'Topic',
     cell: ({ row }: { row: { original: TrackTableType } }) => {
       const topic = row.original.problem.topic as NeetCodeTopic
+      console.log('problem.topic', topic, getTopicColor(topic))
       return (
         <div
           className={cn(

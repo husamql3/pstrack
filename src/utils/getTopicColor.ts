@@ -1,48 +1,49 @@
+// utils/getTopicColor.ts
 import { NeetCodeTopic } from '@/types/neetCodeTopic.type'
 
 export function getTopicColor(topic: NeetCodeTopic): string {
   switch (topic) {
     case 'arrays-hashing':
-      return 'bg-[#2cbb5d40] text-[rgb(0,184,163)]' // Light green background, teal text
+      return 'bg-green-200 text-green-900' // Darker green background, darker green text
     case 'two-pointers':
-      return 'bg-[#ffc01e40] text-[rgb(255,192,30)]' // Light yellow background, gold text
+      return 'bg-yellow-200 text-yellow-900' // Darker yellow background, darker yellow text
     case 'sliding-window':
-      return 'bg-[#ef474340] text-[rgb(255,55,95)]' // Light red background, pinkish-red text
+      return 'bg-red-200 text-red-900' // Darker red background, darker red text
     case 'stack':
-      return 'bg-[#6f42c140] text-[rgb(111,66,193)]' // Light purple background, purple text
+      return 'bg-purple-200 text-purple-900' // Darker purple background, darker purple text
     case 'binary-search':
-      return 'bg-[#17a2b840] text-[rgb(23,162,184)]' // Light cyan background, cyan text
+      return 'bg-cyan-200 text-cyan-900' // Darker cyan background, darker cyan text
     case 'linked-list':
-      return 'bg-[#fd7e1440] text-[rgb(253,126,20)]' // Light orange background, orange text
+      return 'bg-orange-200 text-orange-900' // Darker orange background, darker orange text
     case 'trees':
-      return 'bg-[#28a74540] text-[rgb(40,167,69)]' // Light green background, green text
+      return 'bg-emerald-200 text-emerald-900' // Darker emerald background, darker emerald text
     case 'tries':
-      return 'bg-[#dc354540] text-[rgb(220,53,69)]' // Light red background, red text
+      return 'bg-rose-200 text-rose-900' // Darker rose background, darker rose text
     case 'heap-priority-queue':
-      return 'bg-[#ffc10740] text-[rgb(255,193,7)]' // Light yellow background, yellow text
+      return 'bg-amber-200 text-amber-900' // Darker amber background, darker amber text
     case 'backtracking':
-      return 'bg-[#007bff40] text-[rgb(0,123,255)]' // Light blue background, blue text
+      return 'bg-blue-200 text-blue-900' // Darker blue background, darker blue text
     case 'graphs':
-      return 'bg-[#6610f240] text-[rgb(102,16,242)]' // Light indigo background, indigo text
+      return 'bg-indigo-200 text-indigo-900' // Darker indigo background, darker indigo text
     case 'advanced-graphs':
-      return 'bg-[#e83e8c40] text-[rgb(232,62,140)]' // Light pink background, pink text
+      return 'bg-pink-200 text-pink-900' // Darker pink background, darker pink text
     case '1d-dynamic-programming':
-      return 'bg-[#20c99740] text-[rgb(32,201,151)]' // Light teal background, teal text
+      return 'bg-teal-200 text-teal-900' // Darker teal background, darker teal text
     case '2d-dynamic-programming':
-      return 'bg-[#17a2b840] text-[rgb(23,162,184)]' // Light cyan background, cyan text
+      return 'bg-sky-200 text-sky-900' // Darker sky background, darker sky text
     case 'greedy':
-      return 'bg-[#ffc10740] text-[rgb(255,193,7)]' // Light yellow background, yellow text
+      return 'bg-amber-200 text-amber-900' // Darker amber background, darker amber text
     case 'intervals':
-      return 'bg-[#6f42c140] text-[rgb(111,66,193)]' // Light purple background, purple text
+      return 'bg-violet-200 text-violet-900' // Darker violet background, darker violet text
     case 'math-geometry':
-      return 'bg-[#17a2b840] text-[rgb(23,162,184)]' // Light cyan background, cyan text
+      return 'bg-cyan-200 text-cyan-900' // Darker cyan background, darker cyan text
     case 'bit-manipulation':
-      return 'bg-[#6c757d40] text-[rgb(108,117,125)]' // Light gray background, gray text
+      return 'bg-gray-200 text-gray-900' // Darker gray background, darker gray text
     case 'javascript':
-      return 'bg-[#f0db4f40] text-[rgb(240,219,79)]' // Light yellow background, yellow text
+      return 'bg-yellow-200 text-yellow-900' // Darker yellow background, darker yellow text
     case 'miscellaneous':
-      return 'bg-[#6c757d40] text-[rgb(108,117,125)]' // Light gray background, gray text
+      return 'bg-gray-200 text-gray-900' // Darker gray background, darker gray text
     default:
-      return 'bg-gray-100 text-gray-500' // Default fallback
+      return 'bg-gray-200 text-gray-900' // Default fallback with darker colors
   }
 }

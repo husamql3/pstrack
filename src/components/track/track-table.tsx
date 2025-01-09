@@ -47,7 +47,8 @@ export function TrackTable<TData, TValue>({
   })
 
   return (
-    <div className="w-fit overflow-x-auto">
+    <div className="mx-auto w-fit overflow-x-auto">
+      {/* todo: test overflow-x-auto */}
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
