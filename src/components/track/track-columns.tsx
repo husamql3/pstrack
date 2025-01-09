@@ -132,8 +132,8 @@ export const getColumns = (
 
       return (
         <div className="flex items-baseline">
-          <span className="font-medium">{totalUsers}</span>
-          <span className="text-xs text-zinc-500">/{totalSolved}</span>
+          <span className="font-medium">{totalSolved}</span>
+          <span className="text-xs text-zinc-500">/{totalUsers}</span>
         </div>
       )
     },

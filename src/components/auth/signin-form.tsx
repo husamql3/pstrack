@@ -11,6 +11,7 @@ import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { TbLoader2 } from 'react-icons/tb'
+import Link from 'next/link'
 
 const SignInForm = () => {
   const router = useRouter()
@@ -52,6 +53,7 @@ const SignInForm = () => {
           id="email"
           name="email"
           type="email"
+          className="placeholder:text-sm"
           placeholder="Enter email"
           required
         />
@@ -62,7 +64,7 @@ const SignInForm = () => {
         <div className="relative">
           <Input
             id="password"
-            className="pe-9"
+            className="pe-9 placeholder:text-sm"
             name="password"
             placeholder="Enter password"
             type={isVisible ? 'text' : 'password'}
