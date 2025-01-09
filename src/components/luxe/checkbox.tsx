@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import * as RadixCheckbox from '@radix-ui/react-checkbox'
 import { Loader2 } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 interface CheckboxProps {
   checked?: boolean
@@ -36,9 +37,13 @@ export function Checkbox({ checked = false, disabled = false, onChange }: Checkb
 
   return (
     <RadixCheckbox.Root
-      className={`flex h-5 w-5 flex-shrink-0 appearance-none items-center justify-center rounded border border-neutral-800 bg-neutral-900 outline-none ${
-        disabled || isLoading ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
-      }`}
+      className={cn(
+        'flex h-5 w-5 flex-shrink-0 appearance-none items-center justify-center rounded outline-none',
+        disabled || isLoading ? 'cursor-not-allowed opacity-50' : 'cursor-pointer',
+        isLoading
+          ? 'border-transparent bg-transparent'
+          : 'border border-neutral-800 bg-neutral-900'
+      )}
       checked={internalChecked}
       disabled={disabled || isLoading}
       onCheckedChange={handleChange}
