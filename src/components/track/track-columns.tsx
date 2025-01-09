@@ -9,6 +9,9 @@ import { getDifficultyColor } from '@/utils/getDifficultyColor'
 import { cn } from '@/lib/utils'
 
 import { Checkbox } from '@/components/luxe/checkbox'
+import { Difficulty } from '@/types/difficulty.type'
+import { getTopicColor } from '@/utils/getTopicColor'
+import { NeetCodeTopic } from '@/types/neetCodeTopic.type'
 
 // Function to generate user columns with conditional disabling
 export const getUserColumns = (
@@ -74,29 +77,32 @@ export const getColumns = (
   {
     accessorKey: 'problem.topic',
     header: 'Topic',
+    cell: ({ row }: { row: { original: TrackTableType } }) => {
+      const topic = row.original.problem.topic as NeetCodeTopic
+      return (
+        <div
+          className={cn(
+            'w-fit rounded-lg px-2 py-1 text-xs font-medium',
+            getTopicColor(topic)
+          )}
+        >
+          {topic}
+        </div>
+      )
+    },
   },
   {
     accessorKey: 'problem.difficulty',
     header: 'Difficulty',
     cell: ({ row }: { row: { original: TrackTableType } }) => {
-      const difficulty = row.original.problem.difficulty as 'Easy' | 'Medium' | 'Hard'
-
-      const difficultyClasses = (() => {
-        switch (difficulty) {
-          case 'Easy':
-            return 'bg-[#2cbb5d40] text-[rgb(0,184,163)]'
-          case 'Medium':
-            return 'bg-[#ffc01e40] text-[rgb(255,192,30)]'
-          case 'Hard':
-            return 'bg-[#ef474340] text-[rgb(255,55,95)]'
-          default:
-            return 'bg-gray-100 text-gray-500'
-        }
-      })()
+      const difficulty = row.original.problem.difficulty as Difficulty
 
       return (
         <span
-          className={cn('rounded-lg px-2 py-1 text-xs font-medium', difficultyClasses)}
+          className={cn(
+            'w-fit rounded-lg px-2 py-1 text-xs font-medium',
+            getDifficultyColor(difficulty)
+          )}
         >
           {difficulty}
         </span>
