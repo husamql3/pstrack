@@ -36,6 +36,7 @@ export const getUserColumns = (
           problem_id: row.original.problem.id,
           group_no: groupId,
         })
+        console.log(result)
         if (!result) {
           // show toast instead of throwing error
           throw new Error('Failed to submit daily problem')
@@ -132,8 +133,8 @@ export const getColumns = (
 
       return (
         <div className="flex items-baseline">
-          <span className="font-medium">{totalUsers}</span>
-          <span className="text-xs text-zinc-500">/{totalSolved}</span>
+          <span className="font-medium">{totalSolved}</span>
+          <span className="text-xs text-zinc-500">/{totalUsers}</span>
         </div>
       )
     },
