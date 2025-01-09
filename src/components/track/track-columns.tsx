@@ -38,7 +38,7 @@ export const getUserColumns = (
         })
         console.log(result)
         if (!result) {
-          // show toast instead of throwing error
+          // todo: show toast instead of throwing error
           throw new Error('Failed to submit daily problem')
         }
       }
