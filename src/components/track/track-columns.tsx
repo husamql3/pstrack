@@ -1,13 +1,11 @@
 'use client'
 
 import { ColumnDef } from '@tanstack/react-table'
-
 import { LeetcoderRow } from '@/types/supabase.type'
 import { TrackTableType } from '@/types/trackTable.type'
 import { SubmitDailyProblem } from '@/types/submitDailyProblem.type'
 import { getDifficultyColor } from '@/utils/getDifficultyColor'
 import { cn } from '@/lib/utils'
-
 import { Checkbox } from '@/components/luxe/checkbox'
 import { Difficulty } from '@/types/difficulty.type'
 import { getTopicColor } from '@/utils/getTopicColor'
@@ -23,11 +21,11 @@ export const getUserColumns = (
     group_no,
   }: SubmitDailyProblem) => Promise<boolean>,
   groupId: number
-) => {
+): ColumnDef<TrackTableType>[] => {
   return leetcoders.map((user) => ({
     id: user.id,
     header: () => <div className="">@{user.username}</div>, // todo: replace with hover card
-    cell: ({ row }: { row: { original: TrackTableType } }) => {
+    cell: ({ row }) => {
       const userSubmission = row.original.userSubmissions.find(
         (sub: { user_id: string; solved: boolean }) => sub.user_id === user.id
       )
@@ -69,7 +67,7 @@ export const getColumns = (
   {
     accessorKey: 'groupProgressDate',
     header: 'Date',
-    cell: ({ row }: { row: { original: TrackTableType } }) => {
+    cell: ({ row }) => {
       const groupProgressDate = row.original.groupProgressDate
       return <span className="text-xs text-zinc-100">{groupProgressDate}</span>
     },
@@ -79,7 +77,7 @@ export const getColumns = (
     header: 'Problem',
     sortingFn: 'alphanumeric',
     enableSorting: true,
-    cell: ({ row }: { row: { original: TrackTableType } }) => {
+    cell: ({ row }) => {
       const problem = row.original.problem
       return (
         <a
@@ -94,9 +92,8 @@ export const getColumns = (
   {
     accessorKey: 'problem.topic',
     header: 'Topic',
-    cell: ({ row }: { row: { original: TrackTableType } }) => {
+    cell: ({ row }) => {
       const topic = row.original.problem.topic as NeetCodeTopic
-
       return (
         <div
           className={cn(
@@ -112,7 +109,7 @@ export const getColumns = (
   {
     accessorKey: 'problem.difficulty',
     header: 'Difficulty',
-    cell: ({ row }: { row: { original: TrackTableType } }) => {
+    cell: ({ row }) => {
       const difficulty = row.original.problem.difficulty as Difficulty
       return (
         <span
@@ -129,7 +126,7 @@ export const getColumns = (
   {
     accessorKey: 'totalSolved',
     header: 'Count',
-    cell: ({ row }: { row: { original: TrackTableType } }) => {
+    cell: ({ row }) => {
       const totalSolved = row.original.totalSolved
       const totalUsers = leetcoders.length
 
@@ -141,8 +138,5 @@ export const getColumns = (
       )
     },
   },
-  {
-    id: 'userSubmissions',
-    columns: getUserColumns(currentUserId, leetcoders, submitDailyProblem, groupId),
-  },
+  ...getUserColumns(currentUserId, leetcoders, submitDailyProblem, groupId),
 ]
