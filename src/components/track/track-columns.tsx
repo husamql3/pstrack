@@ -5,6 +5,8 @@ import { ColumnDef } from '@tanstack/react-table'
 import { LeetcoderRow } from '@/types/supabase.type'
 import { TrackTableType } from '@/types/trackTable.type'
 import { SubmitDailyProblem } from '@/types/submitDailyProblem.type'
+import { getDifficultyColor } from '@/utils/getDifficultyColor'
+import { cn } from '@/lib/utils'
 
 import { Checkbox } from '@/components/luxe/checkbox'
 
@@ -61,7 +63,7 @@ export const getColumns = (
 ): ColumnDef<TrackTableType>[] => [
   {
     accessorKey: 'problemOrder',
-    header: 'Problem No',
+    header: 'Problem',
     sortingFn: 'alphanumeric',
     enableSorting: true,
   },
@@ -76,6 +78,30 @@ export const getColumns = (
   {
     accessorKey: 'problem.difficulty',
     header: 'Difficulty',
+    cell: ({ row }: { row: { original: TrackTableType } }) => {
+      const difficulty = row.original.problem.difficulty as 'Easy' | 'Medium' | 'Hard'
+
+      const difficultyClasses = (() => {
+        switch (difficulty) {
+          case 'Easy':
+            return 'bg-[#2cbb5d40] text-[rgb(0,184,163)]'
+          case 'Medium':
+            return 'bg-[#ffc01e40] text-[rgb(255,192,30)]'
+          case 'Hard':
+            return 'bg-[#ef474340] text-[rgb(255,55,95)]'
+          default:
+            return 'bg-gray-100 text-gray-500'
+        }
+      })()
+
+      return (
+        <span
+          className={cn('rounded-lg px-2 py-1 text-xs font-medium', difficultyClasses)}
+        >
+          {difficulty}
+        </span>
+      )
+    },
   },
   {
     accessorKey: 'totalSolved',
