@@ -1,6 +1,6 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
+// import { useRouter } from 'next/navigation'
 
 import { fetcher } from '@/utils/fetcher'
 import {
@@ -9,7 +9,7 @@ import {
 } from '@/types/submitDailyProblem.type'
 
 export const useSubmitDailyProblem = (): UseSubmitDailyProblemReturn => {
-  const router = useRouter()
+  // const router = useRouter()
 
   const submitDailyProblem = async ({
     user_id,
@@ -24,12 +24,12 @@ export const useSubmitDailyProblem = (): UseSubmitDailyProblemReturn => {
         problem_id,
         group_no,
       })
-
-      router.refresh()
       return true
     } catch (error) {
       console.error('Error submitting daily problem:', error)
       return false
+    } finally {
+      // router.refresh()
     }
   }
 

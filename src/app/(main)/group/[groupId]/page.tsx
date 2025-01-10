@@ -27,14 +27,12 @@ const TrackPage = async ({ params }: { params: Promise<{ groupId: string }> }) =
   // console.log('tableData:', data)
 
   return (
-    <>
-      <TrackView
-        userId={user?.id}
-        leetcoders={leetcoders}
-        tableData={data}
-        groupId={groupId}
-      />
-    </>
+    <TrackView
+      userId={user?.id}
+      leetcoders={leetcoders}
+      tableData={data}
+      groupId={groupId}
+    />
   )
 }
 
