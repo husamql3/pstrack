@@ -31,13 +31,10 @@ const SignInForm = () => {
           description: state.message,
           variant: 'destructive',
         })
-      } else {
-        toast({
-          description: state.message,
-          variant: 'success',
-        })
-        router.push('/')
+        return
       }
+
+      router.push('/group/1')
     }
   }, [state.message, state.success, router])
 
