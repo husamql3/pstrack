@@ -18,6 +18,7 @@ const LogoutButton = () => {
           toast({
             title: 'Error',
             description: response.message,
+            variant: 'destructive',
             duration: 5000,
           })
         }
@@ -26,6 +27,7 @@ const LogoutButton = () => {
         toast({
           title: 'Error',
           description: 'An error occurred while logging out.',
+          variant: 'destructive',
           duration: 5000,
         })
       }

@@ -1,26 +1,23 @@
 'use client'
 
 import { ColumnDef } from '@tanstack/react-table'
+
 import { LeetcoderRow } from '@/types/supabase.type'
-import { TrackTableType } from '@/types/trackTable.type'
-import { SubmitDailyProblem } from '@/types/submitDailyProblem.type'
-import { getDifficultyColor } from '@/utils/getDifficultyColor'
-import { cn } from '@/lib/utils'
-import { Checkbox } from '@/components/luxe/checkbox'
-import { Difficulty } from '@/types/difficulty.type'
-import { getTopicColor } from '@/utils/getTopicColor'
 import { NeetCodeTopic } from '@/types/neetCodeTopic.type'
+import { TrackTableType } from '@/types/trackTable.type'
+import { Difficulty } from '@/types/difficulty.type'
+
+import { cn } from '@/lib/utils'
+import { getDifficultyColor } from '@/utils/getDifficultyColor'
+import { getTopicColor } from '@/utils/getTopicColor'
+
+import { Checkbox } from '@/components/luxe/checkbox'
 
 // Function to generate user columns with conditional disabling
 export const getUserColumns = (
   currentUserId: string | undefined,
   leetcoders: LeetcoderRow[],
-  submitDailyProblem: ({
-    user_id,
-    problem_id,
-    group_no,
-  }: SubmitDailyProblem) => Promise<boolean>,
-  groupId: number
+  handleSubmit: (user_id: string, problem_id: string) => void
 ): ColumnDef<TrackTableType>[] => {
   return leetcoders.map((user) => ({
     id: user.id,
@@ -30,19 +27,6 @@ export const getUserColumns = (
         (sub: { user_id: string; solved: boolean }) => sub.user_id === user.id
       )
 
-      const handleSubmit = async () => {
-        const result = await submitDailyProblem({
-          user_id: user.id,
-          problem_id: row.original.problem.id,
-          group_no: groupId,
-        })
-        console.log(result)
-        if (!result) {
-          // todo: show toast instead of throwing error
-          throw new Error('Failed to submit daily problem')
-        }
-      }
-
       return (
         <Checkbox
           checked={userSubmission?.solved || false}
@@ -51,7 +35,7 @@ export const getUserColumns = (
             userSubmission?.solved || // Disable if already solved
             !Boolean(user.id) // Disable if there is no user id (user is not logged in)
           }
-          onChange={handleSubmit}
+          onChange={() => handleSubmit(user.id, row.original.problem.id)}
         />
       )
     },
@@ -62,8 +46,7 @@ export const getUserColumns = (
 export const getColumns = (
   currentUserId: string | undefined,
   leetcoders: LeetcoderRow[],
-  submitDailyProblem: ({ user_id, problem_id }: SubmitDailyProblem) => Promise<boolean>,
-  groupId: number
+  handleSubmit: (user_id: string, problem_id: string) => void
 ): ColumnDef<TrackTableType>[] => [
   {
     accessorKey: 'groupProgressDate',
@@ -139,5 +122,5 @@ export const getColumns = (
       )
     },
   },
-  ...getUserColumns(currentUserId, leetcoders, submitDailyProblem, groupId),
+  ...getUserColumns(currentUserId, leetcoders, handleSubmit),
 ]
