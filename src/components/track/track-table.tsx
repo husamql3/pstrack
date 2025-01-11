@@ -47,17 +47,21 @@ export function TrackTable<TData, TValue>({
   })
 
   return (
-    <div className="w-full">
+    <div className="mx-auto w-fit overflow-x-auto">
+      {/* todo: test overflow-x-auto */}
       <Table>
-        <TableHeader className="">
+        <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow
-              className="max-w-5"
+              className="border-zinc-700 text-xs font-medium"
               key={headerGroup.id}
             >
               {headerGroup.headers.map((header) => {
                 return (
-                  <TableHead key={header.id}>
+                  <TableHead
+                    key={header.id}
+                    className="border-zinc-700"
+                  >
                     {header.isPlaceholder
                       ? null
                       : flexRender(header.column.columnDef.header, header.getContext())}
@@ -71,7 +75,7 @@ export function TrackTable<TData, TValue>({
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
               <TableRow
-                className="max-w-5"
+                className="border-zinc-700"
                 key={row.id}
                 data-state={row.getIsSelected() && 'selected'}
               >

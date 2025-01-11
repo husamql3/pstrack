@@ -11,8 +11,14 @@ const TrackHeader = ({ user, groupId }: { user: User; groupId: number }) => {
   return (
     <header className="flex h-12 items-center justify-between border-b border-zinc-900">
       {/* Logo Section */}
-      <div className="flex h-full items-center border-r border-zinc-900 px-2">
-        <Logo className="h-8 w-8" />
+      <div className="flex h-full items-center">
+        <div className="flex h-full items-center border-r border-zinc-900 px-2">
+          <Logo className="size-7" />
+        </div>
+
+        <div className="flex h-full items-center border-r border-zinc-900 px-3">
+          <p className="text-lg font-semibold">Group {groupId}</p>
+        </div>
       </div>
 
       {/* User Menu or Login Button */}

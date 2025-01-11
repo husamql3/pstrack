@@ -7,7 +7,6 @@ import { fetchRoadmap } from '@/db/supabase/services/roadmap.service'
 import { fetchGroupProgress } from '@/db/supabase/services/progress.service'
 import { TableData } from '@/types/trackTable.type'
 
-import { TrackHeader } from '@/components/track/track-header'
 import { TrackView } from '@/components/track/track-view'
 
 const TrackPage = async ({ params }: { params: Promise<{ groupId: string }> }) => {
@@ -28,19 +27,12 @@ const TrackPage = async ({ params }: { params: Promise<{ groupId: string }> }) =
   // console.log('tableData:', data)
 
   return (
-    <>
-      <TrackHeader
-        user={user!}
-        groupId={groupId}
-      />
-
-      <TrackView
-        userId={user?.id}
-        leetcoders={leetcoders}
-        tableData={data}
-        groupId={groupId}
-      />
-    </>
+    <TrackView
+      userId={user?.id}
+      leetcoders={leetcoders}
+      tableData={data}
+      groupId={groupId}
+    />
   )
 }
 
