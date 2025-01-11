@@ -1,6 +1,6 @@
 'use client'
 
-// import { useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 
 import { fetcher } from '@/utils/fetcher'
 import {
@@ -17,8 +17,6 @@ export const useSubmitDailyProblem = (): UseSubmitDailyProblemReturn => {
     group_no,
   }: SubmitDailyProblem): Promise<boolean> => {
     try {
-      // todo: check if the user did not solve the problem using gql leetcode api
-
       await fetcher('/api/submit/daily', 'POST', {
         user_id,
         problem_id,
