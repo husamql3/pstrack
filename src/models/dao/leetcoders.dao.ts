@@ -54,3 +54,17 @@ export const fetchLeetcoder = async (id: string): Promise<leetcoders | null> => 
     return null
   }
 }
+
+export const fetchGroupLeetcoders = async (group_no: number): Promise<leetcoders[]> => {
+  try {
+    return await prisma.leetcoders.findMany({
+      where: {
+        group_no: group_no,
+        status: 'approved',
+      },
+    })
+  } catch (error) {
+    console.error('catch fetchGroupLeetcoders error:', error)
+    return []
+  }
+}

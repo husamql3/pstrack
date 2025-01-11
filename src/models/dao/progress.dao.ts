@@ -1,7 +1,8 @@
-import { group_progress } from '@prisma/client'
 import prisma from '@/models/prisma/prisma'
 
-export const getGroupProgress = async (groupNo: number): Promise<group_progress[]> => {
+import { group_progress } from '@prisma/client'
+
+export const fetchGroupProgress = async (groupNo: number): Promise<group_progress[]> => {
   try {
     return prisma.group_progress.findMany({
       where: {

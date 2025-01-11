@@ -22,7 +22,7 @@ model groups {
   group_name     String
   leetcoders     leetcoders[]
   group_progress group_progress[]
-  submission     submissions[]
+  submissions    submissions[]
 }
 
 model leetcoders {
@@ -36,7 +36,7 @@ model leetcoders {
   username    String
   created_at  DateTime?     @default(now()) @db.Timestamptz
   group       groups?       @relation(fields: [group_no], references: [group_no])
-  submission  submissions[]
+  submissions submissions[]
 }
 
 model roadmap {
@@ -49,7 +49,7 @@ model roadmap {
   topic          String
   difficulty     String           @default("easy")
   group_progress group_progress[]
-  submission     submissions[]
+  submissions    submissions[]
 }
 
 model submissions {
