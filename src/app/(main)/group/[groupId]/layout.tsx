@@ -1,11 +1,10 @@
 import { notFound } from 'next/navigation'
 
 import { getUser } from '@/hooks/get-user'
-
 import { TrackHeader } from '@/components/track/track-header'
 import { checkGroupExists } from '@/db/supabase/services/group.service'
 
-export async function GroupLayout({
+export default async function Layout({
   children,
   params,
 }: {
@@ -24,10 +23,7 @@ export async function GroupLayout({
         groupId={groupId}
         user={user!}
       />
-
       {children}
     </div>
   )
 }
-
-export default GroupLayout

@@ -8,7 +8,7 @@ datasource db {
 }
 
 model group_progress {
-  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id              String   @id @default(uuid()) @db.Uuid
   created_at      DateTime @default(now()) @db.Timestamptz
   group_no        Int?
   current_problem Int?
@@ -17,7 +17,7 @@ model group_progress {
 }
 
 model groups {
-  id             String           @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  id             String           @id @default(uuid()) @db.Uuid
   group_no       Int              @unique @default(autoincrement())
   group_name     String
   leetcoders     leetcoders[]
@@ -26,7 +26,7 @@ model groups {
 }
 
 model leetcoders {
-  id          String        @id
+  id          String        @id @default(uuid()) @db.Uuid
   name        String
   email       String        @unique
   gh_username String?
@@ -40,7 +40,7 @@ model leetcoders {
 }
 
 model roadmap {
-  id             String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id             String           @id @default(uuid()) @db.Uuid
   created_at     DateTime         @default(now()) @db.Timestamptz
   problem_no     Int
   problem_order  Int              @unique
@@ -53,7 +53,7 @@ model roadmap {
 }
 
 model submissions {
-  id         String     @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id         String     @default(uuid()) @db.Uuid
   created_at DateTime   @default(now()) @db.Timestamptz
   user_id    String     @db.Uuid
   problem_id String     @db.Uuid
