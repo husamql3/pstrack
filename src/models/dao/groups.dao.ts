@@ -17,7 +17,7 @@ export const checkGroupExists = async (group_no: number): Promise<boolean> => {
   }
 }
 
-type GroupWithRelations = groups & {
+export type GroupWithRelations = groups & {
   leetcoders: leetcoders[]
   group_progress: group_progress[]
   submissions: (submissions & {

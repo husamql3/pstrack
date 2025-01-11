@@ -1,6 +1,8 @@
-import { fetchGroupData } from '@/models/dao/groups.dao'
 import { generateTableData } from '@/utils/generateTableData'
+import { fetchGroupData } from '@/models/dao/groups.dao'
 import { fetchRoadmap } from '@/models/dao/roadmap.dao'
+
+import { TrackView } from '@/app/g/[groupId]/track-view'
 
 const Page = async ({ params }: { params: Promise<{ groupId: string }> }) => {
   const groupId = Number((await params).groupId)
@@ -15,13 +17,13 @@ const Page = async ({ params }: { params: Promise<{ groupId: string }> }) => {
     roadmap: roadmap,
     group_progress: groupData.group_progress,
   })
-
-  console.log(tableData)
+  // console.log(tableData)
 
   return (
-    <div>
-      <h1>Group {groupId}</h1>
-    </div>
+    <TrackView
+      tableData={tableData}
+      leetcoders={groupData.leetcoders}
+    />
   )
 }
 
