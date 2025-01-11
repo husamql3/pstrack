@@ -22,21 +22,21 @@ model groups {
   group_name     String
   leetcoders     leetcoders[]
   group_progress group_progress[]
-  submission     submission[]
+  submission     submissions[]
 }
 
 model leetcoders {
-  id          String       @id
+  id          String        @id
   name        String
-  email       String       @unique
+  email       String        @unique
   gh_username String?
-  lc_username String?
-  group_no    Int?
-  status      String       @default("pending")
+  lc_username String
+  group_no    Int
+  status      String        @default("pending")
   username    String
-  created_at  DateTime?    @default(now()) @db.Timestamptz
-  group       groups?      @relation(fields: [group_no], references: [group_no])
-  submission  submission[]
+  created_at  DateTime?     @default(now()) @db.Timestamptz
+  group       groups?       @relation(fields: [group_no], references: [group_no])
+  submission  submissions[]
 }
 
 model roadmap {
@@ -49,10 +49,10 @@ model roadmap {
   topic          String
   difficulty     String           @default("easy")
   group_progress group_progress[]
-  submission     submission[]
+  submission     submissions[]
 }
 
-model submission {
+model submissions {
   id         String     @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   created_at DateTime   @default(now()) @db.Timestamptz
   user_id    String     @db.Uuid
