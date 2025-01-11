@@ -1,3 +1,4 @@
+import { ZodError } from 'zod'
 
 export const fetcher = async <T, B = unknown>(
   url: string,
@@ -5,10 +6,6 @@ export const fetcher = async <T, B = unknown>(
   body?: B,
   headers?: Record<string, string>
 ): Promise<T> => {
-  if (!url || typeof url !== 'string') {
-    throw new Error('Invalid URL')
-  }
-
   const config: RequestInit = {
     method,
     headers: {
@@ -21,17 +18,17 @@ export const fetcher = async <T, B = unknown>(
     config.body = JSON.stringify(body)
   }
 
-  try {
-    const response = await fetch(url, config)
+  const response = await fetch(url, config)
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => null)
-      throw new Error(errorData?.error || 'Something went wrong')
+  if (!response.ok) {
+    const errorData = await response.json()
+
+    if (errorData.error && errorData.error.includes('ZodError')) {
+      throw new ZodError(JSON.parse(errorData.error))
     }
 
-    return response.json()
-  } catch (error) {
-    console.error('Error in fetcher:', error)
-    throw error
+    throw new Error(errorData.error || 'Something went wrong')
   }
+
+  return response.json()
 }
