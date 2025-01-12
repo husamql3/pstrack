@@ -7,28 +7,16 @@ import { addCheckSubmission } from '@/models/dao/submissions.dao'
 
 export async function POST(req: NextRequest) {
   try {
-    const body = (await req.json()) as submissions
+    const body = (await req.json()) as submissions & {
+      lc_username: { lc_username: string }
+    }
+    const { lc_username, ...submission } = body
     body.group_no = Number(body.group_no)
 
-    // const { lc_username } = await fetchLeetcoder(body.user_id)
-    // console.log('lc_username', lc_username)
+    console.log('Extracted lc_username:', lc_username)
+    console.log('Submission data:', submission)
 
-    // const hasSolvedDailyProblem = await validateDailyProblemSolved(
-    //   lc_username.lc_username as string,
-    //   body.problem_id
-    // )
-    // if (!hasSolvedDailyProblem) {
-    //   return NextResponse.json(
-    //     {
-    //       success: false,
-    //       error: 'User has not solved the daily problem',
-    //     },
-    //     { status: 400 }
-    //   )
-    // }
-    // console.log('User has solved the daily problem:', lc_username.lc_username)
-
-    const data = await addCheckSubmission(body)
+    const data = await addCheckSubmission(submission)
     console.log('/api/submit/daily POST body:', body)
     return NextResponse.json(
       {
@@ -48,3 +36,18 @@ export async function POST(req: NextRequest) {
     )
   }
 }
+
+// const hasSolvedDailyProblem = await validateDailyProblemSolved(
+//   lc_username.lc_username as string,
+//   body.problem_id
+// )
+// if (!hasSolvedDailyProblem) {
+//   return NextResponse.json(
+//     {
+//       success: false,
+//       error: 'User has not solved the daily problem',
+//     },
+//     { status: 400 }
+//   )
+// }
+// console.log('User has solved the daily problem:', lc_username.lc_username)

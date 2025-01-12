@@ -1,4 +1,4 @@
-export const recentSubmissionList = `
+export const recentSubmissionListGql = `
     query getUserSubmissions($username: String!) {
         recentSubmissionList(username: $username, limit: 1000) {
             title

@@ -1,5 +1,3 @@
-import { env } from 'process'
-
 const DAILY_PROBLEM_QUERY = `
   query getUserRecentSubmissions($username: String!) {
     matchedUser(username: $username) {
@@ -20,11 +18,11 @@ const DAILY_PROBLEM_QUERY = `
 
 export const validateDailyProblemSolved = async (
   username: string,
-  dailyProblemTitleSlug: string
+  problemSlug: string
 ): Promise<boolean> => {
   console.log('Validating daily problem submission for:', username)
   try {
-    const response = await fetch(env.LEETCODE_API_URL as string, {
+    const response = await fetch(process.env.LEETCODE_API_URL as string, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -47,11 +45,11 @@ export const validateDailyProblemSolved = async (
       console.error('User not found:', username)
       return false
     }
-    console.log('Daily problem title slug:', dailyProblemTitleSlug)
+    console.log('Daily problem title slug:', problemSlug)
 
     const hasSolvedDailyProblem = data.data.matchedUser.recentSubmissionList.some(
       (submission: { titleSlug: string; status: string }) =>
-        submission.titleSlug === dailyProblemTitleSlug && submission.status === 'Accepted'
+        submission.titleSlug === problemSlug && submission.status === 'Accepted'
     )
 
     console.log('Has solved daily problem:', hasSolvedDailyProblem)

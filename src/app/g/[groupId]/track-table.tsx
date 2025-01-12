@@ -23,19 +23,27 @@ import { SubmitDailyProblem } from '@/types/submitDailyProblem.type'
 
 const columnHelper = createColumnHelper<TableRowOutput>()
 
+export type TrackTableProps = {
+  tableData: TableRowOutput[]
+  leetcoders: leetcoders[]
+  userId?: string
+  onSubmit: ({
+    user_id,
+    problem_slug,
+    problem_id,
+    group_no,
+    lc_username,
+  }: SubmitDailyProblem) => Promise<boolean>
+  groupId: number
+}
+
 export const TrackTable = ({
   tableData,
   leetcoders,
   userId,
   onSubmit,
   groupId,
-}: {
-  tableData: TableRowOutput[]
-  leetcoders: leetcoders[]
-  userId?: string
-  onSubmit: ({ user_id, problem_id, group_no }: SubmitDailyProblem) => Promise<boolean>
-  groupId: number
-}) => {
+}: TrackTableProps) => {
   const [submittingCheckboxId, setSubmittingCheckboxId] = useState<string | null>(null) // Track the currently submitting checkbox
   const [optimisticUpdates, setOptimisticUpdates] = useState<Record<string, boolean>>({}) // Track optimistic updates
 
@@ -121,6 +129,8 @@ export const TrackTable = ({
                 try {
                   const success = await onSubmit({
                     user_id: leetcoder.id,
+                    lc_username: leetcoder.lc_username,
+                    problem_slug: info.row.original.problem.problem_slug,
                     problem_id: info.row.original.problem.id,
                     group_no: groupId,
                   })
@@ -163,7 +173,7 @@ export const TrackTable = ({
         )
       ),
     ],
-    [groupId, leetcoders, submittingCheckboxId, userId]
+    [groupId, leetcoders, onSubmit, optimisticUpdates, submittingCheckboxId, userId]
   )
 
   const table = useReactTable({
