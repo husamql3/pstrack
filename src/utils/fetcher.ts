@@ -1,10 +1,18 @@
 import { ZodError } from 'zod'
 
+export type ApiResponse<T> = {
+  status: number
+  success?: boolean
+  data?: T
+  error?: string
+  message?: string
+}
+
 export const fetcher = async <T, B = unknown>(
   url: string,
   method: 'GET' | 'POST' | 'PUT' | 'DELETE',
   body?: B
-): Promise<T> => {
+): Promise<ApiResponse<T>> => {
   const config: RequestInit = {
     method,
     headers: {

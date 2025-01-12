@@ -1,60 +1,49 @@
-const DAILY_PROBLEM_QUERY = `
-  query getUserRecentSubmissions($username: String!) {
-    matchedUser(username: $username) {
-      submitStats {
-        acSubmissionNum {
-          difficulty
-          count
-          submissions
-        }
-      }
-    query userQuestionStatus($titleSlug: String!) {
-        question(titleSlug: $titleSlug) {
-        status
-      }
-    }
-  }
-`
+import { recentSubmissionListQuery } from '@/lib/graphql/recentSubmissionList.gql'
 
-export const validateDailyProblemSolved = async (
-  username: string,
-  problemSlug: string
-): Promise<boolean> => {
-  console.log('Validating daily problem submission for:', username)
+type RecentSubmission = {
+  title: string
+  titleSlug: string
+  status: number
+  lang: string
+  timestamp: string
+}
+
+type ValidateDailyProblemSolved = {
+  lc_username: string
+  problem_slug: string
+}
+
+export const validateDailyProblemSolved = async ({
+  lc_username,
+  problem_slug,
+}: ValidateDailyProblemSolved): Promise<boolean> => {
   try {
-    const response = await fetch(process.env.LEETCODE_API_URL as string, {
+    const response = await fetch('https://leetcode.com/graphql', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        query: DAILY_PROBLEM_QUERY,
-        variables: { username },
+        query: recentSubmissionListQuery,
+        variables: { username: 'husamahmud' },
       }),
     })
-
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`)
+      console.error('Error validating daily problem submission:', response)
+      return false
     }
 
     const data = await response.json()
-
-    console.log('Data:', data)
-
-    if (!data.data.matchedUser) {
-      console.error('User not found:', username)
+    if (!data.data?.recentSubmissionList) {
+      console.error('No submissions found for user:', lc_username)
       return false
     }
-    console.log('Daily problem title slug:', problemSlug)
 
-    const hasSolvedDailyProblem = data.data.matchedUser.recentSubmissionList.some(
-      (submission: { titleSlug: string; status: string }) =>
-        submission.titleSlug === problemSlug && submission.status === 'Accepted'
+    // Check if the user has solved the specific problem
+    return data.data.recentSubmissionList.some(
+      (submission: RecentSubmission) =>
+        submission.titleSlug === problem_slug && submission.status === 10
     )
-
-    console.log('Has solved daily problem:', hasSolvedDailyProblem)
-
-    return hasSolvedDailyProblem
   } catch (error) {
     console.error('Error validating daily problem submission:', error)
     return false

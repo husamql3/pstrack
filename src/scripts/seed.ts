@@ -1,22 +1,29 @@
-import { PrismaClient } from '@prisma/client'
+import { type leetcoders, PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
-const leetcoders = [
+const leetcoders: leetcoders[] = [
   {
     id: 'f07e0ca7-4a29-4f7d-9e39-220f95f204b9',
-    username: 'Hüsam',
+    username: 'husamql3',
+    name: 'Hüsam',
     email: 'john.doe@example.com',
+    lc_username: 'husamahmud',
+    gh_username: 'husamahmud',
+    status: 'approved',
+    created_at: null,
+    group_no: 1,
   },
   {
     id: '8236a8bd-8e20-4958-9618-98631584ce01',
-    username: 'Menna',
-    email: 'john.doe1@example.com',
-  },
-  {
-    id: 'ddf49246-6735-4cc7-bd98-3e2f5cfd8a1b',
-    username: 'HusamQl3',
+    name: 'menna',
     email: 'john.doe2@example.com',
+    gh_username: '',
+    lc_username: 'Menna',
+    group_no: 1,
+    status: 'approved',
+    username: 'mennasamir',
+    created_at: null,
   },
 ]
 
@@ -30,19 +37,19 @@ const roadmap = [
     difficulty: 'easy',
   },
   {
-    problem_no: 2,
+    problem_no: 217,
     problem_order: 2,
     problem_slug: 'add-two-numbers',
-    link: 'https://leetcode.com/problems/add-two-numbers/',
-    topic: 'linked-list',
-    difficulty: 'medium',
+    link: 'https://leetcode.com/problems/contains-duplicate/description/',
+    topic: 'array-hashing',
+    difficulty: 'easy',
   },
   {
-    problem_no: 3,
+    problem_no: 15,
     problem_order: 3,
-    problem_slug: 'longest-substring-without-repeating-characters',
-    link: 'https://leetcode.com/problems/longest-substring-without-repeating-characters/',
-    topic: 'String',
+    problem_slug: '3sum',
+    link: 'https://leetcode.com/problems/3sum/',
+    topic: 'two-pointers',
     difficulty: 'medium',
   },
   {
