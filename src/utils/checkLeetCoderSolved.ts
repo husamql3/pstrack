@@ -34,13 +34,13 @@ export const validateDailyProblemSolved = async ({
     }
 
     const data = await response.json()
-    if (!data.data?.recentSubmissionList) {
+    if (!data.data?.recentSubmissionList.length) {
       console.error('No submissions found for user:', lc_username)
       return false
     }
 
     // Check if the user has solved the specific problem
-    return data.data.recentSubmissionList.some(
+    return !!data.data.recentSubmissionList.some(
       (submission: RecentSubmission) =>
         submission.titleSlug === problem_slug && submission.status === 10
     )

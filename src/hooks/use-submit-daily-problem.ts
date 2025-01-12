@@ -20,33 +20,13 @@ export const useSubmitDailyProblem = (): UseSubmitDailyProblemReturn => {
     group_no,
   }: SubmitDailyProblem): Promise<boolean> => {
     try {
-      const res = await fetcher('/api/submit/daily', 'POST', {
+      await fetcher('/api/submit/daily', 'POST', {
         user_id,
         problem_slug,
         problem_id,
         lc_username,
         group_no,
       })
-      console.log(res)
-      if (!res.success) {
-        if (res.status === 400) {
-          toast({
-            title: 'Are you sure you solved this problem?',
-            description:
-              'Please make sure you have solved the problem before submitting.',
-            variant: 'destructive',
-          })
-
-          return false
-        }
-
-        toast({
-          title: 'Error',
-          description: res.error || 'Failed to submit problem. Please try again.',
-          variant: 'destructive',
-        })
-        return false
-      }
 
       toast({
         title: 'Great job!',
@@ -56,7 +36,16 @@ export const useSubmitDailyProblem = (): UseSubmitDailyProblemReturn => {
 
       router.refresh()
       return true
-    } catch {
+    } catch (error) {
+      if (error instanceof Error && error.message === 'User has not solved the problem') {
+        toast({
+          title: 'Are you sure you solved this problem?',
+          description: 'Please solve the problem on LeetCode before submitting.',
+          variant: 'destructive',
+        })
+        return false
+      }
+
       toast({
         title: 'Error',
         description: 'Failed to submit problem. Please try again.',
