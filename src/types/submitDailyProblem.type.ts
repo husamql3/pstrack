@@ -5,5 +5,9 @@ export type SubmitDailyProblem = {
 }
 
 export type UseSubmitDailyProblemReturn = {
-  submitDailyProblem: ({ user_id, problem_id }: SubmitDailyProblem) => Promise<boolean>
+  submitDailyProblem: ({
+    user_id,
+    problem_id,
+    group_no,
+  }: SubmitDailyProblem) => Promise<boolean>
 }

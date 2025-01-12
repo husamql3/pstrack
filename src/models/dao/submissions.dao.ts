@@ -7,7 +7,12 @@ export const addCheckSubmission = async (
 ): Promise<submissions> => {
   try {
     return await prisma.submissions.create({
-      data: submission,
+      data: {
+        user_id: submission.user_id,
+        problem_id: submission.problem_id,
+        group_no: submission.group_no,
+        solved: true,
+      },
     })
   } catch (error) {
     console.error('catch addCheckSubmission error:', error)

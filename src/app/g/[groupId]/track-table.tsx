@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import {
   createColumnHelper,
   flexRender,
@@ -16,16 +16,29 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { TableRowOutput } from '@/utils/generateTableData'
+import { getDifficultyColor } from '@/utils/getDifficultyColor'
+import { cn } from '@/lib/utils'
+import { Difficulty } from '@/types/difficulty.type'
+import { SubmitDailyProblem } from '@/types/submitDailyProblem.type'
 
 const columnHelper = createColumnHelper<TableRowOutput>()
 
-const TrackTable = ({
+export const TrackTable = ({
   tableData,
   leetcoders,
+  userId,
+  onSubmit,
+  groupId,
 }: {
   tableData: TableRowOutput[]
   leetcoders: leetcoders[]
+  userId?: string
+  onSubmit: ({ user_id, problem_id, group_no }: SubmitDailyProblem) => Promise<boolean>
+  groupId: number
 }) => {
+  const [submittingCheckboxId, setSubmittingCheckboxId] = useState<string | null>(null) // Track the currently submitting checkbox
+  const [optimisticUpdates, setOptimisticUpdates] = useState<Record<string, boolean>>({}) // Track optimistic updates
+
   const columns = useMemo(
     () => [
       columnHelper.accessor('groupProgressDate', {
@@ -55,47 +68,102 @@ const TrackTable = ({
       columnHelper.accessor('problem.difficulty', {
         header: () => 'Difficulty',
         cell: (info) => {
-          const difficulty = info.getValue()
+          const difficulty = info.getValue() as Difficulty
           return (
             <span
-              className={
-                difficulty === 'easy'
-                  ? 'text-green-600'
-                  : difficulty === 'medium'
-                    ? 'text-yellow-600'
-                    : 'text-red-600'
-              }
+              className={cn(
+                'w-fit rounded-lg px-2 py-1 text-xs font-medium capitalize',
+                getDifficultyColor(difficulty)
+              )}
             >
               {difficulty}
             </span>
           )
         },
       }),
-      columnHelper.accessor((row) => `${row.totalSolved}/${row.totalSubmissions}`, {
-        id: 'count',
-        header: () => 'Count',
-        cell: (info) => info.getValue(),
-      }),
+      columnHelper.accessor(
+        (row) => ({ totalSolved: row.totalSolved, total: leetcoders.length }),
+        {
+          id: 'count',
+          header: () => 'Count',
+          cell: (info) => {
+            const { totalSolved, total } = info.getValue()
+            return (
+              <div className="flex items-baseline space-x-0.5">
+                <span className="text-base font-medium">{totalSolved}</span>
+                <span className="text-gray-500">/{total}</span>
+              </div>
+            )
+          },
+        }
+      ),
       ...leetcoders.map((leetcoder) =>
         columnHelper.accessor(
           (row) =>
-            row.userSubmissions.find((sub) => sub.user_id === leetcoder.id)?.solved ||
-            false,
+            row.userSubmissions.find((sub) => sub.user_id === leetcoder.id) || false,
           {
             id: leetcoder.id,
-            header: () => leetcoder.username,
-            cell: (info) => (
-              <Checkbox
-                checked={info.getValue()}
-                disabled
-                className={info.getValue() ? 'bg-green-500' : 'bg-gray-200'}
-              />
-            ),
+            header: () => <span>@{leetcoder.username.toLowerCase()}</span>,
+            cell: (info) => {
+              const isCurrentCheckboxSubmitting = submittingCheckboxId === leetcoder.id // Check if this checkbox is submitting
+              const isCheckedOptimistically =
+                optimisticUpdates[`${leetcoder.id}-${info.row.original.problem.id}`] // Check optimistic state
+
+              const onCheck = async () => {
+                setSubmittingCheckboxId(leetcoder.id) // Set the current checkbox as submitting
+
+                // Optimistically update the UI
+                setOptimisticUpdates((prev) => ({
+                  ...prev,
+                  [`${leetcoder.id}-${info.row.original.problem.id}`]: true,
+                }))
+
+                try {
+                  const success = await onSubmit({
+                    user_id: leetcoder.id,
+                    problem_id: info.row.original.problem.id,
+                    group_no: groupId,
+                  })
+
+                  if (!success) {
+                    // Revert the optimistic update if the submission fails
+                    setOptimisticUpdates((prev) => ({
+                      ...prev,
+                      [`${leetcoder.id}-${info.row.original.problem.id}`]: false,
+                    }))
+                  }
+                } catch {
+                  // Revert the optimistic update if there's an error
+                  setOptimisticUpdates((prev) => ({
+                    ...prev,
+                    [`${leetcoder.id}-${info.row.original.problem.id}`]: false,
+                  }))
+                } finally {
+                  setSubmittingCheckboxId(null) // Reset after submission
+                }
+              }
+
+              const isChecked = Boolean(info.getValue()) || isCheckedOptimistically
+
+              return (
+                <div className="flex items-center">
+                  <Checkbox
+                    checked={isChecked}
+                    disabled={
+                      userId !== leetcoder.id || // Disable if not the current user
+                      Boolean(info.getValue()) || // Disable if already solved
+                      isCurrentCheckboxSubmitting // Disable if this checkbox is submitting
+                    }
+                    onCheckedChange={onCheck}
+                  />
+                </div>
+              )
+            },
           }
         )
       ),
     ],
-    [leetcoders]
+    [groupId, leetcoders, submittingCheckboxId, userId]
   )
 
   const table = useReactTable({
@@ -141,5 +209,3 @@ const TrackTable = ({
     </div>
   )
 }
-
-export default TrackTable

@@ -23,11 +23,9 @@ export type TableData = TableRowOutput[]
 
 export const generateTableData = (groupData: TableRow): TableData => {
   const { group_no, roadmap, submission, group_progress } = groupData
-  console.log({ group_no, roadmap, submission, group_progress })
 
   // Find the group progress entry for the group
   const groupProgress = group_progress.find((progress) => progress.group_no === group_no)
-  console.log('groupProgress', groupProgress)
 
   // Format the created_at date to MM/DD/YYYY format
   const formattedDate = groupProgress

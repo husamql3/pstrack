@@ -5,11 +5,11 @@ import { Difficulty } from '@/types/difficulty.type'
  **/
 export function getDifficultyColor(difficulty: Difficulty): string {
   switch (difficulty) {
-    case 'Easy':
+    case 'easy':
       return 'bg-[#2cbb5d40] text-[rgb(0,184,163)]'
-    case 'Medium':
+    case 'medium':
       return 'bg-[#ffc01e40] text-[rgb(255,192,30)]'
-    case 'Hard':
+    case 'hard':
       return 'bg-[#ef474340] text-[rgb(255,55,95)]'
     default:
       return 'bg-gray-100 text-gray-500'
