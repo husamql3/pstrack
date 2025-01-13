@@ -5,13 +5,12 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { leetcoders } from '@prisma/client'
 
 import { TableRowOutput } from '@/types/tableRow.type'
-import { SubmitDailyProblem } from '@/types/submitDailyProblem.type'
 import { Difficulty } from '@/types/difficulty.type'
 import { cn } from '@/lib/utils'
 import { getDifficultyColor } from '@/utils/getDifficultyColor'
+import { TrackTableProps } from '@/types/TrackTableProps.type'
 
 import {
   Table,
@@ -24,20 +23,6 @@ import {
 import { Checkbox } from '@/components/ui/checkbox'
 
 const columnHelper = createColumnHelper<TableRowOutput>()
-
-export type TrackTableProps = {
-  tableData: TableRowOutput[]
-  leetcoders: leetcoders[]
-  userId?: string
-  onSubmit: ({
-    user_id,
-    problem_slug,
-    problem_id,
-    group_no,
-    lc_username,
-  }: SubmitDailyProblem) => Promise<boolean>
-  groupId: number
-}
 
 export const TrackTable = ({
   tableData,
