@@ -89,3 +89,25 @@ export const approveLeetcoder = async (id: string): Promise<LeetcoderRow> => {
     throw error
   }
 }
+
+export const fetchLeetcoder = async (id: string): Promise<LeetcoderRow> => {
+  try {
+    const supabase = await createClient()
+
+    const { data, error } = await supabase
+      .from('leetcoders')
+      .select('*')
+      .eq('id', id)
+      .single()
+
+    if (error) {
+      console.error('fetchLeetcoder error:', error)
+      return {} as LeetcoderRow
+    }
+
+    return data ?? ({} as LeetcoderRow)
+  } catch (error) {
+    console.error('catch fetchLeetcoder error:', error)
+    return {} as LeetcoderRow
+  }
+}

@@ -1,21 +1,24 @@
 import { notFound } from 'next/navigation'
 
 import { getUser } from '@/hooks/get-user'
-import { TrackHeader } from '@/components/track/track-header'
-import { checkGroupExists } from '@/db/supabase/services/group.service'
+import { checkGroupExists } from '@/models/dao/groups.dao'
 
-export default async function Layout({
+import { TrackHeader } from '@/components/track/track-header'
+
+const Layout = async ({
   children,
   params,
 }: {
   children: React.ReactNode
   params: Promise<{ groupId: string }>
-}) {
-  const user = await getUser()
+}) => {
   const groupId = Number((await params).groupId)
-  const groupExists = await checkGroupExists(groupId)
 
+  // check if group exists before rendering the layout
+  const groupExists = await checkGroupExists(groupId)
   if (!groupExists) notFound()
+
+  const user = await getUser()
 
   return (
     <div className="h-svh w-svw">
@@ -23,7 +26,10 @@ export default async function Layout({
         groupId={groupId}
         user={user!}
       />
+
       {children}
     </div>
   )
 }
+
+export default Layout

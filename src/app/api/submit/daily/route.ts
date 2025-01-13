@@ -1,15 +1,35 @@
+import { submissions } from '@prisma/client'
 import { NextRequest, NextResponse } from 'next/server'
 
-import { SubmissionInsert } from '@/types/supabase.type'
-import { insertCheckSubmission } from '@/db/supabase/services/submission.service'
+import { addCheckSubmission } from '@/models/dao/submissions.dao'
+import { validateDailyProblemSolved } from '@/utils/checkLeetCoderSolved'
 
 export async function POST(req: NextRequest) {
   try {
-    const body = (await req.json()) as SubmissionInsert
+    const body = (await req.json()) as submissions & {
+      lc_username: string
+      problem_slug: string
+    }
+    const { lc_username, problem_slug, ...submission } = body
     body.group_no = Number(body.group_no)
 
-    const data = await insertCheckSubmission(body)
+    // Check if the user has solved the problem before submitting
+    const hasSolved = await validateDailyProblemSolved({
+      lc_username: lc_username,
+      problem_slug: problem_slug,
+    })
 
+    if (!hasSolved) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'User has not solved the problem',
+        },
+        { status: 400 }
+      )
+    }
+
+    const data = await addCheckSubmission(submission)
     console.log('/api/submit/daily POST body:', body)
     return NextResponse.json(
       {

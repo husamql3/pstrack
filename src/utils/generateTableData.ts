@@ -1,12 +1,9 @@
-import { TableData, TableRow } from '@/types/trackTable.type'
+import { TableData, TableRow } from '@/types/tableRow.type'
 
-export const generateTableData = ({
-  group_no,
-  roadmap,
-  submission,
-  group_progress,
-}: TableRow): TableData => {
-  // Find the group progress entry for the group (assuming group_no is 1)
+export const generateTableData = (groupData: TableRow): TableData => {
+  const { group_no, roadmap, submission, group_progress } = groupData
+
+  // Find the group progress entry for the group
   const groupProgress = group_progress.find((progress) => progress.group_no === group_no)
 
   // Format the created_at date to MM/DD/YYYY format

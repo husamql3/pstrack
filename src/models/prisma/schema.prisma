@@ -1,0 +1,67 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = "postgresql://pstrack_user:D93ugpIeH167tYmrYeBN2SG3KwJfJVRQ@dpg-cu14kvrqf0us73d6vhn0-a.oregon-postgres.render.com/pstrack"
+}
+
+model group_progress {
+  id              String   @id @default(uuid()) @db.Uuid
+  created_at      DateTime @default(now()) @db.Timestamptz
+  group_no        Int?
+  current_problem Int?
+  group           groups?  @relation(fields: [group_no], references: [group_no])
+  roadmap         roadmap? @relation(fields: [current_problem], references: [problem_order])
+}
+
+model groups {
+  id             String           @id @default(uuid()) @db.Uuid
+  group_no       Int              @unique @default(autoincrement())
+  group_name     String
+  leetcoders     leetcoders[]
+  group_progress group_progress[]
+  submissions    submissions[]
+}
+
+model leetcoders {
+  id          String        @id @default(uuid()) @db.Uuid
+  name        String
+  email       String        @unique
+  gh_username String?
+  lc_username String
+  group_no    Int
+  status      String        @default("pending")
+  username    String
+  created_at  DateTime?     @default(now()) @db.Timestamptz
+  group       groups?       @relation(fields: [group_no], references: [group_no])
+  submissions submissions[]
+}
+
+model roadmap {
+  id             String           @id @default(uuid()) @db.Uuid
+  created_at     DateTime         @default(now()) @db.Timestamptz
+  problem_no     Int
+  problem_order  Int              @unique
+  problem_slug   String
+  link           String
+  topic          String
+  difficulty     String           @default("easy")
+  group_progress group_progress[]
+  submissions    submissions[]
+}
+
+model submissions {
+  id         String     @default(uuid()) @db.Uuid
+  created_at DateTime   @default(now()) @db.Timestamptz
+  user_id    String     @db.Uuid
+  problem_id String     @db.Uuid
+  solved     Boolean    @default(true)
+  group_no   Int?
+  user       leetcoders @relation(fields: [user_id], references: [id])
+  problem    roadmap    @relation(fields: [problem_id], references: [id])
+  group      groups?    @relation(fields: [group_no], references: [group_no])
+
+  @@id([id, user_id])
+}
