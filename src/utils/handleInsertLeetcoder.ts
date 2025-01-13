@@ -4,7 +4,7 @@ import { ZodError } from 'zod'
 import { User } from '@supabase/auth-js'
 import { fetcher } from '@/utils/fetcher'
 import { toast } from '@/hooks/use-toast'
-import { checkLeetCodeUserExists } from '@/utils/checkLeetCoderExist'
+// import { checkLeetCodeUserExists } from '@/utils/checkLeetCoderExist'
 
 export const handleInsertLeetcoder = async (
   formData: FormData,
@@ -22,16 +22,16 @@ export const handleInsertLeetcoder = async (
     status: 'pending',
   }
 
-  const leetCodeUserExists = await checkLeetCodeUserExists(data.lc_username)
-
-  if (!leetCodeUserExists) {
-    toast({
-      title: 'LeetCode Username Not Found',
-      description: 'The provided LeetCode username does not exist.',
-      variant: 'destructive',
-    })
-    return false
-  }
+  // todo: check if leetcode username exists using gql
+  // const leetCodeUserExists = await checkLeetCodeUserExists(data.lc_username)
+  // if (!leetCodeUserExists) {
+  //   toast({
+  //     title: 'LeetCode Username Not Found',
+  //     description: 'The provided LeetCode username does not exist.',
+  //     variant: 'destructive',
+  //   })
+  //   return false
+  // }
 
   try {
     // TODO: before submitting, check if the leetcode username exists using gql leetcode api

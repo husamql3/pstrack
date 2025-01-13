@@ -1,9 +1,9 @@
 import { generateTableData } from '@/utils/generateTableData'
 import { fetchGroupData } from '@/models/dao/groups.dao'
 import { fetchRoadmap } from '@/models/dao/roadmap.dao'
-
-import { TrackView } from '@/app/g/[groupId]/track-view'
 import { getUser } from '@/hooks/get-user'
+
+import { TrackView } from '@/components/track/track-view'
 
 const Page = async ({ params }: { params: Promise<{ groupId: string }> }) => {
   const groupId = Number((await params).groupId)

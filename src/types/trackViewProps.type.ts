@@ -1,9 +1,9 @@
-import { LeetcoderRow } from '@/types/supabase.type'
-import { TableData } from '@/types/trackTable.type'
+import { leetcoders } from '@prisma/client'
+import { TableData } from '@/types/tableRow.type'
 
 export type TrackViewProps = {
-  userId: string | undefined
-  leetcoders: LeetcoderRow[]
   tableData: TableData
+  leetcoders: leetcoders[]
+  userId?: string
   groupId: number
 }

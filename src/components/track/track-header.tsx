@@ -15,7 +15,6 @@ const TrackHeader = ({ user, groupId }: { user: User; groupId: number }) => {
         <div className="flex h-full items-center border-r border-zinc-900 px-2">
           <Logo className="size-7" />
         </div>
-
         <div className="flex h-full items-center border-r border-zinc-900 px-3">
           <p className="text-lg font-semibold">Group {groupId}</p>
         </div>
