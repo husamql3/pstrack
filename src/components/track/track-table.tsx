@@ -16,6 +16,7 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
@@ -229,6 +230,25 @@ export const TrackTable = ({
             </TableRow>
           ))}
         </TableBody>
+        <TableFooter className="border-zinc-700 text-xs font-medium">
+          <TableRow>
+            <TableCell
+              colSpan={5}
+              className="text-right text-xs font-medium text-gray-500"
+            >
+              Total
+            </TableCell>
+
+            {sortedLeetcoders.map((leetcoder) => (
+              <TableCell
+                key={leetcoder.id}
+                className="text-center"
+              >
+                {leetcoderSolvedCounts[leetcoder.id]}
+              </TableCell>
+            ))}
+          </TableRow>
+        </TableFooter>
       </Table>
     </div>
   )
