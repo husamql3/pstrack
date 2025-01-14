@@ -41,7 +41,11 @@ export const fetchGroupData = async (
         group_no,
       },
       include: {
-        leetcoders: true,
+        leetcoders: {
+          where: {
+            status: 'approved',
+          },
+        },
         group_progress: true,
         submissions: {
           include: {

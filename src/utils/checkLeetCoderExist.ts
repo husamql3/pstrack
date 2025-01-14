@@ -1,4 +1,4 @@
-import { fetcher } from '@/utils/fetcher'
+import { fetcherGql } from '@/utils/graphFetcher'
 
 export const checkLeetCodeUserExists = async (username: string): Promise<boolean> => {
   const query = `
@@ -13,12 +13,12 @@ export const checkLeetCodeUserExists = async (username: string): Promise<boolean
   }
 
   try {
-    const data = await fetcher<{ data: { matchedUser: { username: string } | null } }>(
+    const data = await fetcherGql<{ data: { matchedUser: { username: string } | null } }>(
       '/api/graph',
       'POST',
       { query, variables }
     )
-    return data?.data?.matchedUser !== null
+    return data?.data.matchedUser !== null
   } catch (error) {
     console.error('Error checking LeetCode user:', error)
     return false

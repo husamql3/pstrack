@@ -1,12 +1,11 @@
 import { NextResponse } from 'next/server'
-import { fetcher } from '@/utils/graphFetcher'
-import { env } from 'process'
+import { fetcherGql } from '@/utils/graphFetcher'
 
 export async function POST(req: Request) {
   try {
     const { query, variables } = await req.json()
-    const data = await fetcher<{ data: { matchedUser: { username: string } | null } }>(
-      env.LEETCODE_API_URL as string,
+    const data = await fetcherGql<{ data: { matchedUser: { username: string } | null } }>(
+      process.env.LEETCODE_API_URL as string,
       'POST',
       { query, variables }
     )
