@@ -2,10 +2,11 @@ import { leetcoders } from '@prisma/client'
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library'
 
 import prisma from '@/models/prisma/prisma'
+import { LeetcoderRequest, Leetcoders } from '@/types/leetcoder.type'
 
 export const addLeetcoder = async (
   user_id: string,
-  request: Omit<leetcoders, 'created_at'>
+  request: LeetcoderRequest
 ): Promise<leetcoders> => {
   try {
     return prisma.leetcoders.create({
@@ -13,7 +14,6 @@ export const addLeetcoder = async (
         ...request,
         id: user_id,
         status: 'pending',
-        created_at: new Date(),
       },
     })
   } catch (error) {
@@ -23,6 +23,24 @@ export const addLeetcoder = async (
 
     console.error('insertLeetcoder error:', error)
     return {} as leetcoders
+  }
+}
+
+export const fetchPendingLeetcoders = async (): Promise<Leetcoders[]> => {
+  try {
+    const data = await prisma.leetcoders.findMany({
+      where: {
+        status: 'pending',
+      },
+    })
+
+    return data.map((item) => ({
+      ...item,
+      created_at: item.created_at ? item.created_at.toISOString() : null,
+    }))
+  } catch (error) {
+    console.error('catch approveLeetcoder error:', error)
+    return []
   }
 }
 
@@ -66,5 +84,23 @@ export const fetchGroupLeetcoders = async (group_no: number): Promise<leetcoders
   } catch (error) {
     console.error('catch fetchGroupLeetcoders error:', error)
     return []
+  }
+}
+
+export const isLeetcoderApproved = async (id: string): Promise<boolean> => {
+  if (!id) return false
+
+  try {
+    const data = await prisma.leetcoders.findUnique({
+      where: {
+        id: id,
+        status: 'approved',
+      },
+    })
+
+    return !!data
+  } catch (error) {
+    console.error('catch isLeetcoderApproved error:', error)
+    return false
   }
 }

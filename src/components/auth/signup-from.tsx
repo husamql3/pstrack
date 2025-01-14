@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'
 import { useActionState, useEffect } from 'react'
 import { TbLoader2 } from 'react-icons/tb'
 
-import { signUp } from '@/db/supabase/services/auth.service'
+import { signUp } from '@/supabase/auth.service'
 import { toast } from '@/hooks/use-toast'
 
 import { Label } from '@/components/ui/label'

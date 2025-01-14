@@ -7,7 +7,15 @@ import { UserMenu } from '@/components/track/user-menu'
 import { Button } from '@/components/ui/button'
 import { RequestToJoin } from '@/components/track/request-to-join'
 
-const TrackHeader = ({ user, groupId }: { user: User; groupId: number }) => {
+const TrackHeader = ({
+  user,
+  groupId,
+  isApproved,
+}: {
+  user: User
+  groupId: number
+  isApproved: boolean
+}) => {
   return (
     <header className="mx-auto flex h-16 max-w-screen-lg items-center justify-between px-3">
       {/* Logo Section */}
@@ -17,19 +25,21 @@ const TrackHeader = ({ user, groupId }: { user: User; groupId: number }) => {
       </div>
 
       {/* User Menu or Login Button */}
-      <div className="flex h-full flex-row-reverse items-center gap-5">
+      <div className="flex flex-row-reverse items-center gap-5">
         {user ? (
           <>
             <UserMenu user={user} />
-            <RequestToJoin
-              user={user}
-              groupId={groupId}
-            />
+            {!isApproved && (
+              <RequestToJoin
+                user={user}
+                groupId={groupId}
+              />
+            )}
           </>
         ) : (
           <Link
             href="/login"
-            className="flex h-full items-center justify-center border-l px-3"
+            className="flex items-center justify-center"
             prefetch
           >
             <Button

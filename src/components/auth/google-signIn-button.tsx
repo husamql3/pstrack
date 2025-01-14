@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { IoLogoGoogle } from 'react-icons/io5'
 import { TbLoader2 } from 'react-icons/tb'
 
-import { oauthLogin } from '@/db/supabase/services/auth.service'
+import { oauthLogin } from '@/supabase/auth.service'
 
 import { Button } from '@/components/ui/button'
 

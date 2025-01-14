@@ -1,8 +1,8 @@
 'use server'
 
-import { createClient } from '@/db/supabase/server'
-import { SigninSchema, signUpSchema } from '@/types/schema/auth.schema'
+import { createClient } from '@/supabase/server'
 import { ActionResponse } from '@/types/auth.type'
+import { SigninSchema, SignUpSchema } from '@/types/schema/auth.schema'
 
 export const signUp = async (
   prevState: ActionResponse | null,
@@ -14,7 +14,7 @@ export const signUp = async (
       password: String(formData.get('password')),
     }
 
-    const result = signUpSchema.safeParse(rawData)
+    const result = SignUpSchema.safeParse(rawData)
 
     if (!result.success) {
       return {

@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Eye, EyeOff } from 'lucide-react'
 import { TbLoader2 } from 'react-icons/tb'
 
-import { signIn } from '@/db/supabase/services/auth.service'
+import { signIn } from '@/supabase/auth.service'
 import { toast } from '@/hooks/use-toast'
 
 import { Label } from '@/components/ui/label'

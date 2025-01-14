@@ -1,20 +1,18 @@
 import { ZodError } from 'zod'
 import { NextRequest, NextResponse } from 'next/server'
-import { LeetcoderInsert } from '@/types/supabase.type'
+
 import { LeetcoderInsertSchema } from '@/types/schema/leetcoder.schema'
-import {
-  approveLeetcoder,
-  insertLeetcoder,
-} from '@/db/supabase/services/leetcoder.service'
+import { addLeetcoder, approveLeetcoder } from '@/models/dao/leetcoders.dao'
+import { LeetcoderRequest } from '@/types/leetcoder.type'
 
 export async function POST(req: NextRequest) {
   try {
-    const body = (await req.json()) as LeetcoderInsert
+    const body = await req.json()
     body.group_no = Number(body.group_no)
 
     const validatedData = LeetcoderInsertSchema.parse(body)
 
-    const data = await insertLeetcoder(validatedData)
+    const data = await addLeetcoder(body.id, validatedData as LeetcoderRequest)
 
     console.log('insertLeetcoder data:', data)
     return NextResponse.json(
