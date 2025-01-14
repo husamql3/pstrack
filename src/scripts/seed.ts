@@ -6,12 +6,12 @@ const leetcoders: leetcoders[] = [
   {
     id: '8236a8bd-8e20-4958-9618-98631584ce01',
     name: 'menna',
-    email: 'john.doe2@example.com',
+    email: 'bena.yalla@yahoo.com',
     gh_username: '',
-    lc_username: 'Menna',
+    lc_username: 'mennaSamirr',
     group_no: 1,
     status: 'approved',
-    username: 'fsadtew',
+    username: 'Menna Samir',
     created_at: null,
   },
   {
