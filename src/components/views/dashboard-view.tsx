@@ -1,11 +1,11 @@
-import { LeetcodeRowType } from '@/types/supabase.type'
-import { fetchPendingLeetcoders } from '@/db/supabase/services/leetcoder.service'
+import { Leetcoders } from '@/types/leetcoder.type'
+import { fetchPendingLeetcoders } from '@/models/dao/leetcoders.dao'
 
 import { requestsColumns } from '@/components/requests/columns'
 import { RequestsTable } from '@/components/requests/requests-table'
 
 const DashboardView = async () => {
-  const requestsData: LeetcodeRowType = (await fetchPendingLeetcoders()) ?? []
+  const requestsData: Leetcoders[] = await fetchPendingLeetcoders()
 
   return (
     <div className="h-svh w-full p-5">

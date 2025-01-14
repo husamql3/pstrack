@@ -59,17 +59,6 @@ const leetcoders: leetcoders[] = [
     created_at: null,
   },
   {
-    id: 'f07e0ca7-4a29-4f7d-9e39-220f95f204b9',
-    username: 'husamql3',
-    name: 'Hüsam',
-    email: 'john.doe@example.com',
-    lc_username: 'husamahmud',
-    gh_username: 'husamahmud',
-    status: 'approved',
-    created_at: null,
-    group_no: 1,
-  },
-  {
     id: '8236a8bd-8e20-4958-9618-98631584ce06',
     name: 'menna',
     email: 'john.doe6@example.com',

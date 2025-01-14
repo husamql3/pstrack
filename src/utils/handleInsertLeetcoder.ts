@@ -2,6 +2,7 @@
 
 import { ZodError } from 'zod'
 import { User } from '@supabase/auth-js'
+
 import { fetcher } from '@/utils/fetcher'
 import { toast } from '@/hooks/use-toast'
 // import { checkLeetCodeUserExists } from '@/utils/checkLeetCoderExist'
@@ -12,14 +13,13 @@ export const handleInsertLeetcoder = async (
   groupId: number
 ): Promise<boolean> => {
   const data = {
-    name: formData.get('name'),
-    username: formData.get('username'),
-    email: user.email,
+    name: formData.get('name') as string,
+    username: formData.get('username') as string,
+    email: user.email as string,
     group_no: groupId,
     id: user.id,
-    gh_username: formData.get('gh_username') || '',
+    gh_username: formData.get('gh_username') as string,
     lc_username: formData.get('lc_username') as string,
-    status: 'pending',
   }
 
   // todo: check if leetcode username exists using gql
