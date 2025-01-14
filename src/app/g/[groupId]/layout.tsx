@@ -1,9 +1,11 @@
+import { Suspense } from 'react'
 import { notFound } from 'next/navigation'
 
 import { getUser } from '@/hooks/get-user'
 import { checkGroupExists } from '@/models/dao/groups.dao'
 
 import { TrackHeader } from '@/components/track/track-header'
+import { TableSkeleton } from '@/components/track/table-skeleton'
 
 const Layout = async ({
   children,
@@ -27,7 +29,7 @@ const Layout = async ({
         user={user!}
       />
 
-      {children}
+      <Suspense fallback={<TableSkeleton />}>{children}</Suspense>
     </div>
   )
 }
