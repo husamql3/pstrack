@@ -80,7 +80,7 @@ export const TrackTable = ({
       }),
       columnHelper.accessor('problem.topic', {
         header: () => 'Topic',
-        cell: (info) => <span className="capitalize">{info.getValue()}</span>,
+        cell: (info) => <span className="whitespace-nowrap">{info.getValue()}</span>,
       }),
       columnHelper.accessor('problem.difficulty', {
         header: () => 'Difficulty',
@@ -198,58 +198,59 @@ export const TrackTable = ({
   })
 
   return (
-    <div className="mx-auto max-w-5xl">
-      <Table className="mx-auto w-fit">
-        <TableHeader>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow
-              key={headerGroup.id}
-              className="border-zinc-700 text-xs font-medium"
-            >
-              {headerGroup.headers.map((header) => (
-                <TableHead key={header.id}>
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(header.column.columnDef.header, header.getContext())}
-                </TableHead>
-              ))}
-            </TableRow>
-          ))}
-        </TableHeader>
-        <TableBody>
-          {table.getRowModel().rows.map((row) => (
-            <TableRow
-              key={row.id}
-              className="border-zinc-700 text-xs"
-            >
-              {row.getVisibleCells().map((cell) => (
-                <TableCell key={cell.id}>
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </TableCell>
-              ))}
-            </TableRow>
-          ))}
-        </TableBody>
-        <TableFooter className="border-zinc-700 text-xs font-medium">
-          <TableRow>
-            <TableCell
-              colSpan={5}
-              className="text-right text-xs font-medium text-gray-500"
-            >
-              Total
-            </TableCell>
-
-            {sortedLeetcoders.map((leetcoder) => (
+    <Table className="mx-auto w-full">
+      <TableHeader>
+        {table.getHeaderGroups().map((headerGroup) => (
+          <TableRow
+            key={headerGroup.id}
+            className="border-zinc-700 text-xs font-medium"
+          >
+            {headerGroup.headers.map((header) => (
+              <TableHead key={header.id}>
+                {header.isPlaceholder
+                  ? null
+                  : flexRender(header.column.columnDef.header, header.getContext())}
+              </TableHead>
+            ))}
+          </TableRow>
+        ))}
+      </TableHeader>
+      <TableBody>
+        {table.getRowModel().rows.map((row) => (
+          <TableRow
+            key={row.id}
+            className="border-zinc-700 text-xs"
+          >
+            {row.getVisibleCells().map((cell) => (
               <TableCell
-                key={leetcoder.id}
-                className="text-center"
+                key={cell.id}
+                className="text-xs"
               >
-                {leetcoderSolvedCounts[leetcoder.id]}
+                {flexRender(cell.column.columnDef.cell, cell.getContext())}
               </TableCell>
             ))}
           </TableRow>
-        </TableFooter>
-      </Table>
-    </div>
+        ))}
+      </TableBody>
+      <TableFooter className="border-zinc-700 text-xs font-medium">
+        <TableRow>
+          <TableCell
+            colSpan={5}
+            className="text-right text-xs font-medium text-gray-500"
+          >
+            Total
+          </TableCell>
+
+          {sortedLeetcoders.map((leetcoder) => (
+            <TableCell
+              key={leetcoder.id}
+              className="text-center"
+            >
+              {leetcoderSolvedCounts[leetcoder.id]}
+            </TableCell>
+          ))}
+        </TableRow>
+      </TableFooter>
+    </Table>
   )
 }

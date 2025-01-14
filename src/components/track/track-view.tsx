@@ -9,7 +9,7 @@ const TrackView = ({ tableData, leetcoders, userId, groupId }: TrackViewProps) =
   const { submitDailyProblem } = useSubmitDailyProblem()
 
   return (
-    <main className="mx-auto max-w-screen-xl py-5">
+    <main className="mx-auto w-full max-w-screen-xl py-5">
       <TrackTable
         tableData={tableData}
         leetcoders={leetcoders}
