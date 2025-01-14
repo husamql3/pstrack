@@ -8,9 +8,9 @@ import {
 
 import { TableRowOutput } from '@/types/tableRow.type'
 import { Difficulty } from '@/types/difficulty.type'
-import { cn } from '@/lib/utils'
 import { getDifficultyColor } from '@/utils/getDifficultyColor'
 import { TrackTableProps } from '@/types/TrackTableProps.type'
+import { cn } from '@/lib/utils'
 
 import {
   Table,
@@ -31,8 +31,29 @@ export const TrackTable = ({
   onSubmit,
   groupId,
 }: TrackTableProps) => {
-  const [submittingCheckboxId, setSubmittingCheckboxId] = useState<string | null>(null) // Track the currently submitting checkbox
-  const [optimisticUpdates, setOptimisticUpdates] = useState<Record<string, boolean>>({}) // Track optimistic updates
+  const [submittingCheckboxId, setSubmittingCheckboxId] = useState<string | null>(null)
+  const [optimisticUpdates, setOptimisticUpdates] = useState<Record<string, boolean>>({})
+
+  // Calculate the number of problems each leetcoder has solved
+  const leetcoderSolvedCounts = useMemo(() => {
+    const counts: Record<string, number> = {}
+
+    leetcoders.forEach((leetcoder) => {
+      counts[leetcoder.id] = tableData.reduce((acc, row) => {
+        const hasSolved = row.userSubmissions.some((sub) => sub.user_id === leetcoder.id)
+        return acc + (hasSolved ? 1 : 0)
+      }, 0)
+    })
+
+    return counts
+  }, [tableData, leetcoders])
+
+  // Sort leetcoders by the number of problems solved (descending order)
+  const sortedLeetcoders = useMemo(() => {
+    return [...leetcoders].sort((a, b) => {
+      return leetcoderSolvedCounts[b.id] - leetcoderSolvedCounts[a.id]
+    })
+  }, [leetcoders, leetcoderSolvedCounts])
 
   const columns = useMemo(
     () => [
@@ -92,7 +113,8 @@ export const TrackTable = ({
           },
         }
       ),
-      ...leetcoders.map((leetcoder) =>
+      // Use the sortedLeetcoders array instead of the original leetcoders array
+      ...sortedLeetcoders.map((leetcoder) =>
         columnHelper.accessor(
           (row) =>
             row.userSubmissions.find((sub) => sub.user_id === leetcoder.id) || false,
@@ -100,14 +122,13 @@ export const TrackTable = ({
             id: leetcoder.id,
             header: () => <span>@{leetcoder.username.toLowerCase()}</span>,
             cell: (info) => {
-              const isCurrentCheckboxSubmitting = submittingCheckboxId === leetcoder.id // Check if this checkbox is submitting
+              const isCurrentCheckboxSubmitting = submittingCheckboxId === leetcoder.id
               const isCheckedOptimistically =
-                optimisticUpdates[`${leetcoder.id}-${info.row.original.problem.id}`] // Check optimistic state
+                optimisticUpdates[`${leetcoder.id}-${info.row.original.problem.id}`]
 
               const onCheck = async () => {
-                setSubmittingCheckboxId(leetcoder.id) // Set the current checkbox as submitting
+                setSubmittingCheckboxId(leetcoder.id)
 
-                // Optimistically update the UI
                 setOptimisticUpdates((prev) => ({
                   ...prev,
                   [`${leetcoder.id}-${info.row.original.problem.id}`]: true,
@@ -123,20 +144,18 @@ export const TrackTable = ({
                   })
 
                   if (!success) {
-                    // Revert the optimistic update if the submission fails
                     setOptimisticUpdates((prev) => ({
                       ...prev,
                       [`${leetcoder.id}-${info.row.original.problem.id}`]: false,
                     }))
                   }
                 } catch {
-                  // Revert the optimistic update if there's an error
                   setOptimisticUpdates((prev) => ({
                     ...prev,
                     [`${leetcoder.id}-${info.row.original.problem.id}`]: false,
                   }))
                 } finally {
-                  setSubmittingCheckboxId(null) // Reset after submission
+                  setSubmittingCheckboxId(null)
                 }
               }
 
@@ -147,9 +166,9 @@ export const TrackTable = ({
                   <Checkbox
                     checked={isChecked}
                     disabled={
-                      userId !== leetcoder.id || // Disable if not the current user
-                      Boolean(info.getValue()) || // Disable if already solved
-                      isCurrentCheckboxSubmitting // Disable if this checkbox is submitting
+                      userId !== leetcoder.id ||
+                      Boolean(info.getValue()) ||
+                      isCurrentCheckboxSubmitting
                     }
                     onCheckedChange={onCheck}
                   />
@@ -160,7 +179,15 @@ export const TrackTable = ({
         )
       ),
     ],
-    [groupId, leetcoders, onSubmit, optimisticUpdates, submittingCheckboxId, userId]
+    [
+      sortedLeetcoders,
+      leetcoders.length,
+      submittingCheckboxId,
+      optimisticUpdates,
+      userId,
+      onSubmit,
+      groupId,
+    ]
   )
 
   const table = useReactTable({
