@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-export const signUpSchema = z.object({
+export const SignUpSchema = z.object({
   email: z.string().email('Invalid email address').trim().toLowerCase(),
   password: z
     .string()
@@ -10,7 +10,7 @@ export const signUpSchema = z.object({
     .regex(/[A-Z]/, 'At least 1 uppercase letter'),
 })
 
-export type SignupFormData = z.infer<typeof signUpSchema>
+export type SignupFormData = z.infer<typeof SignUpSchema>
 
 export const SigninSchema = z.object({
   email: z.string().email('Invalid email address').trim().toLowerCase(),
