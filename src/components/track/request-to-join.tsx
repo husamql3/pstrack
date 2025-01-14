@@ -46,7 +46,7 @@ const RequestToJoin = ({ user, groupId }: { user: User; groupId: number }) => {
       <DialogTrigger asChild>
         <Button
           size="sm"
-          variant="ghost"
+          variant="secondary"
           className="px-3"
         >
           Request to join
