@@ -2,7 +2,7 @@ import { Spotlight } from '@/components/ui/spotlight'
 
 export const LandingBg = () => {
   return (
-    <div className="bg-grid-white/[0.02] absolute flex h-svh w-full overflow-hidden rounded-md bg-black/[0.96] antialiased md:items-center md:justify-center">
+    <div className="bg-grid-white/[0.02] absolute hidden h-svh w-full overflow-hidden rounded-md bg-black/[0.96] antialiased md:flex md:items-center md:justify-center">
       <div
         className="pointer-events-none absolute inset-0"
         style={{

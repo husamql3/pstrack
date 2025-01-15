@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 
 const Header = () => {
   return (
-    <header className="mx-auto flex w-full max-w-screen-md justify-between pt-10">
+    <header className="mx-auto flex w-full max-w-screen-md justify-between px-3 pt-5 md:px-0 md:pt-8">
       <Logo />
 
       <Link

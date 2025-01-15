@@ -1,22 +1,22 @@
-import Link from 'next/link'
-
 import { version } from '@/data/CONSTANTS'
 
 const Footer = () => {
   return (
-    <footer className="mx-auto flex w-full max-w-screen-md justify-between pb-5 text-sm">
+    <footer className="mx-auto flex w-full max-w-screen-md justify-between px-3 pb-5 text-sm md:px-3">
       <p className="dark-fit text-sm">
         © {new Date().getFullYear()} PSTrack. | v{version}
       </p>
 
       <div>
         <span>Crafted by</span>
-        <Link
+        <a
           href="https://www.linkedin.com/in/husamahmud/"
-          className="ml-1 text-xs font-semibold"
+          target="_blank"
+          rel="noopener noreferrer nofollow"
+          className="ml-1 text-xs font-semibold transition-all duration-200 hover:underline"
         >
           @Hüsam
-        </Link>
+        </a>
       </div>
     </footer>
   )
