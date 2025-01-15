@@ -2,6 +2,7 @@ import Link from 'next/link'
 
 import { Logo } from '@/components/components/logo'
 import { Button } from '@/components/ui/button'
+import { LogIn } from 'lucide-react'
 
 const Header = () => {
   return (
@@ -12,7 +13,13 @@ const Header = () => {
         prefetch
         href="/login"
       >
-        <Button>Login</Button>
+        <Button
+          variant="outline"
+          className="h-10 rounded-full border-2 px-5 text-sm font-medium"
+        >
+          Login
+          <LogIn size={7} />
+        </Button>
       </Link>
     </header>
   )
