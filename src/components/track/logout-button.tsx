@@ -1,9 +1,11 @@
 'use client'
 
 import { useTransition } from 'react'
+
 import { logout } from '@/supabase/auth.service'
-import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
 import { toast } from '@/hooks/use-toast'
+
+import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
 
 const LogoutButton = () => {
   const [isPending, startTransition] = useTransition()

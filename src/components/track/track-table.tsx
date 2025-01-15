@@ -242,10 +242,7 @@ export const TrackTable = ({
           </TableCell>
 
           {sortedLeetcoders.map((leetcoder) => (
-            <TableCell
-              key={leetcoder.id}
-              className="text-center"
-            >
+            <TableCell key={leetcoder.id}>
               {leetcoderSolvedCounts[leetcoder.id]}
             </TableCell>
           ))}
