@@ -1,8 +1,8 @@
 import Link from 'next/link'
+import { LogIn } from 'lucide-react'
 
 import { Logo } from '@/components/components/logo'
 import { Button } from '@/components/ui/button'
-import { LogIn } from 'lucide-react'
 
 const Header = () => {
   return (
