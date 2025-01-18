@@ -1,4 +1,4 @@
-import { submissions } from '@prisma/client'
+import { type submissions } from '@prisma/client'
 import { NextRequest, NextResponse } from 'next/server'
 
 import { addCheckSubmission } from '@/prisma/dao/submissions.dao'
