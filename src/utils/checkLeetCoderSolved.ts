@@ -1,17 +1,8 @@
 import { recentSubmissionListQuery } from '@/lib/graphql/recentSubmissionList.gql'
-
-type RecentSubmission = {
-  title: string
-  titleSlug: string
-  status: number
-  lang: string
-  timestamp: string
-}
-
-type ValidateDailyProblemSolved = {
-  lc_username: string
-  problem_slug: string
-}
+import {
+  RecentSubmission,
+  ValidateDailyProblemSolved,
+} from '@/types/validateDailyProblemSolved.type'
 
 export const validateDailyProblemSolved = async ({
   lc_username,

@@ -5,7 +5,6 @@ import { User } from '@supabase/auth-js'
 
 import { fetcher } from '@/utils/fetcher'
 import { toast } from '@/hooks/use-toast'
-import { checkLeetCodeUserExists } from '@/utils/checkLeetCoderExist'
 
 export const handleInsertLeetcoder = async (
   formData: FormData,
@@ -20,17 +19,6 @@ export const handleInsertLeetcoder = async (
     id: user.id,
     gh_username: formData.get('gh_username') as string,
     lc_username: formData.get('lc_username') as string,
-  }
-
-  // todo: check if leetcode username exists using gql
-  const leetCodeUserExists = await checkLeetCodeUserExists(data.lc_username)
-  if (!leetCodeUserExists) {
-    toast({
-      title: 'LeetCode Username Not Found',
-      description: 'The provided LeetCode username does not exist.',
-      variant: 'destructive',
-    })
-    return false
   }
 
   try {
@@ -54,12 +42,26 @@ export const handleInsertLeetcoder = async (
       return false
     }
 
-    if (error instanceof Error && error.message === 'You are already registered.') {
-      toast({
-        title: 'Registration Error',
-        description: error.message,
-        variant: 'destructive',
-      })
+    if (error instanceof Error) {
+      if (error.message === 'You are already registered.') {
+        toast({
+          title: 'Registration Error',
+          description: error.message,
+          variant: 'destructive',
+        })
+      } else if (error.message === 'LeetCode user does not exist.') {
+        toast({
+          title: 'LeetCode User Error',
+          description: error.message,
+          variant: 'destructive',
+        })
+      } else if (error.message === 'Username already exist.') {
+        toast({
+          title: 'Username Error',
+          description: error.message,
+          variant: 'destructive',
+        })
+      }
 
       return false
     }

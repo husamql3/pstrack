@@ -104,3 +104,18 @@ export const isLeetcoderApproved = async (id: string): Promise<boolean> => {
     return false
   }
 }
+
+export const isUsernameExist = async (username: string): Promise<boolean> => {
+  try {
+    const data = await prisma.leetcoders.findMany({
+      where: {
+        username,
+      },
+    })
+
+    return !!data
+  } catch (error) {
+    console.error('catch isUsernameExist error:', error)
+    return false
+  }
+}

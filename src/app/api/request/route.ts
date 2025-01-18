@@ -2,15 +2,46 @@ import { ZodError } from 'zod'
 import { NextRequest, NextResponse } from 'next/server'
 
 import { LeetcoderInsertSchema } from '@/types/schema/leetcoder.schema'
-import { addLeetcoder, approveLeetcoder } from '@/models/dao/leetcoders.dao'
+import {
+  addLeetcoder,
+  approveLeetcoder,
+  isUsernameExist,
+} from '@/models/dao/leetcoders.dao'
 import { LeetcoderRequest } from '@/types/leetcoder.type'
+import { checkLeetCodeUserExists } from '@/utils/checkLeetCoderExist'
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
     body.group_no = Number(body.group_no)
 
+    // Validate the data
     const validatedData = LeetcoderInsertSchema.parse(body)
+
+    // Check if the LeetCode user exists
+    const leetCodeUserExists = await checkLeetCodeUserExists(validatedData.lc_username)
+    if (!leetCodeUserExists) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'LeetCode user does not exist.',
+        },
+        { status: 400 }
+      )
+    }
+
+    // Check if the username already exist
+    const usernameExist = await isUsernameExist(body.username)
+    console.log(usernameExist)
+    if (usernameExist) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Username already exist.',
+        },
+        { status: 409 }
+      )
+    }
 
     const data = await addLeetcoder(body.id, validatedData as LeetcoderRequest)
 
@@ -35,14 +66,24 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    if (error instanceof Error && error.message === 'You are already registered.') {
-      return NextResponse.json(
-        {
-          success: false,
-          error: error.message,
-        },
-        { status: 409 }
-      )
+    if (error instanceof Error) {
+      if (error.message === 'You are already registered.') {
+        return NextResponse.json(
+          {
+            success: false,
+            error: error.message,
+          },
+          { status: 409 }
+        )
+      } else if (error.message === 'Username already exist.') {
+        return NextResponse.json(
+          {
+            success: false,
+            error: error.message,
+          },
+          { status: 409 }
+        )
+      }
     }
 
     return NextResponse.json(
