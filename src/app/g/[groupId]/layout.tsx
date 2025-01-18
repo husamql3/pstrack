@@ -2,8 +2,8 @@ import { Suspense } from 'react'
 import { notFound } from 'next/navigation'
 
 import { getUser } from '@/hooks/get-user'
-import { checkGroupExists } from '@/models/dao/groups.dao'
-import { isLeetcoderApproved } from '@/models/dao/leetcoders.dao'
+import { checkGroupExists } from '@/prisma/dao/groups.dao'
+import { isLeetcoderApproved } from '@/prisma/dao/leetcoders.dao'
 
 import { TrackHeader } from '@/components/track/track-header'
 import { TableSkeleton } from '@/components/track/table-skeleton'

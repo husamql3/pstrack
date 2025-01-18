@@ -1,6 +1,6 @@
 import { roadmap } from '@prisma/client'
 
-import prisma from '@/models/prisma/prisma'
+import prisma from '@/prisma/prisma'
 
 export const fetchRoadmap = async (): Promise<roadmap[]> => {
   try {

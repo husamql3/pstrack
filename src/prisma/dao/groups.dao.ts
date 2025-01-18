@@ -1,6 +1,6 @@
 import { group_progress, groups, leetcoders, roadmap, submissions } from '@prisma/client'
 
-import prisma from '@/models/prisma/prisma'
+import prisma from '@/prisma/prisma'
 
 export const checkGroupExists = async (group_no: number): Promise<boolean> => {
   try {

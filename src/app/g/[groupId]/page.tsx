@@ -1,6 +1,6 @@
 import { generateTableData } from '@/utils/generateTableData'
-import { fetchGroupData } from '@/models/dao/groups.dao'
-import { fetchRoadmap } from '@/models/dao/roadmap.dao'
+import { fetchGroupData } from '@/prisma/dao/groups.dao'
+import { fetchRoadmap } from '@/prisma/dao/roadmap.dao'
 import { getUser } from '@/hooks/get-user'
 
 import { TrackView } from '@/components/track/track-view'

@@ -1,7 +1,7 @@
 import { submissions } from '@prisma/client'
 import { NextRequest, NextResponse } from 'next/server'
 
-import { addCheckSubmission } from '@/models/dao/submissions.dao'
+import { addCheckSubmission } from '@/prisma/dao/submissions.dao'
 import { validateDailyProblemSolved } from '@/utils/checkLeetCoderSolved'
 
 export async function POST(req: NextRequest) {

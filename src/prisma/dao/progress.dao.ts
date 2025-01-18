@@ -1,4 +1,4 @@
-import prisma from '@/models/prisma/prisma'
+import prisma from '@/prisma/prisma'
 
 import { group_progress } from '@prisma/client'
 

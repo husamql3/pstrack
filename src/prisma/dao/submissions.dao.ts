@@ -1,6 +1,6 @@
 import { submissions } from '@prisma/client'
 
-import prisma from '@/models/prisma/prisma'
+import prisma from '@/prisma/prisma'
 
 export const addCheckSubmission = async (
   submission: submissions

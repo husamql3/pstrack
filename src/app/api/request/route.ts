@@ -2,13 +2,13 @@ import { ZodError } from 'zod'
 import { NextRequest, NextResponse } from 'next/server'
 
 import { LeetcoderInsertSchema } from '@/types/schema/leetcoder.schema'
+import { LeetcoderRequest } from '@/types/leetcoder.type'
+import { checkLeetCodeUserExists } from '@/utils/checkLeetCoderExist'
 import {
   addLeetcoder,
   approveLeetcoder,
   isUsernameExist,
-} from '@/models/dao/leetcoders.dao'
-import { LeetcoderRequest } from '@/types/leetcoder.type'
-import { checkLeetCodeUserExists } from '@/utils/checkLeetCoderExist'
+} from '@/prisma/dao/leetcoders.dao'
 
 export async function POST(req: NextRequest) {
   try {
