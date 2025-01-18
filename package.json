@@ -13,11 +13,11 @@
     "lint": "next lint",
     "format": "prettier --write .",
     "tsc": "tsc --noEmit",
-    "prisma:generate": "prisma generate --schema=./src/models/prisma/schema.prisma",
-    "prisma:migrate:dev": "prisma migrate dev --name init --schema=./src/models/prisma/schema.prisma",
-    "prisma:migrate:deploy": "prisma migrate deploy --schema=./src/models/prisma/schema.prisma",
-    "prisma:studio": "prisma studio --schema=./src/models/prisma/schema.prisma",
-    "prisma:push": "prisma db push --schema=./src/models/prisma/schema.prisma"
+    "prisma:generate": "prisma generate --schema=./src/prisma/schema.prisma",
+    "prisma:migrate:dev": "prisma migrate dev --name init --schema=./src/prisma/schema.prisma",
+    "prisma:migrate:deploy": "prisma migrate deploy --schema=./src/prisma/schema.prisma",
+    "prisma:studio": "prisma studio --schema=./src/prisma/schema.prisma",
+    "prisma:push": "prisma db push --schema=./src/prisma/schema.prisma"
   },
   "dependencies": {
     "@prisma/client": "^6.2.1",
