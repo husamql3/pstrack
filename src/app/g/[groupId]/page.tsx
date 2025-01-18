@@ -10,8 +10,9 @@ const Page = async ({ params }: { params: Promise<{ groupId: string }> }) => {
   const user = await getUser()
 
   const groupData = await fetchGroupData(groupId)
-  const roadmap = await fetchRoadmap()
   if (!groupData) return null
+
+  const roadmap = await fetchRoadmap()
 
   const tableData = generateTableData({
     group_no: groupData.group_no,

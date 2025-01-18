@@ -3,10 +3,11 @@ import { notFound } from 'next/navigation'
 
 import { getUser } from '@/hooks/get-user'
 import { checkGroupExists } from '@/models/dao/groups.dao'
+import { isLeetcoderApproved } from '@/models/dao/leetcoders.dao'
 
 import { TrackHeader } from '@/components/track/track-header'
 import { TableSkeleton } from '@/components/track/table-skeleton'
-import { isLeetcoderApproved } from '@/models/dao/leetcoders.dao'
+import { TrackFooter } from '@/components/track/track-footer'
 
 const Layout = async ({
   children,
@@ -25,7 +26,7 @@ const Layout = async ({
   const isApproved = await isLeetcoderApproved(user?.id as string)
 
   return (
-    <div className="h-svh w-svw">
+    <div className="flex h-svh w-svw flex-col">
       <TrackHeader
         groupId={groupId}
         user={user!}
@@ -33,6 +34,8 @@ const Layout = async ({
       />
 
       <Suspense fallback={<TableSkeleton />}>{children}</Suspense>
+
+      <TrackFooter />
     </div>
   )
 }
