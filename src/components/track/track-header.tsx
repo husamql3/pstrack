@@ -20,7 +20,14 @@ const TrackHeader = ({
     <header className="mx-auto flex h-16 max-w-screen-lg items-center justify-between px-3">
       {/* Logo Section */}
       <div className="flex h-full items-center gap-5">
-        <Logo className="size-7" />
+        <Link
+          href="/"
+          className="flex items-center gap-2"
+          prefetch
+        >
+          <Logo className="size-7" />
+        </Link>
+
         <p className="text-lg font-semibold">Group #{groupId}</p>
       </div>
 

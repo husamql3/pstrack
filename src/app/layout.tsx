@@ -19,7 +19,7 @@ const roboto = Roboto({
 
 export const metadata: Metadata = {
   title: 'PSTrack',
-  description: '',
+  description: 'A platform that helps you solve, track, and grow in problem-solving,',
 }
 
 export default function RootLayout({
