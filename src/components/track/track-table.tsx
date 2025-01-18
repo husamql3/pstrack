@@ -22,6 +22,8 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Checkbox } from '@/components/ui/checkbox'
+import { getTopicColor } from '@/utils/getTopicColor'
+import { NeetCodeTopic } from '@/types/neetCodeTopic.type'
 
 const columnHelper = createColumnHelper<TableRowOutput>()
 
@@ -80,7 +82,19 @@ export const TrackTable = ({
       }),
       columnHelper.accessor('problem.topic', {
         header: () => 'Topic',
-        cell: (info) => <span className="whitespace-nowrap">{info.getValue()}</span>,
+        cell: (info) => {
+          const topic = info.getValue() as NeetCodeTopic
+          return (
+            <span
+              className={cn(
+                getTopicColor(topic),
+                'whitespace-nowrap rounded-lg px-2 py-1 text-xs font-medium'
+              )}
+            >
+              {info.getValue()}
+            </span>
+          )
+        },
       }),
       columnHelper.accessor('problem.difficulty', {
         header: () => 'Difficulty',

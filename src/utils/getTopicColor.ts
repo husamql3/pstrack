@@ -1,4 +1,3 @@
-// utils/getTopicColor.ts
 import { NeetCodeTopic } from '@/types/neetCodeTopic.type'
 
 export function getTopicColor(topic: NeetCodeTopic): string {
