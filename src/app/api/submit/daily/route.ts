@@ -10,6 +10,7 @@ export async function POST(req: NextRequest) {
       lc_username: string
       problem_slug: string
     }
+    console.log(body)
     const { lc_username, problem_slug, ...submission } = body
     body.group_no = Number(body.group_no)
 

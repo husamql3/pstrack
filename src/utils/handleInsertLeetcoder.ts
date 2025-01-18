@@ -34,8 +34,6 @@ export const handleInsertLeetcoder = async (
   }
 
   try {
-    // TODO: before submitting, check if the leetcode username exists using gql leetcode api
-    //TODO: check user is authenticated
     await fetcher('/api/request', 'POST', data)
     toast({
       title: 'Request submitted!',
