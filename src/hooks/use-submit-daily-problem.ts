@@ -20,13 +20,14 @@ export const useSubmitDailyProblem = (): UseSubmitDailyProblemReturn => {
     group_no,
   }: SubmitDailyProblem): Promise<boolean> => {
     try {
-      await fetcher('/api/submit/daily', 'POST', {
+      const res = await fetcher('/api/submit/daily', 'POST', {
         user_id,
         problem_slug,
         problem_id,
         lc_username,
         group_no,
       })
+      console.log(res)
 
       toast({
         title: 'Great job!',

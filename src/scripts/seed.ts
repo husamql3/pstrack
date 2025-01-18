@@ -4,6 +4,17 @@ const prisma = new PrismaClient()
 
 const leetcoders: leetcoders[] = [
   {
+    id: 'f07e0ca7-4a29-4f7d-9e39-220f95f204b9',
+    name: 'Hüsam',
+    email: 'husamahmud@gmail.com',
+    gh_username: 'husamahmud',
+    lc_username: 'husamql3',
+    group_no: 1,
+    status: 'approved',
+    username: 'husamql3',
+    created_at: null,
+  },
+  {
     id: '8236a8bd-8e20-4958-9618-98631584ce01',
     name: 'menna',
     email: 'bena.yalla@yahoo.com',
@@ -168,8 +179,8 @@ async function main() {
         email: leetcoder.email,
         group_no: 1,
         status: 'approved',
-        gh_username: 'johndoe',
-        lc_username: 'johndoe',
+        gh_username: leetcoder.gh_username,
+        lc_username: leetcoder.lc_username,
       },
     })
   }

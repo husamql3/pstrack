@@ -17,7 +17,7 @@ const TrackHeader = ({
   isApproved: boolean
 }) => {
   return (
-    <header className="mx-auto flex h-16 max-w-screen-lg items-center justify-between px-3">
+    <header className="mx-auto flex h-16 w-full max-w-screen-lg items-center justify-between px-3">
       {/* Logo Section */}
       <div className="flex h-full items-center gap-5">
         <Link
