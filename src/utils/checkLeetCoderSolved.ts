@@ -17,17 +17,19 @@ export const validateDailyProblemSolved = async ({
   lc_username,
   problem_slug,
 }: ValidateDailyProblemSolved): Promise<boolean> => {
+  const payload = {
+    query: recentSubmissionListQuery,
+    variables: { username: lc_username },
+  }
   try {
     const response = await fetch('https://leetcode.com/graphql', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        query: recentSubmissionListQuery,
-        variables: { username: 'husamahmud' },
-      }),
+      body: JSON.stringify(payload),
     })
+
     if (!response.ok) {
       console.error('Error validating daily problem submission:', response)
       return false

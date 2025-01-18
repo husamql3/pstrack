@@ -1,6 +1,6 @@
 import { ZodError } from 'zod'
 
-export const fetcher = async <T, B = unknown>(
+export const fetcherGql = async <T, B = unknown>(
   url: string,
   method: 'GET' | 'POST' | 'PUT' | 'DELETE',
   body?: B,
@@ -32,3 +32,4 @@ export const fetcher = async <T, B = unknown>(
 
   return response.json()
 }
+

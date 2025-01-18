@@ -9,19 +9,19 @@ datasource db {
 
 model group_progress {
   id              String   @id @default(uuid()) @db.Uuid
-  created_at      DateTime @default(now()) @db.Timestamptz
+  created_at      DateTime @default(now()) @db.Timestamptz(6)
   group_no        Int?
   current_problem Int?
-  group           groups?  @relation(fields: [group_no], references: [group_no])
   roadmap         roadmap? @relation(fields: [current_problem], references: [problem_order])
+  group           groups?  @relation(fields: [group_no], references: [group_no])
 }
 
 model groups {
   id             String           @id @default(uuid()) @db.Uuid
   group_no       Int              @unique @default(autoincrement())
   group_name     String
-  leetcoders     leetcoders[]
   group_progress group_progress[]
+  leetcoders     leetcoders[]
   submissions    submissions[]
 }
 
@@ -34,14 +34,14 @@ model leetcoders {
   group_no    Int
   status      String        @default("pending")
   username    String
-  created_at  DateTime?     @default(now()) @db.Timestamptz
-  group       groups?       @relation(fields: [group_no], references: [group_no])
+  created_at  DateTime?     @default(now()) @db.Timestamptz(6)
+  group       groups        @relation(fields: [group_no], references: [group_no])
   submissions submissions[]
 }
 
 model roadmap {
   id             String           @id @default(uuid()) @db.Uuid
-  created_at     DateTime         @default(now()) @db.Timestamptz
+  created_at     DateTime         @default(now()) @db.Timestamptz(6)
   problem_no     Int
   problem_order  Int              @unique
   problem_slug   String
@@ -54,14 +54,14 @@ model roadmap {
 
 model submissions {
   id         String     @default(uuid()) @db.Uuid
-  created_at DateTime   @default(now()) @db.Timestamptz
+  created_at DateTime   @default(now()) @db.Timestamptz(6)
   user_id    String     @db.Uuid
   problem_id String     @db.Uuid
   solved     Boolean    @default(true)
   group_no   Int?
-  user       leetcoders @relation(fields: [user_id], references: [id])
-  problem    roadmap    @relation(fields: [problem_id], references: [id])
   group      groups?    @relation(fields: [group_no], references: [group_no])
+  problem    roadmap    @relation(fields: [problem_id], references: [id])
+  user       leetcoders @relation(fields: [user_id], references: [id])
 
   @@id([id, user_id])
 }
