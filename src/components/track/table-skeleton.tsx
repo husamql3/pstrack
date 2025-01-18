@@ -2,7 +2,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 
 export const TableSkeleton = () => {
   return (
-    <div className="mx-auto max-w-5xl flex-1">
+    <div className="mx-auto max-w-5xl flex-1 py-5">
       <div className="mx-auto w-fit">
         {/* Table Header */}
         <div className="flex border-b border-zinc-700">
