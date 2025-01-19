@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import {
   createColumnHelper,
   flexRender,
@@ -12,8 +12,8 @@ import { getDifficultyColor } from '@/utils/getDifficultyColor'
 import { TrackTableProps } from '@/types/TrackTableProps.type'
 import { cn } from '@/lib/utils'
 import { getTopicColor } from '@/utils/getTopicColor'
-import { NeetCodeTopic } from '@/types/neetCodeTopic.type'
 import { PROBLEM_BASE_URL } from '@/data/CONSTANTS'
+import { Topic } from '@/types/topics.type'
 
 import {
   Table,
@@ -84,7 +84,7 @@ export const TrackTable = ({
       columnHelper.accessor('problem.topic', {
         header: () => 'Topic',
         cell: (info) => {
-          const topic = info.getValue() as NeetCodeTopic
+          const topic = info.getValue() as Topic
           return (
             <span
               className={cn(
