@@ -37,16 +37,16 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser()
   console.log('middleware user', user?.email)
 
-  // if (
-  //   !user &&
-  //   !request.nextUrl.pathname.startsWith('/login') &&
-  //   !request.nextUrl.pathname.startsWith('/auth')
-  // ) {
-  //   // no user, potentially respond by redirecting the user to the login page
-  //   const url = request.nextUrl.clone()
-  //   url.pathname = '/login'
-  //   return NextResponse.redirect(url)
-  // }
+  const allowedUserEmail = process.env.ADMIN_EMAIL
+
+  // Check if the user is trying to access the protected route
+  if (request.nextUrl.pathname.startsWith('/dashboard')) {
+    if (!user || user.email !== allowedUserEmail) {
+      const url = request.nextUrl.clone()
+      url.pathname = '/404'
+      return NextResponse.redirect(url)
+    }
+  }
 
   return supabaseResponse
 }
