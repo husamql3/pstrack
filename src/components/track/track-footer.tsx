@@ -1,7 +1,7 @@
 import { Bug } from 'lucide-react'
 import { IoLogoGithub } from 'react-icons/io5'
 
-import { version } from '@/data/CONSTANTS'
+import { VERSION } from '@/data/CONSTANTS'
 
 import { Button } from '@/components/ui/button'
 
@@ -9,7 +9,7 @@ export const TrackFooter = () => {
   return (
     <footer className="mx-auto flex w-full max-w-screen-lg items-end justify-between px-3 pb-2 text-sm md:px-3">
       <p className="dark-fit text-sm">
-        © {new Date().getFullYear()} PSTrack. | v{version}
+        © {new Date().getFullYear()} PSTrack. | v{VERSION}
       </p>
 
       <div className="space-x-1">

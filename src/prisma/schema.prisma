@@ -45,7 +45,6 @@ model roadmap {
   problem_no     Int
   problem_order  Int              @unique
   problem_slug   String
-  link           String
   topic          String
   difficulty     String           @default("easy")
   group_progress group_progress[]

@@ -11,6 +11,9 @@ import { Difficulty } from '@/types/difficulty.type'
 import { getDifficultyColor } from '@/utils/getDifficultyColor'
 import { TrackTableProps } from '@/types/TrackTableProps.type'
 import { cn } from '@/lib/utils'
+import { getTopicColor } from '@/utils/getTopicColor'
+import { NeetCodeTopic } from '@/types/neetCodeTopic.type'
+import { PROBLEM_BASE_URL } from '@/data/CONSTANTS'
 
 import {
   Table,
@@ -22,8 +25,6 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Checkbox } from '@/components/ui/checkbox'
-import { getTopicColor } from '@/utils/getTopicColor'
-import { NeetCodeTopic } from '@/types/neetCodeTopic.type'
 
 const columnHelper = createColumnHelper<TableRowOutput>()
 
@@ -70,7 +71,7 @@ export const TrackTable = ({
           const problem = info.getValue()
           return (
             <a
-              href={problem.link}
+              href={PROBLEM_BASE_URL + problem.problem_slug}
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-600 hover:underline"

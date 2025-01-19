@@ -192,7 +192,6 @@ async function main() {
         problem_no: problem.problem_no,
         problem_order: problem.problem_order,
         problem_slug: problem.problem_slug,
-        link: problem.link,
         topic: problem.topic,
         difficulty: problem.difficulty,
       },
