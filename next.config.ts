@@ -4,7 +4,6 @@ const nextConfig: NextConfig = {
   output: 'standalone',
   experimental: {
     optimizeCss: true,
-    ppr: true,
   },
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
