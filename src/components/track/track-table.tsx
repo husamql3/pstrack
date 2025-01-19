@@ -137,7 +137,6 @@ export const TrackTable = ({
           {
             id: leetcoder.id,
             header: () => (
-              // change style if the column for the current user
               <span
                 className={cn(
                   'whitespace-nowrap',
