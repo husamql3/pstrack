@@ -227,7 +227,7 @@ export const TrackTable = ({
   }
 
   return (
-    <div className="w-svw overflow-hidden px-3">
+    <div className="w-svw px-3">
       <Table className="mx-auto px-3">
         <TableHeader className="border-t border-zinc-700">
           {table.getHeaderGroups().map((headerGroup) => (
