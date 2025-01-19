@@ -5,6 +5,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+import { MoveDown } from 'lucide-react'
 
 import { TableRowOutput } from '@/types/tableRow.type'
 import { Difficulty } from '@/types/difficulty.type'
@@ -37,6 +38,7 @@ export const TrackTable = ({
 }: TrackTableProps) => {
   const [checkedState, setCheckedState] = useState<Record<string, boolean>>({})
   const [loadingState, setLoadingState] = useState<Record<string, boolean>>({})
+  const [visibleRecords, setVisibleRecords] = useState(15) // State to track visible records
 
   // Calculate the number of problems each leetcoder has solved
   const leetcoderSolvedCounts = useMemo(() => {
@@ -59,6 +61,11 @@ export const TrackTable = ({
     })
   }, [leetcoders, leetcoderSolvedCounts])
 
+  // Slice the tableData to only show the first `visibleRecords` items
+  const visibleTableData = useMemo(() => {
+    return tableData.slice(0, visibleRecords)
+  }, [tableData, visibleRecords])
+
   const columns = useMemo(
     () => [
       columnHelper.accessor('groupProgressDate', {
@@ -71,7 +78,7 @@ export const TrackTable = ({
           const problem = info.getValue()
           return (
             <a
-              href={PROBLEM_BASE_URL + problem.problem_slug}
+              href={PROBLEM_BASE_URL + '/' + problem.problem_slug}
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-600 hover:underline"
@@ -187,6 +194,9 @@ export const TrackTable = ({
                     checked={isChecked}
                     disabled={isDisabled}
                     onCheckedChange={handleCheck}
+                    className={cn(
+                      'rounded-[.3rem] disabled:opacity-100 dark:data-[state=checked]:bg-[#2383E2]'
+                    )}
                   />
                 </div>
               )
@@ -207,10 +217,14 @@ export const TrackTable = ({
   )
 
   const table = useReactTable({
-    data: tableData,
+    data: visibleTableData, // Use the sliced data
     columns,
     getCoreRowModel: getCoreRowModel(),
   })
+
+  const handleShowMore = () => {
+    setVisibleRecords((prev) => prev + 20) // Increment visible records by 20
+  }
 
   return (
     <Table className="mx-auto w-full">
@@ -247,8 +261,30 @@ export const TrackTable = ({
           </TableRow>
         ))}
       </TableBody>
-      <TableFooter className="border-zinc-700 text-xs font-medium">
-        <TableRow>
+
+      <TableFooter className="border-y border-zinc-700 text-xs font-medium">
+        {/* Show "Show More" button if there are more records */}
+        {tableData.length > visibleRecords && (
+          <TableRow
+            className="cursor-pointer border-y border-zinc-700"
+            onClick={handleShowMore}
+          >
+            <TableCell
+              colSpan={tableData.length}
+              className="flex w-full items-center justify-center whitespace-nowrap py-2 text-xs text-gray-500"
+            >
+              <MoveDown
+                size={12}
+                className="mr-1"
+              />
+              Load more
+            </TableCell>
+            <TableCell colSpan={tableData.length} />
+          </TableRow>
+        )}
+
+        {/* Show total count */}
+        <TableRow className="border-0">
           <TableCell
             colSpan={5}
             className="text-right text-xs font-medium text-gray-500"
