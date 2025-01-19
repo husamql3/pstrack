@@ -227,77 +227,79 @@ export const TrackTable = ({
   }
 
   return (
-    <Table className="mx-auto w-full">
-      <TableHeader className="border-t border-zinc-700">
-        {table.getHeaderGroups().map((headerGroup) => (
-          <TableRow
-            key={headerGroup.id}
-            className="border-zinc-700 text-xs font-medium"
-          >
-            {headerGroup.headers.map((header) => (
-              <TableHead key={header.id}>
-                {header.isPlaceholder
-                  ? null
-                  : flexRender(header.column.columnDef.header, header.getContext())}
-              </TableHead>
-            ))}
-          </TableRow>
-        ))}
-      </TableHeader>
-      <TableBody>
-        {table.getRowModel().rows.map((row) => (
-          <TableRow
-            key={row.id}
-            className="border-zinc-700 text-xs"
-          >
-            {row.getVisibleCells().map((cell) => (
+    <div className="w-svw overflow-hidden px-3">
+      <Table className="mx-auto px-3">
+        <TableHeader className="border-t border-zinc-700">
+          {table.getHeaderGroups().map((headerGroup) => (
+            <TableRow
+              key={headerGroup.id}
+              className="border-zinc-700 text-xs font-medium"
+            >
+              {headerGroup.headers.map((header) => (
+                <TableHead key={header.id}>
+                  {header.isPlaceholder
+                    ? null
+                    : flexRender(header.column.columnDef.header, header.getContext())}
+                </TableHead>
+              ))}
+            </TableRow>
+          ))}
+        </TableHeader>
+        <TableBody>
+          {table.getRowModel().rows.map((row) => (
+            <TableRow
+              key={row.id}
+              className="border-zinc-700 text-xs"
+            >
+              {row.getVisibleCells().map((cell) => (
+                <TableCell
+                  key={cell.id}
+                  className="text-xs"
+                >
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </TableCell>
+              ))}
+            </TableRow>
+          ))}
+        </TableBody>
+
+        <TableFooter className="border-y border-zinc-700 text-xs font-medium">
+          {/* Show "Show More" button if there are more records */}
+          {tableData.length > visibleRecords && (
+            <TableRow
+              className="cursor-pointer border-y border-zinc-700"
+              onClick={handleShowMore}
+            >
               <TableCell
-                key={cell.id}
-                className="text-xs"
+                colSpan={tableData.length}
+                className="flex w-full items-center justify-center whitespace-nowrap py-2 text-xs text-gray-500"
               >
-                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                <MoveDown
+                  size={12}
+                  className="mr-1"
+                />
+                Load more
+              </TableCell>
+              <TableCell colSpan={tableData.length} />
+            </TableRow>
+          )}
+
+          {/* Show total count */}
+          <TableRow className="border-0">
+            <TableCell
+              colSpan={5}
+              className="text-right text-xs font-medium text-gray-500"
+            >
+              Total
+            </TableCell>
+            {sortedLeetcoders.map((leetcoder) => (
+              <TableCell key={leetcoder.id}>
+                {leetcoderSolvedCounts[leetcoder.id]}
               </TableCell>
             ))}
           </TableRow>
-        ))}
-      </TableBody>
-
-      <TableFooter className="border-y border-zinc-700 text-xs font-medium">
-        {/* Show "Show More" button if there are more records */}
-        {tableData.length > visibleRecords && (
-          <TableRow
-            className="cursor-pointer border-y border-zinc-700"
-            onClick={handleShowMore}
-          >
-            <TableCell
-              colSpan={tableData.length}
-              className="flex w-full items-center justify-center whitespace-nowrap py-2 text-xs text-gray-500"
-            >
-              <MoveDown
-                size={12}
-                className="mr-1"
-              />
-              Load more
-            </TableCell>
-            <TableCell colSpan={tableData.length} />
-          </TableRow>
-        )}
-
-        {/* Show total count */}
-        <TableRow className="border-0">
-          <TableCell
-            colSpan={5}
-            className="text-right text-xs font-medium text-gray-500"
-          >
-            Total
-          </TableCell>
-          {sortedLeetcoders.map((leetcoder) => (
-            <TableCell key={leetcoder.id}>
-              {leetcoderSolvedCounts[leetcoder.id]}
-            </TableCell>
-          ))}
-        </TableRow>
-      </TableFooter>
-    </Table>
+        </TableFooter>
+      </Table>
+    </div>
   )
 }
