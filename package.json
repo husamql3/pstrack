@@ -10,6 +10,7 @@
     "dev": "next dev --turbopack",
     "build": "prisma generate --schema=./src/prisma/schema.prisma && next build",
     "start": "next start",
+    "prod": "vercel --prod",
     "lint": "next lint",
     "format": "prettier --write .",
     "tsc": "tsc --noEmit",

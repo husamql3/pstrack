@@ -3,11 +3,9 @@ name: CI
 on:
   pull_request:
     branches:
-      - main # TODO: remove
       - dev
   push:
     branches:
-      - main # TODO: remove
       - dev
 
 jobs:

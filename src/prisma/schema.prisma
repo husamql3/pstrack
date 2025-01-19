@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = "postgresql://pstrack_user:D93ugpIeH167tYmrYeBN2SG3KwJfJVRQ@dpg-cu14kvrqf0us73d6vhn0-a.oregon-postgres.render.com/pstrack"
+  url      = env("DATABASE_URL")
 }
 
 model group_progress {
