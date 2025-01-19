@@ -26,7 +26,7 @@ const Layout = async ({
   const isApproved = await isLeetcoderApproved(user?.id as string)
 
   return (
-    <div className="flex h-svh w-svw flex-col">
+    <div className="flex h-svh flex-col">
       <TrackHeader
         groupId={groupId}
         user={user!}

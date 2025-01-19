@@ -1,16 +1,20 @@
-import { useState, useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import {
   createColumnHelper,
   flexRender,
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+import { MoveDown } from 'lucide-react'
 
 import { TableRowOutput } from '@/types/tableRow.type'
 import { Difficulty } from '@/types/difficulty.type'
 import { getDifficultyColor } from '@/utils/getDifficultyColor'
 import { TrackTableProps } from '@/types/TrackTableProps.type'
 import { cn } from '@/lib/utils'
+import { getTopicColor } from '@/utils/getTopicColor'
+import { PROBLEM_BASE_URL } from '@/data/CONSTANTS'
+import { Topic } from '@/types/topics.type'
 
 import {
   Table,
@@ -22,8 +26,6 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Checkbox } from '@/components/ui/checkbox'
-import { getTopicColor } from '@/utils/getTopicColor'
-import { NeetCodeTopic } from '@/types/neetCodeTopic.type'
 
 const columnHelper = createColumnHelper<TableRowOutput>()
 
@@ -36,6 +38,7 @@ export const TrackTable = ({
 }: TrackTableProps) => {
   const [checkedState, setCheckedState] = useState<Record<string, boolean>>({})
   const [loadingState, setLoadingState] = useState<Record<string, boolean>>({})
+  const [visibleRecords, setVisibleRecords] = useState(15) // State to track visible records
 
   // Calculate the number of problems each leetcoder has solved
   const leetcoderSolvedCounts = useMemo(() => {
@@ -58,6 +61,11 @@ export const TrackTable = ({
     })
   }, [leetcoders, leetcoderSolvedCounts])
 
+  // Slice the tableData to only show the first `visibleRecords` items
+  const visibleTableData = useMemo(() => {
+    return tableData.slice(0, visibleRecords)
+  }, [tableData, visibleRecords])
+
   const columns = useMemo(
     () => [
       columnHelper.accessor('groupProgressDate', {
@@ -70,7 +78,7 @@ export const TrackTable = ({
           const problem = info.getValue()
           return (
             <a
-              href={problem.link}
+              href={PROBLEM_BASE_URL + '/' + problem.problem_slug}
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-600 hover:underline"
@@ -83,7 +91,7 @@ export const TrackTable = ({
       columnHelper.accessor('problem.topic', {
         header: () => 'Topic',
         cell: (info) => {
-          const topic = info.getValue() as NeetCodeTopic
+          const topic = info.getValue() as Topic
           return (
             <span
               className={cn(
@@ -136,7 +144,6 @@ export const TrackTable = ({
           {
             id: leetcoder.id,
             header: () => (
-              // change style if the column for the current user
               <span
                 className={cn(
                   'whitespace-nowrap',
@@ -187,6 +194,9 @@ export const TrackTable = ({
                     checked={isChecked}
                     disabled={isDisabled}
                     onCheckedChange={handleCheck}
+                    className={cn(
+                      'rounded-[.3rem] disabled:opacity-100 dark:data-[state=checked]:bg-[#2383E2]'
+                    )}
                   />
                 </div>
               )
@@ -207,61 +217,89 @@ export const TrackTable = ({
   )
 
   const table = useReactTable({
-    data: tableData,
+    data: visibleTableData, // Use the sliced data
     columns,
     getCoreRowModel: getCoreRowModel(),
   })
 
+  const handleShowMore = () => {
+    setVisibleRecords((prev) => prev + 20) // Increment visible records by 20
+  }
+
   return (
-    <Table className="mx-auto w-full">
-      <TableHeader>
-        {table.getHeaderGroups().map((headerGroup) => (
-          <TableRow
-            key={headerGroup.id}
-            className="border-zinc-700 text-xs font-medium"
-          >
-            {headerGroup.headers.map((header) => (
-              <TableHead key={header.id}>
-                {header.isPlaceholder
-                  ? null
-                  : flexRender(header.column.columnDef.header, header.getContext())}
-              </TableHead>
-            ))}
-          </TableRow>
-        ))}
-      </TableHeader>
-      <TableBody>
-        {table.getRowModel().rows.map((row) => (
-          <TableRow
-            key={row.id}
-            className="border-zinc-700 text-xs"
-          >
-            {row.getVisibleCells().map((cell) => (
+    <div className="w-svw px-3">
+      <Table className="mx-auto px-3">
+        <TableHeader className="border-t border-zinc-700">
+          {table.getHeaderGroups().map((headerGroup) => (
+            <TableRow
+              key={headerGroup.id}
+              className="border-zinc-700 text-xs font-medium"
+            >
+              {headerGroup.headers.map((header) => (
+                <TableHead key={header.id}>
+                  {header.isPlaceholder
+                    ? null
+                    : flexRender(header.column.columnDef.header, header.getContext())}
+                </TableHead>
+              ))}
+            </TableRow>
+          ))}
+        </TableHeader>
+        <TableBody>
+          {table.getRowModel().rows.map((row) => (
+            <TableRow
+              key={row.id}
+              className="border-zinc-700 text-xs"
+            >
+              {row.getVisibleCells().map((cell) => (
+                <TableCell
+                  key={cell.id}
+                  className="text-xs"
+                >
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </TableCell>
+              ))}
+            </TableRow>
+          ))}
+        </TableBody>
+
+        <TableFooter className="border-y border-zinc-700 text-xs font-medium">
+          {/* Show "Show More" button if there are more records */}
+          {tableData.length > visibleRecords && (
+            <TableRow
+              className="cursor-pointer border-y border-zinc-700"
+              onClick={handleShowMore}
+            >
               <TableCell
-                key={cell.id}
-                className="text-xs"
+                colSpan={tableData.length}
+                className="flex w-full items-center justify-center whitespace-nowrap py-2 text-xs text-gray-500"
               >
-                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                <MoveDown
+                  size={12}
+                  className="mr-1"
+                />
+                Load more
+              </TableCell>
+              <TableCell colSpan={tableData.length} />
+            </TableRow>
+          )}
+
+          {/* Show total count */}
+          <TableRow className="border-0">
+            <TableCell
+              colSpan={5}
+              className="text-right text-xs font-medium text-gray-500"
+            >
+              Total
+            </TableCell>
+            {sortedLeetcoders.map((leetcoder) => (
+              <TableCell key={leetcoder.id}>
+                {leetcoderSolvedCounts[leetcoder.id]}
               </TableCell>
             ))}
           </TableRow>
-        ))}
-      </TableBody>
-      <TableFooter className="border-zinc-700 text-xs font-medium">
-        <TableRow>
-          <TableCell
-            colSpan={5}
-            className="text-right text-xs font-medium text-gray-500"
-          >
-            Total
-          </TableCell>
-          {sortedLeetcoders.map((leetcoder) => (
-            <TableCell key={leetcoder.id}>
-              {leetcoderSolvedCounts[leetcoder.id]}
-            </TableCell>
-          ))}
-        </TableRow>
-      </TableFooter>
-    </Table>
+        </TableFooter>
+      </Table>
+    </div>
   )
 }

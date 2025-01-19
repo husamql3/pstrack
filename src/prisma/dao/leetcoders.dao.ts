@@ -113,7 +113,7 @@ export const isUsernameExist = async (username: string): Promise<boolean> => {
       },
     })
 
-    return !!data
+    return data.length > 0
   } catch (error) {
     console.error('catch isUsernameExist error:', error)
     return false

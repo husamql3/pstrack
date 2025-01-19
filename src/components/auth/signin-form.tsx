@@ -34,7 +34,7 @@ const SignInForm = () => {
         return
       }
 
-      router.push('/group/1')
+      router.push('/g/1')
     }
   }, [state.message, state.success, router])
 

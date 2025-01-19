@@ -31,7 +31,7 @@ const SignUpForm = () => {
           description: state.message,
           variant: 'success',
         })
-        router.push('/')
+        router.push('/g/1')
       }
     }
   }, [state.message, state.success, router])
