@@ -4,12 +4,12 @@ import { ColumnDef } from '@tanstack/react-table'
 import { BiShowAlt } from 'react-icons/bi'
 
 import { toast } from '@/hooks/use-toast'
-import { LeetcoderRow } from '@/types/supabase.type'
+import { Leetcoders } from '@/types/leetcoder.type'
 
 import { Button } from '@/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 
-export const requestsColumns: ColumnDef<LeetcoderRow>[] = [
+export const requestsColumns: ColumnDef<Leetcoders>[] = [
   {
     accessorKey: 'username',
     header: 'Username',
