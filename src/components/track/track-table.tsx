@@ -215,7 +215,7 @@ export const TrackTable = ({
 
   return (
     <Table className="mx-auto w-full">
-      <TableHeader>
+      <TableHeader className="border-t border-zinc-700">
         {table.getHeaderGroups().map((headerGroup) => (
           <TableRow
             key={headerGroup.id}
