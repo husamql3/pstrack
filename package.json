@@ -8,7 +8,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build",
+    "build": "prisma generate --schema=./src/prisma/schema.prisma && next build",
     "start": "next start",
     "lint": "next lint",
     "format": "prettier --write .",
