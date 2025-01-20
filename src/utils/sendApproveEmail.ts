@@ -18,13 +18,10 @@ export const sendApproveEmail = async ({ to, username, group_no }: SendEmail) =>
     .replace(/{{group_no}}/g, group_no)
     .replace(/{{group_link}}/g, groupLink)
 
-  const res = await resend.emails.send({
+  return await resend.emails.send({
     from: 'info@pstrack.tech',
     to,
     subject: 'Congratulations - You’ve been accepted to PSTrack',
     html: htmlContent,
   })
-  console.log('sendApproveEmail', res)
-
-  return res
 }
