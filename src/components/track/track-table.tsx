@@ -15,6 +15,7 @@ import { cn } from '@/lib/utils'
 import { getTopicColor } from '@/utils/getTopicColor'
 import { PROBLEM_BASE_URL } from '@/data/CONSTANTS'
 import { Topic } from '@/types/topics.type'
+import { parseDate } from '@/utils/parseDate'
 
 import {
   Table,
@@ -63,8 +64,18 @@ export const TrackTable = ({
 
   // Slice the tableData to only show the first `visibleRecords` items
   const visibleTableData = useMemo(() => {
-    return tableData.slice(0, visibleRecords)
+    // Sort the tableData by groupProgressDate in descending order
+    const sortedData = [...tableData].sort((a, b) => {
+      const dateA = parseDate(a.groupProgressDate || '')
+      const dateB = parseDate(b.groupProgressDate || '')
+      return dateB.getTime() - dateA.getTime() // Sort in descending order
+    })
+
+    // Slice the sorted data to only show the first `visibleRecords` items
+    return sortedData.slice(0, visibleRecords)
   }, [tableData, visibleRecords])
+
+  // Helper function to parse dates in DD/MM/YYYY format
 
   const columns = useMemo(
     () => [

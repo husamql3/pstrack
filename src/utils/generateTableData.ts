@@ -3,18 +3,6 @@ import { TableData, TableRow } from '@/types/tableRow.type'
 export const generateTableData = (groupData: TableRow): TableData => {
   const { roadmap, submission, group_progress } = groupData
 
-  // Find the group progress entry for the group
-  // const groupProgress = group_progress.find((progress) => progress.group_no === group_no)
-
-  // Format the created_at date to MM/DD/YYYY format
-  const formattedDate = group_progress
-    ? new Date(group_progress.created_at).toLocaleDateString('en-US', {
-        month: '2-digit',
-        day: '2-digit',
-        year: 'numeric',
-      })
-    : null
-
   return roadmap.map((problem) => {
     const problemSubmissions = submission.filter(
       (submission) => submission.problem_id === problem.id
@@ -23,6 +11,20 @@ export const generateTableData = (groupData: TableRow): TableData => {
     const uniqueUserIds = new Set(
       problemSubmissions.map((submission) => submission.user_id)
     )
+
+    // Find the group_progress record for this problem
+    const progressForProblem = group_progress.find(
+      (gp) => gp.current_problem === problem.problem_order
+    )
+
+    // Format the created_at date for this problem's progress
+    const formattedDate = progressForProblem
+      ? new Date(progressForProblem.created_at).toLocaleDateString('en-GB', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+        })
+      : null
 
     return {
       problemOrder: problem.problem_order,

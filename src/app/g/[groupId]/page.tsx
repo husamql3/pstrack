@@ -13,7 +13,7 @@ const Page = async ({ params }: { params: Promise<{ groupId: string }> }) => {
   if (!groupData) return null
 
   // todo: update this on RELEASE
-  const roadmap = await fetchRoadmap(0!)
+  const roadmap = await fetchRoadmap(groupData.group_progress)
 
   // if the group does not started yet, return message
   if (roadmap.length === 0) {
@@ -33,7 +33,7 @@ const Page = async ({ params }: { params: Promise<{ groupId: string }> }) => {
     roadmap: roadmap,
     group_progress: groupData.group_progress,
   })
-  console.log(tableData)
+  // console.log(tableData)
 
   return (
     <TrackView
