@@ -12,6 +12,7 @@ const Page = async ({ params }: { params: Promise<{ groupId: string }> }) => {
   const groupData = await fetchGroupData(groupId)
   if (!groupData) return null
 
+  // todo: update this on RELEASE
   const roadmap = await fetchRoadmap(0!)
 
   // if the group does not started yet, return message
@@ -20,7 +21,7 @@ const Page = async ({ params }: { params: Promise<{ groupId: string }> }) => {
       <div className="flex h-screen flex-col items-center justify-center">
         <h1 className="text-center text-2xl font-semibold">
           We&apos;re preparing something amazing for you! <br />
-          Stay tuned, and thanks for your patience. 🙌
+          Stay tuned, and thanks for your patience. 😉❤️
         </h1>
       </div>
     )
