@@ -16,6 +16,8 @@ const TrackHeader = ({
   groupId: number
   isApproved: boolean
 }) => {
+  const isHüsam = process.env.ADMIN_EMAIL === user?.email
+
   return (
     <header className="mx-auto flex w-full max-w-screen-lg items-center justify-between px-3 pt-3">
       {/* Logo Section */}
@@ -30,6 +32,16 @@ const TrackHeader = ({
 
         <p className="text-lg font-semibold">Group #{groupId}</p>
       </div>
+
+      {isHüsam && (
+        <Link
+          href="/dashboard"
+          className="flex items-center gap-2"
+          prefetch
+        >
+          <p className="text-blue-500 underline">Admin</p>
+        </Link>
+      )}
 
       {/* User Menu or Login Button */}
       <div className="flex flex-row-reverse items-center gap-5">
