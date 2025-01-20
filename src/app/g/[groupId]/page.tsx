@@ -13,9 +13,10 @@ const Page = async ({ params }: { params: Promise<{ groupId: string }> }) => {
   if (!groupData) return null
 
   // todo: update this on RELEASE
-  const roadmap = await fetchRoadmap(groupData.group_progress)
+  // const roadmap = await fetchRoadmap(groupData.group_progress)
+  const roadmap = await fetchRoadmap([])
 
-  // if the group does not started yet, return message
+  // if the group does not start yet, return message
   if (roadmap.length === 0) {
     return (
       <div className="flex h-screen flex-col items-center justify-center">
