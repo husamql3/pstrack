@@ -12,7 +12,19 @@ const Page = async ({ params }: { params: Promise<{ groupId: string }> }) => {
   const groupData = await fetchGroupData(groupId)
   if (!groupData) return null
 
-  const roadmap = await fetchRoadmap(groupData.group_progress.current_problem!)
+  const roadmap = await fetchRoadmap(0!)
+
+  // if the group does not started yet, return message
+  if (roadmap.length === 0) {
+    return (
+      <div className="flex h-screen flex-col items-center justify-center">
+        <h1 className="text-center text-2xl font-semibold">
+          We&apos;re preparing something amazing for you! <br />
+          Stay tuned, and thanks for your patience. 🙌
+        </h1>
+      </div>
+    )
+  }
 
   const tableData = generateTableData({
     group_no: groupData.group_no,
