@@ -19,7 +19,7 @@ export const checkGroupExists = async (group_no: number): Promise<boolean> => {
 
 export type GroupWithRelations = groups & {
   leetcoders: leetcoders[]
-  group_progress: group_progress[]
+  group_progress: group_progress
   submissions: (submissions & {
     problem: roadmap
     user: leetcoders
@@ -46,7 +46,13 @@ export const fetchGroupData = async (
             status: 'approved',
           },
         },
-        group_progress: true,
+        group_progress: {
+          where: {
+            current_problem: {
+              not: null,
+            },
+          },
+        },
         submissions: {
           include: {
             problem: true,
@@ -61,7 +67,14 @@ export const fetchGroupData = async (
       return null
     }
 
-    return groupData
+    const [currentProgress] = groupData.group_progress
+
+    const groupWithRelations: GroupWithRelations = {
+      ...groupData,
+      group_progress: currentProgress || null,
+    }
+
+    return groupWithRelations
   } catch (error) {
     // Safe error logging
     console.error('Error fetching group data:', {
