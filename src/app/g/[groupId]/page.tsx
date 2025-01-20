@@ -12,7 +12,7 @@ const Page = async ({ params }: { params: Promise<{ groupId: string }> }) => {
   const groupData = await fetchGroupData(groupId)
   if (!groupData) return null
 
-  const roadmap = await fetchRoadmap()
+  const roadmap = await fetchRoadmap(groupData.group_progress.current_problem!)
 
   const tableData = generateTableData({
     group_no: groupData.group_no,
@@ -20,8 +20,7 @@ const Page = async ({ params }: { params: Promise<{ groupId: string }> }) => {
     roadmap: roadmap,
     group_progress: groupData.group_progress,
   })
-  console.log(groupData.group_progress.current_problem)
-  console.log(groupData.group_progress.group_no)
+  console.log(tableData)
 
   return (
     <TrackView
