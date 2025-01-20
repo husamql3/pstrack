@@ -2,9 +2,9 @@ import fs from 'fs'
 import path from 'path'
 import { Resend } from 'resend'
 
-import { sendEmail } from '@/types/sendEmail.type'
+import { SendEmail } from '@/types/sendEmail.type'
 
-export const sendApproveEmail = async ({ to, username, group_no }: sendEmail) => {
+export const sendApproveEmail = async ({ to, username, group_no }: SendEmail) => {
   const resend = new Resend(process.env.RESEND_API_KEY)
 
   const projectRoot = process.cwd()
