@@ -42,6 +42,7 @@ jobs:
       - name: Push changes to origin
         if: github.event_name == 'push' && !contains(github.event.head_commit.message, '[skip ci]')
         env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PAT }}
         run: |
+          git remote set-url origin https://x-access-token:$GITHUB_TOKEN@github.com/pstack-org/pstrack.git
           git push origin main
