@@ -1,14 +1,14 @@
 import { TableData, TableRow } from '@/types/tableRow.type'
 
 export const generateTableData = (groupData: TableRow): TableData => {
-  const { group_no, roadmap, submission, group_progress } = groupData
+  const { roadmap, submission, group_progress } = groupData
 
   // Find the group progress entry for the group
-  const groupProgress = group_progress.find((progress) => progress.group_no === group_no)
+  // const groupProgress = group_progress.find((progress) => progress.group_no === group_no)
 
   // Format the created_at date to MM/DD/YYYY format
-  const formattedDate = groupProgress
-    ? new Date(groupProgress.created_at).toLocaleDateString('en-US', {
+  const formattedDate = group_progress
+    ? new Date(group_progress.created_at).toLocaleDateString('en-US', {
         month: '2-digit',
         day: '2-digit',
         year: 'numeric',

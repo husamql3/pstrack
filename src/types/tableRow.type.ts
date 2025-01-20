@@ -4,7 +4,7 @@ export type TableRow = {
   group_no: number
   roadmap: roadmap[]
   submission: submissions[]
-  group_progress: group_progress[]
+  group_progress: group_progress
 }
 
 export type TableRowOutput = {

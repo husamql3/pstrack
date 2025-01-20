@@ -20,7 +20,8 @@ const Page = async ({ params }: { params: Promise<{ groupId: string }> }) => {
     roadmap: roadmap,
     group_progress: groupData.group_progress,
   })
-  // console.log(tableData)
+  console.log(groupData.group_progress.current_problem)
+  console.log(groupData.group_progress.group_no)
 
   return (
     <TrackView
