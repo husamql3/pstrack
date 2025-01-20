@@ -15,8 +15,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.PAT }}
 
       - name: Set up Git identity
         run: |
@@ -34,16 +32,11 @@ jobs:
       - name: Merge upstream changes
         run: |
           git checkout main
-          git merge upstream/main --allow-unrelated-histories --strategy-option theirs || true
-
-      - name: Commit merged changes
-        run: |
-          git add .
-          git commit -m "Merged changes from upstream repository" || true
+          git merge upstream/main --allow-unrelated-histories
 
       - name: Push changes to origin
         if: github.event_name == 'push' && !contains(github.event.head_commit.message, '[skip ci]')
         env:
-          GITHUB_TOKEN: ${{ secrets.PAT }}
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
         run: |
           git push origin main
