@@ -39,4 +39,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
         run: |
+          git remote set-url origin https://x-access-token:$GITHUB_TOKEN@github.com/pstack-org/pstrack.git
           git push origin main
