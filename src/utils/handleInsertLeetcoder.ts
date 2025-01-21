@@ -28,7 +28,7 @@ export const handleInsertLeetcoder = async (
     })
     return true
   } catch (error) {
-    console.error('Error submitting request:', error.message)
+    console.error('Error submitting request:', error)
 
     if (error instanceof Error) {
       if (error.message === 'You are already registered.') {
