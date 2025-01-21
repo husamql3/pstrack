@@ -21,7 +21,7 @@ const Page = async ({ params }: { params: Promise<{ groupId: string }> }) => {
   if (roadmap.length === 0) {
     return (
       <div className="flex h-screen flex-col items-center justify-center">
-        <h1 className="text-center text-2xl font-semibold">
+        <h1 className="text-center text-2xl font-medium">
           We&apos;re preparing something amazing for you! <br />
           Stay tuned, and thanks for your patience. 😉❤️
         </h1>
