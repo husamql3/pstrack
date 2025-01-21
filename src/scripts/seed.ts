@@ -174,7 +174,7 @@ async function main() {
     await prisma.leetcoders.create({
       data: {
         id: leetcoder.id,
-        name: 'Hüsam',
+        name: leetcoder.name,
         username: leetcoder.username,
         email: leetcoder.email,
         group_no: 1,
