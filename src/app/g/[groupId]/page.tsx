@@ -4,6 +4,7 @@ import { fetchRoadmap } from '@/prisma/dao/roadmap.dao'
 import { getUser } from '@/hooks/get-user'
 
 import { TrackView } from '@/components/track/track-view'
+import { ConfettiFireworks } from '@/components/components/confetti-fireworks'
 
 const Page = async ({ params }: { params: Promise<{ groupId: string }> }) => {
   const groupId = Number((await params).groupId)
@@ -20,7 +21,7 @@ const Page = async ({ params }: { params: Promise<{ groupId: string }> }) => {
   if (roadmap.length === 0) {
     return (
       <div className="flex h-screen flex-col items-center justify-center">
-        <h1 className="text-center text-2xl font-semibold">
+        <h1 className="text-center text-2xl font-medium">
           We&apos;re preparing something amazing for you! <br />
           Stay tuned, and thanks for your patience. 😉❤️
         </h1>
@@ -37,12 +38,16 @@ const Page = async ({ params }: { params: Promise<{ groupId: string }> }) => {
   // console.log(tableData)
 
   return (
-    <TrackView
-      tableData={tableData}
-      leetcoders={groupData.leetcoders}
-      userId={user?.id}
-      groupId={groupId}
-    />
+    <>
+      <TrackView
+        tableData={tableData}
+        leetcoders={groupData.leetcoders}
+        userId={user?.id}
+        groupId={groupId}
+      />
+
+      <ConfettiFireworks />
+    </>
   )
 }
 

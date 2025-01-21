@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 
+import { useConfettiStore } from '@/stores/confettiStore'
 import { fetcher } from '@/utils/fetcher'
 import {
   SubmitDailyProblem,
@@ -11,6 +12,7 @@ import { toast } from '@/hooks/use-toast'
 
 export const useSubmitDailyProblem = (): UseSubmitDailyProblemReturn => {
   const router = useRouter()
+  const { triggerConfetti } = useConfettiStore()
 
   const submitDailyProblem = async ({
     user_id,
@@ -36,6 +38,7 @@ export const useSubmitDailyProblem = (): UseSubmitDailyProblemReturn => {
       })
 
       router.refresh()
+      triggerConfetti()
       return true
     } catch (error) {
       if (error instanceof Error && error.message === 'User has not solved the problem') {
