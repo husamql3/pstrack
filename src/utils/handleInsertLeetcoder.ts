@@ -1,6 +1,3 @@
-'use client'
-
-import { ZodError } from 'zod'
 import { User } from '@supabase/auth-js'
 
 import { fetcher } from '@/utils/fetcher'
@@ -31,16 +28,7 @@ export const handleInsertLeetcoder = async (
     })
     return true
   } catch (error) {
-    console.error('Error submitting request:', error)
-
-    if (error instanceof ZodError) {
-      toast({
-        title: 'Validation Error',
-        description: error.errors.map((err) => err.message).join(', '),
-        variant: 'destructive',
-      })
-      return false
-    }
+    console.error('Error submitting request:', error.message)
 
     if (error instanceof Error) {
       if (error.message === 'You are already registered.') {
@@ -58,6 +46,12 @@ export const handleInsertLeetcoder = async (
       } else if (error.message === 'Username already exist.') {
         toast({
           title: 'Username Error',
+          description: error.message,
+          variant: 'destructive',
+        })
+      } else {
+        toast({
+          title: 'Validation Error',
           description: error.message,
           variant: 'destructive',
         })
