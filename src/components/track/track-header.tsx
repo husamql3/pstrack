@@ -16,7 +16,8 @@ const TrackHeader = ({
   groupId: number
   isApproved: boolean
 }) => {
-  const isHüsam = process.env.ADMIN_EMAIL === user?.email
+  const isHusam =
+    process.env.ADMIN_EMAIL === user?.email && process.env.NODE_ENV === 'development'
 
   return (
     <header className="mx-auto flex w-full max-w-screen-lg items-center justify-between px-3 pt-3">
@@ -33,7 +34,7 @@ const TrackHeader = ({
         <p className="text-lg font-semibold">Group #{groupId}</p>
       </div>
 
-      {isHüsam && (
+      {isHusam && (
         <Link
           href="/dashboard"
           className="flex items-center gap-2"
