@@ -1,8 +1,12 @@
 {
-  "crons": [
-    {
-      "path": "/api/cron/add-group-progress",
-      "schedule": "0 0 * * *"
-    }
-  ]
+	"crons": [
+		{
+			"path": "/api/cron/add-group-progress",
+			"schedule": "0 0 * * *"
+		},
+		{
+			"path": "/api/cron/send-daily-problem-email",
+			"schedule": "0 6 * * *"
+		}
+	]
 }

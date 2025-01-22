@@ -1,5 +1,7 @@
-import prisma from '@/prisma/prisma'
 import { NextResponse } from 'next/server'
+
+import prisma from '@/prisma/prisma'
+import { sendErrorEmailToAdmin } from '@/utils/sendErrorEmailToAdmin'
 
 export async function GET() {
   try {
@@ -37,8 +39,12 @@ export async function GET() {
     }
 
     return NextResponse.json({ success: true, data: 'group progress added' })
-  } catch {
-    return NextResponse.json({ success: false, error: 'cron job failed' })
+  } catch (error) {
+    await sendErrorEmailToAdmin(error, 'GET /api/cron/add-group-progress')
+    return NextResponse.json({
+      success: false,
+      error: 'add group progress cron job failed',
+    })
   } finally {
     await prisma.$disconnect()
   }
