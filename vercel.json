@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/add-group-progress",
+      "schedule": "0 0 * * *"
+    }
+  ]
+}
