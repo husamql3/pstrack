@@ -10,8 +10,8 @@ datasource db {
 model group_progress {
   id              String   @id @default(uuid()) @db.Uuid
   created_at      DateTime @default(now()) @db.Timestamptz(6)
-  group_no        Int?
-  current_problem Int?
+  group_no        Int
+  current_problem Int
   roadmap         roadmap? @relation(fields: [current_problem], references: [problem_order])
   group           groups?  @relation(fields: [group_no], references: [group_no])
 }
