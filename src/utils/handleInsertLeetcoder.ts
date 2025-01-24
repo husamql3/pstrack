@@ -23,7 +23,7 @@ export const handleInsertLeetcoder = async (
     toast({
       title: 'Request submitted!',
       description:
-        'Your request is under review. You will be notified once it is approved.',
+        'Your request is under review. You will be notified once it is APPROVED.',
       variant: 'success',
     })
     return true

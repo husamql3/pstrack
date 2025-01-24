@@ -13,7 +13,7 @@ export const addLeetcoder = async (
       data: {
         ...request,
         id: user_id,
-        status: 'pending',
+        status: 'PENDING',
       },
     })
   } catch (error) {
@@ -30,7 +30,7 @@ export const fetchPendingLeetcoders = async (): Promise<Leetcoders[]> => {
   try {
     const data = await prisma.leetcoders.findMany({
       where: {
-        status: 'pending',
+        status: 'PENDING',
       },
     })
 
@@ -51,7 +51,7 @@ export const approveLeetcoder = async (id: string): Promise<leetcoders> => {
         id: id,
       },
       data: {
-        status: 'approved',
+        status: 'APPROVED',
       },
     })
   } catch (error) {
@@ -78,7 +78,7 @@ export const fetchGroupLeetcoders = async (group_no: number): Promise<leetcoders
     return await prisma.leetcoders.findMany({
       where: {
         group_no: group_no,
-        status: 'approved',
+        status: 'APPROVED',
       },
     })
   } catch (error) {
@@ -97,7 +97,7 @@ export const isLeetcoderApproved = async (
     const data = await prisma.leetcoders.findUnique({
       where: {
         id: id,
-        status: 'approved',
+        status: 'APPROVED',
         group_no,
       },
     })
@@ -131,11 +131,11 @@ export const isGroupFull = async (group_no: number): Promise<boolean> => {
         OR: [
           {
             group_no,
-            status: 'approved',
+            status: 'APPROVED',
           },
           {
             group_no,
-            status: 'pending',
+            status: 'PENDING',
           },
         ],
       },

@@ -25,7 +25,7 @@ CREATE TABLE "leetcoders" (
     "gh_username" TEXT,
     "lc_username" TEXT NOT NULL,
     "group_no" INTEGER NOT NULL,
-    "status" TEXT NOT NULL DEFAULT 'pending',
+    "status" TEXT NOT NULL DEFAULT 'PENDING',
     "username" TEXT NOT NULL,
     "created_at" TIMESTAMPTZ(6) DEFAULT CURRENT_TIMESTAMP,
     "is_notified" BOOLEAN NOT NULL DEFAULT false,

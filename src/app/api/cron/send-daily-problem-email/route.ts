@@ -50,17 +50,17 @@ export async function GET(req: Request) {
       }
     }
 
-    // Fetch all approved leetcoders
-    const approvedLeetcoders = await prisma.leetcoders.findMany({
+    // Fetch all APPROVED leetcoders
+    const APPROVEDLeetcoders = await prisma.leetcoders.findMany({
       where: {
-        status: 'approved',
+        status: 'APPROVED',
       },
       include: {
         group: true, // Include group details
       },
     })
 
-    for (const leetcoder of approvedLeetcoders) {
+    for (const leetcoder of APPROVEDLeetcoders) {
       const { email, group } = leetcoder
 
       const problem = groupProblems.get(group.group_no)

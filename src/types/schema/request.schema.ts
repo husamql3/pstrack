@@ -6,7 +6,7 @@ export const RequestInsertSchema = z.object({
   group_no: z.number().nullable().optional(),
   lc_username: z.string().nullable().optional(),
   name: z.string().min(1, { message: 'Name is required' }),
-  status: z.enum(['pending', 'approved', 'rejected']),
+  status: z.enum(['PENDING', 'APPROVED']),
   user_id: z.string().uuid().nullable().optional(),
   username: z
     .string()
