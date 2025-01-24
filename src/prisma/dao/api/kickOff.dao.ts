@@ -22,9 +22,25 @@ export const getAllLeetcoders = async () => {
           },
         ],
       },
-      include: {
+      select: {
+        id: true,
+        name: true,
+        username: true,
+        email: true,
+        gh_username: true,
+        lc_username: true,
+        group_no: true,
+        is_notified: true,
         submissions: {
           where: {
+            solved: true,
+          },
+          select: {
+            id: true,
+            created_at: true,
+            group_no: true,
+            user_id: true,
+            problem_id: true,
             solved: true,
           },
         },
