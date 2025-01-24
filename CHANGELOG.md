@@ -1,5 +1,7 @@
 ### Changelog
 
+- 1.0.9: STYLE: Update scrollbar style
+- 1.0.8: FEAT: Add chart for count
 - 1.0.7: FEAT: Add group 2
 - 1.0.6: FEAT: Kick off neglected leetcoders after 5 non-solved problems
 - 1.0.5: FEAT: Secure cron job
