@@ -27,6 +27,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Checkbox } from '@/components/ui/checkbox'
+import CountChart from './count-chart'
 
 const columnHelper = createColumnHelper<TableRowOutput>()
 
@@ -139,9 +140,12 @@ export const TrackTable = ({
           cell: (info) => {
             const { totalSolved, total } = info.getValue()
             return (
-              <div className="flex items-baseline space-x-0.5">
+              <div className="flex items-center justify-between space-x-0.5">
                 <span className="text-base font-medium">{totalSolved}</span>
-                <span className="text-gray-500">/{total}</span>
+                <CountChart
+                  totalSolved={totalSolved}
+                  total={total}
+                />
               </div>
             )
           },
