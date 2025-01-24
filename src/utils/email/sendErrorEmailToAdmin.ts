@@ -2,11 +2,11 @@ import { Resend } from 'resend'
 import fs from 'fs'
 import path from 'path'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
-const adminEmail = process.env.ADMIN_EMAIL as string
-
 export const sendErrorEmailToAdmin = async (error: unknown, context: string) => {
   try {
+    const resend = new Resend(process.env.RESEND_API_KEY)
+    const adminEmail = process.env.ADMIN_EMAIL as string
+
     const projectRoot = process.cwd()
     const templatePath = path.join(projectRoot, 'public', 'errorEmailTemplate.html')
 

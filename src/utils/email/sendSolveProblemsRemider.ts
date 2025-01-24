@@ -2,9 +2,9 @@ import fs from 'fs'
 import path from 'path'
 import { Resend } from 'resend'
 
-import { SendEmail } from '@/types/sendEmail.type'
+import { SendRemiderEmail } from '@/types/sendEmail.type'
 
-export const sendApproveEmail = async ({ to, username, group_no }: SendEmail) => {
+export const sendSolveProblemsRemider = async ({ to, group_no }: SendRemiderEmail) => {
   const resend = new Resend(process.env.RESEND_API_KEY)
 
   const projectRoot = process.cwd()
@@ -13,15 +13,12 @@ export const sendApproveEmail = async ({ to, username, group_no }: SendEmail) =>
   let htmlContent = await fs.promises.readFile(templatePath, 'utf-8')
   const groupLink = `https://pstrack.tech/g/${group_no}`
 
-  htmlContent = htmlContent
-    .replace(/{{username}}/g, username)
-    .replace(/{{group_no}}/g, group_no)
-    .replace(/{{group_link}}/g, groupLink)
+  htmlContent = htmlContent.replace(/{{group_link}}/g, groupLink)
 
   return await resend.emails.send({
     from: 'info@pstrack.tech',
     to,
-    subject: 'Congratulations - You’ve been accepted to PSTrack',
+    subject: '1 Day Left: Solve Problems to Stay in PSTrack!',
     html: htmlContent,
   })
 }

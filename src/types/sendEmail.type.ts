@@ -11,3 +11,8 @@ export type SendDailyProblemEmail = {
   group_no: string
   email: string
 }
+
+export type SendRemiderEmail = {
+  group_no: string
+  to: string
+}

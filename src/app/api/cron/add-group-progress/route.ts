@@ -1,10 +1,21 @@
 import { NextResponse } from 'next/server'
 
 import prisma from '@/prisma/prisma'
-import { sendErrorEmailToAdmin } from '@/utils/sendErrorEmailToAdmin'
+import { sendErrorEmailToAdmin } from '@/utils/email/sendErrorEmailToAdmin'
 
-export async function GET() {
+/**
+ * @route GET /api/cron/add-group-progress
+ * works every day at 1am
+ **/
+export async function GET(req: Request) {
   try {
+    const secret = req.headers.get('X-Secret-Key')
+    if (secret !== process.env.CRON_SECRET_KEY) {
+      return NextResponse.json({ success: false, error: 'FUCK OFF' })
+    }
+
+    // return NextResponse.json({ success: true, data: 'secret key matched' })
+
     await prisma.$connect()
 
     // get all group progress
