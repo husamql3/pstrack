@@ -14,7 +14,7 @@
     "prod": "vercel --prod",
     "prev": "vercel",
     "lint": "next lint",
-    "format": "prettier --write .",
+    "format": "prettier --check .",
     "tsc": "tsc --noEmit",
     "prisma:generate": "prisma generate --schema=./src/prisma/schema.prisma",
     "prisma:migrate:dev": "prisma migrate dev --name init --schema=./src/prisma/schema.prisma",

@@ -32,8 +32,8 @@ jobs:
       - name: Run Eslint
         run: yarn lint
 
+      - name: Run TS type checks
+        run: yarn tsc --noEmit
+
       - name: Build
         run: yarn build
-
-#      - name: Run TS type checks
-#        run: yarn tsc --noEmit
