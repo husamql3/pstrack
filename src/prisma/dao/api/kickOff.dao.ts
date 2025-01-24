@@ -1,9 +1,14 @@
-import prisma from '@/prisma/prisma'
-import { leetcoders } from '@prisma/client'
+import { leetcoders, submissions } from '@prisma/client'
 
-export const getAllLeetcoders = async () => {
+import prisma from '@/prisma/prisma'
+
+type LeetcoderWithSubmissions = leetcoders & {
+  submissions: submissions[]
+}
+
+export const getAllLeetcoders = async (): Promise<LeetcoderWithSubmissions[]> => {
   try {
-    return await prisma.leetcoders.findMany({
+    return (await prisma.leetcoders.findMany({
       where: {
         OR: [
           {
@@ -22,30 +27,14 @@ export const getAllLeetcoders = async () => {
           },
         ],
       },
-      select: {
-        id: true,
-        name: true,
-        username: true,
-        email: true,
-        gh_username: true,
-        lc_username: true,
-        group_no: true,
-        is_notified: true,
+      include: {
         submissions: {
           where: {
             solved: true,
           },
-          select: {
-            id: true,
-            created_at: true,
-            group_no: true,
-            user_id: true,
-            problem_id: true,
-            solved: true,
-          },
         },
       },
-    })
+    })) as LeetcoderWithSubmissions[]
   } catch (error) {
     console.error('catch getAllLeetcoders error:', error)
     return []
