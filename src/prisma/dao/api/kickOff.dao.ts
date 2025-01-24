@@ -4,6 +4,7 @@ import prisma from '@/prisma/prisma'
 
 type LeetcoderWithSubmissions = leetcoders & {
   submissions: submissions[]
+  is_notified: boolean
 }
 
 export const getAllLeetcoders = async (): Promise<LeetcoderWithSubmissions[]> => {
