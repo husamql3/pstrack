@@ -4041,7 +4041,7 @@ prettier@^3.4.2:
 
 prisma@^6.2.1:
   version "6.2.1"
-  resolved "https://registry.npmjs.org/prisma/-/prisma-6.2.1.tgz"
+  resolved "https://registry.yarnpkg.com/prisma/-/prisma-6.2.1.tgz#457b210326d66d0e6f583cc6f9cd2819b984408f"
   integrity sha512-hhyM0H13pQleQ+br4CkzGizS5I0oInoeTw3JfLw1BRZduBSQxPILlJLwi+46wZzj9Je7ndyQEMGw/n5cN2fknA==
   dependencies:
     "@prisma/engines" "6.2.1"
