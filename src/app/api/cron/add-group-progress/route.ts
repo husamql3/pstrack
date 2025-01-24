@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { group_progress } from '@prisma/client'
 
 import prisma from '@/prisma/prisma'
 import { sendErrorEmailToAdmin } from '@/utils/email/sendErrorEmailToAdmin'
@@ -19,7 +20,7 @@ export async function GET(req: Request) {
     await prisma.$connect()
 
     // get all group progress
-    const allGroupProgress = await prisma.group_progress.findMany()
+    const allGroupProgress: group_progress[] = await prisma.group_progress.findMany()
 
     const groupProgressMap = new Map()
 
