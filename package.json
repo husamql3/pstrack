@@ -11,6 +11,8 @@
     "build": "next build",
     "start": "next start",
     "prod": "vercel --prod",
+    "preinstall": "prisma generate --schema=./src/prisma/schema.prisma",
+    "prev": "vercel",
     "lint": "next lint",
     "format": "prettier --write .",
     "tsc": "tsc --noEmit",
