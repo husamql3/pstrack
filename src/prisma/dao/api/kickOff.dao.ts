@@ -42,9 +42,9 @@ export const getAllLeetcoders = async (): Promise<LeetcoderWithSubmissions[]> =>
   }
 }
 
-export const updateIsNotified = async (leetcoderId: string): Promise<void> => {
+export const updateIsNotified = async (leetcoderId: string): Promise<leetcoders> => {
   try {
-    await prisma.leetcoders.update({
+    return await prisma.leetcoders.update({
       where: {
         id: leetcoderId,
       },
