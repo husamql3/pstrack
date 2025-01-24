@@ -1,4 +1,4 @@
-import { leetcoders, Prisma, submissions } from '@prisma/client'
+import { leetcoders, submissions } from '@prisma/client'
 
 import prisma from '@/prisma/prisma'
 
@@ -44,15 +44,13 @@ export const getAllLeetcoders = async (): Promise<LeetcoderWithSubmissions[]> =>
 
 export const updateIsNotified = async (leetcoderId: string): Promise<void> => {
   try {
-    const updateData: Prisma.leetcodersUpdateInput = {
-      is_notified: true,
-    }
-
     await prisma.leetcoders.update({
       where: {
         id: leetcoderId,
       },
-      data: updateData,
+      data: {
+        is_notified: true,
+      },
     })
   } catch (error) {
     console.error('Error updating leetcoder notification status:', error)
