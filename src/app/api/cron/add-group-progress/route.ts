@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { group_progress } from '@prisma/client'
+import { type group_progress } from '@prisma/client'
 
 import prisma from '@/prisma/prisma'
 import { sendErrorEmailToAdmin } from '@/utils/email/sendErrorEmailToAdmin'
