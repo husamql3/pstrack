@@ -65,7 +65,7 @@ export const kickOffLeetcoders = async (id: string) => {
         id: id,
       },
       data: {
-        status: 'suspended',
+        status: 'SUSPENDED',
       },
     })
   } catch (error) {
