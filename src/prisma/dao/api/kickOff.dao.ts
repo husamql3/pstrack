@@ -49,7 +49,7 @@ export const updateIsNotified = async (leetcoderId: string): Promise<leetcoders>
         id: leetcoderId,
       },
       data: {
-        is_notified: true as boolean,
+        is_notified: { set: true },
       },
     })
   } catch (error) {
