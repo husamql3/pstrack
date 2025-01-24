@@ -8,7 +8,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "preinstall": "npx prisma generate --schema=./src/prisma/schema.prisma",
+    "postinstall": "prisma generate --schema=./src/prisma/schema.prisma",
     "build": "next build",
     "start": "next start",
     "prod": "vercel --prod",
