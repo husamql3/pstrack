@@ -87,7 +87,10 @@ export const fetchGroupLeetcoders = async (group_no: number): Promise<leetcoders
   }
 }
 
-export const isLeetcoderApproved = async (id: string): Promise<boolean> => {
+export const isLeetcoderApproved = async (
+  id: string | undefined,
+  group_no: number
+): Promise<boolean> => {
   if (!id) return false
 
   try {
@@ -95,6 +98,7 @@ export const isLeetcoderApproved = async (id: string): Promise<boolean> => {
       where: {
         id: id,
         status: 'approved',
+        group_no,
       },
     })
 
@@ -116,6 +120,29 @@ export const isUsernameExist = async (username: string): Promise<boolean> => {
     return data.length > 0
   } catch (error) {
     console.error('catch isUsernameExist error:', error)
+    return false
+  }
+}
+
+export const isGroupFull = async (group_no: number): Promise<boolean> => {
+  try {
+    const data = await prisma.leetcoders.findMany({
+      where: {
+        OR: [
+          {
+            group_no,
+            status: 'approved',
+          },
+          {
+            group_no,
+            status: 'pending',
+          },
+        ],
+      },
+    })
+    return data.length >= 30
+  } catch (error) {
+    console.error('catch isGroupFull error:', error)
     return false
   }
 }
