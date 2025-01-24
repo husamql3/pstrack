@@ -51,12 +51,14 @@ const TrackHeader = ({
         {user ? (
           <>
             <UserMenu user={user} />
-            {(!isApproved || !isFull) && (
-              <RequestToJoin
-                user={user}
-                groupId={groupId}
-              />
-            )}
+            {/*{!isApproved && (*/}
+            {isFull ||
+              (!isApproved && (
+                <RequestToJoin
+                  user={user}
+                  groupId={groupId}
+                />
+              ))}
           </>
         ) : (
           <Link

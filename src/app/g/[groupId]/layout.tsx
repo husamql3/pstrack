@@ -23,8 +23,10 @@ const Layout = async ({
   if (!groupExists) notFound()
 
   const user = await getUser()
-  const isApproved = await isLeetcoderApproved(user?.id, groupId)
+  const isApproved = await isLeetcoderApproved(user?.id)
   const isFull = await isGroupFull(groupId)
+
+  console.log({ isApproved: isApproved, isFull: isFull })
 
   return (
     <div className="relative flex h-svh flex-col">

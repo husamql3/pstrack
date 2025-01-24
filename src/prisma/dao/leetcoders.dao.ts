@@ -87,20 +87,17 @@ export const fetchGroupLeetcoders = async (group_no: number): Promise<leetcoders
   }
 }
 
-export const isLeetcoderApproved = async (
-  id: string | undefined,
-  group_no: number
-): Promise<boolean> => {
+export const isLeetcoderApproved = async (id: string | undefined): Promise<boolean> => {
   if (!id) return false
 
   try {
-    const data = await prisma.leetcoders.findUnique({
+    const data = await prisma.leetcoders.findFirst({
       where: {
-        id: id,
+        id,
         status: 'APPROVED',
-        group_no,
       },
     })
+    console.log('isLeetcoderApproved', data)
 
     return !!data
   } catch (error) {

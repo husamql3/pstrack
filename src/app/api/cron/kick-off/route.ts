@@ -11,7 +11,7 @@ import { sendErrorEmailToAdmin } from '@/utils/email/sendErrorEmailToAdmin'
 
 /**
  * @route GET /api/cron/kick-off
- * works every week, friday at 6am
+ * works every day at 6am
  **/
 export async function GET(req: Request) {
   try {
