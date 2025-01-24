@@ -9,8 +9,8 @@ import {
   approveLeetcoder,
   isUsernameExist,
 } from '@/prisma/dao/leetcoders.dao'
-import { sendApproveEmail } from '@/utils/sendApproveEmail'
-import { sendErrorEmailToAdmin } from '@/utils/sendErrorEmailToAdmin'
+import { sendApproveEmail } from '@/utils/email/sendApproveEmail'
+import { sendErrorEmailToAdmin } from '@/utils/email/sendErrorEmailToAdmin'
 
 export async function POST(req: NextRequest) {
   try {

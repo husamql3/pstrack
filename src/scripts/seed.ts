@@ -13,6 +13,7 @@ const leetcoders: leetcoders[] = [
     status: 'approved',
     username: 'husamql3',
     created_at: null,
+    is_notified: true,
   },
   {
     id: '8236a8bd-8e20-4958-9618-98631584ce01',
@@ -24,6 +25,7 @@ const leetcoders: leetcoders[] = [
     status: 'approved',
     username: 'Menna Samir',
     created_at: null,
+    is_notified: true,
   },
   {
     id: '8236a8bd-8e20-4958-9618-98631584ce02',
@@ -35,6 +37,7 @@ const leetcoders: leetcoders[] = [
     status: 'approved',
     username: 'aewqartf',
     created_at: null,
+    is_notified: true,
   },
   {
     id: '8236a8bd-8e20-4958-9618-98631584ce03',
@@ -46,6 +49,7 @@ const leetcoders: leetcoders[] = [
     status: 'approved',
     username: 'fsdaf',
     created_at: null,
+    is_notified: true,
   },
   {
     id: '8236a8bd-8e20-4958-9618-98631584ce04',
@@ -57,6 +61,7 @@ const leetcoders: leetcoders[] = [
     status: 'approved',
     username: 'fsdafdsaf',
     created_at: null,
+    is_notified: true,
   },
   {
     id: '8236a8bd-8e20-4958-9618-98631584ce05',
@@ -68,6 +73,7 @@ const leetcoders: leetcoders[] = [
     status: 'approved',
     username: 'mennasamir',
     created_at: null,
+    is_notified: true,
   },
   {
     id: '8236a8bd-8e20-4958-9618-98631584ce06',
@@ -79,6 +85,7 @@ const leetcoders: leetcoders[] = [
     status: 'approved',
     username: 'feawtsdsa',
     created_at: null,
+    is_notified: true,
   },
   {
     id: '8236a8bd-8e20-4958-9618-98631584ce07',
@@ -90,6 +97,7 @@ const leetcoders: leetcoders[] = [
     status: 'approved',
     username: 'feawtsdsa',
     created_at: null,
+    is_notified: true,
   },
   {
     id: '8236a8bd-8e20-4958-9618-98631584ce08',
@@ -101,6 +109,7 @@ const leetcoders: leetcoders[] = [
     status: 'approved',
     username: 'feawtsdsa',
     created_at: null,
+    is_notified: true,
   },
   {
     id: '8236a8bd-8e20-4958-9618-98631584ce09',
@@ -112,6 +121,7 @@ const leetcoders: leetcoders[] = [
     status: 'approved',
     username: 'feawtsdsa',
     created_at: null,
+    is_notified: true,
   },
 ]
 

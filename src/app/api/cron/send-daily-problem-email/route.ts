@@ -1,11 +1,20 @@
 import { NextResponse } from 'next/server'
 
 import prisma from '@/prisma/prisma'
-import { sendDailyProblemEmail } from '@/utils/sendDailyProblemEmail'
-import { sendErrorEmailToAdmin } from '@/utils/sendErrorEmailToAdmin'
+import { sendDailyProblemEmail } from '@/utils/email/sendDailyProblemEmail'
+import { sendErrorEmailToAdmin } from '@/utils/email/sendErrorEmailToAdmin'
 
-export async function GET() {
+/**
+ * @route GET /api/cron/send-daily-problem-email
+ * works every day at 6am
+ **/
+export async function GET(req: Request) {
   try {
+    const secret = req.headers.get('X-Secret-Key')
+    if (secret !== process.env.CRON_SECRET_KEY) {
+      return NextResponse.json({ success: false, error: 'FUCK OFF' })
+    }
+
     await prisma.$connect()
 
     // Fetch all groups with their latest progress

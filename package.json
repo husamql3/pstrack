@@ -8,7 +8,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "prisma generate --schema=./src/prisma/schema.prisma && next build",
+    "build": "next build",
     "start": "next start",
     "prod": "vercel --prod",
     "lint": "next lint",
