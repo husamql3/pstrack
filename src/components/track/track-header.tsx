@@ -11,10 +11,12 @@ const TrackHeader = ({
   user,
   groupId,
   isApproved,
+  isFull,
 }: {
   user: User
   groupId: number
   isApproved: boolean
+  isFull: boolean
 }) => {
   const isHusam =
     process.env.ADMIN_EMAIL === user?.email && process.env.NODE_ENV === 'development'
@@ -49,7 +51,7 @@ const TrackHeader = ({
         {user ? (
           <>
             <UserMenu user={user} />
-            {!isApproved && (
+            {(!isApproved || !isFull) && (
               <RequestToJoin
                 user={user}
                 groupId={groupId}

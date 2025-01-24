@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation'
 
 import { getUser } from '@/hooks/get-user'
 import { checkGroupExists } from '@/prisma/dao/groups.dao'
-import { isLeetcoderApproved } from '@/prisma/dao/leetcoders.dao'
+import { isGroupFull, isLeetcoderApproved } from '@/prisma/dao/leetcoders.dao'
 
 import { TrackHeader } from '@/components/track/track-header'
 import { TableSkeleton } from '@/components/track/table-skeleton'
@@ -23,7 +23,8 @@ const Layout = async ({
   if (!groupExists) notFound()
 
   const user = await getUser()
-  const isApproved = await isLeetcoderApproved(user?.id as string)
+  const isApproved = await isLeetcoderApproved(user?.id, groupId)
+  const isFull = await isGroupFull(groupId)
 
   return (
     <div className="relative flex h-svh flex-col">
@@ -31,6 +32,7 @@ const Layout = async ({
         groupId={groupId}
         user={user!}
         isApproved={isApproved}
+        isFull={isFull}
       />
 
       <Suspense fallback={<TableSkeleton />}>{children}</Suspense>
