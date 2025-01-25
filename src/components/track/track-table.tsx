@@ -40,7 +40,7 @@ export const TrackTable = ({
 }: TrackTableProps) => {
   const [checkedState, setCheckedState] = useState<Record<string, boolean>>({})
   const [loadingState, setLoadingState] = useState<Record<string, boolean>>({})
-  const [visibleRecords, setVisibleRecords] = useState(15) // State to track visible records
+  const [visibleRecords, setVisibleRecords] = useState(20) // State to track visible records
 
   // Calculate the number of problems each leetcoder has solved
   const leetcoderSolvedCounts = useMemo(() => {
@@ -140,8 +140,10 @@ export const TrackTable = ({
           cell: (info) => {
             const { totalSolved, total } = info.getValue()
             return (
-              <div className="flex items-center justify-between space-x-0.5">
-                <span className="text-base font-medium">{totalSolved}</span>
+              <div className="flex items-center justify-between">
+                <span className="flex-1 text-right text-xs font-medium">
+                  {totalSolved}
+                </span>
                 <CountChart
                   totalSolved={totalSolved}
                   total={total}

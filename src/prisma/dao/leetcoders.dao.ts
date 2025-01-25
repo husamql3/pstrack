@@ -97,7 +97,6 @@ export const isLeetcoderApproved = async (id: string | undefined): Promise<boole
         status: 'APPROVED',
       },
     })
-    console.log('isLeetcoderApproved', data)
 
     return !!data
   } catch (error) {

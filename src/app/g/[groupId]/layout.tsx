@@ -2,12 +2,13 @@ import { Suspense } from 'react'
 import { notFound } from 'next/navigation'
 
 import { getUser } from '@/hooks/get-user'
-import { checkGroupExists } from '@/prisma/dao/groups.dao'
+import { checkGroupExists, getAllGroups } from '@/prisma/dao/groups.dao'
 import { isGroupFull, isLeetcoderApproved } from '@/prisma/dao/leetcoders.dao'
 
 import { TrackHeader } from '@/components/track/track-header'
 import { TableSkeleton } from '@/components/track/table-skeleton'
 import { TrackFooter } from '@/components/track/track-footer'
+import { groups } from '@prisma/client'
 
 const Layout = async ({
   children,
@@ -25,8 +26,7 @@ const Layout = async ({
   const user = await getUser()
   const isApproved = await isLeetcoderApproved(user?.id)
   const isFull = await isGroupFull(groupId)
-
-  console.log({ isApproved: isApproved, isFull: isFull })
+  const groups: groups[] = await getAllGroups()
 
   return (
     <div className="relative flex h-svh flex-col">
@@ -35,6 +35,7 @@ const Layout = async ({
         user={user!}
         isApproved={isApproved}
         isFull={isFull}
+        groups={groups}
       />
 
       <Suspense fallback={<TableSkeleton />}>{children}</Suspense>

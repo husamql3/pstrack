@@ -1,5 +1,8 @@
 ### Changelog
 
+- 1.0.12: STYLE: Update count chart
+- 1.0.11: STYLE: Update scrollbar style
+- 1.0.10: FEAT: Add navigation menu
 - 1.0.9: STYLE: Update scrollbar style
 - 1.0.8: FEAT: Add chart for count
 - 1.0.7: FEAT: Add group 2

@@ -30,16 +30,16 @@ export default function CountChart({
   return (
     <ChartContainer
       config={chartConfig}
-      className="aspect-square max-h-[43px] w-[43px]"
+      className="aspect-square max-h-[30px] w-[30px]"
     >
       <PieChart>
         <Pie
           data={chartData}
           dataKey="people"
           nameKey="type"
-          innerRadius={9}
-          strokeWidth={2}
-        ></Pie>
+          innerRadius={6}
+          strokeWidth={5}
+        />
       </PieChart>
     </ChartContainer>
   )

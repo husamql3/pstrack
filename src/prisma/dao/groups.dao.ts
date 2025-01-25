@@ -17,6 +17,15 @@ export const checkGroupExists = async (group_no: number): Promise<boolean> => {
   }
 }
 
+export const getAllGroups = async (): Promise<groups[]> => {
+  try {
+    return await prisma.groups.findMany()
+  } catch (error) {
+    console.error('catch getAllGroups error:', error)
+    return []
+  }
+}
+
 export type GroupWithRelations = groups & {
   leetcoders: leetcoders[]
   group_progress: group_progress[]
