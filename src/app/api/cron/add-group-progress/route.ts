@@ -15,8 +15,6 @@ export async function GET(req: Request) {
       return NextResponse.json({ success: false, error: 'FUCK OFF' })
     }
 
-    // return NextResponse.json({ success: true, data: 'secret key matched' })
-
     await prisma.$connect()
 
     // get all group progress
