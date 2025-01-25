@@ -1,16 +1,21 @@
-import { Resend } from 'resend'
-import fs from 'fs'
+import fs from 'fs/promises'
 import path from 'path'
 
-export const sendErrorEmailToAdmin = async (error: unknown, context: string) => {
+import { sendEmail } from '@/utils/email/sendEmail'
+
+export const sendAdminEmail = async (error: unknown, context: string): Promise<void> => {
   try {
-    const resend = new Resend(process.env.RESEND_API_KEY)
     const adminEmail = process.env.ADMIN_EMAIL as string
 
     const projectRoot = process.cwd()
-    const templatePath = path.join(projectRoot, 'public', 'errorEmailTemplate.html')
+    const templatePath = path.join(
+      projectRoot,
+      'public',
+      'email',
+      'adminEmailTemplate.html'
+    )
 
-    let htmlContent = await fs.promises.readFile(templatePath, 'utf-8')
+    let htmlContent = await fs.readFile(templatePath, 'utf-8')
 
     const errorMessage = error instanceof Error ? error.message : 'Unknown error'
     const errorStack = error instanceof Error ? error.stack : 'No stack trace available'
@@ -20,15 +25,11 @@ export const sendErrorEmailToAdmin = async (error: unknown, context: string) => 
       .replace(/{{errorMessage}}/g, errorMessage)
       .replace(/{{errorStack}}/g, errorStack || 'No stack trace available')
 
-    const res = await resend.emails.send({
-      from: 'info@pstrack.tech',
+    await sendEmail({
       to: adminEmail,
-      subject: 'Error Occurred in PSTrack',
+      subject: 'PSTrack Admin Notification',
       html: htmlContent,
     })
-
-    console.log('Error email sent to admin:', res)
-    return res
   } catch (emailError) {
     console.error('Failed to send error email to admin:', emailError)
   }

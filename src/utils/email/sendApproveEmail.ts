@@ -1,18 +1,21 @@
-import fs from 'fs'
+import fs from 'fs/promises'
 import path from 'path'
-import { Resend } from 'resend'
 
-import { SendEmail } from '@/types/sendEmail.type'
-import { sendErrorEmailToAdmin } from '@/utils/email/sendErrorEmailToAdmin'
+import { SendApprovalEmail } from '@/types/sendEmail.type'
+import { sendEmail } from '@/utils/email/sendEmail'
+import { sendAdminEmail } from '@/utils/email/sendAdminEmail'
 
-export const sendApproveEmail = async ({ to, username, group_no }: SendEmail) => {
+export const sendApproveEmail = async ({ to, username, group_no }: SendApprovalEmail) => {
   try {
-    const resend = new Resend(process.env.RESEND_API_KEY)
-
     const projectRoot = process.cwd()
-    const templatePath = path.join(projectRoot, 'public', 'approveEmailTemplate.html')
+    const templatePath = path.join(
+      projectRoot,
+      'public',
+      'email',
+      'approveEmailTemplate.html'
+    )
 
-    let htmlContent = await fs.promises.readFile(templatePath, 'utf-8')
+    let htmlContent = await fs.readFile(templatePath, 'utf-8')
     const groupLink = `https://pstrack.tech/g/${group_no}`
 
     htmlContent = htmlContent
@@ -20,13 +23,12 @@ export const sendApproveEmail = async ({ to, username, group_no }: SendEmail) =>
       .replace(/{{group_no}}/g, group_no)
       .replace(/{{group_link}}/g, groupLink)
 
-    return await resend.emails.send({
-      from: 'info@pstrack.tech',
-      to,
+    await sendEmail({
+      to: to,
       subject: 'Congratulations - You’ve been accepted to PSTrack',
       html: htmlContent,
     })
   } catch (error) {
-    await sendErrorEmailToAdmin(error, 'sendApproveEmail')
+    await sendAdminEmail(error, 'sendApproveEmail')
   }
 }

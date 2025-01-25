@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { group_progress } from '@prisma/client'
 
 import prisma from '@/prisma/prisma'
-import { sendErrorEmailToAdmin } from '@/utils/email/sendErrorEmailToAdmin'
+import { sendAdminEmail } from '@/utils/email/sendAdminEmail'
 
 /**
  * @route GET /api/cron/add-group-progress
@@ -50,7 +50,7 @@ export async function GET(req: Request) {
 
     return NextResponse.json({ success: true, data: 'group progress added' })
   } catch (error) {
-    await sendErrorEmailToAdmin(error, 'GET /api/cron/add-group-progress')
+    await sendAdminEmail(error, 'GET /api/cron/add-group-progress')
     return NextResponse.json({
       success: false,
       error: 'add group progress cron job failed',

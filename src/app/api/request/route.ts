@@ -10,7 +10,7 @@ import {
   isUsernameExist,
 } from '@/prisma/dao/leetcoders.dao'
 import { sendApproveEmail } from '@/utils/email/sendApproveEmail'
-import { sendErrorEmailToAdmin } from '@/utils/email/sendErrorEmailToAdmin'
+import { sendAdminEmail } from '@/utils/email/sendAdminEmail'
 
 export async function POST(req: NextRequest) {
   try {
@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
     )
   } catch (error) {
     console.error('/api/request POST API Error:', error)
-    await sendErrorEmailToAdmin(error, 'PUT /api/request - Email Sending')
+    await sendAdminEmail(error, 'PUT /api/request - Email Sending')
 
     if (error instanceof ZodError) {
       return NextResponse.json(
@@ -116,17 +116,11 @@ export async function PUT(req: NextRequest) {
 
     const data = await approveLeetcoder(id)
 
-    try {
-      const res = await sendApproveEmail({
-        to: data.email,
-        username: data.name,
-        group_no: String(data.group_no),
-      })
-      console.log('sendApproveEmail res:', res)
-    } catch (emailError) {
-      console.error('Error sending approval email:', emailError)
-      await sendErrorEmailToAdmin(emailError, 'PUT /api/request - Email Sending')
-    }
+    sendApproveEmail({
+      to: data.email,
+      username: data.name,
+      group_no: String(data.group_no),
+    })
 
     return NextResponse.json(
       {
@@ -137,7 +131,7 @@ export async function PUT(req: NextRequest) {
     )
   } catch (error) {
     console.error('/api/request PUT API Error:', error)
-    await sendErrorEmailToAdmin(error, 'PUT /api/request - Email Sending')
+    await sendAdminEmail(error, 'PUT /api/request - Email Sending')
     return NextResponse.json(
       {
         success: false,

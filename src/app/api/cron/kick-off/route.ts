@@ -7,7 +7,7 @@ import {
   updateIsNotified,
 } from '@/prisma/dao/api/kickOff.dao'
 import { sendSolveProblemsRemider } from '@/utils/email/sendSolveProblemsRemider'
-import { sendErrorEmailToAdmin } from '@/utils/email/sendErrorEmailToAdmin'
+import { sendAdminEmail } from '@/utils/email/sendAdminEmail'
 
 /**
  * @route GET /api/cron/kick-off
@@ -44,14 +44,14 @@ export async function GET(req: Request) {
       }
     }
 
-    await sendErrorEmailToAdmin(neglectedLeetcoders, 'Neglected Leetcoders')
+    await sendAdminEmail(neglectedLeetcoders, 'Neglected Leetcoders')
     return NextResponse.json({
       success: true,
       data: 'Neglected Leetcoders kicked off successfully',
     })
   } catch (error) {
     console.error(error)
-    await sendErrorEmailToAdmin(error, 'GET /api/cron/kick-off')
+    await sendAdminEmail(error, 'GET /api/cron/kick-off')
 
     return NextResponse.json(
       {

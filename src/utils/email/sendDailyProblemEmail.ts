@@ -1,9 +1,9 @@
-import { Resend } from 'resend'
 import path from 'path'
-import fs from 'fs'
+import fs from 'fs/promises'
 
 import { SendDailyProblemEmail } from '@/types/sendEmail.type'
-import { sendErrorEmailToAdmin } from '@/utils/email/sendErrorEmailToAdmin'
+import { sendEmail } from '@/utils/email/sendEmail'
+import { sendAdminEmail } from '@/utils/email/sendAdminEmail'
 
 export const sendDailyProblemEmail = async ({
   problem_slug,
@@ -13,16 +13,15 @@ export const sendDailyProblemEmail = async ({
   email,
 }: SendDailyProblemEmail) => {
   try {
-    const resend = new Resend(process.env.RESEND_API_KEY)
-
     const projectRoot = process.cwd()
     const templatePath = path.join(
       projectRoot,
       'public',
+      'email',
       'dailyProblemEmailTemplate.html'
     )
 
-    let htmlContent = await fs.promises.readFile(templatePath, 'utf-8')
+    let htmlContent = await fs.readFile(templatePath, 'utf-8')
     const groupLink = `https://pstrack.tech/g/${group_no}`
 
     htmlContent = htmlContent
@@ -31,13 +30,12 @@ export const sendDailyProblemEmail = async ({
       .replace(/{{topic}}/g, topic)
       .replace(/{{group_link}}/g, groupLink)
 
-    return await resend.emails.send({
-      from: 'info@pstrack.tech',
+    await sendEmail({
       to: email,
-      subject: 'LeetCode Streak Reminder: Can You Solve It?',
+      subject: "Todays's LeetCode Problem: Can You Solve It?",
       html: htmlContent,
     })
   } catch (error) {
-    await sendErrorEmailToAdmin(error, 'sendDailyProblemEmail')
+    await sendAdminEmail(error, 'sendDailyProblemEmail')
   }
 }
