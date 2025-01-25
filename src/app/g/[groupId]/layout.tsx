@@ -1,4 +1,5 @@
 import { Suspense } from 'react'
+import { groups } from '@prisma/client'
 import { notFound } from 'next/navigation'
 
 import { getUser } from '@/hooks/get-user'
@@ -8,7 +9,6 @@ import { isGroupFull, isLeetcoderApproved } from '@/prisma/dao/leetcoders.dao'
 import { TrackHeader } from '@/components/track/track-header'
 import { TableSkeleton } from '@/components/track/table-skeleton'
 import { TrackFooter } from '@/components/track/track-footer'
-import { groups } from '@prisma/client'
 
 const Layout = async ({
   children,

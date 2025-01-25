@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 
 import prisma from '@/prisma/prisma'
 import { sendDailyProblemEmail } from '@/utils/email/sendDailyProblemEmail'
-import { sendErrorEmailToAdmin } from '@/utils/email/sendErrorEmailToAdmin'
+import { sendAdminEmail } from '@/utils/email/sendAdminEmail'
 
 /**
  * @route GET /api/cron/send-daily-problem-email
@@ -60,9 +60,6 @@ export async function GET(req: Request) {
       },
     })
 
-    // store results
-    const results = []
-
     for (const leetcoder of approvedLeetcoders) {
       const { email, group } = leetcoder
 
@@ -70,25 +67,22 @@ export async function GET(req: Request) {
 
       if (problem) {
         // Send the daily problem email
-        const res = await sendDailyProblemEmail({
+        await sendDailyProblemEmail({
           problem_slug: problem.problem_slug,
           difficulty: problem.difficulty,
           topic: problem.topic,
           group_no: group.group_no.toString(),
           email: email,
         })
-
-        results.push(res)
       }
     }
 
-    await sendErrorEmailToAdmin(results, 'Daily Problem Emails')
     return NextResponse.json({
       success: true,
       data: 'Daily problem emails sent successfully',
     })
   } catch (error) {
-    await sendErrorEmailToAdmin(error, 'GET /api/cron/send-daily-problem-email')
+    await sendAdminEmail(error, 'GET /api/cron/send-daily-problem-email')
     return NextResponse.json({
       success: false,
       error: 'Failed to send daily problem emails',
