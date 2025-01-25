@@ -1,28 +1,29 @@
 import Link from 'next/link'
 import { LogIn } from 'lucide-react'
 import { User } from '@supabase/auth-js'
+import { groups } from '@prisma/client'
 
 import { Logo } from '@/components/components/logo'
 import { UserMenu } from '@/components/track/user-menu'
 import { Button } from '@/components/ui/button'
 import { RequestToJoin } from '@/components/track/request-to-join'
+import { NavMenu } from '@/components/components/nav-menu'
 
 const TrackHeader = ({
   user,
   groupId,
   isApproved,
   isFull,
+  groups,
 }: {
   user: User
   groupId: number
   isApproved: boolean
   isFull: boolean
+  groups: groups[]
 }) => {
-  const isHusam =
-    process.env.ADMIN_EMAIL === user?.email && process.env.NODE_ENV === 'development'
-
   return (
-    <header className="mx-auto flex w-full max-w-screen-lg items-center justify-between px-3 pt-3">
+    <header className="mx-auto flex w-full max-w-screen-lg items-center justify-between px-3 pt-5">
       {/* Logo Section */}
       <div className="flex h-full items-center gap-5">
         <Link
@@ -36,15 +37,7 @@ const TrackHeader = ({
         <p className="text-lg font-semibold">Group #{groupId}</p>
       </div>
 
-      {isHusam && (
-        <Link
-          href="/d"
-          className="flex items-center gap-2"
-          prefetch
-        >
-          <p className="text-blue-500 underline">Admin</p>
-        </Link>
-      )}
+      <NavMenu groups={groups} />
 
       {/* User Menu or Login Button */}
       <div className="flex flex-row-reverse items-center gap-5">
