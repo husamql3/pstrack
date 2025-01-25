@@ -1,5 +1,6 @@
 ### Changelog
 
+- 1.0.13: ENHANCEMENT: use nodemailer instead of resend
 - 1.0.12: STYLE: Update count chart
 - 1.0.11: STYLE: Update scrollbar style
 - 1.0.10: FEAT: Add navigation menu
