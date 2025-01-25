@@ -38,7 +38,7 @@ const TrackHeader = ({
 
       {isHusam && (
         <Link
-          href="/dashboard"
+          href="/d"
           className="flex items-center gap-2"
           prefetch
         >

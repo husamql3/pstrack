@@ -51,7 +51,7 @@ export async function GET(req: Request) {
     }
 
     // Fetch all APPROVED leetcoders
-    const APPROVEDLeetcoders = await prisma.leetcoders.findMany({
+    const approvedLeetcoders = await prisma.leetcoders.findMany({
       where: {
         status: 'APPROVED',
       },
@@ -60,7 +60,10 @@ export async function GET(req: Request) {
       },
     })
 
-    for (const leetcoder of APPROVEDLeetcoders) {
+    // store results
+    const results = []
+
+    for (const leetcoder of approvedLeetcoders) {
       const { email, group } = leetcoder
 
       const problem = groupProblems.get(group.group_no)
@@ -75,11 +78,11 @@ export async function GET(req: Request) {
           email: email,
         })
 
-        console.log(`Email sent to ${email}:`, res)
+        results.push(res)
       }
     }
 
-    // Return success response
+    await sendErrorEmailToAdmin(results, 'Daily Problem Emails')
     return NextResponse.json({
       success: true,
       data: 'Daily problem emails sent successfully',

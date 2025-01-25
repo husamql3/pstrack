@@ -44,9 +44,10 @@ export async function GET(req: Request) {
       }
     }
 
+    await sendErrorEmailToAdmin(neglectedLeetcoders, 'Neglected Leetcoders')
     return NextResponse.json({
       success: true,
-      data: neglectedLeetcoders,
+      data: 'Neglected Leetcoders kicked off successfully',
     })
   } catch (error) {
     console.error(error)
