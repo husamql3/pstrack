@@ -1,12 +1,14 @@
+import { roadmap } from '@prisma/client'
+
+import { getRoadmap } from '@/hooks/get-roadmap'
+
 import { LandingBg } from '@/components/landing/landing-bg'
 import Header from '@/components/landing/header'
 import RoadmapAccordion from '@/components/roadmap/roadmap-accordion'
-import { roadmap } from '@prisma/client'
-
-import { fetchAllRoadmap } from '@/prisma/dao/roadmap.dao'
 
 const RoadmapView = async () => {
-  const roadmap: roadmap[] = await fetchAllRoadmap()
+  const roadmap: roadmap[] = await getRoadmap()
+
   return (
     <>
       <LandingBg />
