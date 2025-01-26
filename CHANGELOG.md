@@ -1,5 +1,6 @@
 ### Changelog
 
+- 1.0.16: STYLE: Update roadmap accordion style
 - 1.0.15: FEAT: Add `/roadmap` page
 - 1.0.14: FEAT: Configure Redis
 - 1.0.13: ENHANCEMENT: use nodemailer instead of resend

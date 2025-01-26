@@ -42,7 +42,7 @@ export default function RoadmapAccordion({ roadmaps }: { roadmaps: roadmap[] }) 
           <AccordionItem
             value={topic}
             key={topic}
-            className="border bg-zinc-900 px-4 py-1 first:rounded-t-lg last:rounded-b-lg"
+            className="border border-zinc-500 bg-zinc-900 px-4 py-1 first:rounded-t-lg last:rounded-b-lg"
           >
             <AccordionPrimitive.Header className="flex">
               <AccordionPrimitive.Trigger className="flex flex-1 items-center justify-between py-2 text-left text-sm font-semibold leading-6 text-zinc-100 transition-all [&>svg>path:last-child]:origin-center [&>svg>path:last-child]:transition-all [&>svg>path:last-child]:duration-200 [&[data-state=open]>svg>path:last-child]:rotate-90 [&[data-state=open]>svg>path:last-child]:opacity-0 [&[data-state=open]>svg]:rotate-180">
