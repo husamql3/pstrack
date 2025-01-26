@@ -1,12 +1,7 @@
 import { NextResponse } from 'next/server'
 
 import prisma from '@/prisma/prisma'
-import {
-  getAllLeetcoders,
-  kickOffLeetcoders,
-  updateIsNotified,
-} from '@/prisma/dao/api/kickOff.dao'
-import { sendSolveProblemsRemider } from '@/utils/email/sendSolveProblemsRemider'
+import { getAllLeetcoders, processLeetcoder } from '@/prisma/dao/api/kickOff.dao'
 import { sendAdminEmail } from '@/utils/email/sendAdminEmail'
 
 /**
@@ -22,29 +17,21 @@ export async function GET(req: Request) {
 
     await prisma.$connect()
 
+    // await prisma.leetcoders.updateMany({
+    //   data: { is_notified: false, status: 'APPROVED' },
+    // })
+    // return NextResponse.json({
+    //   success: true,
+    //   data: 'Neglected Leetcoders kicked off successfully',
+    // })
+
     // get all leetcoders
     const leetcoders = await getAllLeetcoders()
 
-    // filter leetcoders who have less than 5 submissions
-    const neglectedLeetcoders = leetcoders.filter(
-      (leetcoder) => leetcoder.submissions.length <= 5
-    )
-
-    for (const leetcoder of neglectedLeetcoders) {
-      if (leetcoder.is_notified) {
-        // if the leetcoder has been notified, kick off
-        await kickOffLeetcoders(leetcoder.id)
-      } else {
-        // if the leetcoder has not been notified, send email
-        await sendSolveProblemsRemider({
-          to: leetcoder.email,
-          group_no: String(leetcoder.group_no),
-        })
-        await updateIsNotified(leetcoder.id)
-      }
+    for (const leetcoder of leetcoders) {
+      await processLeetcoder(leetcoder)
     }
-
-    await sendAdminEmail(neglectedLeetcoders, 'Neglected Leetcoders')
+    // await sendAdminEmail(neglectedLeetcoders, 'Neglected Leetcoders')
     return NextResponse.json({
       success: true,
       data: 'Neglected Leetcoders kicked off successfully',
