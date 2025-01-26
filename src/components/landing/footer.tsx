@@ -2,7 +2,7 @@ import { VERSION } from '@/data/CONSTANTS'
 
 const Footer = () => {
   return (
-    <footer className="mx-auto flex w-full max-w-screen-lg items-center justify-between gap-2 px-3 pb-3 text-xs md:px-3 md:pb-5 md:text-sm">
+    <footer className="mx-auto flex w-full max-w-screen-md items-center justify-between gap-2 px-3 pb-3 text-xs md:px-3 md:pb-5 md:text-sm">
       <p className="dark-fit text-sm">
         © {new Date().getFullYear()} PSTrack. | v{VERSION}
       </p>

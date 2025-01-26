@@ -29,22 +29,3 @@ export const fetchRoadmap = async (
     return []
   }
 }
-
-export const fetchAllRoadmap = async (): Promise<roadmap[]> => {
-  try {
-    // await connectRedis()
-    // const cacheKey = 'roadmap-data'
-    // const cachedData = await redisClient.get(cacheKey)
-
-    // if (cachedData) {
-    //   return JSON.parse(cachedData)
-    // }
-
-    const data = await prisma.roadmap.findMany()
-    // await redisClient.set(cacheKey, JSON.stringify(data), { EX: 60 * 60 * 24 * 7 }) // cache for 1 week
-    return data
-  } catch (error) {
-    console.error('catch fetchAllRoadmap error:', error)
-    return []
-  }
-}

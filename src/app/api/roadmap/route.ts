@@ -7,7 +7,6 @@ import { getCachedRoadmap, updateCachedRoadmap } from '@/utils/redis'
 export async function GET() {
   try {
     const cachedData = await getCachedRoadmap()
-    console.log('cachedData')
     if (cachedData) {
       return NextResponse.json(cachedData)
     }
@@ -19,9 +18,7 @@ export async function GET() {
         problem_order: 'asc', // Sort by problem_order
       },
     })
-    console.log('not cached')
 
-    // Cache the data in Edge Config
     await updateCachedRoadmap(roadmap)
     return NextResponse.json(roadmap)
   } catch (error) {

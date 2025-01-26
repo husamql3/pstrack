@@ -32,7 +32,7 @@ export default function RoadmapAccordion({ roadmaps }: { roadmaps: roadmap[] }) 
       <Accordion
         type="single"
         collapsible
-        className="w-full -space-y-px pb-10"
+        className="w-full -space-y-px"
       >
         {sortedTopics.map(([topic, roadmaps]) => (
           <AccordionItem
