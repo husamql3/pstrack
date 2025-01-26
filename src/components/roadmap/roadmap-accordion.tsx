@@ -1,7 +1,11 @@
+import { Difficulty } from '@/types/difficulty.type'
 import { Plus } from 'lucide-react'
 import { roadmap } from '@prisma/client'
 import * as AccordionPrimitive from '@radix-ui/react-accordion'
 import { Accordion, AccordionContent, AccordionItem } from '@/components/ui/accordion'
+import { PROBLEM_BASE_URL } from '@/data/CONSTANTS'
+import { cn } from '@/lib/utils'
+import { getDifficultyTextColor } from '@/utils/getDifficultyColor'
 
 export default function RoadmapAccordion({ roadmaps }: { roadmaps: roadmap[] }) {
   // Group roadmaps by topic
@@ -38,10 +42,10 @@ export default function RoadmapAccordion({ roadmaps }: { roadmaps: roadmap[] }) 
           <AccordionItem
             value={topic}
             key={topic}
-            className="border bg-zinc-950 px-4 py-1 first:rounded-t-lg last:rounded-b-lg"
+            className="border bg-zinc-900 px-4 py-1 first:rounded-t-lg last:rounded-b-lg"
           >
             <AccordionPrimitive.Header className="flex">
-              <AccordionPrimitive.Trigger className="flex flex-1 items-center justify-between py-2 text-left text-[15px] font-semibold leading-6 transition-all [&>svg>path:last-child]:origin-center [&>svg>path:last-child]:transition-all [&>svg>path:last-child]:duration-200 [&[data-state=open]>svg>path:last-child]:rotate-90 [&[data-state=open]>svg>path:last-child]:opacity-0 [&[data-state=open]>svg]:rotate-180">
+              <AccordionPrimitive.Trigger className="flex flex-1 items-center justify-between py-2 text-left text-sm font-semibold leading-6 text-zinc-100 transition-all [&>svg>path:last-child]:origin-center [&>svg>path:last-child]:transition-all [&>svg>path:last-child]:duration-200 [&[data-state=open]>svg>path:last-child]:rotate-90 [&[data-state=open]>svg>path:last-child]:opacity-0 [&[data-state=open]>svg]:rotate-180">
                 {topic}
                 <Plus
                   size={16}
@@ -51,7 +55,7 @@ export default function RoadmapAccordion({ roadmaps }: { roadmaps: roadmap[] }) 
                 />
               </AccordionPrimitive.Trigger>
             </AccordionPrimitive.Header>
-            <AccordionContent className="text-muted-foreground pb-2">
+            <AccordionContent className="pb-2 text-zinc-100">
               <ul className="space-y-2">
                 {roadmaps
                   .sort((a, b) => a.problem_order - b.problem_order)
@@ -60,17 +64,20 @@ export default function RoadmapAccordion({ roadmaps }: { roadmaps: roadmap[] }) 
                       key={roadmap.id}
                       className="flex items-center justify-between"
                     >
-                      <span>
+                      <a
+                        href={`${PROBLEM_BASE_URL}/${roadmap.problem_slug}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title="Open problem in a new tab"
+                        className="duration-100 hover:text-blue-600"
+                      >
                         {roadmap.problem_no}. {roadmap.problem_slug}
-                      </span>
+                      </a>
                       <span
-                        className={`text-sm font-medium ${
-                          roadmap.difficulty === 'easy'
-                            ? 'text-green-500'
-                            : roadmap.difficulty === 'medium'
-                              ? 'text-yellow-500'
-                              : 'text-red-500'
-                        }`}
+                        className={cn(
+                          'w-12 text-center text-xs capitalize',
+                          getDifficultyTextColor(roadmap.difficulty as Difficulty)
+                        )}
                       >
                         {roadmap.difficulty}
                       </span>
