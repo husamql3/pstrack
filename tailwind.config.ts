@@ -15,10 +15,12 @@ export default {
         spotlight: 'spotlight 2s ease .75s 1 forwards',
         'shimmer-slide': 'shimmer-slide var(--speed) ease-in-out infinite alternate',
         'spin-around': 'spin-around calc(var(--speed) * 2) infinite linear',
+        'accordion-down': 'accordion-down 0.2s ease-out',
+        'accordion-up': 'accordion-up 0.2s ease-out',
       },
       fontFamily: {
         roboto: ['var(--font-roboto)', 'sans-serif'],
-        spartan: ['var(--font-league-spartan)', 'sans-serif'], // league spartan
+        spartan: ['var(--font-league-spartan)', 'sans-serif'],
       },
       keyframes: {
         spotlight: {
@@ -48,6 +50,22 @@ export default {
         'shimmer-slide': {
           to: {
             transform: 'translate(calc(100cqw - 100%), 0)',
+          },
+        },
+        'accordion-down': {
+          from: {
+            height: '0',
+          },
+          to: {
+            height: 'var(--radix-accordion-content-height)',
+          },
+        },
+        'accordion-up': {
+          from: {
+            height: 'var(--radix-accordion-content-height)',
+          },
+          to: {
+            height: '0',
           },
         },
       },
