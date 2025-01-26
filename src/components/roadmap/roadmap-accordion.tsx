@@ -31,7 +31,7 @@ export default function RoadmapAccordion({ roadmaps }: { roadmaps: roadmap[] }) 
 
   return (
     <div className="w-full space-y-4">
-      <h2 className="text-xl font-bold">Roadmap</h2>
+      <h2 className="text-xl font-bold text-zinc-100">Roadmap</h2>
 
       <Accordion
         type="single"
