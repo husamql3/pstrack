@@ -114,7 +114,7 @@ export const calculateUnsolvedProblems = (
 
 export const processLeetcoder = async (
   leetcoder: LeetcoderWithSubmissions,
-  unsolvedThreshold = 2
+  unsolvedThreshold = 5
 ) => {
   const assignedProblems = await getAssignedProblems(leetcoder.group_no)
   const solvedProblems = getSolvedProblems(leetcoder)
