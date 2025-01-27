@@ -17,21 +17,13 @@ export async function GET(req: Request) {
 
     await prisma.$connect()
 
-    // await prisma.leetcoders.updateMany({
-    //   data: { is_notified: false, status: 'APPROVED' },
-    // })
-    // return NextResponse.json({
-    //   success: true,
-    //   data: 'Neglected Leetcoders kicked off successfully',
-    // })
-
     // get all leetcoders
-    const leetcoders = await getAllLeetcoders()
+    const neglectedLeetcoders = await getAllLeetcoders()
 
-    for (const leetcoder of leetcoders) {
+    for (const leetcoder of neglectedLeetcoders) {
       await processLeetcoder(leetcoder)
     }
-    // await sendAdminEmail(neglectedLeetcoders, 'Neglected Leetcoders')
+    await sendAdminEmail(neglectedLeetcoders, 'Neglected Leetcoders')
     return NextResponse.json({
       success: true,
       data: 'Neglected Leetcoders kicked off successfully',

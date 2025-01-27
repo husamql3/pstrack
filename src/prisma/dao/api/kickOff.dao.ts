@@ -85,7 +85,7 @@ export const hasSolvedCurrentProblem = (
 }
 
 export const getAssignedProblems = async (groupNo: number) => {
-  return await prisma.roadmap.findMany({
+  return prisma.roadmap.findMany({
     where: {
       group_progress: {
         some: {
@@ -114,7 +114,7 @@ export const calculateUnsolvedProblems = (
 
 export const processLeetcoder = async (
   leetcoder: LeetcoderWithSubmissions,
-  unsolvedThreshold = 6
+  unsolvedThreshold = 2
 ) => {
   const assignedProblems = await getAssignedProblems(leetcoder.group_no)
   const solvedProblems = getSolvedProblems(leetcoder)

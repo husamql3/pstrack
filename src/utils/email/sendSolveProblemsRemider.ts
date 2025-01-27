@@ -10,7 +10,7 @@ export const sendSolveProblemsRemider = async ({ to, group_no }: SendRemiderEmai
     projectRoot,
     'public',
     'email',
-    'approveEmailTemplate.html'
+    'solveProblemsReminder.html'
   )
 
   let htmlContent = await fs.readFile(templatePath, 'utf-8')
