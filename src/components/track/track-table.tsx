@@ -90,9 +90,10 @@ export const TrackTable = ({
           const problem = info.getValue()
           return (
             <a
-              href={PROBLEM_BASE_URL + '/' + problem.problem_slug}
+              href={`${PROBLEM_BASE_URL}/${problem.problem_slug}`}
               target="_blank"
               rel="noopener noreferrer"
+              title="Open problem in a new tab"
               className="text-blue-600 hover:underline"
             >
               {problem.problem_no}

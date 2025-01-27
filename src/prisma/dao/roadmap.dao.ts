@@ -1,4 +1,5 @@
 import { group_progress, roadmap } from '@prisma/client'
+
 import prisma from '@/prisma/prisma'
 
 export const fetchRoadmap = async (

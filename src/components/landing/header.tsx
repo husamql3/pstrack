@@ -15,7 +15,7 @@ const Header = async () => {
   const groups: groups[] = await getAllGroups()
 
   return (
-    <header className="mx-auto flex w-full max-w-screen-md justify-between px-3 pt-5 md:px-0 md:pt-8">
+    <header className="dark mx-auto flex w-full max-w-screen-md justify-between px-3 pt-5 md:px-0 md:pt-8">
       <Logo />
 
       <NavMenu groups={groups} />

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { League_Spartan, Roboto } from 'next/font/google'
+import { Analytics } from '@vercel/analytics/react'
 
 import { Toaster } from '@/components/ui/toaster'
 import { cn } from '@/lib/utils'
@@ -27,6 +28,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const prod = process.env.NODE_ENV === 'production'
+
   return (
     <html
       lang="en"
@@ -42,6 +45,7 @@ export default function RootLayout({
       >
         {children}
         <Toaster />
+        {prod && <Analytics />}
       </body>
     </html>
   )
