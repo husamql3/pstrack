@@ -1,6 +1,7 @@
 import { leetcoders, Prisma, submissions } from '@prisma/client'
 
 import prisma from '@/prisma/prisma'
+import { sendSolveProblemsRemider } from '@/utils/email/sendSolveProblemsRemider'
 
 type LeetcoderWithSubmissions = leetcoders & {
   submissions: submissions[]
@@ -71,5 +72,63 @@ export const kickOffLeetcoders = async (id: string) => {
   } catch (error) {
     console.error('catch kickOffLeetcoders error:', error)
     return {} as leetcoders
+  }
+}
+
+export const hasSolvedCurrentProblem = (
+  leetcoder: LeetcoderWithSubmissions,
+  currentProblemId: string
+): boolean => {
+  return leetcoder.submissions.some(
+    (submission) => submission.problem_id === currentProblemId && submission.solved
+  )
+}
+
+export const getAssignedProblems = async (groupNo: number) => {
+  return prisma.roadmap.findMany({
+    where: {
+      group_progress: {
+        some: {
+          group_no: groupNo,
+        },
+      },
+    },
+    select: {
+      id: true,
+    },
+  })
+}
+
+export const getSolvedProblems = (leetcoder: LeetcoderWithSubmissions) => {
+  return leetcoder.submissions
+    .filter((submission) => submission.solved)
+    .map((submission) => submission.problem_id)
+}
+
+export const calculateUnsolvedProblems = (
+  assignedProblems: { id: string }[],
+  solvedProblems: string[]
+) => {
+  return assignedProblems.filter((problem) => !solvedProblems.includes(problem.id))
+}
+
+export const processLeetcoder = async (
+  leetcoder: LeetcoderWithSubmissions,
+  unsolvedThreshold = 2
+) => {
+  const assignedProblems = await getAssignedProblems(leetcoder.group_no)
+  const solvedProblems = getSolvedProblems(leetcoder)
+  const unsolvedProblems = calculateUnsolvedProblems(assignedProblems, solvedProblems)
+
+  if (unsolvedProblems.length >= unsolvedThreshold) {
+    if (leetcoder.is_notified) {
+      await kickOffLeetcoders(leetcoder.id)
+    } else {
+      await sendSolveProblemsRemider({
+        to: leetcoder.email,
+        group_no: String(leetcoder.group_no),
+      })
+      await updateIsNotified(leetcoder.id)
+    }
   }
 }
