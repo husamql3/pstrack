@@ -3,7 +3,7 @@ import { fetchGroupData } from '@/prisma/dao/groups.dao'
 import { fetchRoadmap } from '@/prisma/dao/roadmap.dao'
 import { getUser } from '@/hooks/get-user'
 
-import { TrackView } from '@/components/track/track-view'
+import { TrackView } from '@/components/views/track-view'
 import { ConfettiFireworks } from '@/components/components/confetti-fireworks'
 
 const Page = async ({ params }: { params: Promise<{ groupId: string }> }) => {

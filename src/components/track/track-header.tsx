@@ -4,7 +4,7 @@ import { User } from '@supabase/auth-js'
 import { groups } from '@prisma/client'
 
 import { Logo } from '@/components/components/logo'
-import { UserMenu } from '@/components/track/user-menu'
+import { UserMenu } from '@/components/components/user-menu'
 import { Button } from '@/components/ui/button'
 import { RequestToJoin } from '@/components/track/request-to-join'
 import { NavMenu } from '@/components/components/nav-menu'

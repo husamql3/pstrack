@@ -1,10 +1,11 @@
-import { UserRound } from 'lucide-react'
+import { UserPen, UserRound } from 'lucide-react'
 
 import { type User } from '@supabase/auth-js'
 
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
@@ -14,6 +15,7 @@ import { LogoutButton } from '@/components/track/logout-button'
 
 const UserMenu = ({ user }: { user: User }) => {
   const {
+    id,
     user_metadata: { email, avatar_url, name },
   } = user
 
@@ -43,6 +45,21 @@ const UserMenu = ({ user }: { user: User }) => {
           <span className="font-semibold">Signed in as</span>
           <span className="text-foreground text-xs font-normal">{email}</span>
         </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+        // onClick={() => {
+        //   'use client'
+        //   window.location.href = `/u/${id}`
+        // }}
+        >
+          <UserPen
+            size={16}
+            strokeWidth={2}
+            className="opacity-60"
+            aria-hidden="true"
+          />
+          <span>Option 5</span>
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <LogoutButton />
       </DropdownMenuContent>

@@ -7,7 +7,7 @@ import { getAllGroups } from '@/prisma/dao/groups.dao'
 
 import { Logo } from '@/components/components/logo'
 import { Button } from '@/components/ui/button'
-import { UserMenu } from '@/components/track/user-menu'
+import { UserMenu } from '@/components/components/user-menu'
 import { NavMenu } from '@/components/components/nav-menu'
 
 const Header = async () => {
