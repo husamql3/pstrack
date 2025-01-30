@@ -24,7 +24,7 @@ const Layout = async ({
     <div className="relative flex h-svh flex-col">
       <Header />
 
-      <main className="mx-auto w-full max-w-2xl flex-1">{children}</main>
+      <main className="mx-auto w-full max-w-xl flex-1">{children}</main>
 
       <TrackFooter />
     </div>
