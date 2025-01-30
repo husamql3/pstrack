@@ -62,13 +62,13 @@ export const approveLeetcoder = async (id: string): Promise<leetcoders> => {
 
 export const fetchLeetcoder = async (id: string): Promise<leetcoders | null> => {
   try {
-    return await prisma.leetcoders.findUnique({
+    return prisma.leetcoders.findFirst({
       where: {
-        id: id,
+        id,
       },
     })
   } catch (error) {
-    console.error('catch fetchLeetcoder error:', error)
+    console.error('Error fetching user:', error)
     return null
   }
 }
