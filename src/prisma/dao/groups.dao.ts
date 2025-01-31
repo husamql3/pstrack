@@ -35,9 +35,7 @@ export type GroupWithRelations = groups & {
   })[]
 }
 
-export const fetchGroupData = async (
-  group_no: number
-): Promise<GroupWithRelations | null> => {
+export const fetchGroupData = async (group_no: number): Promise<GroupWithRelations | null> => {
   // Input validation
   if (!group_no || isNaN(group_no)) {
     console.error('Invalid group number provided:', group_no)

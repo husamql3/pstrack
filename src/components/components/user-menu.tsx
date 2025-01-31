@@ -10,10 +10,11 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { LogoutButton } from '@/components/track/logout-button'
+import { LogoutButton, UserButton } from '@/components/components/user-menu-buttons'
 
 const UserMenu = ({ user }: { user: User }) => {
   const {
+    id,
     user_metadata: { email, avatar_url, name },
   } = user
 
@@ -21,7 +22,7 @@ const UserMenu = ({ user }: { user: User }) => {
     <DropdownMenu>
       <DropdownMenuTrigger
         asChild
-        className="h-8 w-8"
+        className="size-10"
       >
         <Avatar className="cursor-pointer">
           <AvatarImage
@@ -43,6 +44,8 @@ const UserMenu = ({ user }: { user: User }) => {
           <span className="font-semibold">Signed in as</span>
           <span className="text-foreground text-xs font-normal">{email}</span>
         </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <UserButton userId={id} />
         <DropdownMenuSeparator />
         <LogoutButton />
       </DropdownMenuContent>

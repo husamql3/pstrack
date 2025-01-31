@@ -29,8 +29,10 @@ model leetcoders {
   id          String         @id @default(uuid()) @db.Uuid
   name        String
   email       String         @unique
-  gh_username String?
   lc_username String
+  gh_username String?
+  x_username  String?
+  li_username String?
   group_no    Int
   username    String         @unique
   created_at  DateTime?      @default(now()) @db.Timestamptz(6)

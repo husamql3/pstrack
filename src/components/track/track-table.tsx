@@ -133,40 +133,31 @@ export const TrackTable = ({
           )
         },
       }),
-      columnHelper.accessor(
-        (row) => ({ totalSolved: row.totalSolved, total: leetcoders.length }),
-        {
-          id: 'count',
-          header: () => 'Count',
-          cell: (info) => {
-            const { totalSolved, total } = info.getValue()
-            return (
-              <div className="flex items-center justify-between">
-                <span className="flex-1 text-right text-xs font-medium">
-                  {totalSolved}
-                </span>
-                <CountChart
-                  totalSolved={totalSolved}
-                  total={total}
-                />
-              </div>
-            )
-          },
-        }
-      ),
+      columnHelper.accessor((row) => ({ totalSolved: row.totalSolved, total: leetcoders.length }), {
+        id: 'count',
+        header: () => 'Count',
+        cell: (info) => {
+          const { totalSolved, total } = info.getValue()
+          return (
+            <div className="flex items-center justify-between">
+              <span className="flex-1 text-right text-xs font-medium">{totalSolved}</span>
+              <CountChart
+                totalSolved={totalSolved}
+                total={total}
+              />
+            </div>
+          )
+        },
+      }),
       // Use the sortedLeetcoders array instead of the original leetcoders array
       ...sortedLeetcoders.map((leetcoder) =>
         columnHelper.accessor(
-          (row) =>
-            row.userSubmissions.find((sub) => sub.user_id === leetcoder.id) || false,
+          (row) => row.userSubmissions.find((sub) => sub.user_id === leetcoder.id) || false,
           {
             id: leetcoder.id,
             header: () => (
               <span
-                className={cn(
-                  'whitespace-nowrap',
-                  userId === leetcoder.id && 'text-emerald-500'
-                )}
+                className={cn('whitespace-nowrap', userId === leetcoder.id && 'text-emerald-500')}
               >
                 @{leetcoder.username}
               </span>
@@ -223,15 +214,7 @@ export const TrackTable = ({
         )
       ),
     ],
-    [
-      sortedLeetcoders,
-      leetcoders.length,
-      loadingState,
-      checkedState,
-      userId,
-      onSubmit,
-      groupId,
-    ]
+    [sortedLeetcoders, leetcoders.length, loadingState, checkedState, userId, onSubmit, groupId]
   )
 
   const table = useReactTable({
@@ -311,9 +294,7 @@ export const TrackTable = ({
               Total
             </TableCell>
             {sortedLeetcoders.map((leetcoder) => (
-              <TableCell key={leetcoder.id}>
-                {leetcoderSolvedCounts[leetcoder.id]}
-              </TableCell>
+              <TableCell key={leetcoder.id}>{leetcoderSolvedCounts[leetcoder.id]}</TableCell>
             ))}
           </TableRow>
         </TableFooter>

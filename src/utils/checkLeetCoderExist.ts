@@ -1,7 +1,6 @@
 import { userProfile } from '@/lib/graphql/userProfile'
 
 export const checkLeetCodeUserExists = async (username: string): Promise<boolean> => {
-  console.log('checkLeetCodeUserExists')
   const payload = {
     query: userProfile,
     variables: { username: username },
@@ -15,15 +14,14 @@ export const checkLeetCodeUserExists = async (username: string): Promise<boolean
       },
       body: JSON.stringify(payload),
     })
-    console.log('response', response)
 
     if (!response.ok) {
-      throw new Error('Error checking LeetCode user.')
+      console.error(`HTTP error! status: ${response.status}`)
+      return false
     }
 
     const data = await response.json()
-    console.log('data', data)
-    return data.data.matchedUser !== null
+    return data.data?.matchedUser !== null
   } catch (error) {
     console.error('Error checking LeetCode user:', error)
     return false
