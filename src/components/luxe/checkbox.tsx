@@ -44,9 +44,7 @@ export function Checkbox({ checked = false, disabled = false, onChange }: Checkb
       className={cn(
         'flex h-5 w-5 flex-shrink-0 appearance-none items-center justify-center rounded outline-none',
         disabled || isLoading ? 'cursor-not-allowed opacity-50' : 'cursor-pointer',
-        isLoading
-          ? 'border-transparent bg-transparent'
-          : 'border border-neutral-800 bg-neutral-900'
+        isLoading ? 'border-transparent bg-transparent' : 'border border-neutral-800 bg-neutral-900'
       )}
       checked={internalChecked}
       disabled={disabled || isLoading}

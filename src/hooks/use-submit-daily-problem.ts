@@ -4,10 +4,7 @@ import { useRouter } from 'next/navigation'
 
 import { useConfettiStore } from '@/stores/confettiStore'
 import { fetcher } from '@/utils/fetcher'
-import {
-  SubmitDailyProblem,
-  UseSubmitDailyProblemReturn,
-} from '@/types/submitDailyProblem.type'
+import { SubmitDailyProblem, UseSubmitDailyProblemReturn } from '@/types/submitDailyProblem.type'
 import { toast } from '@/hooks/use-toast'
 
 export const useSubmitDailyProblem = (): UseSubmitDailyProblemReturn => {

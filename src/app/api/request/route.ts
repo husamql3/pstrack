@@ -4,11 +4,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { LeetcoderInsertSchema } from '@/types/schema/leetcoder.schema'
 import { LeetcoderRequest } from '@/types/leetcoder.type'
 import { checkLeetCodeUserExists } from '@/utils/checkLeetCoderExist'
-import {
-  addLeetcoder,
-  approveLeetcoder,
-  isUsernameExist,
-} from '@/prisma/dao/leetcoders.dao'
+import { addLeetcoder, approveLeetcoder, isUsernameExist } from '@/prisma/dao/leetcoders.dao'
 import { sendApproveEmail } from '@/utils/email/sendApproveEmail'
 import { sendAdminEmail } from '@/utils/email/sendAdminEmail'
 
