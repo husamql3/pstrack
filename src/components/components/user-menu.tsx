@@ -22,7 +22,7 @@ const UserMenu = ({ user }: { user: User }) => {
     <DropdownMenu>
       <DropdownMenuTrigger
         asChild
-        className="h-8 w-8"
+        className="size-10"
       >
         <Avatar className="cursor-pointer">
           <AvatarImage

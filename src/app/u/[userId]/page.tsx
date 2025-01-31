@@ -6,7 +6,7 @@ const Page = async ({ params }: { params: Promise<{ userId: string }> }) => {
   const userId = (await params).userId
   const user = await fetchLeetcoder(userId)
 
-  return <ProfileView user={user} />
+  return <ProfileView user={user!} />
 }
 
 export default Page

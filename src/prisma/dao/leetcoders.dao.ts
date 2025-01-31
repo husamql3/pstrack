@@ -142,3 +142,23 @@ export const isGroupFull = async (group_no: number): Promise<boolean> => {
     return false
   }
 }
+
+export const updateLeetcoder = async ({
+  id,
+  data,
+}: {
+  id: string
+  data: Partial<leetcoders>
+}): Promise<leetcoders> => {
+  try {
+    return await prisma.leetcoders.update({
+      where: {
+        id,
+      },
+      data,
+    })
+  } catch (error) {
+    console.error('catch updateLeetcoder error:', error)
+    return {} as leetcoders
+  }
+}

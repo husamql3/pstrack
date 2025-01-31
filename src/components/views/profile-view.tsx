@@ -1,191 +1,177 @@
 'use client'
 
-import { zodResolver } from '@hookform/resolvers/zod'
+import { useState } from 'react'
 import { leetcoders } from '@prisma/client'
 import { AtSign } from 'lucide-react'
-import { useForm } from 'react-hook-form'
-import { z } from 'zod'
+import { toast } from '@/hooks/use-toast'
 
 import { Button } from '@/components/ui/button'
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Select, SelectTrigger, SelectValue } from '@/components/ui/select'
-
-const formSchema = z.object({
-  name: z.string().min(2, {}),
-  username: z.string(),
-  lc_username: z.string(),
-  gh_username: z.string().optional(),
-  x_username: z.string().optional(),
-  li_username: z.string().optional(),
-})
+import { Label } from '@/components/ui/label'
 
 const ProfileView = ({ user }: { user: leetcoders }) => {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: user.name,
-      username: user.username,
-      lc_username: user.lc_username,
-      gh_username: user.gh_username || '',
-      x_username: '',
-      li_username: '',
-    },
-  })
+  const [isPending, setIsPending] = useState(false)
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values)
+  const updateProfile = async (formData: FormData) => {
+    setIsPending(true)
+    try {
+      const response = await fetch('/api/user', {
+        method: 'PUT',
+        body: formData,
+      })
+
+      if (!response.ok) {
+        const data = await response.json()
+        console.log(data)
+        toast({
+          description: data.error,
+          variant: 'destructive',
+        })
+      } else {
+        toast({
+          description: 'Profile updated successfully',
+          variant: 'success',
+        })
+      }
+    } catch (error) {
+      console.error('Error updating profile:', error)
+      toast({
+        description: 'An unexpected error occurred. Please try again later.',
+        variant: 'destructive',
+      })
+    } finally {
+      setIsPending(false)
+    }
+  }
+
+  const { username, group_no, name, lc_username, gh_username, x_username, li_username } = user
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    const formData = new FormData(event.currentTarget)
+    await updateProfile(formData)
   }
 
   return (
-    <div className="space-y-3 py-5">
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-3"
-        >
-          <div className="flex flex-1 gap-3">
-            <FormField
-              control={form.control}
-              name="username"
-              render={({ field }) => (
-                <FormItem className="flex-1">
-                  <FormLabel>LeetCode username</FormLabel>
-                  <FormControl>
-                    <div className="relative">
-                      <Input
-                        className="peer ps-9"
-                        {...field}
-                        disabled
-                      />
-                      <div className="text-muted-foreground/80 pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 peer-disabled:opacity-50">
-                        <AtSign
-                          size={16}
-                          strokeWidth={2}
-                          aria-hidden="true"
-                        />
-                      </div>
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormItem>
-              <FormLabel>Group Number</FormLabel>
-              <FormControl>
-                <Select disabled>
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder={'Group ' + user.group_no} />
-                  </SelectTrigger>
-                </Select>
-              </FormControl>
-            </FormItem>
+    <div className="space-y-3 py-10">
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-3"
+      >
+        {/* Username & Group Number */}
+        <div className="flex flex-1 gap-3">
+          <div className="flex-1">
+            <Label>Username</Label>
+            <div className="relative">
+              <Input
+                name="username"
+                className="peer ps-9"
+                defaultValue={username}
+                disabled
+              />
+              <div className="pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 peer-disabled:opacity-50">
+                <AtSign
+                  size={16}
+                  strokeWidth={2}
+                  aria-hidden="true"
+                />
+              </div>
+            </div>
           </div>
 
-          <FormField
-            control={form.control}
+          <div>
+            <Label>Group Number</Label>
+            <Select disabled>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue
+                  placeholder={'Group ' + group_no}
+                  defaultValue={group_no}
+                />
+              </SelectTrigger>
+            </Select>
+          </div>
+        </div>
+
+        {/* Name */}
+        <div>
+          <Label>Name</Label>
+          <Input
             name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Name</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            defaultValue={name}
           />
+          {/*{state?.errors?.name && <p className="text-red-500">{state.errors.name}</p>}*/}
+        </div>
 
-          <div className="flex w-full gap-3">
-            <FormField
-              control={form.control}
+        {/* LeetCoder & GitHub usernames  */}
+        <div className="flex w-full gap-3">
+          <div className="flex-1">
+            <Label>LeetCode Username</Label>
+            <Input
               name="lc_username"
-              render={({ field }) => (
-                <FormItem className="flex-1">
-                  <FormLabel>LeetCode username</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+              defaultValue={lc_username || ''}
             />
+          </div>
 
-            <FormField
-              control={form.control}
+          <div className="flex-1">
+            <Label>GitHub Username</Label>
+            <Input
               name="gh_username"
-              render={({ field }) => (
-                <FormItem className="flex-1">
-                  <FormLabel>GitHub username</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+              defaultValue={gh_username || ''}
             />
           </div>
+        </div>
 
-          <FormField
-            control={form.control}
-            name="x_username"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Twitter Username</FormLabel>
-                <FormControl>
-                  <div className="flex">
-                    <span className="-z-10 inline-flex items-center rounded-s-lg border border-r-0 border-zinc-800 px-3 text-sm">
-                      x.com/
-                    </span>
-                    <Input
-                      {...field}
-                      className="-ms-px rounded-s-none shadow-none"
-                      type="text"
-                    />
-                  </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="li_username"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>LinkedIn Username</FormLabel>
-                <FormControl>
-                  <div className="flex">
-                    <span className="-z-10 inline-flex items-center rounded-s-lg border border-r-0 border-zinc-800 px-3 text-sm">
-                      linkedin.com/in/
-                    </span>
-                    <Input
-                      {...field}
-                      className="-ms-px rounded-s-none shadow-none"
-                      type="text"
-                    />
-                  </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <div className="flex w-full justify-end pt-4">
-            <Button type="submit">Save Changes</Button>
+        {/* Twitter username */}
+        <div>
+          <Label>Twitter Username</Label>
+          <div className="flex">
+            <span className="-z-10 inline-flex items-center rounded-s-lg border border-r-0 border-zinc-800 px-3 text-sm text-zinc-50 opacity-50">
+              x.com/
+            </span>
+            <Input
+              name="x_username"
+              className="-ms-px rounded-s-none shadow-none"
+              type="text"
+              defaultValue={x_username || ''}
+            />
           </div>
-        </form>
-      </Form>
+          {/*{state?.errors?.x_username && <p className="text-red-500">{state.errors.x_username}</p>}*/}
+        </div>
+
+        {/* LinkedIn username */}
+        <div>
+          <Label>LinkedIn Username</Label>
+          <div className="flex">
+            <span className="-z-10 inline-flex items-center rounded-s-lg border border-r-0 border-zinc-800 px-3 text-sm text-zinc-50 opacity-50">
+              linkedin.com/in/
+            </span>
+            <Input
+              name="li_username"
+              className="-ms-px rounded-s-none shadow-none"
+              type="text"
+              defaultValue={li_username || ''}
+            />
+          </div>
+          {/*{state?.errors?.li_username && <p className="text-red-500">{state.errors.li_username}</p>}*/}
+        </div>
+
+        {/* User ID */}
+        <input
+          type="hidden"
+          name="id"
+          value={user.id}
+        />
+
+        <div className="flex w-full justify-end pt-4">
+          <Button
+            type="submit"
+            disabled={isPending}
+          >
+            Save Changes
+          </Button>
+        </div>
+      </form>
     </div>
   )
 }
