@@ -1,5 +1,6 @@
 ### Changelog
 
+- 1.1.17: FEAT: Add update profile page
 - 1.0.17: FIX: use gmail instead of titan
 - 1.0.16: STYLE: Update roadmap accordion style
 - 1.0.15: FEAT: Add `/roadmap` page

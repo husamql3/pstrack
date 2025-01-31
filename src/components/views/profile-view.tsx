@@ -62,9 +62,10 @@ const ProfileView = ({ user }: { user: leetcoders }) => {
         {/* Username & Group Number */}
         <div className="flex flex-1 gap-3">
           <div className="flex-1">
-            <Label>Username</Label>
+            <Label htmlFor="username">Username</Label>
             <div className="relative">
               <Input
+                id="username"
                 name="username"
                 className="peer ps-9"
                 defaultValue={username}
@@ -95,27 +96,29 @@ const ProfileView = ({ user }: { user: leetcoders }) => {
 
         {/* Name */}
         <div>
-          <Label>Name</Label>
+          <Label htmlFor="name">Name</Label>
           <Input
+            id="name"
             name="name"
             defaultValue={name}
           />
-          {/*{state?.errors?.name && <p className="text-red-500">{state.errors.name}</p>}*/}
         </div>
 
         {/* LeetCoder & GitHub usernames  */}
         <div className="flex w-full gap-3">
           <div className="flex-1">
-            <Label>LeetCode Username</Label>
+            <Label htmlFor="lc_username">LeetCode Username</Label>
             <Input
+              id="lc_username"
               name="lc_username"
               defaultValue={lc_username || ''}
             />
           </div>
 
           <div className="flex-1">
-            <Label>GitHub Username</Label>
+            <Label htmlFor="gh_username">GitHub Username</Label>
             <Input
+              id="gh_username"
               name="gh_username"
               defaultValue={gh_username || ''}
             />
@@ -124,36 +127,36 @@ const ProfileView = ({ user }: { user: leetcoders }) => {
 
         {/* Twitter username */}
         <div>
-          <Label>Twitter Username</Label>
+          <Label htmlFor="x_username">Twitter Username</Label>
           <div className="flex">
             <span className="-z-10 inline-flex items-center rounded-s-lg border border-r-0 border-zinc-800 px-3 text-sm text-zinc-50 opacity-50">
               x.com/
             </span>
             <Input
+              id="x_username"
               name="x_username"
               className="-ms-px rounded-s-none shadow-none"
               type="text"
               defaultValue={x_username || ''}
             />
           </div>
-          {/*{state?.errors?.x_username && <p className="text-red-500">{state.errors.x_username}</p>}*/}
         </div>
 
         {/* LinkedIn username */}
         <div>
-          <Label>LinkedIn Username</Label>
+          <Label htmlFor="li_username">LinkedIn Username</Label>
           <div className="flex">
             <span className="-z-10 inline-flex items-center rounded-s-lg border border-r-0 border-zinc-800 px-3 text-sm text-zinc-50 opacity-50">
               linkedin.com/in/
             </span>
             <Input
+              id="li_username"
               name="li_username"
               className="-ms-px rounded-s-none shadow-none"
               type="text"
               defaultValue={li_username || ''}
             />
           </div>
-          {/*{state?.errors?.li_username && <p className="text-red-500">{state.errors.li_username}</p>}*/}
         </div>
 
         {/* User ID */}

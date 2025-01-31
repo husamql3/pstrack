@@ -21,7 +21,7 @@ const Layout = async ({
   if (!userExists) notFound()
 
   return (
-    <div className="relative flex h-svh flex-col">
+    <div className="relative mx-auto flex h-svh max-w-screen-md flex-col">
       <Header />
 
       <main className="mx-auto w-full max-w-xl flex-1">{children}</main>
