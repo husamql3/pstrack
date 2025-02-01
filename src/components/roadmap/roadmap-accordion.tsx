@@ -29,7 +29,17 @@ export default function RoadmapAccordion({ roadmaps }: { roadmaps: roadmap[] }) 
 
   return (
     <div className="w-full space-y-4">
-      <h2 className="text-xl font-bold text-zinc-100">Roadmap</h2>
+      <h2 className="text-xl font-bold text-zinc-100">
+        Roadmap
+        <a
+          href="https://neetcode.io/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="ml-1 text-sm font-medium transition-all duration-200 hover:underline"
+        >
+          (neetcode)
+        </a>
+      </h2>
 
       <Accordion
         type="single"
