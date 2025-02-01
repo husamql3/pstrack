@@ -20,7 +20,16 @@ const roboto = Roboto({
 
 export const metadata: Metadata = {
   title: 'PSTrack',
-  description: 'A platform that helps you solve, track, and grow in problem-solving,',
+  description: 'A platform that helps you solve, track, and grow in problem-solving.',
+  openGraph: {
+    title: 'PSTrack',
+    description: 'Level up your problem-solving game with PSTrack',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'PSTrack',
+    description: 'Level up your problem-solving game with PSTrack',
+  },
 }
 
 export default function RootLayout({
