@@ -14,12 +14,7 @@ export const sendDailyProblemEmail = async ({
 }: SendDailyProblemEmail) => {
   try {
     const projectRoot = process.cwd()
-    const templatePath = path.join(
-      projectRoot,
-      'public',
-      'email',
-      'dailyProblemEmailTemplate.html'
-    )
+    const templatePath = path.join(projectRoot, 'public', 'email', 'dailyProblemEmailTemplate.html')
 
     let htmlContent = await fs.readFile(templatePath, 'utf-8')
     const groupLink = `https://pstrack.tech/g/${group_no}`

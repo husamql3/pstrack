@@ -15,13 +15,7 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
-export default function CountChart({
-  totalSolved,
-  total,
-}: {
-  totalSolved: number
-  total: number
-}) {
+export default function CountChart({ totalSolved, total }: { totalSolved: number; total: number }) {
   const chartData = [
     { type: 'solved', people: totalSolved, fill: 'var(--color-solved)' },
     { type: 'noSolved', people: total - totalSolved, fill: 'var(--color-notSolved)' },

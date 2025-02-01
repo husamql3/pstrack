@@ -8,12 +8,7 @@ import { sendAdminEmail } from '@/utils/email/sendAdminEmail'
 export const sendApproveEmail = async ({ to, username, group_no }: SendApprovalEmail) => {
   try {
     const projectRoot = process.cwd()
-    const templatePath = path.join(
-      projectRoot,
-      'public',
-      'email',
-      'approveEmailTemplate.html'
-    )
+    const templatePath = path.join(projectRoot, 'public', 'email', 'approveEmailTemplate.html')
 
     let htmlContent = await fs.readFile(templatePath, 'utf-8')
     const groupLink = `https://pstrack.tech/g/${group_no}`

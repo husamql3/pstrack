@@ -6,12 +6,7 @@ import { sendEmail } from '@/utils/email/sendEmail'
 
 export const sendSolveProblemsRemider = async ({ to, group_no }: SendRemiderEmail) => {
   const projectRoot = process.cwd()
-  const templatePath = path.join(
-    projectRoot,
-    'public',
-    'email',
-    'solveProblemsReminder.html'
-  )
+  const templatePath = path.join(projectRoot, 'public', 'email', 'solveProblemsReminder.html')
 
   let htmlContent = await fs.readFile(templatePath, 'utf-8')
   const groupLink = `https://pstrack.tech/g/${group_no}`

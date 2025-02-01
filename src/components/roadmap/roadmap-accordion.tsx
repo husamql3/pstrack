@@ -21,13 +21,11 @@ export default function RoadmapAccordion({ roadmaps }: { roadmaps: roadmap[] }) 
   )
 
   // Sort topics by the problem_order of the first problem in each topic
-  const sortedTopics = Object.entries(groupedRoadmaps).sort(
-    ([, roadmapsA], [, roadmapsB]) => {
-      const firstProblemOrderA = roadmapsA[0].problem_order
-      const firstProblemOrderB = roadmapsB[0].problem_order
-      return firstProblemOrderA - firstProblemOrderB
-    }
-  )
+  const sortedTopics = Object.entries(groupedRoadmaps).sort(([, roadmapsA], [, roadmapsB]) => {
+    const firstProblemOrderA = roadmapsA[0].problem_order
+    const firstProblemOrderB = roadmapsB[0].problem_order
+    return firstProblemOrderA - firstProblemOrderB
+  })
 
   return (
     <div className="w-full space-y-4">

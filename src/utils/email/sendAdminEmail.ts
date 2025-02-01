@@ -8,12 +8,7 @@ export const sendAdminEmail = async (error: unknown, context: string): Promise<v
     const adminEmail = process.env.ADMIN_EMAIL as string
 
     const projectRoot = process.cwd()
-    const templatePath = path.join(
-      projectRoot,
-      'public',
-      'email',
-      'adminEmailTemplate.html'
-    )
+    const templatePath = path.join(projectRoot, 'public', 'email', 'adminEmailTemplate.html')
 
     let htmlContent = await fs.readFile(templatePath, 'utf-8')
 

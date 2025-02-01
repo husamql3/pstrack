@@ -62,13 +62,13 @@ export const approveLeetcoder = async (id: string): Promise<leetcoders> => {
 
 export const fetchLeetcoder = async (id: string): Promise<leetcoders | null> => {
   try {
-    return await prisma.leetcoders.findUnique({
+    return prisma.leetcoders.findFirst({
       where: {
-        id: id,
+        id,
       },
     })
   } catch (error) {
-    console.error('catch fetchLeetcoder error:', error)
+    console.error('Error fetching user:', error)
     return null
   }
 }
@@ -140,5 +140,25 @@ export const isGroupFull = async (group_no: number): Promise<boolean> => {
   } catch (error) {
     console.error('catch isGroupFull error:', error)
     return false
+  }
+}
+
+export const updateLeetcoder = async ({
+  id,
+  data,
+}: {
+  id: string
+  data: Partial<leetcoders>
+}): Promise<leetcoders> => {
+  try {
+    return await prisma.leetcoders.update({
+      where: {
+        id,
+      },
+      data,
+    })
+  } catch (error) {
+    console.error('catch updateLeetcoder error:', error)
+    return {} as leetcoders
   }
 }

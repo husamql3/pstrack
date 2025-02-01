@@ -3,7 +3,7 @@ import { fetchGroupData } from '@/prisma/dao/groups.dao'
 import { fetchRoadmap } from '@/prisma/dao/roadmap.dao'
 import { getUser } from '@/hooks/get-user'
 
-import { TrackView } from '@/components/track/track-view'
+import { TrackView } from '@/components/views/track-view'
 import { ConfettiFireworks } from '@/components/components/confetti-fireworks'
 
 const Page = async ({ params }: { params: Promise<{ groupId: string }> }) => {
@@ -20,8 +20,8 @@ const Page = async ({ params }: { params: Promise<{ groupId: string }> }) => {
     return (
       <div className="flex h-screen flex-col items-center justify-center">
         <h1 className="max-w-lg px-3 text-center text-base font-medium md:px-0 md:text-2xl">
-          We&apos;re preparing something amazing for you! Stay tuned, and thanks for your
-          patience. 😉❤️
+          We&apos;re preparing something amazing for you! Stay tuned, and thanks for your patience.
+          😉❤️
         </h1>
       </div>
     )

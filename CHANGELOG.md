@@ -1,5 +1,6 @@
 ### Changelog
 
+- 1.1.18: FEAT: Add update profile page
 - 1.0.18: FEAT: use [neetcode](https://neetcode.io/practice) roadmap
 - 1.0.17: FIX: use gmail instead of titan
 - 1.0.16: STYLE: Update roadmap accordion style
