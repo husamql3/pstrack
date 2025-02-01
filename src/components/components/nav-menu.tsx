@@ -23,19 +23,21 @@ export function NavMenu({ groups }: { groups: groups[] }) {
           <NavigationMenuTrigger>Groups</NavigationMenuTrigger>
           <NavigationMenuContent>
             <ul className="flex w-full flex-col-reverse p-2">
-              {groups.map(({ group_no }) => (
-                <Link
-                  key={group_no}
-                  href={`/g/${group_no}`}
-                  legacyBehavior
-                  passHref
-                  prefetch
-                >
-                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                    Group {group_no}
-                  </NavigationMenuLink>
-                </Link>
-              ))}
+              {groups
+                .sort((a, b) => b.group_no - a.group_no)
+                .map(({ group_no }) => (
+                  <Link
+                    key={group_no}
+                    href={`/g/${group_no}`}
+                    legacyBehavior
+                    passHref
+                    prefetch
+                  >
+                    <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                      Group {group_no}
+                    </NavigationMenuLink>
+                  </Link>
+                ))}
             </ul>
           </NavigationMenuContent>
         </NavigationMenuItem>
