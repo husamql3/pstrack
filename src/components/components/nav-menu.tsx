@@ -53,18 +53,18 @@ export function NavMenu({ groups }: { groups: groups[] }) {
           </Link>
         </NavigationMenuItem> */}
 
-        {/*<NavigationMenuItem>*/}
-        {/*  <Link*/}
-        {/*    href="/roadmap"*/}
-        {/*    legacyBehavior*/}
-        {/*    passHref*/}
-        {/*    prefetch*/}
-        {/*  >*/}
-        {/*    <NavigationMenuLink className={navigationMenuTriggerStyle()}>*/}
-        {/*      Roadmap*/}
-        {/*    </NavigationMenuLink>*/}
-        {/*  </Link>*/}
-        {/*</NavigationMenuItem>*/}
+        <NavigationMenuItem>
+          <Link
+            href="/roadmap"
+            legacyBehavior
+            passHref
+            prefetch
+          >
+            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+              Roadmap
+            </NavigationMenuLink>
+          </Link>
+        </NavigationMenuItem>
       </NavigationMenuList>
     </NavigationMenu>
   )
