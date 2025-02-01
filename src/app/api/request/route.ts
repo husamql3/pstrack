@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
 
     const [data] = await Promise.all([
       addLeetcoder(body.id, validatedData as LeetcoderRequest),
-      sendAdminEmail(validatedData, 'PUT /api/request - Email Sending'),
+      sendAdminEmail(validatedData, 'Registered Leetcoder'),
     ])
 
     console.log('insertLeetcoder data:', data)
