@@ -5,18 +5,16 @@ import prisma from '@/prisma/prisma'
 export const fetchRoadmap = async (groupProgress: group_progress[]): Promise<roadmap[]> => {
   try {
     // If groupProgress is empty or invalid, return an empty array
-    if (!groupProgress || groupProgress.length === 0) {
-      return []
-    }
+    if (!groupProgress || groupProgress.length === 0) return []
 
-    // Find the maximum current_problem for the group
-    const maxCurrentProblem = Math.max(...groupProgress.map((gp) => gp.current_problem || 0))
+    // Extract current_problem from groupProgress
+    const currentProblems: number[] = groupProgress.map((gp) => gp.current_problem)
 
-    // Fetch all problems where problem_order is less than or equal to the max current_problem
+    // Fetch roadmap records where problem_order is in currentProblems
     return await prisma.roadmap.findMany({
       where: {
         problem_order: {
-          lte: maxCurrentProblem,
+          in: currentProblems,
         },
       },
     })
