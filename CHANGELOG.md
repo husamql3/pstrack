@@ -1,22 +1,23 @@
 ### Changelog
 
-- 1.1.18: FEAT: Add update profile page
+- 1.1.19: FIX: update fetching groupProgress logic
+- 1.1.18: FEAT: add update profile page
 - 1.0.18: FEAT: use [neetcode](https://neetcode.io/practice) roadmap
 - 1.0.17: FIX: use gmail instead of titan
-- 1.0.16: STYLE: Update roadmap accordion style
-- 1.0.15: FEAT: Add `/roadmap` page
-- 1.0.14: FEAT: Configure Redis
+- 1.0.16: STYLE: update roadmap accordion style
+- 1.0.15: FEAT: add `/roadmap` page
+- 1.0.14: FEAT: configure Redis
 - 1.0.13: ENHANCEMENT: use nodemailer instead of resend
-- 1.0.12: STYLE: Update count chart
-- 1.0.11: STYLE: Update scrollbar style
-- 1.0.10: FEAT: Add navigation menu
-- 1.0.9: STYLE: Update scrollbar style
-- 1.0.8: FEAT: Add chart for count
-- 1.0.7: FEAT: Add group 2
-- 1.0.6: FEAT: Kick off neglected leetcoders after 5 non-solved problems
-- 1.0.5: FEAT: Secure cron job
-- 1.0.4: ENHANCEMENT: Use [cron-jon](https://console.cron-job.org/jobs) instead of vercel cron
-- 1.0.3: FEAT: Automate "send daily problem email" cron job
-- 1.0.2: FEAT: Automate "add group progress" cron job
-- 1.0.1: FIX: Show validation error message when the form is submitted
+- 1.0.12: STYLE: update count chart
+- 1.0.11: STYLE: update scrollbar style
+- 1.0.10: FEAT: add navigation menu
+- 1.0.9: STYLE: update scrollbar style
+- 1.0.8: FEAT: add chart for count
+- 1.0.7: FEAT: add group 2
+- 1.0.6: FEAT: kick off neglected leetcoders after 5 non-solved problems
+- 1.0.5: FEAT: secure cron job
+- 1.0.4: ENHANCEMENT: use [cron-jon](https://console.cron-job.org/jobs) instead of vercel cron
+- 1.0.3: FEAT: automate "send daily problem email" cron job
+- 1.0.2: FEAT: automate "add group progress" cron job
+- 1.0.1: FIX: show validation error message when the form is submitted
 - 1.0.0: Initial release
