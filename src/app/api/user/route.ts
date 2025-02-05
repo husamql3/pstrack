@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { UpdateProfileSchema } from '@/types/schema/updateProfile.schema'
 import { checkLeetCodeUserExists } from '@/utils/checkLeetCoderExist'
 import { checkGitHubUserExists } from '@/utils/checkGitHubUserExists'
-import { updateLeetcoder } from '@/prisma/dao/leetcoders.dao'
+import { fetchLeetcoder, updateLeetcoder } from '@/prisma/dao/leetcoders.dao'
 
 export async function PUT(req: NextRequest) {
   try {
@@ -87,6 +87,46 @@ export async function PUT(req: NextRequest) {
         status: 200,
       }
     )
+  } catch (error) {
+    console.error(error)
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Something went wrong',
+      },
+      { status: 500 }
+    )
+  }
+}
+
+export async function GET(req: NextRequest) {
+  try {
+    const userId = req.nextUrl.searchParams.get('id') as string
+    if (!userId) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Missing user id',
+        },
+        { status: 400 }
+      )
+    }
+
+    const leetcoder = await fetchLeetcoder(userId)
+    if (!leetcoder) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'User not found',
+        },
+        { status: 404 }
+      )
+    }
+
+    return NextResponse.json({
+      success: true,
+      data: leetcoder,
+    })
   } catch (error) {
     console.error(error)
     return NextResponse.json(

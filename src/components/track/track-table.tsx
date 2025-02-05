@@ -1,11 +1,11 @@
 import { useMemo, useState } from 'react'
+import { MoveDown } from 'lucide-react'
 import {
   createColumnHelper,
   flexRender,
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { MoveDown } from 'lucide-react'
 
 import { TableRowOutput } from '@/types/tableRow.type'
 import { Difficulty } from '@/types/difficulty.type'
@@ -27,7 +27,8 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Checkbox } from '@/components/ui/checkbox'
-import CountChart from './count-chart'
+import CountChart from '@/components/track/count-chart'
+import { LeetcoderCard } from '@/components/track/leetcoder-card'
 
 const columnHelper = createColumnHelper<TableRowOutput>()
 
@@ -133,22 +134,28 @@ export const TrackTable = ({
           )
         },
       }),
-      columnHelper.accessor((row) => ({ totalSolved: row.totalSolved, total: leetcoders.length }), {
-        id: 'count',
-        header: () => 'Count',
-        cell: (info) => {
-          const { totalSolved, total } = info.getValue()
-          return (
-            <div className="flex items-center justify-between">
-              <span className="flex-1 text-right text-xs font-medium">{totalSolved}</span>
-              <CountChart
-                totalSolved={totalSolved}
-                total={total}
-              />
-            </div>
-          )
-        },
-      }),
+      columnHelper.accessor(
+        (row) => ({
+          totalSolved: row.totalSolved,
+          total: leetcoders.length,
+        }),
+        {
+          id: 'count',
+          header: () => 'Count',
+          cell: (info) => {
+            const { totalSolved, total } = info.getValue()
+            return (
+              <div className="flex items-center justify-between">
+                <span className="flex-1 text-right text-xs font-medium">{totalSolved}</span>
+                <CountChart
+                  totalSolved={totalSolved}
+                  total={total}
+                />
+              </div>
+            )
+          },
+        }
+      ),
       // Use the sortedLeetcoders array instead of the original leetcoders array
       ...sortedLeetcoders.map((leetcoder) =>
         columnHelper.accessor(
@@ -156,11 +163,11 @@ export const TrackTable = ({
           {
             id: leetcoder.id,
             header: () => (
-              <span
-                className={cn('whitespace-nowrap', userId === leetcoder.id && 'text-emerald-500')}
-              >
-                @{leetcoder.username}
-              </span>
+              <LeetcoderCard
+                leetcoderId={leetcoder.id}
+                leetcoderUser={leetcoder.username}
+                currentUser={userId === leetcoder.id}
+              />
             ),
             cell: (info) => {
               const problemId = info.row.original.problem.id
