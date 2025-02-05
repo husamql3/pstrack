@@ -1,5 +1,6 @@
 ### Changelog
 
+- 1.2.20: FEAT: Add leetcoder card 
 - 1.1.20: ENHANCEMENT: make logo as Link instead of image
 - 1.1.19: FIX: update fetching groupProgress logic
 - 1.1.18: FEAT: add update profile page
