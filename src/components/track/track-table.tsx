@@ -9,10 +9,10 @@ import {
 
 import { TableRowOutput } from '@/types/tableRow.type'
 import { Difficulty } from '@/types/difficulty.type'
-import { getDifficultyColor } from '@/utils/getDifficultyColor'
+import { getDifficultyColor } from '@/utils/track/getDifficultyColor'
 import { TrackTableProps } from '@/types/TrackTableProps.type'
 import { cn } from '@/lib/utils'
-import { getTopicColor } from '@/utils/getTopicColor'
+import { getTopicColor } from '@/utils/track/getTopicColor'
 import { PROBLEM_BASE_URL } from '@/data/CONSTANTS'
 import { Topic } from '@/types/topics.type'
 import { parseDate } from '@/utils/parseDate'

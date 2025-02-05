@@ -8,34 +8,13 @@ import { IoLogoGithub } from 'react-icons/io5'
 import { IoLogoLinkedin } from 'react-icons/io'
 
 import { cn } from '@/lib/utils'
+import { extractUsername } from '@/utils/track/extractUsername'
+import { getSocialLink } from '@/utils/track/getSocialLink'
 
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import LeetCoderCardSkeleton from '@/components/track/leetcoder-card-skeleton'
-
-const extractUsername = (input: string, platform: 'github' | 'twitter' | 'linkedin'): string => {
-  const patterns = {
-    github: /^(?:https?:\/\/)?(?:www\.)?github\.com\/([a-zA-Z0-9-]+)\/?$/,
-    twitter: /^(?:https?:\/\/)?(?:www\.)?(?:twitter\.com|x\.com)\/([a-zA-Z0-9_]+)\/?$/,
-    linkedin: /^(?:https?:\/\/)?(?:www\.)?linkedin\.com\/(?:in|company)\/([a-zA-Z0-9-]+)\/?$/,
-  }
-
-  const match = input.match(patterns[platform])
-  return match ? match[1] : input
-}
-
-const getSocialLink = (username: string, platform: 'github' | 'twitter' | 'linkedin'): string => {
-  if (username.startsWith('http')) return username
-
-  const baseUrls = {
-    github: 'https://github.com/',
-    twitter: 'https://twitter.com/',
-    linkedin: 'https://linkedin.com/in/',
-  }
-
-  return `${baseUrls[platform]}${username}`
-}
+import { LeetCoderCardSkeleton } from '@/components/track/leetcoder-card-skeleton'
 
 const LeetcoderCard = ({
   leetcoderId,

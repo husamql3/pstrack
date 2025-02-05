@@ -20,4 +20,4 @@ const LeetCoderCardSkeleton = () => {
   )
 }
 
-export default LeetCoderCardSkeleton
+export { LeetCoderCardSkeleton }
