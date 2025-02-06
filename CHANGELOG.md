@@ -1,6 +1,7 @@
 ### Changelog
 
-- 1.2.21: FEAT: Add leetcoder card
+- 1.2.22: FEAT: add logout icon
+- 1.2.21: FEAT: add leetcoder card
 - 1.1.21: FIX: authorization issue
 - 1.1.20: ENHANCEMENT: make logo as Link instead of image
 - 1.1.19: FIX: update fetching groupProgress logic
