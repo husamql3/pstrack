@@ -16,6 +16,11 @@ import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { LeetCoderCardSkeleton } from '@/components/track/leetcoder-card-skeleton'
 
+type LeetcoderData = leetcoders & {
+  max_steak: number
+  max_streak_for_cur_year: number
+}
+
 const LeetcoderCard = ({
   leetcoderId,
   leetcoderUser,
@@ -25,7 +30,7 @@ const LeetcoderCard = ({
   leetcoderUser: string
   currentUser: boolean
 }) => {
-  const [leetcoder, setLeetcoder] = useState<leetcoders | null>(null)
+  const [leetcoder, setLeetcoder] = useState<LeetcoderData | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 

@@ -5,6 +5,9 @@ import { UpdateProfileSchema } from '@/types/schema/updateProfile.schema'
 import { checkLeetCodeUserExists } from '@/utils/checkLeetCoderExist'
 import { checkGitHubUserExists } from '@/utils/checkGitHubUserExists'
 import { fetchLeetcoder, updateLeetcoder } from '@/prisma/dao/leetcoders.dao'
+import { LEETCODE_GQL_BASE_URL } from '@/data/CONSTANTS'
+import { calcMaxStreak } from '@/utils/calculateMaxStreak'
+import { userProfileQuery } from '@/lib/graphql/userProfile.gql'
 
 export async function PUT(req: NextRequest) {
   try {
@@ -123,9 +126,40 @@ export async function GET(req: NextRequest) {
       )
     }
 
+    const payload = {
+      query: userProfileQuery,
+      variables: {
+        username: leetcoder.lc_username,
+      },
+    }
+    const response = await fetch(LEETCODE_GQL_BASE_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    })
+    if (!response.ok) {
+      console.error('Error fetching user profile:', response)
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Something went wrong',
+        },
+        { status: 500 }
+      )
+    }
+    const data = await response.json()
+    const maxSteak = data.data.matchedUser.userCalendar.streak
+    const maxStreakForCurYear = calcMaxStreak(data.data.matchedUser.userCalendar.submissionCalendar)
+
     return NextResponse.json({
       success: true,
-      data: leetcoder,
+      data: {
+        ...leetcoder,
+        max_steak: maxSteak,
+        max_streak_for_cur_year: maxStreakForCurYear,
+      },
     })
   } catch (error) {
     console.error(error)
