@@ -1,6 +1,8 @@
 import { createServerClient } from '@supabase/ssr'
 import { type NextRequest, NextResponse } from 'next/server'
 
+const PROTECTED_PATHS = ['/dashboard', '/u/']
+
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
     request,
@@ -40,7 +42,7 @@ export async function updateSession(request: NextRequest) {
   const allowedUserEmail = process.env.ADMIN_EMAIL
 
   // Check if the user is trying to access the protected route
-  if (request.nextUrl.pathname.startsWith('/dashboard')) {
+  if (PROTECTED_PATHS.some((path) => request.nextUrl.pathname.startsWith(path))) {
     if (!user || user.email !== allowedUserEmail) {
       const url = request.nextUrl.clone()
       url.pathname = '/404'
