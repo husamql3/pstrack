@@ -1,8 +1,5 @@
 import { Difficulty } from '@/types/difficulty.type'
 
-/*
- * Get the color for the difficulty based on the difficulty level
- **/
 export function getDifficultyColor(difficulty: Difficulty): string {
   switch (difficulty) {
     case 'easy':

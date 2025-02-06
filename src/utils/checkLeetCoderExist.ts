@@ -1,4 +1,5 @@
 import { userProfile } from '@/lib/graphql/userProfile'
+import { LEETCODE_GQL_BASE_URL } from '@/data/CONSTANTS'
 
 export const checkLeetCodeUserExists = async (username: string): Promise<boolean> => {
   const payload = {
@@ -7,7 +8,7 @@ export const checkLeetCodeUserExists = async (username: string): Promise<boolean
   }
 
   try {
-    const response = await fetch('https://leetcode.com/graphql', {
+    const response = await fetch(LEETCODE_GQL_BASE_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

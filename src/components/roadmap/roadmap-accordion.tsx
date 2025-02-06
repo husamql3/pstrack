@@ -1,11 +1,13 @@
-import { Difficulty } from '@/types/difficulty.type'
 import { Plus } from 'lucide-react'
 import { roadmap } from '@prisma/client'
+
+import { cn } from '@/lib/utils'
+import { PROBLEM_BASE_URL } from '@/data/CONSTANTS'
+
+import { Difficulty } from '@/types/difficulty.type'
 import * as AccordionPrimitive from '@radix-ui/react-accordion'
 import { Accordion, AccordionContent, AccordionItem } from '@/components/ui/accordion'
-import { PROBLEM_BASE_URL } from '@/data/CONSTANTS'
-import { cn } from '@/lib/utils'
-import { getDifficultyTextColor } from '@/utils/getDifficultyColor'
+import { getDifficultyTextColor } from '@/utils/track/getDifficultyColor'
 
 export default function RoadmapAccordion({ roadmaps }: { roadmaps: roadmap[] }) {
   // Group roadmaps by topic

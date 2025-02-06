@@ -3,6 +3,7 @@ import {
   RecentSubmission,
   ValidateDailyProblemSolved,
 } from '@/types/validateDailyProblemSolved.type'
+import { LEETCODE_GQL_BASE_URL } from '@/data/CONSTANTS'
 
 export const validateDailyProblemSolved = async ({
   lc_username,
@@ -13,7 +14,7 @@ export const validateDailyProblemSolved = async ({
     variables: { username: lc_username },
   }
   try {
-    const response = await fetch('https://leetcode.com/graphql', {
+    const response = await fetch(LEETCODE_GQL_BASE_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

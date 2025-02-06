@@ -1,4 +1,4 @@
-import { generateTableData } from '@/utils/generateTableData'
+import { generateTableData } from '@/utils/track/generateTableData'
 import { fetchGroupData } from '@/prisma/dao/groups.dao'
 import { fetchRoadmap } from '@/prisma/dao/roadmap.dao'
 import { getUser } from '@/hooks/get-user'

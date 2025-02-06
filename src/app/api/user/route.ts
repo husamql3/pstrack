@@ -4,7 +4,10 @@ import { NextRequest, NextResponse } from 'next/server'
 import { UpdateProfileSchema } from '@/types/schema/updateProfile.schema'
 import { checkLeetCodeUserExists } from '@/utils/checkLeetCoderExist'
 import { checkGitHubUserExists } from '@/utils/checkGitHubUserExists'
-import { updateLeetcoder } from '@/prisma/dao/leetcoders.dao'
+import { fetchLeetcoder, updateLeetcoder } from '@/prisma/dao/leetcoders.dao'
+import { LEETCODE_GQL_BASE_URL } from '@/data/CONSTANTS'
+import { calcMaxStreak } from '@/utils/calculateMaxStreak'
+import { userProfileQuery } from '@/lib/graphql/userProfile.gql'
 
 export async function PUT(req: NextRequest) {
   try {
@@ -87,6 +90,77 @@ export async function PUT(req: NextRequest) {
         status: 200,
       }
     )
+  } catch (error) {
+    console.error(error)
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Something went wrong',
+      },
+      { status: 500 }
+    )
+  }
+}
+
+export async function GET(req: NextRequest) {
+  try {
+    const userId = req.nextUrl.searchParams.get('id') as string
+    if (!userId) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Missing user id',
+        },
+        { status: 400 }
+      )
+    }
+
+    const leetcoder = await fetchLeetcoder(userId)
+    if (!leetcoder) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'User not found',
+        },
+        { status: 404 }
+      )
+    }
+
+    const payload = {
+      query: userProfileQuery,
+      variables: {
+        username: leetcoder.lc_username,
+      },
+    }
+    const response = await fetch(LEETCODE_GQL_BASE_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    })
+    if (!response.ok) {
+      console.error('Error fetching user profile:', response)
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Something went wrong',
+        },
+        { status: 500 }
+      )
+    }
+    const data = await response.json()
+    const maxSteak = data.data.matchedUser.userCalendar.streak
+    const maxStreakForCurYear = calcMaxStreak(data.data.matchedUser.userCalendar.submissionCalendar)
+
+    return NextResponse.json({
+      success: true,
+      data: {
+        ...leetcoder,
+        max_steak: maxSteak,
+        max_streak_for_cur_year: maxStreakForCurYear,
+      },
+    })
   } catch (error) {
     console.error(error)
     return NextResponse.json(
