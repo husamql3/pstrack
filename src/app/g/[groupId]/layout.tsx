@@ -29,7 +29,7 @@ const Layout = async ({
   const groups: groups[] = await getAllGroups()
 
   return (
-    <div className="relative flex h-svh flex-col">
+    <div className="relative flex h-svh flex-col overflow-x-hidden">
       <TrackHeader
         groupId={groupId}
         user={user!}
