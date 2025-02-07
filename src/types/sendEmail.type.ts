@@ -28,3 +28,9 @@ export type SendRemiderEmail = {
   group_no: string
   to: string
 }
+
+export type EmailLog = {
+  email: string
+  status: 'success' | 'failed'
+  error?: string
+}
