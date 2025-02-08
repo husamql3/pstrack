@@ -84,7 +84,7 @@ export const hasSolvedCurrentProblem = (
   )
 }
 
-export const getAssignedProblems = async (groupNo: number) => {
+export const getLastAssignedProblems = async (groupNo: number) => {
   return prisma.roadmap.findMany({
     where: {
       group_progress: {
@@ -93,6 +93,10 @@ export const getAssignedProblems = async (groupNo: number) => {
         },
       },
     },
+    orderBy: {
+      created_at: 'desc',
+    },
+    take: 6,
     select: {
       id: true,
     },
@@ -105,22 +109,28 @@ export const getSolvedProblems = (leetcoder: LeetcoderWithSubmissions) => {
     .map((submission) => submission.problem_id)
 }
 
-export const calculateUnsolvedProblems = (
+export const checkUnsolvedLastProblems = async (leetcoder: LeetcoderWithSubmissions) => {
+  const lastAssignedProblems = await getLastAssignedProblems(leetcoder.group_no)
+  const solvedProblems = new Set(getSolvedProblems(leetcoder))
+
+  const allUnsolved = lastAssignedProblems.every((problem) => !solvedProblems.has(problem.id))
+
+  return allUnsolved
+}
+
+/* export const calculateUnsolvedProblems = (
   assignedProblems: { id: string }[],
   solvedProblems: string[]
 ) => {
   return assignedProblems.filter((problem) => !solvedProblems.includes(problem.id))
-}
+} */
 
 export const processLeetcoder = async (
   leetcoder: LeetcoderWithSubmissions,
-  unsolvedThreshold = 5
 ) => {
-  const assignedProblems = await getAssignedProblems(leetcoder.group_no)
-  const solvedProblems = getSolvedProblems(leetcoder)
-  const unsolvedProblems = calculateUnsolvedProblems(assignedProblems, solvedProblems)
+  const allUnsolved = await checkUnsolvedLastProblems(leetcoder)
 
-  if (unsolvedProblems.length >= unsolvedThreshold) {
+  if (allUnsolved) {
     if (leetcoder.is_notified) {
       await kickOffLeetcoders(leetcoder.id)
     } else {
