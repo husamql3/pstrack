@@ -125,9 +125,7 @@ export const checkUnsolvedLastProblems = async (leetcoder: LeetcoderWithSubmissi
   return assignedProblems.filter((problem) => !solvedProblems.includes(problem.id))
 } */
 
-export const processLeetcoder = async (
-  leetcoder: LeetcoderWithSubmissions,
-) => {
+export const processLeetcoder = async (leetcoder: LeetcoderWithSubmissions) => {
   const allUnsolved = await checkUnsolvedLastProblems(leetcoder)
 
   if (allUnsolved) {
