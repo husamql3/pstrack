@@ -12,6 +12,7 @@ export const getAllLeetcoders = async (): Promise<LeetcoderWithSubmissions[]> =>
   try {
     return (await prisma.leetcoders.findMany({
       where: {
+        status: 'APPROVED',
         OR: [
           {
             submissions: {
@@ -84,19 +85,18 @@ export const hasSolvedCurrentProblem = (
   )
 }
 
-export const getLastAssignedProblems = async (groupNo: number) => {
+export const getAssignedProblems = async (groupNo: number, leetcoderCreatedAt: Date) => {
   return prisma.roadmap.findMany({
     where: {
       group_progress: {
         some: {
           group_no: groupNo,
+          created_at: {
+            gte: leetcoderCreatedAt,
+          },
         },
       },
     },
-    orderBy: {
-      created_at: 'desc',
-    },
-    take: 6,
     select: {
       id: true,
     },
@@ -109,34 +109,33 @@ export const getSolvedProblems = (leetcoder: LeetcoderWithSubmissions) => {
     .map((submission) => submission.problem_id)
 }
 
-export const checkUnsolvedLastProblems = async (leetcoder: LeetcoderWithSubmissions) => {
-  const lastAssignedProblems = await getLastAssignedProblems(leetcoder.group_no)
-  const solvedProblems = new Set(getSolvedProblems(leetcoder))
-
-  const allUnsolved = lastAssignedProblems.every((problem) => !solvedProblems.has(problem.id))
-
-  return allUnsolved
-}
-
-/* export const calculateUnsolvedProblems = (
+export const calculateUnsolvedProblems = (
   assignedProblems: { id: string }[],
   solvedProblems: string[]
 ) => {
   return assignedProblems.filter((problem) => !solvedProblems.includes(problem.id))
-} */
+}
 
-export const processLeetcoder = async (leetcoder: LeetcoderWithSubmissions) => {
-  const allUnsolved = await checkUnsolvedLastProblems(leetcoder)
+export const processLeetcoder = async (
+  leetcoder: LeetcoderWithSubmissions,
+  unsolvedThreshold = 6
+) => {
+  const assignedProblems = await getAssignedProblems(leetcoder.group_no, leetcoder.created_at)
 
-  if (allUnsolved) {
-    if (leetcoder.is_notified) {
-      await kickOffLeetcoders(leetcoder.id)
-    } else {
-      await sendSolveProblemsRemider({
-        to: leetcoder.email,
-        group_no: String(leetcoder.group_no),
-      })
-      await updateIsNotified(leetcoder.id)
+  if (assignedProblems.length >= unsolvedThreshold) {
+    const solvedProblems = getSolvedProblems(leetcoder)
+    const unsolvedProblems = calculateUnsolvedProblems(assignedProblems, solvedProblems)
+
+    if (unsolvedProblems.length > unsolvedThreshold) {
+      if (leetcoder.is_notified) {
+        await kickOffLeetcoders(leetcoder.id)
+      } else {
+        await sendSolveProblemsRemider({
+          to: leetcoder.email,
+          group_no: String(leetcoder.group_no),
+        })
+        await updateIsNotified(leetcoder.id)
+      }
     }
   }
 }
