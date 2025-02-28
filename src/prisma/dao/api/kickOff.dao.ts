@@ -12,6 +12,7 @@ export const getAllLeetcoders = async (): Promise<LeetcoderWithSubmissions[]> =>
   try {
     return (await prisma.leetcoders.findMany({
       where: {
+        status: 'APPROVED',
         OR: [
           {
             submissions: {
@@ -84,12 +85,15 @@ export const hasSolvedCurrentProblem = (
   )
 }
 
-export const getAssignedProblems = async (groupNo: number) => {
+export const getAssignedProblems = async (groupNo: number, leetcoderCreatedAt: Date) => {
   return prisma.roadmap.findMany({
     where: {
       group_progress: {
         some: {
           group_no: groupNo,
+          created_at: {
+            gte: leetcoderCreatedAt,
+          },
         },
       },
     },
@@ -114,21 +118,24 @@ export const calculateUnsolvedProblems = (
 
 export const processLeetcoder = async (
   leetcoder: LeetcoderWithSubmissions,
-  unsolvedThreshold = 5
+  unsolvedThreshold = 6
 ) => {
-  const assignedProblems = await getAssignedProblems(leetcoder.group_no)
-  const solvedProblems = getSolvedProblems(leetcoder)
-  const unsolvedProblems = calculateUnsolvedProblems(assignedProblems, solvedProblems)
+  const assignedProblems = await getAssignedProblems(leetcoder.group_no, leetcoder.created_at)
 
-  if (unsolvedProblems.length >= unsolvedThreshold) {
-    if (leetcoder.is_notified) {
-      await kickOffLeetcoders(leetcoder.id)
-    } else {
-      await sendSolveProblemsRemider({
-        to: leetcoder.email,
-        group_no: String(leetcoder.group_no),
-      })
-      await updateIsNotified(leetcoder.id)
+  if (assignedProblems.length >= unsolvedThreshold) {
+    const solvedProblems = getSolvedProblems(leetcoder)
+    const unsolvedProblems = calculateUnsolvedProblems(assignedProblems, solvedProblems)
+
+    if (unsolvedProblems.length > unsolvedThreshold) {
+      if (leetcoder.is_notified) {
+        await kickOffLeetcoders(leetcoder.id)
+      } else {
+        await sendSolveProblemsRemider({
+          to: leetcoder.email,
+          group_no: String(leetcoder.group_no),
+        })
+        await updateIsNotified(leetcoder.id)
+      }
     }
   }
 }
