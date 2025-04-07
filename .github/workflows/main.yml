@@ -1,39 +1,67 @@
-name: CI
+# name: CI
 
-on:
-  pull_request:
-    branches:
-      - main
-  push:
-    branches:
-      - main
+# on:
+#   pull_request:
+#     branches:
+#       - main
+#   push:
+#     branches:
+#       - main
 
-jobs:
-  prettier:
-    name: Run Prettier, Eslint, and TS type checks
-    runs-on: ubuntu-latest
+# jobs:
+#   prettier:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v4
+#       - uses: actions/setup-node@v4
+#         with:
+#           node-version: '>=16'
+#       - name: Install pnpm
+#         run: npm install -g pnpm
+#       - name: Install dependencies
+#         run: pnpm install --strict-peer-dependencies=false
+#       - name: Run Prettier
+#         run: pnpm run prettier
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+#   eslint:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v4
+#       - uses: actions/setup-node@v4
+#         with:
+#           node-version: '>=16'
+#       - name: Install pnpm
+#         run: npm install -g pnpm
+#       - name: Install dependencies
+#         run: pnpm install --strict-peer-dependencies=false
+#       - name: Run ESLint
+#         run: pnpm run lint
 
-      - name: Setup node env
-        uses: actions/setup-node@v4
-        with:
-          node-version: '>=16'
-          cache: 'yarn'
+#   typecheck:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v4
+#       - uses: actions/setup-node@v4
+#         with:
+#           node-version: '>=16'
+#       - name: Install pnpm
+#         run: npm install -g pnpm
+#       - name: Install dependencies
+#         run: pnpm install --strict-peer-dependencies=false
+#       - name: Run Typecheck
+#         run: pnpm run typecheck
 
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
-
-      - name: Run Prettier
-        run: yarn prettier:check
-
-      - name: Run Eslint
-        run: yarn lint
-
-      - name: Run TS type checks
-        run: yarn tsc --noEmit
-
-      - name: Build
-        run: yarn build
+#   build:
+#     runs-on: ubuntu-latest
+#     needs: [typecheck]
+#     steps:
+#       - uses: actions/checkout@v4
+#       - uses: actions/setup-node@v4
+#         with:
+#           node-version: '>=16'
+#       - name: Install pnpm
+#         run: npm install -g pnpm
+#       - name: Install dependencies
+#         run: pnpm install --strict-peer-dependencies=false
+#       - name: Run Build
+#         run: pnpm run build

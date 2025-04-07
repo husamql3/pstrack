@@ -1,13 +1,7 @@
-import type { NextConfig } from 'next'
+import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: 'standalone',
-  experimental: {
-    optimizeCss: true,
-  },
-  compiler: {
-    removeConsole: process.env.NODE_ENV === 'production',
-  },
-}
+  /* config options here */
+};
 
-export default nextConfig
+export default nextConfig;

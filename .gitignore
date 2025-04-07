@@ -39,9 +39,3 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-
-.idea
-/src/types/supabase.ts
-/src/types/schema.sql
-package-lock.json
-/src/archive
