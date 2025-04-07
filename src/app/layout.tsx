@@ -1,12 +1,12 @@
 import type { Metadata } from 'next'
-import { Roboto } from 'next/font/google'
+import { Geist } from 'next/font/google'
 import { Toaster } from 'sonner'
 
 import Providers from '@/components/providers/providers'
 import { cn } from '@/lib/utils'
 import './globals.css'
 
-const roboto = Roboto({
+const geist = Geist({
   weight: ['400', '500', '700'],
   subsets: ['latin'],
   display: 'swap',
@@ -26,7 +26,7 @@ function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={cn('dark antialiased', roboto.className)}>
+      <body className={cn('dark -tracking-wide antialiased', geist.className)}>
         <Providers>{children}</Providers>
         <Toaster />
       </body>
