@@ -1,0 +1,75 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model group_progress {
+  id              String   @id @default(uuid()) @db.Uuid
+  created_at      DateTime @default(now()) @db.Timestamptz(6)
+  group_no        Int
+  current_problem Int
+  roadmap         roadmap  @relation(fields: [current_problem], references: [problem_order])
+  group           groups   @relation(fields: [group_no], references: [group_no])
+}
+
+model groups {
+  id             String           @id @default(uuid()) @db.Uuid
+  group_no       Int              @unique @default(autoincrement())
+  group_name     String
+  group_progress group_progress[]
+  leetcoders     leetcoders[]
+  submissions    submissions[]
+}
+
+model leetcoders {
+  id          String         @id @default(uuid()) @db.Uuid
+  name        String
+  email       String         @unique
+  lc_username String
+  gh_username String?
+  x_username  String?
+  li_username String?
+  group_no    Int
+  username    String         @unique
+  created_at  DateTime       @default(now()) @db.Timestamptz(6)
+  is_notified Boolean        @default(false)
+  status      LeetcodeStatus @default(PENDING)
+  group       groups         @relation(fields: [group_no], references: [group_no])
+  submissions submissions[]
+}
+
+model roadmap {
+  id             String           @id @default(uuid()) @db.Uuid
+  created_at     DateTime         @default(now()) @db.Timestamptz(6)
+  problem_no     Int
+  problem_order  Int              @unique
+  problem_slug   String
+  topic          String
+  difficulty     String           @default("easy")
+  group_progress group_progress[]
+  submissions    submissions[]
+}
+
+model submissions {
+  id         String     @default(uuid()) @db.Uuid
+  created_at DateTime   @default(now()) @db.Timestamptz(6)
+  user_id    String     @db.Uuid
+  problem_id String     @db.Uuid
+  solved     Boolean    @default(true)
+  group_no   Int?
+  group      groups?    @relation(fields: [group_no], references: [group_no])
+  problem    roadmap    @relation(fields: [problem_id], references: [id])
+  user       leetcoders @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@id([id, user_id])
+}
+
+enum LeetcodeStatus {
+  PENDING
+  APPROVED
+  SUSPENDED
+}
