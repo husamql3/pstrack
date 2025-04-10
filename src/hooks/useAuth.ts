@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import type { Provider } from '@supabase/supabase-js'
 import { createClient } from '@/supabase/client'
 import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
 
 export function useAuth() {
   const supabase = createClient()
@@ -22,6 +23,23 @@ export function useAuth() {
     },
   })
 
+  // Set up auth state listener
+  useEffect(() => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session?.user) {
+        queryClient.setQueryData(['user'], session.user)
+      } else if (event === 'SIGNED_OUT') {
+        queryClient.setQueryData(['user'], null)
+      }
+    })
+
+    return () => {
+      subscription.unsubscribe()
+    }
+  }, [queryClient, supabase])
+
   // OAuth sign in mutation
   const { mutate: signInWithOAuth, isPending: isSigningIn } = useMutation({
     mutationFn: async (provider: Provider) => {
@@ -29,12 +47,15 @@ export function useAuth() {
         provider,
         options: {
           redirectTo: `${window.location.origin}/auth/callback`,
+          queryParams: {
+            returnTo: window.location.pathname,
+          },
         },
       })
       if (error) throw error
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['user'] })
+    onError: (error) => {
+      console.error('Sign in error:', error)
     },
   })
 
@@ -47,7 +68,10 @@ export function useAuth() {
     onSuccess: () => {
       queryClient.setQueryData(['user'], null)
       queryClient.invalidateQueries({ queryKey: ['user'] })
-      router.push('/')
+      router.push('/login')
+    },
+    onError: (error) => {
+      console.error('Sign out error:', error)
     },
   })
 
