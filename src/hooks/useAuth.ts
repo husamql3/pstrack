@@ -14,10 +14,8 @@ export function useAuth() {
     queryFn: async () => {
       const {
         data: { session },
-        error,
       } = await supabase.auth.getSession()
 
-      if (error) throw error
       return session?.user ?? null
     },
   })
