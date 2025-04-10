@@ -18,7 +18,6 @@ import { useAuth } from '@/hooks/useAuth'
 
 export const UserMenu = () => {
   const { user, signOut } = useAuth()
-  console.log(user)
 
   return (
     <DropdownMenu>
