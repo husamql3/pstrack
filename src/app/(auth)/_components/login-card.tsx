@@ -2,13 +2,13 @@
 
 import { IoLogoGithub, IoLogoGoogle } from 'react-icons/io5'
 
+import { api } from '@/trpc/react'
+
 import { Card, CardHeader, CardDescription, CardTitle, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 
-import { useAuth } from '@/hooks/useAuth'
-
 export const LoginCard = () => {
-  const { signInWithOAuth } = useAuth()
+  const { mutateAsync: signInWithOAuth } = api.auth.signInWithOAuth.useMutation()
 
   return (
     <Card className="w-sm">
@@ -22,7 +22,7 @@ export const LoginCard = () => {
             <Button
               variant="outline"
               className="w-full"
-              onClick={() => signInWithOAuth('github')}
+              onClick={() => signInWithOAuth({ provider: 'github' })}
             >
               <IoLogoGithub className="size-4" />
               Login with GitHub
@@ -30,7 +30,7 @@ export const LoginCard = () => {
             <Button
               variant="outline"
               className="w-full"
-              onClick={() => signInWithOAuth('google')}
+              onClick={() => signInWithOAuth({ provider: 'google' })}
             >
               <IoLogoGoogle className="size-4" />
               Login with Google

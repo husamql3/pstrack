@@ -3,8 +3,7 @@ import { z } from 'zod'
 import { createTRPCRouter, publicProcedure } from '@/server/trpc'
 import { db } from '@/prisma/db'
 
-export const getRouter = createTRPCRouter({
-  /** Groups **/
+export const groupsRouter = createTRPCRouter({
   getAllGroupsNo: publicProcedure.query(() => {
     return db.groups.findMany({
       select: { group_no: true },
@@ -16,15 +15,6 @@ export const getRouter = createTRPCRouter({
       return db.groups.findUnique({
         where: { group_no: input.group_no },
         select: { group_no: true },
-      })
-    }),
-  /** Leetcoders **/
-  getLeetcoderById: publicProcedure
-    .input(z.object({ id: z.string().uuid() }))
-    .query(async ({ input }) => {
-      if (!input.id) return null
-      return db.leetcoders.findUnique({
-        where: { id: input.id },
       })
     }),
 })

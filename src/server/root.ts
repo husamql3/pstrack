@@ -1,7 +1,9 @@
+import { createCallerFactory, createTRPCRouter } from '@/server/trpc'
 import { postRouter } from '@/server/routers/post'
 import { getRouter } from '@/server/routers/get'
-import { createCallerFactory, createTRPCRouter } from '@/server/trpc'
-
+import { authRouter } from '@/server/routers/auth'
+import { leetcodersRouter } from '@/server/routers/leetcoder'
+import { groupsRouter } from '@/server/routers/groups'
 /**
  * This is the primary router for your server.
  *
@@ -10,6 +12,9 @@ import { createCallerFactory, createTRPCRouter } from '@/server/trpc'
 export const appRouter = createTRPCRouter({
   post: postRouter,
   get: getRouter,
+  auth: authRouter,
+  leetcoders: leetcodersRouter,
+  groups: groupsRouter,
 })
 
 // export type definition of API
