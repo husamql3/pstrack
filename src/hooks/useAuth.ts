@@ -1,7 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import type { Provider } from '@supabase/supabase-js'
-import { createClient } from '@/supabase/client'
 import { useRouter } from 'next/navigation'
+
+import { createClient } from '@/supabase/client'
 
 export function useAuth() {
   const supabase = createClient()

@@ -1,9 +1,9 @@
 'use client'
 
-import { useAuth } from '@/hooks/useAuth'
-
-import { UserMenu } from '@/components/auth/user-menu'
 import Link from 'next/link'
+
+import { useAuth } from '@/hooks/useAuth'
+import { UserMenu } from '../(auth)/_components/user-menu'
 
 export const UserAuth = () => {
   const { user } = useAuth()

@@ -19,7 +19,6 @@ model group_progress {
 model groups {
   id             String           @id @default(uuid()) @db.Uuid
   group_no       Int              @unique @default(autoincrement())
-  group_name     String
   group_progress group_progress[]
   leetcoders     leetcoders[]
   submissions    submissions[]

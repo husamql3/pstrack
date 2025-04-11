@@ -14,10 +14,12 @@
     "typecheck": "tsc --noEmit",
     "prisma:generate": "prisma generate --schema=./src/prisma/schema.prisma",
     "prisma:migrate:dev": "prisma migrate dev --name init --schema=./src/prisma/schema.prisma",
+    "prisma:migrate:reset": "prisma migrate reset --schema=./src/prisma/schema.prisma",
     "prisma:migrate:deploy": "prisma migrate deploy --schema=./src/prisma/schema.prisma",
     "prisma:studio": "prisma studio --schema=./src/prisma/schema.prisma",
     "prisma:push": "prisma db push --schema=./src/prisma/schema.prisma",
-    "prisma:pull": "prisma db pull --schema=./src/prisma/schema.prisma"
+    "prisma:pull": "prisma db pull --schema=./src/prisma/schema.prisma",
+    "prisma:seed": "ts-node ./src/prisma/seed.ts"
   },
   "dependencies": {
     "@prisma/client": "6.6.0",
