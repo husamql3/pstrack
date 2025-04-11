@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack --experimental-https",
+    "postinstall": "prisma generate --schema=./src/prisma/schema.prisma",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",

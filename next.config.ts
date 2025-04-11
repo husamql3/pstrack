@@ -6,6 +6,7 @@ const jiti = createJiti(fileURLToPath(import.meta.url))
 void jiti.import('./src/config/env')
 
 const nextConfig: NextConfig = {
+  distDir: process.env.NODE_ENV === 'production' ? '.next' : '.next-dev',
   transpilePackages: ['@t3-oss/env-nextjs', '@t3-oss/env-core'],
 }
 
