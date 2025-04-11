@@ -15,9 +15,10 @@ import {
 } from '@/components/ui/dropdown-menu'
 
 import { useAuth } from '@/hooks/useAuth'
+import type { User } from '@supabase/supabase-js'
 
-export const UserMenu = () => {
-  const { user, signOut } = useAuth()
+export const UserMenu = ({ user }: { user: User }) => {
+  const { signOut } = useAuth()
 
   return (
     <DropdownMenu>
