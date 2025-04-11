@@ -1,5 +1,5 @@
-import { Logo } from './logo'
-import { UserAuth } from './user-auth'
+import { Logo } from '@/app/_components/logo'
+import { UserAuth } from '@/app/_components/user-auth'
 
 export const Header = () => {
   return (

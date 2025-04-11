@@ -1,6 +1,6 @@
-import { Footer } from './_components/footer'
-import { Hero } from './_components/hero'
-import { Header } from './_components/header'
+import { Footer } from '@/app/_components/footer'
+import { Hero } from '@/app/_components/hero'
+import { Header } from '@/app/_components/header'
 
 export default function Home() {
   return (

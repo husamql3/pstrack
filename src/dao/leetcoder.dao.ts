@@ -1,10 +1,10 @@
 import type { leetcoders } from '@prisma/client'
 
-import prisma from '@/prisma/prisma'
+import { db } from '@/prisma/db'
 
 export const getLeetcoderById = async (id: string): Promise<leetcoders | null> => {
   try {
-    return prisma.leetcoders.findFirst({
+    return db.leetcoders.findFirst({
       where: {
         id,
       },

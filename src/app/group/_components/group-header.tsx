@@ -1,6 +1,6 @@
 // todo: update group no style
 
-import { User } from './user'
+import { User } from '@/app/group/_components/user'
 
 export const GroupHeader = ({ groupNo }: { groupNo: string }) => {
   return (

@@ -1,8 +1,8 @@
-import prisma from '@/prisma/prisma'
+import { db } from '@/prisma/db'
 
 export const getAllGroupsNo = async (): Promise<{ group_no: number }[]> => {
   try {
-    const groups = await prisma.groups.findMany({
+    const groups = await db.groups.findMany({
       select: { group_no: true },
     })
     return groups
@@ -14,7 +14,7 @@ export const getAllGroupsNo = async (): Promise<{ group_no: number }[]> => {
 
 export const getGroupByNo = async (groupNo: number): Promise<{ group_no: number } | null> => {
   try {
-    const group = await prisma.groups.findUnique({
+    const group = await db.groups.findUnique({
       where: { group_no: groupNo },
       select: { group_no: true },
     })

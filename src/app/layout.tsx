@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { Geist } from 'next/font/google'
 import { Toaster } from 'sonner'
 
-import Providers from '@/components/providers/providers'
+import { TRPCReactProvider } from '@/trpc/react'
 import { cn } from '@/lib/utils'
 import './globals.css'
 
@@ -27,7 +27,7 @@ function RootLayout({
   return (
     <html lang="en">
       <body className={cn('dark -tracking-wide antialiased', geist.className)}>
-        <Providers>{children}</Providers>
+        <TRPCReactProvider>{children}</TRPCReactProvider>
         <Toaster />
       </body>
     </html>

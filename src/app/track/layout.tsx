@@ -1,4 +1,4 @@
-import TrackHeader from './_components/track-header'
+import TrackHeader from '@/app/track/_components/track-header'
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   return (

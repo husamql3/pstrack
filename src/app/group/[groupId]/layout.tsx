@@ -2,7 +2,7 @@ import { cache } from 'react'
 import { notFound } from 'next/navigation'
 
 import { getAllGroupsNo, getGroupByNo } from '@/dao/groups.dao'
-import { GroupHeader } from '../_components/group-header'
+import { GroupHeader } from '@/app/group/_components/group-header'
 
 // generateStaticParams for groups
 export async function generateStaticParams() {
