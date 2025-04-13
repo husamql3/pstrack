@@ -34,12 +34,10 @@ const Layout = async ({
   }
 
   return (
-    <>
+    <div className="flex min-h-screen flex-col">
       <GroupHeader groupNo={groupId} />
-
-      <div>GROUP ID: {groupId}</div>
       {children}
-    </>
+    </div>
   )
 }
 

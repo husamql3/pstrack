@@ -1,6 +1,7 @@
 // todo: update group no style
 
-import { User } from '@/app/group/_components/user'
+import { UserAuth } from '@/app/_components/user-auth'
+import { Button } from '@/components/ui/button'
 
 export const GroupHeader = ({ groupNo }: { groupNo: string }) => {
   return (
@@ -9,7 +10,11 @@ export const GroupHeader = ({ groupNo }: { groupNo: string }) => {
         <h1 className="text-2xl font-bold">Group #{groupNo}</h1>
       </div>
 
-      <User />
+      <div className="flex items-center gap-3">
+        <Button variant="secondary">Request to join</Button>
+
+        <UserAuth />
+      </div>
     </header>
   )
 }

@@ -17,4 +17,27 @@ export const groupsRouter = createTRPCRouter({
         select: { group_no: true },
       })
     }),
+  getGroupTableData: publicProcedure
+    .input(z.object({ group_no: z.string().transform((val) => Number(val)) }))
+    .query(({ input }) => {
+      return db.groups.findUnique({
+        where: {
+          group_no: input.group_no,
+        },
+        include: {
+          leetcoders: {
+            where: {
+              status: 'APPROVED',
+            },
+          },
+          group_progress: true,
+          submissions: {
+            include: {
+              problem: true,
+              user: true,
+            },
+          },
+        },
+      })
+    }),
 })

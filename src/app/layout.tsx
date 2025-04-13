@@ -3,7 +3,7 @@ import { Geist } from 'next/font/google'
 import { Toaster } from 'sonner'
 
 import { TRPCReactProvider } from '@/trpc/react'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/utils'
 import './globals.css'
 
 const geist = Geist({

@@ -4,6 +4,7 @@ import { getRouter } from '@/server/routers/get'
 import { authRouter } from '@/server/routers/auth'
 import { leetcodersRouter } from '@/server/routers/leetcoder'
 import { groupsRouter } from '@/server/routers/groups'
+import { roadmapRouter } from '@/server/routers/roadmap'
 /**
  * This is the primary router for your server.
  *
@@ -15,6 +16,7 @@ export const appRouter = createTRPCRouter({
   auth: authRouter,
   leetcoders: leetcodersRouter,
   groups: groupsRouter,
+  roadmap: roadmapRouter,
 })
 
 // export type definition of API
