@@ -10,4 +10,4 @@ export const createCaller = async () => {
     headers: new Headers(headersList),
     db,
   })
-} 
+}

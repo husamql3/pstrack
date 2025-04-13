@@ -4,9 +4,10 @@ import type { Provider } from '@supabase/supabase-js'
 import { IoLogoGithub, IoLogoGoogle } from 'react-icons/io5'
 import { toast } from 'sonner'
 
+import { signIn } from '@/supabase/auth.service'
+
 import { Card, CardHeader, CardDescription, CardTitle, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { signIn } from '@/supabase/auth.service'
 
 export const LoginCard = () => {
   const handleSignIn = async (provider: Provider) => {
