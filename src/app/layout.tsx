@@ -28,7 +28,10 @@ function RootLayout({
     <html lang="en">
       <body className={cn('dark -tracking-wide antialiased', geist.className)}>
         <TRPCReactProvider>{children}</TRPCReactProvider>
-        <Toaster />
+        <Toaster
+          position="top-center"
+          expand={true}
+        />
       </body>
     </html>
   )

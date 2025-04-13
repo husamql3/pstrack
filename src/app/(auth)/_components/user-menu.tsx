@@ -1,6 +1,7 @@
 'use client'
 
-import { IoExitOutline, IoPinOutline, IoPencilOutline } from 'react-icons/io5'
+import { IoPinOutline, IoPencilOutline } from 'react-icons/io5'
+import type { User } from '@supabase/supabase-js'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
@@ -13,13 +14,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-
-import { useAuth } from '@/hooks/useAuth'
-import type { User } from '@supabase/supabase-js'
+import { LogoutBtn } from '@/app/(auth)/_components/logout-btn'
 
 export const UserMenu = ({ user }: { user: User }) => {
-  const { signOut } = useAuth()
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -60,14 +57,7 @@ export const UserMenu = ({ user }: { user: User }) => {
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => signOut()}>
-          <IoExitOutline
-            size={16}
-            className="opacity-60"
-            aria-hidden="true"
-          />
-          <span>Logout</span>
-        </DropdownMenuItem>
+        <LogoutBtn />
       </DropdownMenuContent>
     </DropdownMenu>
   )

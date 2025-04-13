@@ -1,14 +1,23 @@
 'use client'
 
+import type { Provider } from '@supabase/supabase-js'
 import { IoLogoGithub, IoLogoGoogle } from 'react-icons/io5'
-
-import { api } from '@/trpc/react'
+import { toast } from 'sonner'
 
 import { Card, CardHeader, CardDescription, CardTitle, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { signIn } from '@/supabase/auth.service'
 
 export const LoginCard = () => {
-  const { mutateAsync: signInWithOAuth } = api.auth.signInWithOAuth.useMutation()
+  const handleSignIn = async (provider: Provider) => {
+    const toastId = toast.loading('Redirecting to login...')
+    const { error } = await signIn(provider)
+    if (error) {
+      toast.error('Login failed, please try again.', { id: toastId })
+      console.error(error)
+      return
+    }
+  }
 
   return (
     <Card className="w-sm">
@@ -22,7 +31,7 @@ export const LoginCard = () => {
             <Button
               variant="outline"
               className="w-full"
-              onClick={() => signInWithOAuth({ provider: 'github' })}
+              onClick={() => handleSignIn('github')}
             >
               <IoLogoGithub className="size-4" />
               Login with GitHub
@@ -30,7 +39,7 @@ export const LoginCard = () => {
             <Button
               variant="outline"
               className="w-full"
-              onClick={() => signInWithOAuth({ provider: 'google' })}
+              onClick={() => handleSignIn('google')}
             >
               <IoLogoGoogle className="size-4" />
               Login with Google

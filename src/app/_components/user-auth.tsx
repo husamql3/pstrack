@@ -1,12 +1,10 @@
-'use client'
-
 import Link from 'next/link'
 
-import { useAuth } from '@/hooks/useAuth'
+import { api } from '@/trpc/server'
+
 import { UserMenu } from '@/app/(auth)/_components/user-menu'
 
-export const UserAuth = () => {
-  const { user } = useAuth()
-
+export const UserAuth = async () => {
+  const user = await api.auth.getUser()
   return <div>{user ? <UserMenu user={user} /> : <Link href="/login">Sign In</Link>}</div>
 }
