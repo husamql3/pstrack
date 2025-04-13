@@ -1,6 +1,6 @@
 'use client'
 
-import { IoPinOutline, IoPencilOutline } from 'react-icons/io5'
+import { IoPersonOutline } from 'react-icons/io5'
 import type { User } from '@supabase/supabase-js'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -40,20 +40,12 @@ export const UserMenu = ({ user }: { user: User }) => {
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem>
-            <IoPinOutline
+            <IoPersonOutline
               size={16}
               className="opacity-60"
               aria-hidden="true"
             />
-            <span>Option 4</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <IoPencilOutline
-              size={16}
-              className="opacity-60"
-              aria-hidden="true"
-            />
-            <span>Option 5</span>
+            <span>Profile</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />

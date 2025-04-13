@@ -3,8 +3,9 @@ import { generateTableData } from '@/utils/generateTableData'
 
 import { TrackTable } from '@/app/group/_components/track-table'
 
-export default async function Page({ params }: { params: Promise<{ groupId: string }> }) {
+const Page = async ({ params }: { params: Promise<{ groupId: string }> }) => {
   const { groupId } = await params
+
   const groupData = await api.groups.getGroupTableData({ group_no: groupId })
   const roadmap = await api.roadmap.getGroupProblems(groupData?.group_progress || [])
 
@@ -19,5 +20,12 @@ export default async function Page({ params }: { params: Promise<{ groupId: stri
     group_progress: groupData.group_progress,
   })
 
-  return <TrackTable />
+  return (
+    <TrackTable
+      leetcoders={groupData.leetcoders}
+      tableData={tableData}
+    />
+  )
 }
+
+export default Page
