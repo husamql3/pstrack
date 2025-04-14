@@ -27,6 +27,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { SubmitCheckbox } from '@/app/group/_components/submit-checkbox'
+import { LeetCoderCard } from './leetcoder-card'
 
 const columnHelper = createColumnHelper<TableRowOutput>()
 
@@ -148,7 +149,7 @@ export const TrackTable = ({
           (row) => row.userSubmissions.find((sub) => sub.user_id === leetcoder.id) || false,
           {
             id: leetcoder.id,
-            header: () => <>{leetcoder.username}</>,
+            header: () => <LeetCoderCard leetcoder={leetcoder} />,
             cell: (info) => {
               return (
                 <SubmitCheckbox
