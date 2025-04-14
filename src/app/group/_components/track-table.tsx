@@ -1,11 +1,15 @@
 'use client'
 
 import { useState } from 'react'
+import { MoveDown } from 'lucide-react'
 import type { leetcoders } from '@prisma/client'
 
 import { PROBLEM_BASE_URL, VISIBLE_COUNT } from '@/data/constants'
 import type { TableRowOutput } from '@/types/tableRow.type'
+import type { Difficulty, Topic } from '@/types/problems.type'
 import { parseDate } from '@/utils/parseDate'
+import { cn } from '@/utils/utils'
+import { getDifficultyColor, getTopicColor } from '@/utils/problemsUtils'
 
 import {
   createColumnHelper,
@@ -22,19 +26,24 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Checkbox } from '@/components/ui/checkbox'
+import { SubmitCheckbox } from '@/app/group/_components/submit-checkbox'
+import { api } from '@/trpc/react'
 
 const columnHelper = createColumnHelper<TableRowOutput>()
 
 export const TrackTable = ({
   leetcoders,
   tableData,
+  groupId,
 }: {
   leetcoders: leetcoders[]
   tableData: TableRowOutput[]
+  groupId: string
 }) => {
+  const [checkedState, setCheckedState] = useState<Record<string, boolean>>({})
   const [visibleRecords, setVisibleRecords] = useState(VISIBLE_COUNT)
   const leetcoderSolvedCounts: Record<string, number> = {}
+  const userId = api.auth.getUser.useQuery().data?.id
 
   for (const leetcoder of leetcoders) {
     leetcoderSolvedCounts[leetcoder.id] = tableData.reduce((acc, row) => {
@@ -80,9 +89,14 @@ export const TrackTable = ({
     columnHelper.accessor('problem.topic', {
       header: () => 'Topic',
       cell: (info) => {
-        const topic = info.getValue()
+        const topic = info.getValue() as Topic
         return (
-          <span className="rounded-lg px-2 py-1 text-xs font-medium whitespace-nowrap">
+          <span
+            className={cn(
+              getTopicColor(topic),
+              'rounded-lg px-2 py-1 text-xs font-medium whitespace-nowrap'
+            )}
+          >
             {topic}
           </span>
         )
@@ -91,9 +105,14 @@ export const TrackTable = ({
     columnHelper.accessor('problem.difficulty', {
       header: () => 'Difficulty',
       cell: (info) => {
-        const difficulty = info.getValue()
+        const difficulty = info.getValue() as Difficulty
         return (
-          <span className="w-fit rounded-lg px-2 py-1 text-xs font-medium capitalize">
+          <span
+            className={cn(
+              getDifficultyColor(difficulty),
+              'w-fit rounded-lg px-2 py-1 text-xs font-medium capitalize'
+            )}
+          >
             {difficulty}
           </span>
         )
@@ -112,7 +131,7 @@ export const TrackTable = ({
           return (
             <div className="flex items-center justify-between">
               <span className="flex-1 text-right text-xs font-medium">{totalSolved}</span>
-              Count
+              <span className="flex-1 text-right text-xs font-medium">/{total}</span>
             </div>
           )
         },
@@ -124,46 +143,14 @@ export const TrackTable = ({
         (row) => row.userSubmissions.find((sub) => sub.user_id === leetcoder.id) || false,
         {
           id: leetcoder.id,
-          header: () => (
-            <>{leetcoder.username}</>
-            // <LeetcoderCard
-            //   leetcoderId={leetcoder.id}
-            //   leetcoderUser={leetcoder.username}
-            //   currentUser={userId === leetcoder.id}
-            // />
-          ),
+          header: () => <>{leetcoder.username}</>,
           cell: (info) => {
-            const problemId = info.row.original.problem.id
-            const key = `${leetcoder.id}-${problemId}`
-            // const isDisabled =
-            //   userId !== leetcoder.id || Boolean(info.getValue()) || checkedState[key]
-            // const isChecked = checkedState[key] || Boolean(info.getValue())
-
-            // const handleCheck = async () => {
-            // if (isDisabled) return
-
-            // setCheckedState((prev) => ({ ...prev, [key]: true }))
-
-            // const success = await onSubmit({
-            //   user_id: leetcoder.id,
-            //   lc_username: leetcoder.lc_username,
-            //   problem_slug: info.row.original.problem.problem_slug,
-            //   problem_id: problemId,
-            //   group_no: groupId,
-            // })
-            // }
-
             return (
-              <div className="flex items-center">
-                <Checkbox
-                  // checked={isChecked}
-                  // disabled={isDisabled}
-                  // onCheckedChange={handleCheck}
-                  // className={cn(
-                  className="rounded-[.3rem] disabled:opacity-100 dark:data-[state=checked]:bg-[#2383E2]"
-                  // )}
-                />
-              </div>
+              <SubmitCheckbox
+                info={info}
+                leetcoder={leetcoder}
+                groupId={groupId}
+              />
             )
           },
         }

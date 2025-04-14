@@ -11,6 +11,9 @@ const nextConfig: NextConfig = {
   transpilePackages: ['@t3-oss/env-nextjs', '@t3-oss/env-core'],
   experimental: {
     optimizeCss: true,
+    turbo: {
+      treeShaking: true,
+    },
   },
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',

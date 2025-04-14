@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 export const Hero = () => {
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-5">
@@ -13,6 +15,8 @@ export const Hero = () => {
       <h4 className="text-xl font-medium">
         PSTrack: The platform that helps you solve, track, and grow.
       </h4>
+
+      <Link href="/group/1">Group</Link>
     </div>
   )
 }

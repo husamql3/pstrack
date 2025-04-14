@@ -24,6 +24,7 @@ const Page = async ({ params }: { params: Promise<{ groupId: string }> }) => {
     <TrackTable
       leetcoders={groupData.leetcoders}
       tableData={tableData}
+      groupId={groupId}
     />
   )
 }
