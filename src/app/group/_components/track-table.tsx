@@ -54,7 +54,7 @@ export const TrackTable = ({
     return [...leetcoders].sort((a, b) => {
       return leetcoderSolvedCounts[b.id] - leetcoderSolvedCounts[a.id]
     })
-  }, [leetcoders]) // Removed leetcoderSolvedCounts from dependencies as it's derived from leetcoders and tableData
+  }, [leetcoders])
 
   const visibleTableData = useMemo(() => {
     // Sort the tableData by groupProgressDate in descending order
@@ -99,7 +99,7 @@ export const TrackTable = ({
             <span
               className={cn(
                 getTopicColor(topic),
-                'rounded-lg px-2 py-1 text-xs font-medium whitespace-nowrap'
+                'rounded-lg px-2 py-0.5 text-sm font-medium whitespace-nowrap'
               )}
             >
               {topic}
@@ -115,7 +115,7 @@ export const TrackTable = ({
             <span
               className={cn(
                 getDifficultyColor(difficulty),
-                'w-fit rounded-lg px-2 py-1 text-xs font-medium capitalize'
+                'w-fit rounded-lg px-2 py-0.5 text-sm font-medium capitalize'
               )}
             >
               {difficulty}
@@ -135,8 +135,8 @@ export const TrackTable = ({
             const { totalSolved, total } = info.getValue()
             return (
               <div className="flex items-center justify-between">
-                <span className="flex-1 text-right text-xs font-medium">{totalSolved}</span>
-                <span className="flex-1 text-right text-xs font-medium">/{total}</span>
+                <span className="flex-1 text-right text-sm font-medium">{totalSolved}</span>
+                <span className="flex-1 text-right text-sm font-medium">/{total}</span>
               </div>
             )
           },
@@ -182,7 +182,7 @@ export const TrackTable = ({
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow
               key={headerGroup.id}
-              className="border-zinc-700 text-xs font-medium"
+              className="border-zinc-700 text-sm font-medium"
             >
               {headerGroup.headers.map((header) => (
                 <TableHead key={header.id}>
@@ -198,12 +198,12 @@ export const TrackTable = ({
           {table.getRowModel().rows.map((row) => (
             <TableRow
               key={row.id}
-              className="border-zinc-700 text-xs"
+              className="border-zinc-700 text-sm"
             >
               {row.getVisibleCells().map((cell) => (
                 <TableCell
                   key={cell.id}
-                  className="text-xs"
+                  className="text-sm"
                 >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </TableCell>
@@ -212,7 +212,7 @@ export const TrackTable = ({
           ))}
         </TableBody>
 
-        <TableFooter className="border-y border-zinc-700 text-xs font-medium">
+        <TableFooter className="border-y border-zinc-700 text-sm font-medium">
           {/* Show "Show More" button if there are more records */}
           {tableData.length > visibleRecords && (
             <TableRow
@@ -221,7 +221,7 @@ export const TrackTable = ({
             >
               <TableCell
                 colSpan={tableData.length}
-                className="flex w-full items-center justify-center py-2 text-xs whitespace-nowrap text-gray-500"
+                className="flex w-full items-center justify-center py-2 text-sm whitespace-nowrap text-gray-500"
               >
                 <MoveDown
                   size={12}
@@ -237,7 +237,7 @@ export const TrackTable = ({
           <TableRow className="border-0">
             <TableCell
               colSpan={5}
-              className="text-right text-xs font-medium text-gray-500"
+              className="text-right text-sm font-medium text-gray-500"
             >
               Total
             </TableCell>
