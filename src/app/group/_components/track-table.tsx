@@ -1,22 +1,22 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { MoveDown } from 'lucide-react'
 import type { leetcoders } from '@prisma/client'
-
-import { PROBLEM_BASE_URL, VISIBLE_COUNT } from '@/data/constants'
-import type { TableRowOutput } from '@/types/tableRow.type'
-import type { Difficulty, Topic } from '@/types/problems.type'
-import { parseDate } from '@/utils/parseDate'
-import { cn } from '@/utils/utils'
-import { getDifficultyColor, getTopicColor } from '@/utils/problemsUtils'
-
 import {
   createColumnHelper,
   flexRender,
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+
+import { PROBLEM_BASE_URL, VISIBLE_COUNT } from '@/data/constants'
+import type { TableRowOutput } from '@/types/tableRow.type'
+import type { Difficulty, Topic } from '@/types/problems.type'
+import { parseDate } from '@/utils/parseDate'
+import { cn } from '@/utils/cn'
+import { getDifficultyColor, getTopicColor } from '@/utils/problemsUtils'
+
 import {
   Table,
   TableBody,
@@ -27,7 +27,6 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { SubmitCheckbox } from '@/app/group/_components/submit-checkbox'
-import { api } from '@/trpc/react'
 
 const columnHelper = createColumnHelper<TableRowOutput>()
 
@@ -40,10 +39,8 @@ export const TrackTable = ({
   tableData: TableRowOutput[]
   groupId: string
 }) => {
-  const [checkedState, setCheckedState] = useState<Record<string, boolean>>({})
   const [visibleRecords, setVisibleRecords] = useState(VISIBLE_COUNT)
   const leetcoderSolvedCounts: Record<string, number> = {}
-  const userId = api.auth.getUser.useQuery().data?.id
 
   for (const leetcoder of leetcoders) {
     leetcoderSolvedCounts[leetcoder.id] = tableData.reduce((acc, row) => {
@@ -52,111 +49,121 @@ export const TrackTable = ({
     }, 0)
   }
 
-  const sortedLeetcoders = [...leetcoders].sort((a, b) => {
-    return leetcoderSolvedCounts[b.id] - leetcoderSolvedCounts[a.id]
-  })
+  // Sort leetcoders by the number of problems solved (descending order)
+  const sortedLeetcoders = useMemo(() => {
+    return [...leetcoders].sort((a, b) => {
+      return leetcoderSolvedCounts[b.id] - leetcoderSolvedCounts[a.id]
+    })
+  }, [leetcoders]) // Removed leetcoderSolvedCounts from dependencies as it's derived from leetcoders and tableData
 
-  const sortedData = [...tableData].sort((a, b) => {
-    const dateA = parseDate(a.groupProgressDate || '')
-    const dateB = parseDate(b.groupProgressDate || '')
-    return dateB.getTime() - dateA.getTime() // Sort in descending order
-  })
+  const visibleTableData = useMemo(() => {
+    // Sort the tableData by groupProgressDate in descending order
+    const sortedData = [...tableData].sort((a, b) => {
+      const dateA = parseDate(a.groupProgressDate || '')
+      const dateB = parseDate(b.groupProgressDate || '')
+      return dateB.getTime() - dateA.getTime() // Sort in descending order
+    })
 
-  const visibleTableData = sortedData.slice(0, visibleRecords)
+    // Slice the sorted data to only show the first `visibleRecords` items
+    return sortedData.slice(0, visibleRecords)
+  }, [tableData, visibleRecords])
 
-  const columns = [
-    columnHelper.accessor('groupProgressDate', {
-      header: () => 'Date',
-      cell: (info) => info.getValue() || 'N/A',
-    }),
-    columnHelper.accessor('problem', {
-      header: () => 'Problem',
-      cell: (info) => {
-        const problem = info.getValue()
-        return (
-          <a
-            href={`${PROBLEM_BASE_URL}/${problem.problem_slug}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            title="Open problem in a new tab"
-            className="text-blue-600 hover:underline"
-          >
-            {problem.problem_no}
-          </a>
-        )
-      },
-    }),
-    columnHelper.accessor('problem.topic', {
-      header: () => 'Topic',
-      cell: (info) => {
-        const topic = info.getValue() as Topic
-        return (
-          <span
-            className={cn(
-              getTopicColor(topic),
-              'rounded-lg px-2 py-1 text-xs font-medium whitespace-nowrap'
-            )}
-          >
-            {topic}
-          </span>
-        )
-      },
-    }),
-    columnHelper.accessor('problem.difficulty', {
-      header: () => 'Difficulty',
-      cell: (info) => {
-        const difficulty = info.getValue() as Difficulty
-        return (
-          <span
-            className={cn(
-              getDifficultyColor(difficulty),
-              'w-fit rounded-lg px-2 py-1 text-xs font-medium capitalize'
-            )}
-          >
-            {difficulty}
-          </span>
-        )
-      },
-    }),
-    columnHelper.accessor(
-      (row) => ({
-        totalSolved: row.totalSolved,
-        total: leetcoders.length,
+  const columns = useMemo(
+    () => [
+      columnHelper.accessor('groupProgressDate', {
+        header: () => 'Date',
+        cell: (info) => info.getValue() || 'N/A',
       }),
-      {
-        id: 'count',
-        header: () => 'Count',
+      columnHelper.accessor('problem', {
+        header: () => 'Problem',
         cell: (info) => {
-          const { totalSolved, total } = info.getValue()
+          const problem = info.getValue()
           return (
-            <div className="flex items-center justify-between">
-              <span className="flex-1 text-right text-xs font-medium">{totalSolved}</span>
-              <span className="flex-1 text-right text-xs font-medium">/{total}</span>
-            </div>
+            <a
+              href={`${PROBLEM_BASE_URL}/${problem.problem_slug}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Open problem in a new tab"
+              className="text-blue-600 hover:underline"
+            >
+              {problem.problem_no}
+            </a>
           )
         },
-      }
-    ),
-    // Use the sortedLeetcoders array instead of the original leetcoders array
-    ...sortedLeetcoders.map((leetcoder) =>
+      }),
+      columnHelper.accessor('problem.topic', {
+        header: () => 'Topic',
+        cell: (info) => {
+          const topic = info.getValue() as Topic
+          return (
+            <span
+              className={cn(
+                getTopicColor(topic),
+                'rounded-lg px-2 py-1 text-xs font-medium whitespace-nowrap'
+              )}
+            >
+              {topic}
+            </span>
+          )
+        },
+      }),
+      columnHelper.accessor('problem.difficulty', {
+        header: () => 'Difficulty',
+        cell: (info) => {
+          const difficulty = info.getValue() as Difficulty
+          return (
+            <span
+              className={cn(
+                getDifficultyColor(difficulty),
+                'w-fit rounded-lg px-2 py-1 text-xs font-medium capitalize'
+              )}
+            >
+              {difficulty}
+            </span>
+          )
+        },
+      }),
       columnHelper.accessor(
-        (row) => row.userSubmissions.find((sub) => sub.user_id === leetcoder.id) || false,
+        (row) => ({
+          totalSolved: row.totalSolved,
+          total: leetcoders.length,
+        }),
         {
-          id: leetcoder.id,
-          header: () => <>{leetcoder.username}</>,
+          id: 'count',
+          header: () => 'Count',
           cell: (info) => {
+            const { totalSolved, total } = info.getValue()
             return (
-              <SubmitCheckbox
-                info={info}
-                leetcoder={leetcoder}
-                groupId={groupId}
-              />
+              <div className="flex items-center justify-between">
+                <span className="flex-1 text-right text-xs font-medium">{totalSolved}</span>
+                <span className="flex-1 text-right text-xs font-medium">/{total}</span>
+              </div>
             )
           },
         }
-      )
-    ),
-  ]
+      ),
+      // Use the sortedLeetcoders array instead of the original leetcoders array
+      ...sortedLeetcoders.map((leetcoder) =>
+        columnHelper.accessor(
+          (row) => row.userSubmissions.find((sub) => sub.user_id === leetcoder.id) || false,
+          {
+            id: leetcoder.id,
+            header: () => <>{leetcoder.username}</>,
+            cell: (info) => {
+              return (
+                <SubmitCheckbox
+                  info={info}
+                  leetcoder={leetcoder}
+                  groupId={groupId}
+                />
+              )
+            },
+          }
+        )
+      ),
+    ],
+    [sortedLeetcoders, leetcoders.length, groupId]
+  )
 
   const table = useReactTable({
     data: visibleTableData, // Use the sliced data
@@ -169,7 +176,7 @@ export const TrackTable = ({
   }
 
   return (
-    <div className="w-svw px-3">
+    <div className="w-svw py-5">
       <Table className="mx-auto px-3">
         <TableHeader className="border-t border-zinc-700">
           {table.getHeaderGroups().map((headerGroup) => (

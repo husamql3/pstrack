@@ -1,4 +1,4 @@
-import { cn } from '@/utils/utils'
+import { cn } from '@/utils/cn'
 
 function Card({ className, ...props }: React.ComponentProps<'div'>) {
   return (

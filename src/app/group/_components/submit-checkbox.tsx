@@ -1,3 +1,5 @@
+'use client'
+
 import type { CellContext } from '@tanstack/react-table'
 import type { leetcoders } from '@prisma/client'
 
@@ -5,6 +7,7 @@ import type { TableRowOutput } from '@/types/tableRow.type'
 import { Checkbox } from '@/components/ui/checkbox'
 import { useState } from 'react'
 import { api } from '@/trpc/react'
+import { toast } from 'sonner'
 
 type SubmissionCheckboxProps = {
   info: CellContext<TableRowOutput, unknown>
@@ -16,33 +19,41 @@ export const SubmitCheckbox = ({ info, leetcoder, groupId }: SubmissionCheckboxP
   const submission = info.getValue()
   const [isChecked, setIsChecked] = useState(!!submission)
   const problemId = info.row.original.problem.id
-  const group_no = info.row.original
 
-  const submitMutation = api.submissions.create.useMutation({
+  const { mutate: submitMutation, isPending } = api.submissions.create.useMutation({
     onError: (error) => {},
-    onSuccess: () => {},
+    onSuccess: () => {
+      toast.success('Submission successful!', {
+        style: {
+          background: '#4CAF50',
+          color: 'white',
+          borderRadius: '8px',
+          padding: '16px',
+          fontWeight: '600',
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+          border: 'none',
+        },
+      })
+    },
   })
 
   const handleCheckboxChange = () => {
     const newCheckedState = !isChecked
     setIsChecked(newCheckedState)
-
     if (newCheckedState) {
-      submitMutation.mutate({
+      submitMutation({
         userId: leetcoder.id,
         problemId: problemId,
         group_no: groupId,
       })
     }
-    // Note: You might want to add a delete mutation for unchecking
   }
 
   return (
     <Checkbox
       checked={isChecked}
       onCheckedChange={handleCheckboxChange}
-      // checked={isChecked}
-      // className="rounded-[.3rem] disabled:opacity-100 dark:data-[state=checked]:bg-[#2383E2]"
+      disabled={isPending || isChecked}
     />
   )
 }

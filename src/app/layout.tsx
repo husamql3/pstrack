@@ -3,7 +3,7 @@ import { Geist } from 'next/font/google'
 import { Toaster } from 'sonner'
 
 import { TRPCReactProvider } from '@/trpc/react'
-import { cn } from '@/utils/utils'
+import { cn } from '@/utils/cn'
 import './globals.css'
 
 const geist = Geist({
@@ -31,6 +31,14 @@ function RootLayout({
         <Toaster
           position="top-center"
           expand={true}
+          toastOptions={{
+            classNames: {
+              error: 'bg-red-400',
+              success: 'text-green-400',
+              warning: 'text-yellow-400',
+              info: 'bg-blue-400',
+            },
+          }}
         />
       </body>
     </html>
