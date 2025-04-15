@@ -1,5 +1,6 @@
 import { motion } from 'motion/react'
 import * as RadixCheckbox from '@radix-ui/react-checkbox'
+
 import { cn } from '@/utils/cn'
 
 export const Checkbox = ({

@@ -5,10 +5,10 @@ import type { CellContext } from '@tanstack/react-table'
 import type { leetcoders } from '@prisma/client'
 import { toast } from 'sonner'
 
-import { Checkbox } from '@/app/group/_components/checkbox'
-
-import type { TableRowOutput } from '@/types/tableRow.type'
 import { api } from '@/trpc/react'
+import type { TableRowOutput } from '@/types/tableRow.type'
+
+import { Checkbox } from '@/app/group/_components/checkbox'
 
 export const SubmitCheckbox = ({
   info,
@@ -24,12 +24,20 @@ export const SubmitCheckbox = ({
   const problemId = info.row.original.problem.id
 
   const { mutate: submitMutation, isPending } = api.submissions.create.useMutation({
-    onError: (error) => {},
-    onSuccess: () => {
-      toast.success('Submission successful!', {
+    onError: () => {},
+    onSuccess: () => {},
+  })
+
+  const handleCheckboxChange = () => {
+    const newCheckedState = !isChecked
+    setIsChecked(newCheckedState)
+
+    if (newCheckedState) {
+      // Store the toast ID
+      const loadingToastId = toast.loading('Checking, Hold a second', {
         style: {
-          background: '#4CAF50',
-          color: 'white',
+          background: 'white',
+          color: 'black',
           borderRadius: '8px',
           padding: '16px',
           fontWeight: '600',
@@ -37,18 +45,46 @@ export const SubmitCheckbox = ({
           border: 'none',
         },
       })
-    },
-  })
 
-  const handleCheckboxChange = () => {
-    const newCheckedState = !isChecked
-    setIsChecked(newCheckedState)
-    if (newCheckedState) {
-      submitMutation({
-        userId: leetcoder.id,
-        problemId: problemId,
-        group_no: groupId,
-      })
+      submitMutation(
+        {
+          userId: leetcoder.id,
+          problemId: problemId,
+          group_no: groupId,
+        },
+        {
+          onSuccess: () => {
+            // Dismiss loading toast and show success
+            toast.dismiss(loadingToastId)
+            toast.success('Submission successful!', {
+              style: {
+                background: '#4CAF50',
+                color: 'white',
+                borderRadius: '8px',
+                padding: '16px',
+                fontWeight: '600',
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                border: 'none',
+              },
+            })
+          },
+          onError: () => {
+            // Dismiss loading toast and show error
+            toast.dismiss(loadingToastId)
+            toast.error('Submission failed', {
+              style: {
+                background: '#F44336',
+                color: 'white',
+                borderRadius: '8px',
+                padding: '16px',
+                fontWeight: '600',
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                border: 'none',
+              },
+            })
+          },
+        }
+      )
     }
   }
 

@@ -1,7 +1,7 @@
 import { api } from '@/trpc/react'
 import { cn } from '@/utils/cn'
 import type { leetcoders as leetcodersType } from '@prisma/client'
-import { Calendar, Flame, TrendingUp } from 'lucide-react'
+import { Calendar } from 'lucide-react'
 import { FaXTwitter } from 'react-icons/fa6'
 import { IoLogoGithub } from 'react-icons/io5'
 import { IoLogoLinkedin } from 'react-icons/io'
@@ -41,10 +41,8 @@ export const getSocialLink = (
 
 export const LeetCoderCard = ({ leetcoder }: { leetcoder: leetcodersType }) => {
   const { data: user } = api.auth.getUser.useQuery()
-  const { id: leetcoderId, username: leetcoderUsername } = leetcoder
-  const currUser = user?.id === leetcoderId
-
   const memoizedLeetcoder = useMemo(() => leetcoder, [leetcoder])
+  const currUser = user?.id === memoizedLeetcoder.id
 
   return (
     <HoverCard>
@@ -70,7 +68,7 @@ export const LeetCoderCard = ({ leetcoder }: { leetcoder: leetcodersType }) => {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-1 text-sm">
+          {/* <div className="grid grid-cols-2 gap-1 text-sm">
             <div className="flex items-center space-x-2 rounded-md p-2">
               <Flame className="size-5 flex-shrink-0 text-orange-500" />
               <div>
@@ -85,7 +83,7 @@ export const LeetCoderCard = ({ leetcoder }: { leetcoder: leetcodersType }) => {
                 <span className="text-muted-foreground block text-xs">Year Max</span>
               </div>
             </div>
-          </div>
+          </div> */}
 
           <div className="flex items-center justify-between text-sm">
             <div className="text-muted-foreground flex items-center space-x-1">
