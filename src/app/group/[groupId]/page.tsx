@@ -2,6 +2,7 @@ import { api } from '@/trpc/server'
 import { generateTableData } from '@/utils/generateTableData'
 
 import { TrackTable } from '@/app/group/_components/track-table'
+import { ConfettiFireworks } from '../_components/confetti-fireworks'
 
 const Page = async ({ params }: { params: Promise<{ groupId: string }> }) => {
   const { groupId } = await params
@@ -21,11 +22,15 @@ const Page = async ({ params }: { params: Promise<{ groupId: string }> }) => {
   })
 
   return (
-    <TrackTable
-      leetcoders={groupData.leetcoders}
-      tableData={tableData}
-      groupId={groupId}
-    />
+    <>
+      <TrackTable
+        leetcoders={groupData.leetcoders}
+        tableData={tableData}
+        groupId={groupId}
+      />
+
+      <ConfettiFireworks />
+    </>
   )
 }
 

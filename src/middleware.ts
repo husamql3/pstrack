@@ -6,6 +6,8 @@ export async function middleware(request: NextRequest) {
   return await updateSession(request)
 }
 
+// todo: matcher only for profile page
+
 export const config = {
   matcher: [
     /*

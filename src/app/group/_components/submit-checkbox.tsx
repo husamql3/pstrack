@@ -7,6 +7,7 @@ import { toast } from 'sonner'
 
 import { api } from '@/trpc/react'
 import type { TableRowOutput } from '@/types/tableRow.type'
+import { useConfettiStore } from '@/stores/confettiStore'
 
 import { Checkbox } from '@/app/group/_components/checkbox'
 
@@ -22,6 +23,7 @@ export const SubmitCheckbox = ({
   const submission = info.getValue()
   const [isChecked, setIsChecked] = useState(!!submission)
   const problemId = info.row.original.problem.id
+  const { triggerConfetti } = useConfettiStore()
 
   const { mutate: submitMutation, isPending } = api.submissions.create.useMutation({
     onError: () => {},
@@ -67,6 +69,9 @@ export const SubmitCheckbox = ({
                 border: 'none',
               },
             })
+
+            // Trigger confetti animation
+            triggerConfetti()
           },
           onError: () => {
             // Dismiss loading toast and show error

@@ -1,43 +1,18 @@
-import { api } from '@/trpc/react'
-import { cn } from '@/utils/cn'
+import { useMemo } from 'react'
 import type { leetcoders as leetcodersType } from '@prisma/client'
 import { Calendar } from 'lucide-react'
 import { FaXTwitter } from 'react-icons/fa6'
 import { IoLogoGithub } from 'react-icons/io5'
 import { IoLogoLinkedin } from 'react-icons/io'
 
+import { api } from '@/trpc/react'
+import { cn } from '@/utils/cn'
+
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
-import { useMemo } from 'react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { extractUsername, getSocialLink } from '@/utils/leetcoderCard'
 
-export const extractUsername = (
-  input: string,
-  platform: 'github' | 'twitter' | 'linkedin'
-): string => {
-  const patterns = {
-    github: /^(?:https?:\/\/)?(?:www\.)?github\.com\/([a-zA-Z0-9-]+)\/?$/,
-    twitter: /^(?:https?:\/\/)?(?:www\.)?(?:twitter\.com|x\.com)\/([a-zA-Z0-9_]+)\/?$/,
-    linkedin: /^(?:https?:\/\/)?(?:www\.)?linkedin\.com\/(?:in|company)\/([a-zA-Z0-9-]+)\/?$/,
-  }
-
-  const match = input.match(patterns[platform])
-  return match ? match[1] : input
-}
-
-export const getSocialLink = (
-  username: string,
-  platform: 'github' | 'twitter' | 'linkedin'
-): string => {
-  if (username.startsWith('http')) return username
-
-  const baseUrls = {
-    github: 'https://github.com/',
-    twitter: 'https://twitter.com/',
-    linkedin: 'https://linkedin.com/in/',
-  }
-
-  return `${baseUrls[platform]}${username}`
-}
+// todo: fix card ui
 
 export const LeetCoderCard = ({ leetcoder }: { leetcoder: leetcodersType }) => {
   const { data: user } = api.auth.getUser.useQuery()
