@@ -100,7 +100,7 @@ export const TrackTable = ({
             <span
               className={cn(
                 getTopicColor(topic),
-                'rounded-lg px-2 py-0.5 text-sm font-medium whitespace-nowrap'
+                'rounded-md px-2 py-0.5 text-sm font-medium whitespace-nowrap'
               )}
             >
               {topic}
@@ -116,7 +116,7 @@ export const TrackTable = ({
             <span
               className={cn(
                 getDifficultyColor(difficulty),
-                'w-fit rounded-lg px-2 py-0.5 text-sm font-medium capitalize'
+                'w-fit rounded-md px-2 py-0.5 text-sm font-medium capitalize'
               )}
             >
               {difficulty}

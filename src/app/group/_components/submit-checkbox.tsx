@@ -29,6 +29,8 @@ export const SubmitCheckbox = ({
   const { triggerConfetti } = useConfettiStore()
 
   const { mutate: submitMutation, isPending } = api.submissions.create.useMutation()
+  const { data: user } = api.auth.getUser.useQuery()
+  const isUser = user?.id === leetcoder.id
 
   const handleCheckboxChange = debounce(() => {
     const newCheckedState = !isChecked
@@ -46,6 +48,7 @@ export const SubmitCheckbox = ({
           boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
           border: 'none',
         },
+        closeButton: true,
       })
 
       submitMutation(
@@ -70,6 +73,7 @@ export const SubmitCheckbox = ({
                 boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
                 border: 'none',
               },
+              closeButton: true,
             })
 
             // Trigger confetti animation
@@ -80,7 +84,7 @@ export const SubmitCheckbox = ({
             toast.dismiss(loadingToastId)
             toast.error(
               error.message === 'Problem not solved'
-                ? 'This problem hasn’t been solved on LeetCode yet. Please submit it there first or try again if you’ve already solved it.'
+                ? "This problem hasn't been solved on LeetCode yet. Please submit it there first or try again if you've already solved it."
                 : 'Submission failed',
               {
                 style: {
@@ -93,6 +97,7 @@ export const SubmitCheckbox = ({
                   border: 'none',
                 },
                 duration: 5000, // 5 seconds duration to make sure the user sees the error message
+                closeButton: true,
               }
             )
             setIsChecked(false) // Uncheck on failure
@@ -106,7 +111,7 @@ export const SubmitCheckbox = ({
     <Checkbox
       checked={isChecked}
       onCheckedChange={handleCheckboxChange}
-      disabled={isPending || isChecked}
+      disabled={isPending || isChecked || !isUser} // disabled if it's submitting / already checked / not the current user
       className="peer size-4 shrink-0 rounded-sm border border-zinc-200 shadow focus-visible:ring-1 focus-visible:ring-zinc-950 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-zinc-900 data-[state=checked]:text-zinc-50 dark:border-zinc-800 dark:focus-visible:ring-zinc-300 dark:data-[state=checked]:bg-zinc-50 dark:data-[state=checked]:text-zinc-900"
     />
   )
