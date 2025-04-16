@@ -1,6 +1,8 @@
+'use client'
+
 import { cn } from '@/utils/cn'
 
-const Loading = () => {
+const Page = () => {
   return (
     <div className="flex h-screen items-center justify-center">
       <h1
@@ -16,4 +18,4 @@ const Loading = () => {
   )
 }
 
-export default Loading
+export default Page
