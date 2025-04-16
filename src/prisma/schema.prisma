@@ -65,6 +65,8 @@ model submissions {
   user       leetcoders @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@id([id, user_id])
+  @@index([user_id])
+  @@index([problem_id])
 }
 
 enum LeetcodeStatus {

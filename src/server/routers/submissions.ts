@@ -5,6 +5,10 @@ import { db } from '@/prisma/db'
 import { recentSubmissionListQuery } from '@/data/queries/recentSubmissionList.gql'
 import { LEETCODE_GQL_BASE_URL } from '@/data/constants'
 
+// In-memory cache for submissions
+const submissionCache = new Map<string, { submissions: RecentSubmission[]; timestamp: number }>()
+const CACHE_TTL = 5 * 60 * 1000 // 5 minutes
+
 export const submissionsRouter = createTRPCRouter({
   create: publicProcedure
     .input(
@@ -19,7 +23,10 @@ export const submissionsRouter = createTRPCRouter({
     .mutation(async ({ input }) => {
       console.log('createSubmission', input)
 
+      const start = Date.now()
       const isSolved = await validateProblemSolved(input.lcUsername, input.problemSlug)
+      console.log('Validation took:', Date.now() - start, 'ms')
+
       if (!isSolved) {
         console.log('validateProblemSolved', isSolved)
         throw new Error('Problem not solved')
@@ -50,6 +57,14 @@ export type ValidateDailyProblemSolved = {
 }
 
 const validateProblemSolved = async (lcUsername: string, problemSlug: string) => {
+  const cached = submissionCache.get(lcUsername)
+  if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+    console.log(`Cache hit for ${lcUsername}`)
+    return cached.submissions.some(
+      (submission) => submission.titleSlug === problemSlug && submission.status === 10
+    )
+  }
+
   const payload = {
     query: recentSubmissionListQuery,
     variables: { username: lcUsername },
@@ -63,7 +78,6 @@ const validateProblemSolved = async (lcUsername: string, problemSlug: string) =>
       },
       body: JSON.stringify(payload),
     })
-
     if (!response.ok) {
       console.error('Error validating submission:', {
         status: response.status,
@@ -85,15 +99,14 @@ const validateProblemSolved = async (lcUsername: string, problemSlug: string) =>
       return false
     }
 
-    const submissions = data.data?.recentSubmissionList
-    if (!submissions?.length) {
-      console.error('No submissions found for user:', lcUsername)
-      return false
-    }
+    const submissions = (data.data?.recentSubmissionList ?? []) as RecentSubmission[]
+    console.log('LeetCode response:', JSON.stringify(submissions))
+
+    // Cache submissions
+    submissionCache.set(lcUsername, { submissions, timestamp: Date.now() })
 
     return submissions.some(
-      (submission: RecentSubmission) =>
-        submission.titleSlug === problemSlug && submission.status === 10
+      (submission) => submission.titleSlug === problemSlug && submission.status === 10
     )
   } catch (error) {
     console.error('Error validating daily problem submission:', error)

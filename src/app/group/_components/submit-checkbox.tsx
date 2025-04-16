@@ -1,9 +1,10 @@
 'use client'
 
 import { useState } from 'react'
+import { debounce } from 'lodash'
+import { toast } from 'sonner'
 import type { CellContext } from '@tanstack/react-table'
 import type { leetcoders } from '@prisma/client'
-import { toast } from 'sonner'
 
 import { api } from '@/trpc/react'
 import type { TableRowOutput } from '@/types/tableRow.type'
@@ -27,12 +28,9 @@ export const SubmitCheckbox = ({
   const problemId = info.row.original.problem.id
   const { triggerConfetti } = useConfettiStore()
 
-  const { mutate: submitMutation, isPending } = api.submissions.create.useMutation({
-    onError: () => {},
-    onSuccess: () => {},
-  })
+  const { mutate: submitMutation, isPending } = api.submissions.create.useMutation()
 
-  const handleCheckboxChange = () => {
+  const handleCheckboxChange = debounce(() => {
     const newCheckedState = !isChecked
     setIsChecked(newCheckedState)
 
@@ -77,25 +75,32 @@ export const SubmitCheckbox = ({
             // Trigger confetti animation
             triggerConfetti()
           },
-          onError: () => {
+          onError: (error) => {
             // Dismiss loading toast and show error
             toast.dismiss(loadingToastId)
-            toast.error('Submission failed', {
-              style: {
-                background: '#F44336',
-                color: 'white',
-                borderRadius: '8px',
-                padding: '16px',
-                fontWeight: '600',
-                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-                border: 'none',
-              },
-            })
+            toast.error(
+              error.message === 'Problem not solved'
+                ? 'This problem hasn’t been solved on LeetCode yet. Please submit it there first or try again if you’ve already solved it.'
+                : 'Submission failed',
+              {
+                style: {
+                  background: '#F44336',
+                  color: 'white',
+                  borderRadius: '8px',
+                  padding: '16px',
+                  fontWeight: '600',
+                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                  border: 'none',
+                },
+                duration: 5000, // 5 seconds duration to make sure the user sees the error message
+              }
+            )
+            setIsChecked(false) // Uncheck on failure
           },
         }
       )
     }
-  }
+  }, 300)
 
   return (
     <Checkbox
