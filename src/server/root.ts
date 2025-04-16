@@ -1,6 +1,4 @@
 import { createCallerFactory, createTRPCRouter } from '@/server/trpc'
-import { postRouter } from '@/server/routers/post'
-import { getRouter } from '@/server/routers/get'
 import { authRouter } from '@/server/routers/auth'
 import { leetcodersRouter } from '@/server/routers/leetcoder'
 import { groupsRouter } from '@/server/routers/groups'
@@ -13,8 +11,6 @@ import { submissionsRouter } from '@/server/routers/submissions'
  * All routers added in /api/routers should be manually added here.
  */
 export const appRouter = createTRPCRouter({
-  post: postRouter,
-  get: getRouter,
   auth: authRouter,
   leetcoders: leetcodersRouter,
   groups: groupsRouter,

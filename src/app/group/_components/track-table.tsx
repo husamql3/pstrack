@@ -151,11 +151,13 @@ export const TrackTable = ({
             id: leetcoder.id,
             header: () => <LeetCoderCard leetcoder={leetcoder} />,
             cell: (info) => {
+              const problemSlug = info.row.original.problem.problem_slug
               return (
                 <SubmitCheckbox
                   info={info}
                   leetcoder={leetcoder}
                   groupId={groupId}
+                  problemSlug={problemSlug}
                 />
               )
             },

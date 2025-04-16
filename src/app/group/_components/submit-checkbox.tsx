@@ -15,10 +15,12 @@ export const SubmitCheckbox = ({
   info,
   leetcoder,
   groupId,
+  problemSlug,
 }: {
   info: CellContext<TableRowOutput, unknown>
   leetcoder: leetcoders
   groupId: string
+  problemSlug: string
 }) => {
   const submission = info.getValue()
   const [isChecked, setIsChecked] = useState(!!submission)
@@ -53,6 +55,8 @@ export const SubmitCheckbox = ({
           userId: leetcoder.id,
           problemId: problemId,
           group_no: groupId,
+          lcUsername: leetcoder.lc_username,
+          problemSlug: problemSlug,
         },
         {
           onSuccess: () => {
