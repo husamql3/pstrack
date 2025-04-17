@@ -15,6 +15,15 @@ export const leetcodersRouter = createTRPCRouter({
         where: { id: input.id },
       })
     }),
+  checkLeetcoder: publicProcedure
+    .input(z.object({ id: z.string().uuid() }))
+    .query(async ({ input }) => {
+      if (!input.id) return false
+      const leetcoder = await db.leetcoders.findUnique({
+        where: { id: input.id },
+      })
+      return !!leetcoder
+    }),
   RequestToJoin: publicProcedure
     .input(
       z.object({
@@ -72,7 +81,7 @@ export const leetcodersRouter = createTRPCRouter({
       if (!isLcValid) {
         throw new TRPCError({
           code: 'BAD_REQUEST',
-          message: 'Hmm, that LeetCode username doesn’t seem right. Please double-check it!',
+          message: "Hmm, that LeetCode username doesn't seem right. Please double-check it!",
         })
       }
       if (input.gh_username && !isGhValid) {
