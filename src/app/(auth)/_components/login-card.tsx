@@ -44,7 +44,7 @@ export const LoginCard = () => {
               className="w-full"
               onClick={() => handleSignIn('google')}
             >
-              <IoLogoGoogle className="size-4" />
+              <IoLogoGoogle size={16} />
               Login with Google
             </Button>
           </div>
