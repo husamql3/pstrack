@@ -36,7 +36,7 @@ export const LoginCard = () => {
               className="w-full"
               onClick={() => handleSignIn('github')}
             >
-              <IoLogoGithub className="size-4" />
+              <IoLogoGithub size={16} />
               Login with GitHub
             </Button>
             <Button
