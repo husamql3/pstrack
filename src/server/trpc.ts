@@ -11,6 +11,7 @@ import superjson from 'superjson'
 import { ZodError } from 'zod'
 
 import { db } from '@/prisma/db'
+import { createClient } from '@/supabase/server'
 
 /**
  * 1. CONTEXT
@@ -25,9 +26,16 @@ import { db } from '@/prisma/db'
  * @see https://trpc.io/docs/server/context
  */
 export const createTRPCContext = async (opts: { headers: Headers }) => {
+  // Add the user to the context to be used in procedures
+  const supabase = await createClient()
+  const {
+    data: { session },
+  } = await supabase.auth.getSession()
+
   return {
     db,
     ...opts,
+    user: session?.user ?? null,
   }
 }
 
