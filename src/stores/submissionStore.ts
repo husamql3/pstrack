@@ -26,4 +26,4 @@ export const useSubmissionStore = create<SubmissionStore>()(
       name: 'submission-storage',
     }
   )
-) 
+)
