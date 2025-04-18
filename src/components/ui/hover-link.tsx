@@ -53,14 +53,12 @@ export const StaticLink = React.forwardRef<HTMLAnchorElement, StaticLinkProps>(
         href={href}
         prefetch={true}
         className={cn(
-          'bg-background hover:bg-primary hover:text-primary-foreground relative w-auto cursor-pointer overflow-hidden rounded-full border p-2 px-6 text-center font-semibold transition-colors',
+          'bg-background hover:bg-primary hover:text-primary-foreground relative w-auto cursor-pointer overflow-hidden rounded-full border px-4 py-2 text-center font-semibold transition-colors',
           className
         )}
         {...props}
       >
-        <div className="flex items-center gap-2">
-          <span className="inline-block">{children}</span>
-        </div>
+        {children}
       </Link>
     )
   }

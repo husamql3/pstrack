@@ -53,9 +53,9 @@
     "lodash": "^4.17.21",
     "lucide-react": "^0.488.0",
     "motion": "^12.6.5",
-    "next": "15.2.4",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+    "next": "15.3.1",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
     "react-icons": "^5.5.0",
     "server-only": "^0.0.1",
     "sonner": "^2.0.3",
@@ -73,14 +73,18 @@
     "@types/lodash": "^4.17.16",
     "@types/node": "^20",
     "@types/nodemailer": "^6.4.17",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
+    "@types/react": "19.1.2",
+    "@types/react-dom": "19.1.2",
     "eslint": "^9",
-    "eslint-config-next": "15.2.4",
+    "eslint-config-next": "15.3.1",
     "prettier": "^3.5.3",
     "prettier-plugin-tailwindcss": "^0.6.11",
     "prisma": "^6.6.0",
     "tailwindcss": "^4",
     "typescript": "^5"
+  },
+  "overrides": {
+    "@types/react": "19.1.2",
+    "@types/react-dom": "19.1.2"
   }
 }
