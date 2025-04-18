@@ -6,8 +6,8 @@ import { toast } from 'sonner'
 
 import { signIn } from '@/supabase/auth.service'
 
-import { Card, CardHeader, CardDescription, CardTitle, CardContent } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
+import { Card, CardHeader, CardDescription, CardTitle, CardContent } from '@/ui/card'
+import { Button } from '@/ui/button'
 
 // add animated card border: https://www.luxeui.com/ui/card-animated-border
 

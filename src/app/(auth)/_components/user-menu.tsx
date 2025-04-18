@@ -3,8 +3,8 @@
 import { IoPersonOutline } from 'react-icons/io5'
 import type { User } from '@supabase/supabase-js'
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Button } from '@/components/ui/button'
+import { Avatar, AvatarFallback, AvatarImage } from '@/ui/avatar'
+import { Button } from '@/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,7 +13,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+} from '@/ui/dropdown-menu'
 import { LogoutBtn } from '@/app/(auth)/_components/logout-btn'
 
 export const UserMenu = ({ user }: { user: User }) => {

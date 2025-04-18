@@ -8,8 +8,8 @@ import { IoLogoLinkedin } from 'react-icons/io'
 import { api } from '@/trpc/react'
 import { cn } from '@/utils/cn'
 
-import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/ui/hover-card'
+import { Avatar, AvatarFallback, AvatarImage } from '@/ui/avatar'
 import { extractUsername, getSocialLink } from '@/utils/leetcoderCard'
 
 // todo: fix card ui

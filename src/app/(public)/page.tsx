@@ -1,7 +1,7 @@
 import { Suspense } from 'react'
 
 import { Hero } from '@/app/_components/hero'
-import { StarsBackground } from '@/components/ui/stars-background'
+import { StarsBackground } from '@/ui/stars-background'
 
 export default function Home() {
   return (

@@ -2,7 +2,7 @@ import { useRouter } from 'next/navigation'
 import { IoExitOutline } from 'react-icons/io5'
 import { toast } from 'sonner'
 
-import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
+import { DropdownMenuItem } from '@/ui/dropdown-menu'
 import { signOut } from '@/supabase/auth.service'
 
 export const LogoutBtn = () => {

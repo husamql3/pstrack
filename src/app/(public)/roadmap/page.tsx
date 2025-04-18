@@ -1,5 +1,5 @@
 const Page = () => {
-  return <div>Roadmap</div>
+  return <div className="flex-1">Roadmap</div>
 }
 
 export default Page

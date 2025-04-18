@@ -1,4 +1,4 @@
-import { InteractiveHoverLink } from '@/components/ui/hover-link'
+import { InteractiveHoverLink } from '@/ui/hover-link'
 
 export const Hero = () => {
   return (

@@ -16,12 +16,15 @@ export const NavMenu = () => {
 
   return (
     <nav>
-      <ul className="flex items-center justify-between gap-6">
+      <ul className="flex items-center justify-between gap-3">
         {LINKS.map(({ label, href }) => (
           <li key={href}>
             <Link
               href={href}
-              className={cn(pathname === href ? 'text-red-950' : '')}
+              className={cn(
+                'bg-background hover:bg-primary hover:text-primary-foreground relative w-auto cursor-pointer overflow-hidden rounded-full border px-4 py-2 text-center font-semibold transition-colors',
+                pathname === href ? 'bg-primary text-primary-foreground' : ''
+              )}
             >
               {label}
             </Link>

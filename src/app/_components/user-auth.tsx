@@ -1,7 +1,7 @@
 import { api } from '@/trpc/server'
 
 import { UserMenu } from '@/app/(auth)/_components/user-menu'
-import { StaticLink } from '@/components/ui/hover-link'
+import { StaticLink } from '@/ui/hover-link'
 
 export const UserAuth = async () => {
   const user = await api.auth.getUser()

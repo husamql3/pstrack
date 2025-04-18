@@ -1,6 +1,6 @@
 'use client'
 
-import { StarsBackground } from '@/components/ui/stars-background'
+import { StarsBackground } from '@/ui/stars-background'
 
 export default function Test() {
   return (

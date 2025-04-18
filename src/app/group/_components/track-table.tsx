@@ -26,7 +26,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from '@/ui/table'
 import { SubmitCheckbox } from '@/app/group/_components/submit-checkbox'
 import { LeetCoderCard } from '@/app/group/_components/leetcoder-card'
 
