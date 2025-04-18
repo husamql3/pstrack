@@ -11,13 +11,7 @@ export const authRouter = createTRPCRouter({
       error,
     } = await supabase.auth.getSession()
 
-    if (error) {
-      throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: error.message,
-      })
-    }
-
+    if (error) return null
     return session?.user ?? null
   }),
 

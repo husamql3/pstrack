@@ -5,10 +5,6 @@ import { db } from '@/prisma/db'
 import { recentSubmissionListQuery } from '@/data/queries/recentSubmissionList.gql'
 import { LEETCODE_GQL_BASE_URL } from '@/data/constants'
 
-// In-memory cache for submissions
-const submissionCache = new Map<string, { submissions: RecentSubmission[]; timestamp: number }>()
-const CACHE_TTL = 5 * 60 * 1000 // 5 minutes
-
 export const submissionsRouter = createTRPCRouter({
   create: publicProcedure
     .input(
@@ -57,14 +53,6 @@ export type ValidateDailyProblemSolved = {
 }
 
 const validateProblemSolved = async (lcUsername: string, problemSlug: string) => {
-  const cached = submissionCache.get(lcUsername)
-  if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
-    console.log(`Cache hit for ${lcUsername}`)
-    return cached.submissions.some(
-      (submission) => submission.titleSlug === problemSlug && submission.status === 10
-    )
-  }
-
   const payload = {
     query: recentSubmissionListQuery,
     variables: { username: lcUsername },
@@ -101,9 +89,6 @@ const validateProblemSolved = async (lcUsername: string, problemSlug: string) =>
 
     const submissions = (data.data?.recentSubmissionList ?? []) as RecentSubmission[]
     console.log('LeetCode response:', JSON.stringify(submissions))
-
-    // Cache submissions
-    submissionCache.set(lcUsername, { submissions, timestamp: Date.now() })
 
     return submissions.some(
       (submission) => submission.titleSlug === problemSlug && submission.status === 10

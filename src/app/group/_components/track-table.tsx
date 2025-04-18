@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useCallback, useEffect } from 'react'
 import { MoveDown } from 'lucide-react'
 import type { leetcoders } from '@prisma/client'
 import {
@@ -16,6 +16,7 @@ import type { Difficulty, Topic } from '@/types/problems.type'
 import { parseDate } from '@/utils/parseDate'
 import { cn } from '@/utils/cn'
 import { getDifficultyColor, getTopicColor } from '@/utils/problemsUtils'
+import { useSubmissionStore } from '@/stores/submissionStore'
 
 import {
   Table,
@@ -27,7 +28,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { SubmitCheckbox } from '@/app/group/_components/submit-checkbox'
-import { LeetCoderCard } from './leetcoder-card'
+import { LeetCoderCard } from '@/app/group/_components/leetcoder-card'
 
 const columnHelper = createColumnHelper<TableRowOutput>()
 
@@ -41,21 +42,69 @@ export const TrackTable = ({
   groupId: string
 }) => {
   const [visibleRecords, setVisibleRecords] = useState(VISIBLE_COUNT)
-  const leetcoderSolvedCounts: Record<string, number> = {}
+  // Add state to force re-render and re-sort
+  const [refreshKey, setRefreshKey] = useState(0)
 
-  for (const leetcoder of leetcoders) {
-    leetcoderSolvedCounts[leetcoder.id] = tableData.reduce((acc, row) => {
-      const hasSolved = row.userSubmissions.some((sub) => sub.user_id === leetcoder.id)
-      return acc + (hasSolved ? 1 : 0)
-    }, 0)
-  }
+  // Get the submissions from the store
+  const { submissions } = useSubmissionStore()
+
+  // Listen for changes in the submission store and update refreshKey
+  useEffect(() => {
+    setRefreshKey((prev) => prev + 1)
+  }, [submissions])
+
+  // Calculate leetcoder solved counts from both API data and local submissions
+  const leetcoderSolvedCounts: Record<string, number> = useMemo(() => {
+    const counts: Record<string, number> = {}
+
+    // Initialize counts for all leetcoders
+    for (const leetcoder of leetcoders) {
+      counts[leetcoder.id] = 0
+    }
+
+    // Count from API data
+    for (const row of tableData) {
+      for (const submission of row.userSubmissions) {
+        if (counts[submission.user_id] !== undefined) {
+          counts[submission.user_id]++
+        }
+      }
+    }
+
+    // Add counts from local submission store
+    for (const key in submissions) {
+      if (submissions[key]) {
+        const [keyGroupId, userId, problemId] = key.split(':')
+        // Only count submissions for the current group
+        if (keyGroupId === groupId && counts[userId] !== undefined) {
+          // Check if this problem's submission isn't already counted from API data
+          const alreadyCounted = tableData.some(
+            (row) =>
+              row.problem.id === problemId &&
+              row.userSubmissions.some((sub) => sub.user_id === userId)
+          )
+
+          if (!alreadyCounted) {
+            counts[userId]++
+          }
+        }
+      }
+    }
+
+    return counts
+  }, [leetcoders, tableData, submissions, groupId, refreshKey])
 
   // Sort leetcoders by the number of problems solved (descending order)
   const sortedLeetcoders = useMemo(() => {
     return [...leetcoders].sort((a, b) => {
       return leetcoderSolvedCounts[b.id] - leetcoderSolvedCounts[a.id]
     })
-  }, [leetcoders])
+  }, [leetcoders, leetcoderSolvedCounts])
+
+  // Callback to trigger re-sorting after successful submission
+  const handleSuccessfulSubmit = useCallback(() => {
+    setRefreshKey((prev) => prev + 1)
+  }, [])
 
   const visibleTableData = useMemo(() => {
     // Sort the tableData by groupProgressDate in descending order
@@ -146,7 +195,14 @@ export const TrackTable = ({
       // Use the sortedLeetcoders array instead of the original leetcoders array
       ...sortedLeetcoders.map((leetcoder) =>
         columnHelper.accessor(
-          (row) => row.userSubmissions.find((sub) => sub.user_id === leetcoder.id) || false,
+          (row) => {
+            // Check both the API data and the local store for submission
+            const apiSubmission = row.userSubmissions.find((sub) => sub.user_id === leetcoder.id)
+            const storeKey = `${groupId}:${leetcoder.id}:${row.problem.id}`
+            const localSubmission = submissions[storeKey]
+
+            return apiSubmission || localSubmission || false
+          },
           {
             id: leetcoder.id,
             header: () => <LeetCoderCard leetcoder={leetcoder} />,
@@ -158,6 +214,7 @@ export const TrackTable = ({
                   leetcoder={leetcoder}
                   groupId={groupId}
                   problemSlug={problemSlug}
+                  onSuccessfulSubmit={handleSuccessfulSubmit}
                 />
               )
             },
@@ -165,7 +222,14 @@ export const TrackTable = ({
         )
       ),
     ],
-    [sortedLeetcoders, leetcoders.length, groupId]
+    [
+      sortedLeetcoders,
+      leetcoderSolvedCounts,
+      leetcoders.length,
+      groupId,
+      handleSuccessfulSubmit,
+      submissions,
+    ]
   )
 
   const table = useReactTable({

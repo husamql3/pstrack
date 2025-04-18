@@ -1,4 +1,4 @@
-import type { group_progress, roadmap, submissions } from '@prisma/client'
+import type { group_progress, leetcoders, roadmap, submissions } from '@prisma/client'
 
 export type TableRow = {
   group_no: number
@@ -17,3 +17,11 @@ export type TableRowOutput = {
 }
 
 export type TableData = TableRowOutput[]
+
+export type GroupData = {
+  id: string
+  group_no: number
+  leetcoders: leetcoders[]
+  group_progress: group_progress[]
+  submissions: submissions[]
+}

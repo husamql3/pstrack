@@ -11,6 +11,8 @@ export const env = createEnv({
   server: {
     DATABASE_URL: z.string(),
     NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
+    UPSTASH_REDIS_REST_URL: z.string().url().min(20),
+    UPSTASH_REDIS_REST_TOKEN: z.string().min(20),
   },
   runtimeEnv: {
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -19,5 +21,7 @@ export const env = createEnv({
     NEXT_PUBLIC_AUTH_CALLBACK_URL: process.env.NEXT_PUBLIC_AUTH_CALLBACK_URL,
     NODE_ENV: process.env.NODE_ENV,
     DATABASE_URL: process.env.DATABASE_URL,
+    UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL,
+    UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN,
   },
 })
