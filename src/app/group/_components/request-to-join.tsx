@@ -16,7 +16,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
-import { AnimatedShinyText } from '@/components/animated-shiny-text'
+import { AnimatedShinyText } from '@/components/ui/animated-shiny-text'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -97,6 +97,8 @@ export const RequestToJoin = ({ groupId }: { groupId: string }) => {
       }
     )
   }
+
+  // todo: add https://www.luxeui.com/ui/multi-step-modal for rules and guidelines
 
   return (
     <Dialog>

@@ -46,6 +46,7 @@
     "client-only": "^0.0.1",
     "clsx": "^2.1.1",
     "critters": "^0.0.25",
+    "framer-motion": "^12.7.4",
     "jiti": "^2.4.2",
     "lodash": "^4.17.21",
     "lucide-react": "^0.488.0",

@@ -15,6 +15,7 @@ const nextConfig: NextConfig = {
       treeShaking: true,
     },
   },
+  reactStrictMode: true,
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },
