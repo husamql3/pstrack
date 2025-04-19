@@ -4,7 +4,7 @@ import { LeetcodeStatus } from '@prisma/client'
 
 import { db } from '@/prisma/db'
 import { createTRPCRouter, publicProcedure } from '@/server/trpc'
-import { checkGHUsername, checkLCUsername } from '@/utils/gql/checkLeetcoder'
+import { checkGHUsername, checkLCUsername } from '@/utils/checkLeetcoder'
 import { checkDuplicateUsername, checkPendingLeetcoder } from '@/dao/leetcoder.dao'
 import { env } from '@/config/env.mjs'
 

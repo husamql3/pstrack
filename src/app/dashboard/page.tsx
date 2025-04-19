@@ -8,12 +8,10 @@ const Page = async () => {
 
   return (
     <div className="container mx-auto py-6">
-      <div>
-        <DashboardTable
-          leetcoders={leetcoders}
-          groups={groups}
-        />
-      </div>
+      <DashboardTable
+        leetcoders={leetcoders}
+        groups={groups}
+      />
     </div>
   )
 }
