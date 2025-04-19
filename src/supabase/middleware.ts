@@ -3,6 +3,9 @@ import { type NextRequest, NextResponse } from 'next/server'
 
 import { env } from '@/config/env.mjs'
 
+const AUTHOR = 'imhusamg@gmail.com'
+const ADMINS = ['imhusamg@gmail.com', 'nezhataghy@gmail.com']
+
 export async function updateSession(request: NextRequest) {
   const { searchParams, pathname } = new URL(request.url)
   const code = searchParams.get('code')
@@ -64,7 +67,7 @@ export async function updateSession(request: NextRequest) {
   console.log('middleware user', user?.email)
 
   if (pathname.startsWith('/dashboard')) {
-    if (!user || user.email !== env.ADMIN_EMAIL) {
+    if (!user || !user.email || !ADMINS.includes(user.email)) {
       return NextResponse.redirect(new URL('/not-found', request.url))
     }
   }
