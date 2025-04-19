@@ -1,5 +1,6 @@
 import { LEETCODE_GQL_BASE_URL } from '@/data/constants'
 import { userProfile } from '@/data/queries/userProfile.gql'
+import { sendAdminNotification } from './email/sendEmail'
 
 /**
  * Validates if a LeetCode username exists
@@ -22,7 +23,14 @@ export const checkLCUsername = async (username: string): Promise<boolean> => {
       body: JSON.stringify(payload),
     })
     if (!response.ok) {
-      console.error(`HTTP error! status: ${response.status}`)
+      const errorMsg = `HTTP error! status: ${response.status}`
+      console.error(errorMsg)
+      await sendAdminNotification({
+        operation: 'checkLCUsername',
+        errorMessage: errorMsg,
+        username: JSON.stringify({ username }),
+        timestamp: new Date().toISOString(),
+      })
       return false
     }
 
@@ -30,6 +38,12 @@ export const checkLCUsername = async (username: string): Promise<boolean> => {
     return data.data?.matchedUser !== null
   } catch (error) {
     console.error('Error checking LeetCode user:', error)
+    await sendAdminNotification({
+      operation: 'checkLCUsername',
+      errorMessage: error instanceof Error ? error.message : String(error),
+      username: JSON.stringify({ username }),
+      timestamp: new Date().toISOString(),
+    })
     return false
   }
 }
@@ -44,12 +58,25 @@ export const checkGHUsername = async (username: string): Promise<boolean> => {
   try {
     const response = await fetch(`https://api.github.com/users/${username}`)
     if (!response.ok) {
-      console.error(`GitHub user not found: ${response.status}`)
+      const errorMsg = `GitHub user not found: ${response.status}`
+      console.error(errorMsg)
+      await sendAdminNotification({
+        operation: 'checkGHUsername',
+        errorMessage: errorMsg,
+        username: JSON.stringify({ username }),
+        timestamp: new Date().toISOString(),
+      })
       return false
     }
     return true
   } catch (error) {
     console.error('Error checking GitHub user:', error)
+    await sendAdminNotification({
+      operation: 'checkGHUsername',
+      errorMessage: error instanceof Error ? error.message : String(error),
+      username: JSON.stringify({ username }),
+      timestamp: new Date().toISOString(),
+    })
     return false
   }
 }

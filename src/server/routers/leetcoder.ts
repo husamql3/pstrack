@@ -7,6 +7,7 @@ import { createTRPCRouter, publicProcedure } from '@/server/trpc'
 import { checkGHUsername, checkLCUsername } from '@/utils/checkLeetcoder'
 import { checkDuplicateUsername, checkPendingLeetcoder } from '@/dao/leetcoder.dao'
 import { env } from '@/config/env.mjs'
+import { sendAdminNotification } from '@/utils/email/sendEmail'
 
 export const leetcodersRouter = createTRPCRouter({
   getLeetcoderById: publicProcedure
@@ -103,7 +104,7 @@ export const leetcodersRouter = createTRPCRouter({
         })
       }
 
-      return db.leetcoders.create({
+      const newLeetcoder = await db.leetcoders.create({
         data: {
           id: ctx?.user?.id as string,
           name: input.name,
@@ -115,6 +116,20 @@ export const leetcodersRouter = createTRPCRouter({
           status: LeetcodeStatus.PENDING,
         },
       })
+
+      // Send notification to admin about new join request
+      await sendAdminNotification({
+        event: 'NEW_JOIN_REQUEST',
+        groupNo: input.group_no.toString(),
+        username: input.username,
+        name: input.name,
+        email: ctx?.user?.email as string,
+        leetcodeUsername: input.lc_username,
+        githubUsername: input.gh_username || 'Not provided',
+        timestamp: new Date().toISOString(),
+      })
+
+      return newLeetcoder
     }),
   updateLeetcoderStatus: publicProcedure
     .input(z.object({ id: z.string().uuid(), status: z.nativeEnum(LeetcodeStatus) }))
