@@ -165,7 +165,7 @@ export const DashboardTable = ({
       {/* Table wrapper with proper scrolling */}
       <div className="overflow-x-auto">
         <Table className="w-full min-w-lg border-separate border-spacing-0">
-          <TableHeader className="bg-background/90 sticky top-0 z-20 backdrop-blur-sm">
+          <TableHeader className="bg-background/95 sticky top-0 z-20 backdrop-blur-sm">
             {/* Keep table headers the same */}
             <TableRow className="hover:bg-transparent">
               <TableHead>Username</TableHead>
