@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Geist } from 'next/font/google'
 import { Toaster } from 'sonner'
+import { NuqsAdapter } from 'nuqs/adapters/next/app'
 
 import { TRPCReactProvider } from '@/trpc/react'
 import { cn } from '@/utils/cn'
@@ -27,7 +28,10 @@ function RootLayout({
   return (
     <html lang="en">
       <body className={cn('dark bg-zinc-950 -tracking-wide antialiased', geist.className)}>
-        <TRPCReactProvider>{children}</TRPCReactProvider>
+        <TRPCReactProvider>
+          <NuqsAdapter>{children}</NuqsAdapter>
+        </TRPCReactProvider>
+
         <Toaster
           position="top-center"
           expand={true}

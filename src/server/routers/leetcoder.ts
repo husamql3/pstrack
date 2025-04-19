@@ -5,6 +5,7 @@ import { db } from '@/prisma/db'
 import { createTRPCRouter, publicProcedure } from '@/server/trpc'
 import { checkGHUsername, checkLCUsername } from '@/utils/gql/checkLeetcoder'
 import { checkDuplicateUsername, checkPendingLeetcoder } from '@/dao/leetcoder.dao'
+import { env } from '@/config/env.mjs'
 
 export const leetcodersRouter = createTRPCRouter({
   getLeetcoderById: publicProcedure
@@ -15,6 +16,16 @@ export const leetcodersRouter = createTRPCRouter({
         where: { id: input.id },
       })
     }),
+  getAllLeetcoders: publicProcedure.query(async ({ ctx }) => {
+    // Only allow access if the user is the admin
+    if (ctx.user && ctx.user.email !== env.ADMIN_EMAIL) {
+      throw new TRPCError({
+        code: 'UNAUTHORIZED',
+        message: 'Only admin can access this resource',
+      })
+    }
+    return db.leetcoders.findMany()
+  }),
   checkLeetcoder: publicProcedure
     .input(z.object({ id: z.string().uuid() }))
     .query(async ({ input }) => {
