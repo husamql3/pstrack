@@ -1,11 +1,13 @@
 'use client'
 
-import type { leetcoders } from '@prisma/client'
+import type { groups, leetcoders } from '@prisma/client'
 import { useQueryState } from 'nuqs'
 import { Filter, MoreHorizontal, Search } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { useState, useEffect } from 'react'
+
+import { api } from '@/trpc/react'
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/ui/table'
 import { Button } from '@/ui/button'
@@ -19,7 +21,6 @@ import {
   DropdownMenuCheckboxItem,
 } from '@/ui/dropdown-menu'
 import { Badge } from '@/ui/badge'
-import { api } from '@/trpc/react'
 import { Input } from '@/ui/input'
 
 // Helper function to truncate email
@@ -28,7 +29,13 @@ const truncateEmail = (email: string | null, maxLength = 25) => {
   return email.length > maxLength ? `${email.substring(0, maxLength)}...` : email
 }
 
-export const DashboardTable = ({ leetcoders }: { leetcoders: leetcoders[] }) => {
+export const DashboardTable = ({
+  leetcoders,
+  groups,
+}: {
+  leetcoders: leetcoders[]
+  groups: groups[]
+}) => {
   const router = useRouter()
   const { mutate: updateLeetcoderStatus } = api.leetcoders.updateLeetcoderStatus.useMutation({
     onSuccess: (_, variables) => {
@@ -59,11 +66,6 @@ export const DashboardTable = ({ leetcoders }: { leetcoders: leetcoders[] }) => 
   const [groupFilter, setGroupFilter] = useQueryState('groupNo')
   const [emailFilter, setEmailFilter] = useQueryState('leetcoderEmail')
   const [emailSearch, setEmailSearch] = useState(emailFilter || '')
-
-  // Get unique group numbers for the filter
-  const uniqueGroups = Array.from(
-    new Set(leetcoders.map((coder) => coder.group_no).filter(Boolean))
-  ).sort()
 
   const filteredLeetcoders = leetcoders.filter((coder) => {
     // Apply status filter
@@ -125,30 +127,31 @@ export const DashboardTable = ({ leetcoders }: { leetcoders: leetcoders[] }) => 
   }, [setEmailFilter, setStatusFilter, setGroupFilter])
 
   return (
-    <div className="relative w-5xl overflow-x-auto [&>div]:max-h-svh">
-      <div className="mx-auto my-4 flex justify-center">
-        <div className="relative flex w-full max-w-sm items-center">
+    <div className="flex flex-col space-y-4">
+      {/* Search and filter controls */}
+      <div className="flex flex-wrap items-center justify-between gap-4 px-4 pt-4">
+        <div className="relative flex items-center">
           <Input
             placeholder="Search by email..."
             value={emailSearch}
             onChange={handleEmailInputChange}
             onKeyDown={handleKeyDown}
-            className="pr-10"
+            className="w-full max-w-sm pr-10"
           />
           <Button
             variant="ghost"
             size="sm"
-            className="absolute top-0 right-0 h-full px-3"
+            className="absolute right-0 h-full px-3"
             onClick={handleEmailSearch}
           >
             <Search className="h-4 w-4" />
           </Button>
         </div>
+
         {emailFilter && (
           <Button
             variant="outline"
             size="sm"
-            className="ml-2"
             onClick={() => {
               setEmailFilter('')
               setEmailSearch('')
@@ -158,208 +161,215 @@ export const DashboardTable = ({ leetcoders }: { leetcoders: leetcoders[] }) => 
           </Button>
         )}
       </div>
-      <Table className="[&_td]:border-border [&_th]:border-border w-full min-w-[800px] border-separate border-spacing-0 [&_tfoot_td]:border-t [&_th]:border-b [&_tr]:border-none [&_tr:not(:last-child)_td]:border-b">
-        <TableHeader className="bg-background/90 sticky top-0 z-20 backdrop-blur-sm">
-          <TableRow className="hover:bg-transparent">
-            <TableHead>Username</TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead>Email</TableHead>
-            <TableHead>
-              <div className="flex items-center space-x-1">
-                <span>Group</span>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="ml-1 h-8 w-8 p-0"
-                    >
-                      <Filter className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="start">
-                    <DropdownMenuLabel>Filter by Group</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    {uniqueGroups.map((group) => (
+
+      {/* Table wrapper with proper scrolling */}
+      <div className="overflow-x-auto">
+        <Table className="w-full min-w-lg border-separate border-spacing-0">
+          <TableHeader className="bg-background/90 sticky top-0 z-20 backdrop-blur-sm">
+            {/* Keep table headers the same */}
+            <TableRow className="hover:bg-transparent">
+              <TableHead>Username</TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead>Email</TableHead>
+              <TableHead>
+                <div className="flex items-center space-x-1">
+                  <span>Group</span>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="ml-1 h-8 w-8 p-0"
+                      >
+                        <Filter className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start">
+                      <DropdownMenuLabel>Filter by Group</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      {groups
+                        .sort((a, b) => (a.group_no || 0) - (b.group_no || 0))
+                        .map(({ id, group_no }) => (
+                          <DropdownMenuCheckboxItem
+                            key={id}
+                            checked={groupFilter === group_no?.toString()}
+                            onCheckedChange={(checked) => {
+                              if (checked) {
+                                setGroupFilter(group_no?.toString() || '')
+                              } else {
+                                setGroupFilter('')
+                              }
+                            }}
+                          >
+                            Group {group_no}
+                          </DropdownMenuCheckboxItem>
+                        ))}
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={() => setGroupFilter('')}>
+                        Clear Group Filter
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+              </TableHead>
+              <TableHead>
+                <div className="flex items-center space-x-1">
+                  <span>Status</span>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="ml-1 h-8 w-8 p-0"
+                      >
+                        <Filter className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start">
+                      <DropdownMenuLabel>Filter by Status</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
                       <DropdownMenuCheckboxItem
-                        key={group}
-                        checked={groupFilter === group?.toString()}
+                        checked={statusFilter === 'APPROVED'}
                         onCheckedChange={(checked) => {
                           if (checked) {
-                            setGroupFilter(group?.toString() || '')
+                            setStatusFilter('APPROVED')
                           } else {
-                            setGroupFilter('')
+                            setStatusFilter('')
                           }
                         }}
                       >
-                        Group {group}
+                        Approved
                       </DropdownMenuCheckboxItem>
-                    ))}
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => setGroupFilter('')}>
-                      Clear Group Filter
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-            </TableHead>
-            <TableHead>
-              <div className="flex items-center space-x-1">
-                <span>Status</span>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="ml-1 h-8 w-8 p-0"
-                    >
-                      <Filter className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="start">
-                    <DropdownMenuLabel>Filter by Status</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuCheckboxItem
-                      checked={statusFilter === 'APPROVED'}
-                      onCheckedChange={(checked) => {
-                        if (checked) {
-                          setStatusFilter('APPROVED')
-                        } else {
-                          setStatusFilter('')
-                        }
-                      }}
-                    >
-                      Approved
-                    </DropdownMenuCheckboxItem>
-                    <DropdownMenuCheckboxItem
-                      checked={statusFilter === 'SUSPENDED'}
-                      onCheckedChange={(checked) => {
-                        if (checked) {
-                          setStatusFilter('SUSPENDED')
-                        } else {
-                          setStatusFilter('')
-                        }
-                      }}
-                    >
-                      Suspended
-                    </DropdownMenuCheckboxItem>
-                    <DropdownMenuCheckboxItem
-                      checked={statusFilter === 'PENDING'}
-                      onCheckedChange={(checked) => {
-                        if (checked) {
-                          setStatusFilter('PENDING')
-                        } else {
-                          setStatusFilter('')
-                        }
-                      }}
-                    >
-                      Pending
-                    </DropdownMenuCheckboxItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => setStatusFilter('')}>
-                      Clear Status Filter
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-            </TableHead>
-            <TableHead className="text-right">LeetCode</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {filteredLeetcoders.length > 0 ? (
-            filteredLeetcoders.map(
-              ({ id, name, username, email, group_no, lc_username, status }) => (
-                <TableRow key={id}>
-                  <TableCell>
-                    <div className="flex items-center">
-                      <div>
-                        <div className="font-medium">{username}</div>
-                        <span className="text-muted-foreground mt-0.5 text-xs">
-                          @{username.toLowerCase()}
-                        </span>
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>{name || 'N/A'}</TableCell>
-                  <TableCell title={email || 'N/A'}>{truncateEmail(email)}</TableCell>
-                  <TableCell>{group_no || 'N/A'}</TableCell>
-                  <TableCell>
-                    <Badge
-                      className={
-                        status === 'APPROVED'
-                          ? 'bg-green-100 text-green-800'
-                          : status === 'SUSPENDED'
-                            ? 'bg-red-100 text-red-800'
-                            : 'bg-yellow-100 text-yellow-800'
-                      }
-                    >
-                      {status === 'APPROVED'
-                        ? 'Approved'
-                        : status === 'SUSPENDED'
-                          ? 'Suspended'
-                          : 'Pending'}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <a
-                      href={`https://leetcode.com/${lc_username}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-500 hover:underline"
-                    >
-                      {lc_username}
-                    </a>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          className="h-8 w-8 p-0"
-                        >
-                          <span className="sr-only">Open menu</span>
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem
-                          className="text-green-600"
-                          onClick={() => handleStatusUpdate(id, 'APPROVED')}
-                        >
-                          Set Approved
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          className="text-yellow-600"
-                          onClick={() => handleStatusUpdate(id, 'PENDING')}
-                        >
-                          Set Pending
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          className="text-red-600"
-                          onClick={() => handleStatusUpdate(id, 'SUSPENDED')}
-                        >
-                          Set Suspended
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              )
-            )
-          ) : (
-            <TableRow>
-              <TableCell
-                colSpan={7}
-                className="h-24 text-center"
-              >
-                No records found
-              </TableCell>
+                      <DropdownMenuCheckboxItem
+                        checked={statusFilter === 'SUSPENDED'}
+                        onCheckedChange={(checked) => {
+                          if (checked) {
+                            setStatusFilter('SUSPENDED')
+                          } else {
+                            setStatusFilter('')
+                          }
+                        }}
+                      >
+                        Suspended
+                      </DropdownMenuCheckboxItem>
+                      <DropdownMenuCheckboxItem
+                        checked={statusFilter === 'PENDING'}
+                        onCheckedChange={(checked) => {
+                          if (checked) {
+                            setStatusFilter('PENDING')
+                          } else {
+                            setStatusFilter('')
+                          }
+                        }}
+                      >
+                        Pending
+                      </DropdownMenuCheckboxItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={() => setStatusFilter('')}>
+                        Clear Status Filter
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+              </TableHead>
+              <TableHead className="text-right">LeetCode</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
             </TableRow>
-          )}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {filteredLeetcoders.length > 0 ? (
+              filteredLeetcoders.map(
+                ({ id, name, username, email, group_no, lc_username, status }) => (
+                  <TableRow key={id}>
+                    <TableCell>
+                      <div className="flex items-center">
+                        <div>
+                          <div className="font-medium">{username}</div>
+                          <span className="text-muted-foreground mt-0.5 text-xs">
+                            @{username.toLowerCase()}
+                          </span>
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>{name || 'N/A'}</TableCell>
+                    <TableCell title={email || 'N/A'}>{truncateEmail(email)}</TableCell>
+                    <TableCell>{group_no || 'N/A'}</TableCell>
+                    <TableCell>
+                      <Badge
+                        className={
+                          status === 'APPROVED'
+                            ? 'bg-green-100 text-green-800'
+                            : status === 'SUSPENDED'
+                              ? 'bg-red-100 text-red-800'
+                              : 'bg-yellow-100 text-yellow-800'
+                        }
+                      >
+                        {status === 'APPROVED'
+                          ? 'Approved'
+                          : status === 'SUSPENDED'
+                            ? 'Suspended'
+                            : 'Pending'}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <a
+                        href={`https://leetcode.com/${lc_username}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-500 hover:underline"
+                      >
+                        {lc_username}
+                      </a>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            className="h-8 w-8 p-0"
+                          >
+                            <span className="sr-only">Open menu</span>
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem
+                            className="text-green-600"
+                            onClick={() => handleStatusUpdate(id, 'APPROVED')}
+                          >
+                            Set Approved
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            className="text-yellow-600"
+                            onClick={() => handleStatusUpdate(id, 'PENDING')}
+                          >
+                            Set Pending
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            className="text-red-600"
+                            onClick={() => handleStatusUpdate(id, 'SUSPENDED')}
+                          >
+                            Set Suspended
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                )
+              )
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={7}
+                  className="h-24 text-center"
+                >
+                  No records found
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   )
 }
