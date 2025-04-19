@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { TRPCError } from '@trpc/server'
+import { LeetcodeStatus } from '@prisma/client'
 
 import { db } from '@/prisma/db'
 import { createTRPCRouter, publicProcedure } from '@/server/trpc'
@@ -111,7 +112,24 @@ export const leetcodersRouter = createTRPCRouter({
           gh_username: input.gh_username,
           lc_username: input.lc_username,
           group_no: input.group_no,
-          status: 'PENDING',
+          status: LeetcodeStatus.PENDING,
+        },
+      })
+    }),
+  updateLeetcoderStatus: publicProcedure
+    .input(z.object({ id: z.string().uuid(), status: z.nativeEnum(LeetcodeStatus) }))
+    .mutation(async ({ input, ctx }) => {
+      // Only allow access if the user is the admin
+      if (ctx.user && ctx.user.email !== env.ADMIN_EMAIL) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: 'Only admin can access this resource',
+        })
+      }
+      return db.leetcoders.update({
+        where: { id: input.id },
+        data: {
+          status: input.status,
         },
       })
     }),

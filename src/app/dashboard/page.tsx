@@ -6,7 +6,7 @@ const Page = async () => {
   const leetcoders = await api.leetcoders.getAllLeetcoders()
 
   return (
-    <div className="flex items-center justify-center py-8">
+    <div className="flex h-fit items-center justify-center">
       <DashboardTable leetcoders={leetcoders} />
     </div>
   )

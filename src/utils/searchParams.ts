@@ -3,6 +3,7 @@ import { createSearchParamsCache, createSerializer, parseAsString } from 'nuqs/s
 export const searchParams = {
   leetcoderStatus: parseAsString.withDefault(''),
   groupNo: parseAsString.withDefault(''),
+  leetcoderEmail: parseAsString.withDefault(''),
 }
 
 export const searchParamsCache = createSearchParamsCache(searchParams)

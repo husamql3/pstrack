@@ -2,7 +2,10 @@
 
 import type { leetcoders } from '@prisma/client'
 import { useQueryState } from 'nuqs'
-import { Filter, MoreHorizontal } from 'lucide-react'
+import { Filter, MoreHorizontal, Search } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
+import { useState, useEffect } from 'react'
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/ui/table'
 import { Button } from '@/ui/button'
@@ -16,10 +19,46 @@ import {
   DropdownMenuCheckboxItem,
 } from '@/ui/dropdown-menu'
 import { Badge } from '@/ui/badge'
+import { api } from '@/trpc/react'
+import { Input } from '@/ui/input'
+
+// Helper function to truncate email
+const truncateEmail = (email: string | null, maxLength = 25) => {
+  if (!email) return 'N/A'
+  return email.length > maxLength ? `${email.substring(0, maxLength)}...` : email
+}
 
 export const DashboardTable = ({ leetcoders }: { leetcoders: leetcoders[] }) => {
+  const router = useRouter()
+  const { mutate: updateLeetcoderStatus } = api.leetcoders.updateLeetcoderStatus.useMutation({
+    onSuccess: (_, variables) => {
+      // Refresh the page after successful mutation
+      router.refresh()
+
+      // Show success toast with appropriate message based on status
+      const statusText =
+        variables.status === 'APPROVED'
+          ? 'approved'
+          : variables.status === 'SUSPENDED'
+            ? 'suspended'
+            : 'pending'
+
+      toast.success(`User status successfully updated to ${statusText}`, {
+        duration: 3000,
+      })
+    },
+    onError: (error) => {
+      // Show error toast when mutation fails
+      toast.error(`Failed to update status: ${error.message}`, {
+        duration: 5000,
+      })
+    },
+  })
+
   const [statusFilter, setStatusFilter] = useQueryState('leetcoderStatus')
   const [groupFilter, setGroupFilter] = useQueryState('groupNo')
+  const [emailFilter, setEmailFilter] = useQueryState('leetcoderEmail')
+  const [emailSearch, setEmailSearch] = useState(emailFilter || '')
 
   // Get unique group numbers for the filter
   const uniqueGroups = Array.from(
@@ -34,11 +73,91 @@ export const DashboardTable = ({ leetcoders }: { leetcoders: leetcoders[] }) => 
     const groupMatches =
       !groupFilter || groupFilter === '' || coder.group_no?.toString() === groupFilter
 
-    return statusMatches && groupMatches
+    // Apply email filter - modified to match prefix or any part of the email
+    const emailMatches =
+      !emailFilter ||
+      emailFilter === '' ||
+      coder.email?.toLowerCase().includes(emailFilter.toLowerCase())
+
+    return statusMatches && groupMatches && emailMatches
   })
+
+  const handleStatusUpdate = (id: string, newStatus: 'PENDING' | 'APPROVED' | 'SUSPENDED') => {
+    updateLeetcoderStatus({
+      id,
+      status: newStatus,
+    })
+  }
+
+  const handleEmailSearch = () => {
+    setEmailFilter(emailSearch)
+  }
+
+  const handleEmailInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmailSearch(e.target.value)
+    if (e.target.value === '') {
+      setEmailFilter('')
+    }
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleEmailSearch()
+    } else if (e.key === 'Escape') {
+      setEmailFilter('')
+      setEmailSearch('')
+    }
+  }
+
+  // Add global ESC key listener to clear filters
+  useEffect(() => {
+    const handleGlobalKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setEmailFilter('')
+        setEmailSearch('')
+        setStatusFilter('')
+        setGroupFilter('')
+      }
+    }
+
+    window.addEventListener('keydown', handleGlobalKeyDown)
+    return () => window.removeEventListener('keydown', handleGlobalKeyDown)
+  }, [setEmailFilter, setStatusFilter, setGroupFilter])
 
   return (
     <div className="relative w-5xl overflow-x-auto [&>div]:max-h-svh">
+      <div className="mx-auto my-4 flex justify-center">
+        <div className="relative flex w-full max-w-sm items-center">
+          <Input
+            placeholder="Search by email..."
+            value={emailSearch}
+            onChange={handleEmailInputChange}
+            onKeyDown={handleKeyDown}
+            className="pr-10"
+          />
+          <Button
+            variant="ghost"
+            size="sm"
+            className="absolute top-0 right-0 h-full px-3"
+            onClick={handleEmailSearch}
+          >
+            <Search className="h-4 w-4" />
+          </Button>
+        </div>
+        {emailFilter && (
+          <Button
+            variant="outline"
+            size="sm"
+            className="ml-2"
+            onClick={() => {
+              setEmailFilter('')
+              setEmailSearch('')
+            }}
+          >
+            Clear Email Filter
+          </Button>
+        )}
+      </div>
       <Table className="[&_td]:border-border [&_th]:border-border w-full min-w-[800px] border-separate border-spacing-0 [&_tfoot_td]:border-t [&_th]:border-b [&_tr]:border-none [&_tr:not(:last-child)_td]:border-b">
         <TableHeader className="bg-background/90 sticky top-0 z-20 backdrop-blur-sm">
           <TableRow className="hover:bg-transparent">
@@ -164,7 +283,7 @@ export const DashboardTable = ({ leetcoders }: { leetcoders: leetcoders[] }) => 
                     </div>
                   </TableCell>
                   <TableCell>{name || 'N/A'}</TableCell>
-                  <TableCell>{email || 'N/A'}</TableCell>
+                  <TableCell title={email || 'N/A'}>{truncateEmail(email)}</TableCell>
                   <TableCell>{group_no || 'N/A'}</TableCell>
                   <TableCell>
                     <Badge
@@ -184,18 +303,14 @@ export const DashboardTable = ({ leetcoders }: { leetcoders: leetcoders[] }) => 
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right">
-                    {lc_username ? (
-                      <a
-                        href={`https://leetcode.com/${lc_username}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-500 hover:underline"
-                      >
-                        {lc_username}
-                      </a>
-                    ) : (
-                      'Unrated'
-                    )}
+                    <a
+                      href={`https://leetcode.com/${lc_username}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-500 hover:underline"
+                    >
+                      {lc_username}
+                    </a>
                   </TableCell>
                   <TableCell className="text-right">
                     <DropdownMenu>
@@ -209,10 +324,24 @@ export const DashboardTable = ({ leetcoders }: { leetcoders: leetcoders[] }) => 
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem className="text-green-600">Approve</DropdownMenuItem>
-                        <DropdownMenuItem className="text-red-600">Delete</DropdownMenuItem>
+                        <DropdownMenuItem
+                          className="text-green-600"
+                          onClick={() => handleStatusUpdate(id, 'APPROVED')}
+                        >
+                          Set Approved
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          className="text-yellow-600"
+                          onClick={() => handleStatusUpdate(id, 'PENDING')}
+                        >
+                          Set Pending
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          className="text-red-600"
+                          onClick={() => handleStatusUpdate(id, 'SUSPENDED')}
+                        >
+                          Set Suspended
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
