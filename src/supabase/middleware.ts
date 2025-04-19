@@ -4,7 +4,7 @@ import { type NextRequest, NextResponse } from 'next/server'
 import { env } from '@/config/env.mjs'
 
 export async function updateSession(request: NextRequest) {
-  const { searchParams } = new URL(request.url)
+  const { searchParams, pathname } = new URL(request.url)
   const code = searchParams.get('code')
 
   let response = NextResponse.next({
@@ -62,6 +62,12 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
   console.log('middleware user', user?.email)
+
+  if (pathname.startsWith('/dashboard')) {
+    if (!user || user.email !== env.ADMIN_EMAIL) {
+      return NextResponse.redirect(new URL('/not-found', request.url))
+    }
+  }
 
   return response
 }
