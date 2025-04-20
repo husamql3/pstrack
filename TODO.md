@@ -4,3 +4,9 @@
   - [ ] daily problem CRON
   - [ ] RabbitMQ
 - [ ] protect routes
+- [ ] nav menu
+  - [ ] better nav https://v0.dev/community/vercel-tabs-BT27p0aGPsa
+  - [ ] for mobile
+- [ ] profile page
+- [ ] add avatar to leetcoder
+- [ ] remove profile page
