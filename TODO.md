@@ -1,0 +1,6 @@
+- [ ] kickout - set submission to false
+- [ ] problem
+  - [ ] daily problem email
+  - [ ] daily problem CRON
+  - [ ] RabbitMQ
+- [ ] protect routes
