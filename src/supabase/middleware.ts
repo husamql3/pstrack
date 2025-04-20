@@ -2,7 +2,7 @@ import { createServerClient } from '@supabase/ssr'
 import { type NextRequest, NextResponse } from 'next/server'
 
 import { env } from '@/config/env.mjs'
-import { ADMINS_EMAILS } from '@/data/constants'
+import { ADMINS_EMAILS, PROTECTED_ROUTES } from '@/data/constants'
 
 export async function updateSession(request: NextRequest) {
   const { searchParams, pathname } = new URL(request.url)
@@ -64,7 +64,7 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser()
   console.log('middleware user', user?.email)
 
-  if (pathname.startsWith('/dashboard')) {
+  if (PROTECTED_ROUTES.some((route) => pathname.startsWith(route))) {
     if (!user || !user.email || !ADMINS_EMAILS.includes(user.email)) {
       return NextResponse.redirect(new URL('/not-found', request.url))
     }
