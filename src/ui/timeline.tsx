@@ -114,12 +114,7 @@ interface TimelineIndicatorProps extends React.HTMLAttributes<HTMLDivElement> {
   asChild?: boolean
 }
 
-function TimelineIndicator({
-  asChild = false,
-  className,
-  children,
-  ...props
-}: TimelineIndicatorProps) {
+function TimelineIndicator({ className, children, ...props }: TimelineIndicatorProps) {
   return (
     <div
       data-slot="timeline-indicator"

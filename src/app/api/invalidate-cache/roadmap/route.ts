@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server'
 import { redis } from '@/config/redis'
 import { sendAdminNotification } from '@/utils/email/sendEmail'
 
-export async function POST(request: Request) {
+export async function POST() {
   try {
     // Delete the cache for this group
     const cacheKey = 'roadmap:data'

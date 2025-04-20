@@ -1,5 +1,5 @@
 import { Suspense } from 'react'
-import { LucideMousePointer2 } from 'lucide-react'
+import { HiCursorArrowRays } from 'react-icons/hi2'
 
 import { api } from '@/trpc/server'
 import { redis } from '@/config/redis'
@@ -28,7 +28,7 @@ const Page = async () => {
       </Suspense>
 
       <div className="mx-auto flex w-full max-w-4xl flex-col py-10">
-        <h1 className="text-4xl font-bold">
+        <h1 className="mb-10 text-4xl font-bold">
           Our Roadmap
           <a
             href="https://neetcode.io/"
@@ -40,9 +40,9 @@ const Page = async () => {
           </a>
         </h1>
 
-        <div className="mb-4 flex gap-1">
-          <LucideMousePointer2 className="size-5" />
-          <p className="font-medium text-zinc-300">
+        <div className="mx-auto mb-4 flex gap-1">
+          <HiCursorArrowRays className="size-5" />
+          <p className="font-medium text-neutral-500">
             Select a topic to explore its practice problems!
           </p>
         </div>

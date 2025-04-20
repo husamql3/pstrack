@@ -12,7 +12,6 @@ import { useConfettiStore } from '@/stores/confettiStore'
 import { useSubmissionStore } from '@/stores/submissionStore'
 
 import { Checkbox } from '@/app/group/_components/checkbox'
-import { env } from '@/config/env.mjs'
 
 export const SubmitCheckbox = ({
   info,
