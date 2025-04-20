@@ -3,6 +3,8 @@ import { NextResponse } from 'next/server'
 import { redis } from '@/config/redis'
 import { sendAdminNotification } from '@/utils/email/sendEmail'
 
+// todo: secure the request using env variables in headers
+
 export async function POST(request: Request) {
   const { groupId } = await request.json()
   if (!groupId) {
@@ -20,7 +22,7 @@ export async function POST(request: Request) {
 
     // Notify admin about the error
     await sendAdminNotification({
-      operation: 'cache-invalidation',
+      operation: 'cache-invalidation-group',
       errorMessage: error instanceof Error ? error.message : String(error),
       timestamp: new Date().toISOString(),
       groupId: groupId || 'unknown',

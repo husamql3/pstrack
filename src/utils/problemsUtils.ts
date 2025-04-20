@@ -62,3 +62,12 @@ export const getDifficultyTextColor = (difficulty: Difficulty): string => {
       return 'text-gray-500'
   }
 }
+
+export const formatTopic = (topic: string): string => {
+  return topic
+    .trim()
+    .replace(/-/g, ' ')
+    .split(' ')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ')
+}
