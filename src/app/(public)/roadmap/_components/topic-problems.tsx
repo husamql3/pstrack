@@ -32,7 +32,7 @@ export const TopicProblems = ({ topic, problems }: { topic: string; problems: ro
       <DialogTrigger className="cursor-pointer text-lg font-semibold">
         {formattedTopic}
       </DialogTrigger>
-      <DialogContent className="flex flex-col gap-0 p-0 sm:max-h-[min(630px,80vh)] sm:max-w-lg [&>button:last-child]:hidden">
+      <DialogContent className="flex flex-col gap-0 p-0 sm:max-h-[min(500px,80vh)] sm:max-w-lg [&>button:last-child]:hidden">
         <div className="overflow-y-auto">
           <DialogHeader className="contents space-y-0 text-left">
             <DialogTitle className="border-b px-6 py-4">{formattedTopic} Problems</DialogTitle>
