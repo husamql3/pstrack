@@ -37,16 +37,18 @@ export const sendAcceptanceEmail = async ({
   email,
   username,
 }: {
-  group_no: string
+  group_no: number
   email: string
   username: string
 }) => {
   try {
     const projectRoot = process.cwd()
-    const templatePath = path.join(projectRoot, 'public', 'templates', 'admin-email.html')
+    const templatePath = path.join(projectRoot, 'public', 'templates', 'acceptance-email.html')
 
     let htmlContent = await fs.readFile(templatePath, 'utf-8')
-    htmlContent = htmlContent.replace(/{{group_no}}/g, group_no).replace(/{{username}}/g, username)
+    htmlContent = htmlContent
+      .replace(/{{group_no}}/g, group_no.toString())
+      .replace(/{{username}}/g, username)
 
     await sendEmail({
       to: email,

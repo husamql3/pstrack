@@ -26,7 +26,11 @@ export const leetcodersRouter = createTRPCRouter({
         message: 'Only admin can access this resource',
       })
     }
-    return db.leetcoders.findMany()
+    return db.leetcoders.findMany({
+      orderBy: {
+        created_at: 'desc',
+      },
+    })
   }),
   checkLeetcoder: publicProcedure
     .input(z.object({ id: z.string().uuid() }))
@@ -113,7 +117,7 @@ export const leetcodersRouter = createTRPCRouter({
           gh_username: input.gh_username,
           lc_username: input.lc_username,
           group_no: input.group_no,
-          status: LeetcodeStatus.PENDING,
+          status: 'PENDING',
         },
       })
 
@@ -146,6 +150,20 @@ export const leetcodersRouter = createTRPCRouter({
         data: {
           status: input.status,
         },
+      })
+    }),
+  deleteLeetcoder: publicProcedure
+    .input(z.object({ id: z.string().uuid() }))
+    .mutation(async ({ input, ctx }) => {
+      // Only allow access if the user is the admin
+      if (ctx.user && ctx.user.email !== env.ADMIN_EMAIL) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: 'Only admin can access this resource',
+        })
+      }
+      return db.leetcoders.delete({
+        where: { id: input.id },
       })
     }),
 })

@@ -3,6 +3,7 @@
 import { ArrowRightIcon } from 'lucide-react'
 import { toast } from 'sonner'
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 
 import { cn } from '@/utils/cn'
 import { api } from '@/trpc/react'
@@ -29,6 +30,8 @@ type FormDataType = {
 }
 
 export const RequestToJoin = ({ groupId }: { groupId: string }) => {
+  const router = useRouter()
+
   const { mutate: requestToJoin, isPending } = api.leetcoders.RequestToJoin.useMutation()
   const [formData, setFormData] = useState<FormDataType>({
     name: '',
@@ -69,6 +72,8 @@ export const RequestToJoin = ({ groupId }: { groupId: string }) => {
       },
       {
         onSuccess: () => {
+          router.refresh()
+
           toast.dismiss(loadingToastId)
           toast.success(
             `Awesome! Your request to join Group ${groupId.padStart(2, '0')} has been received. We'll notify you once you're accepted!`

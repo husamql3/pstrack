@@ -47,7 +47,7 @@ export const SubmitCheckbox = ({
   const { data: user } = api.auth.getUser.useQuery()
   const isCurrUser = user?.id === leetcoder.id
 
-  const { mutate: sendEmail } = api.admin.sendEmail.useMutation()
+  const { mutate: sendEmail } = api.email.sendEmail.useMutation()
 
   const handleCheckboxChange = debounce(() => {
     // If already checked, do nothing

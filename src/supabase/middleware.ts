@@ -2,9 +2,7 @@ import { createServerClient } from '@supabase/ssr'
 import { type NextRequest, NextResponse } from 'next/server'
 
 import { env } from '@/config/env.mjs'
-
-const AUTHOR = 'imhusamg@gmail.com'
-const ADMINS = ['imhusamg@gmail.com', 'nezhataghy@gmail.com']
+import { ADMINS_EMAILS } from '@/data/constants'
 
 export async function updateSession(request: NextRequest) {
   const { searchParams, pathname } = new URL(request.url)
@@ -67,7 +65,7 @@ export async function updateSession(request: NextRequest) {
   console.log('middleware user', user?.email)
 
   if (pathname.startsWith('/dashboard')) {
-    if (!user || !user.email || !ADMINS.includes(user.email)) {
+    if (!user || !user.email || !ADMINS_EMAILS.includes(user.email)) {
       return NextResponse.redirect(new URL('/not-found', request.url))
     }
   }
