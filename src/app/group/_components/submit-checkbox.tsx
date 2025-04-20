@@ -12,6 +12,7 @@ import { useConfettiStore } from '@/stores/confettiStore'
 import { useSubmissionStore } from '@/stores/submissionStore'
 
 import { Checkbox } from '@/app/group/_components/checkbox'
+import { env } from '@/config/env.mjs'
 
 export const SubmitCheckbox = ({
   info,
@@ -104,7 +105,7 @@ export const SubmitCheckbox = ({
 
           // Invalidate the Redis cache
           try {
-            await fetch('/api/invalidate-cache', {
+            await fetch('/api/invalidate-cache/group', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',

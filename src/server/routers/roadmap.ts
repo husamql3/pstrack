@@ -23,4 +23,30 @@ export const roadmapRouter = createTRPCRouter({
         },
       })
     }),
+  getRoadmap: publicProcedure.query(async () => {
+    const allProblems = await db.roadmap.findMany({
+      orderBy: {
+        problem_order: 'asc',
+      },
+    })
+
+    const problemsByTopic = allProblems.reduce(
+      (acc, problem) => {
+        if (!acc[problem.topic]) {
+          acc[problem.topic] = []
+        }
+        acc[problem.topic].push(problem)
+        return acc
+      },
+      {} as Record<string, typeof allProblems>
+    )
+
+    // Convert to array format if needed
+    const groupedResults = Object.entries(problemsByTopic).map(([topic, problems]) => ({
+      topic,
+      problems,
+    }))
+
+    return groupedResults
+  }),
 })
