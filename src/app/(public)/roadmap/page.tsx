@@ -41,7 +41,7 @@ const Page = async () => {
         </h1>
 
         <div className="mx-auto mb-4 flex gap-1">
-          <HiCursorArrowRays className="size-5" />
+          <HiCursorArrowRays className="size-5 text-neutral-400" />
           <p className="font-medium text-neutral-500">
             Select a topic to explore its practice problems!
           </p>
