@@ -36,7 +36,6 @@ export async function GET(req: NextRequest) {
   try {
     await db.$connect()
 
-    const emailLogs: EmailLog[] = []
     let totalSuccess = 0
     let totalFailed = 0
 
@@ -61,7 +60,6 @@ export async function GET(req: NextRequest) {
                 email,
               })
 
-              emailLogs.push({ email, status: 'success' })
               totalSuccess++
             } catch (error) {
               await sendAdminNotification({
@@ -69,37 +67,31 @@ export async function GET(req: NextRequest) {
                 error: JSON.stringify(error),
                 message: 'Queueing email in /api/cron/send-daily-problem-email',
               })
-              emailLogs.push({
-                email,
-                status: 'failed',
-                error: JSON.stringify(error),
-              })
               totalFailed++
             }
           }
         }
+
+        // Send admin notification with summary after all emails are processed
+        await sendAdminNotification({
+          message: '/api/cron/send-daily-problem-email',
+          summary: JSON.stringify({
+            total: approvedLeetcoders.length,
+            successful: totalSuccess,
+            failed: totalFailed,
+          }),
+        })
       })()
     )
 
-    await sendAdminNotification({
-      message: '/api/cron/send-daily-problem-email',
-      summary: JSON.stringify({
-        total: totalSuccess + totalFailed,
-        successful: totalSuccess,
-        failed: totalFailed,
-      }),
-      logs: JSON.stringify(emailLogs),
-    })
-
     return NextResponse.json({
-      success: totalFailed === 0,
+      success: true,
       data: {
         summary: {
-          total: totalSuccess + totalFailed,
+          total: approvedLeetcoders.length,
           successful: totalSuccess,
           failed: totalFailed,
         },
-        logs: emailLogs,
       },
     })
   } catch (error) {
