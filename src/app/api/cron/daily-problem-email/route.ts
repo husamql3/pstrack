@@ -7,12 +7,6 @@ import { fetchApprovedLeetcodersWithProblems } from '@/dao/leetcoder.dao'
 import { env } from '@/config/env.mjs'
 import { sendDailyProblemEmail } from '@/utils/email/sendDailyProblemEmail'
 
-type EmailLog = {
-  email: string
-  status: 'success' | 'failed'
-  error?: string
-}
-
 /**
  * Configuration for the serverless function
  * Specifies Node.js runtime and 60-second maximum execution time

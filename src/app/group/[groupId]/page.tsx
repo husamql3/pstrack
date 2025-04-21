@@ -15,6 +15,9 @@ type CachedData = {
 const Page = async ({ params }: { params: Promise<{ groupId: string }> }) => {
   const { groupId } = await params
 
+  const user = await api.auth.getUser()
+  console.log(user)
+
   const cacheKey = `group:${groupId}:data`
   let groupData: GroupData | null = null
   let roadmap: roadmap[] = []
@@ -36,7 +39,13 @@ const Page = async ({ params }: { params: Promise<{ groupId: string }> }) => {
   }
 
   if (!groupData || !roadmap || roadmap.length === 0) {
-    return <div className="flex-1">No problems found for this group.</div>
+    return (
+      <div className="flex flex-1 flex-col items-center justify-center gap-3 px-4">
+        <h1 className="max-w-2xl text-center text-lg font-semibold md:text-2xl">
+          Get ready! Your group's journey is being prepared. We will notify you when it's ready. 🔥
+        </h1>
+      </div>
+    )
   }
 
   const tableData = generateTableData({

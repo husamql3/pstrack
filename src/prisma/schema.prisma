@@ -32,6 +32,7 @@ model leetcoders {
   gh_username String?
   x_username  String?
   li_username String?
+  avatar      String?
   group_no    Int
   username    String         @unique
   created_at  DateTime       @default(now()) @db.Timestamptz(6)

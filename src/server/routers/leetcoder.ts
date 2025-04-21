@@ -118,6 +118,7 @@ export const leetcodersRouter = createTRPCRouter({
           lc_username: input.lc_username,
           group_no: input.group_no,
           status: 'PENDING',
+          avatar: ctx.user?.user_metadata?.avatar_url || null,
         },
       })
 

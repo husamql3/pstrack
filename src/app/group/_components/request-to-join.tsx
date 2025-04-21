@@ -30,6 +30,7 @@ type FormDataType = {
 }
 
 export const RequestToJoin = ({ groupId }: { groupId: string }) => {
+  const { data: user } = api.auth.getUser.useQuery()
   const router = useRouter()
 
   const { mutate: requestToJoin, isPending } = api.leetcoders.RequestToJoin.useMutation()
@@ -47,9 +48,8 @@ export const RequestToJoin = ({ groupId }: { groupId: string }) => {
 
   const handleRequest = (e: React.FormEvent) => {
     e.preventDefault()
-    console.log('formData')
 
-    const loadingToastId = toast.loading('Checking, Hold a second', {
+    const loadingToastId = toast.loading('Checking, please wait...', {
       style: {
         background: 'white',
         color: 'black',
@@ -73,7 +73,6 @@ export const RequestToJoin = ({ groupId }: { groupId: string }) => {
       {
         onSuccess: () => {
           router.refresh()
-
           toast.dismiss(loadingToastId)
           toast.success(
             `Awesome! Your request to join Group ${groupId.padStart(2, '0')} has been received. We'll notify you once you're accepted!`
@@ -94,7 +93,7 @@ export const RequestToJoin = ({ groupId }: { groupId: string }) => {
                 boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
                 border: 'none',
               },
-              duration: 5000, // 5 seconds duration to make sure the user sees the error message
+              duration: 5000,
               closeButton: true,
             }
           )
@@ -103,10 +102,28 @@ export const RequestToJoin = ({ groupId }: { groupId: string }) => {
     )
   }
 
-  // todo: add https://www.luxeui.com/ui/multi-step-modal for rules and guidelines
+  const handleDialogOpen = (open: boolean) => {
+    if (open && !user) {
+      toast.error('You must be logged in to request to join a group', {
+        style: {
+          background: '#F44336',
+          color: 'white',
+          borderRadius: '8px',
+          padding: '16px',
+          fontWeight: '600',
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+          border: 'none',
+        },
+        duration: 5000,
+        closeButton: true,
+      })
+      return false
+    }
+    return true
+  }
 
   return (
-    <Dialog>
+    <Dialog onOpenChange={(open) => handleDialogOpen(open)}>
       <DialogTrigger asChild>
         <div className="z-10 flex items-center justify-center">
           <div
@@ -114,7 +131,7 @@ export const RequestToJoin = ({ groupId }: { groupId: string }) => {
               'group rounded-full border border-black/5 bg-neutral-100 text-base text-white transition-all ease-in hover:cursor-pointer hover:bg-neutral-200 dark:border-white/5 dark:bg-neutral-900 dark:hover:bg-neutral-800'
             )}
           >
-            <AnimatedShinyText className="inline-flex items-center justify-center px-4 py-1 transition ease-out hover:text-neutral-600 hover:duration-300 hover:dark:text-neutral-400">
+            <AnimatedShinyText className="inline-flex items-center justify-center px-4 py-2 transition ease-out hover:text-neutral-600 hover:duration-300 hover:dark:text-neutral-400">
               <span>✨ Request to join</span>
               <ArrowRightIcon className="ml-1 size-4 transition-transform duration-300 ease-in-out group-hover:translate-x-0.5" />
             </AnimatedShinyText>
@@ -133,7 +150,7 @@ export const RequestToJoin = ({ groupId }: { groupId: string }) => {
         <form
           onSubmit={handleRequest}
           id="request-to-join-form"
-          className="grid gap-4 py-4"
+          className="grid gap-4 pt-4"
         >
           <div className="flex flex-col gap-2">
             <Label htmlFor="name">
@@ -197,7 +214,7 @@ export const RequestToJoin = ({ groupId }: { groupId: string }) => {
               type="submit"
               form="request-to-join-form"
               className="space-x-2"
-              disabled={isPending}
+              disabled={isPending || !user}
             >
               {isPending ? 'Requesting' : 'Request'}
             </Button>

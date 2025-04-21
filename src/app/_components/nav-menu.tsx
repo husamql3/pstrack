@@ -11,6 +11,9 @@ const LINKS = [
   { label: 'Groups', href: '/groups' },
 ]
 
+// todo: https://www.serenity-ui.com/components/navbars/tubelightnavbar
+// todo: https://21st.dev/ayushmxxn/tubelight-navbar/default
+
 export const NavMenu = () => {
   const pathname = usePathname()
 
