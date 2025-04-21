@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 
 import { redis } from '@/config/redis'
-import { sendAdminNotification } from '@/utils/email/sendEmail'
+import { sendAdminNotification } from '@/utils/email/sendAdminNotification'
 
 export async function POST() {
   try {

@@ -2,7 +2,8 @@ import { z } from 'zod'
 import { TRPCError } from '@trpc/server'
 
 import { createTRPCRouter, publicProcedure } from '@/server/trpc'
-import { sendAcceptanceEmail, sendAdminNotification } from '@/utils/email/sendEmail'
+import { sendAdminNotification } from '@/utils/email/sendAdminNotification'
+import { sendAcceptanceEmail } from '@/utils/email/sendAcceptanceEmail'
 import { AUTHOR_EMAIL } from '@/data/constants'
 
 export const emailRouter = createTRPCRouter({

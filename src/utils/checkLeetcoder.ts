@@ -1,6 +1,6 @@
 import { LEETCODE_GQL_BASE_URL } from '@/data/constants'
 import { userProfile } from '@/data/queries/userProfile.gql'
-import { sendAdminNotification } from './email/sendEmail'
+import { sendAdminNotification } from '@/utils/email/sendAdminNotification'
 
 /**
  * Validates if a LeetCode username exists

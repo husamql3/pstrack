@@ -17,6 +17,7 @@ export const env = createEnv({
     EMAIL_USER: z.string().email(),
     EMAIL_PASSWORD: z.string(),
     API_SECRET: z.string().min(20),
+    RABBITMQ_URL: z.string().url(),
   },
   runtimeEnv: {
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -32,5 +33,6 @@ export const env = createEnv({
     EMAIL_USER: process.env.EMAIL_USER,
     EMAIL_PASSWORD: process.env.EMAIL_PASSWORD,
     API_SECRET: process.env.API_SECRET,
+    RABBITMQ_URL: process.env.RABBITMQ_URL,
   },
 })

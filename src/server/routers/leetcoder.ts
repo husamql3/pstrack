@@ -7,7 +7,7 @@ import { createTRPCRouter, publicProcedure } from '@/server/trpc'
 import { checkGHUsername, checkLCUsername } from '@/utils/checkLeetcoder'
 import { checkDuplicateUsername, checkPendingLeetcoder } from '@/dao/leetcoder.dao'
 import { env } from '@/config/env.mjs'
-import { sendAdminNotification } from '@/utils/email/sendEmail'
+import { sendAdminNotification } from '@/utils/email/sendAdminNotification'
 
 export const leetcodersRouter = createTRPCRouter({
   getLeetcoderById: publicProcedure

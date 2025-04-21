@@ -1,4 +1,4 @@
-import type { leetcoders } from '@prisma/client'
+import type { leetcoders, roadmap, groups } from '@prisma/client'
 
 import { db } from '@/prisma/db'
 
@@ -83,5 +83,47 @@ export const checkPendingLeetcoder = async (
       isValid: false,
       message: 'An error occurred while validating your application status.',
     }
+  }
+}
+
+export const fetchApprovedLeetcodersWithProblems = async (): Promise<{
+  approvedLeetcoders: (leetcoders & { group: groups })[]
+  groupProblems: Map<number, roadmap>
+}> => {
+  try {
+    // Fetch all groups with their latest progress
+    const groups = await db.groups.findMany({
+      include: {
+        group_progress: {
+          orderBy: { created_at: 'desc' },
+          take: 1,
+        },
+      },
+    })
+
+    // Fetch today's problem for each group
+    const groupProblems = new Map()
+    for (const group of groups) {
+      const latestProgress = group.group_progress[0]
+
+      if (latestProgress) {
+        const problem = await db.roadmap.findUnique({
+          where: { problem_order: latestProgress.current_problem },
+        })
+
+        if (problem) groupProblems.set(group.group_no, problem)
+      }
+    }
+
+    // Fetch all APPROVED leetcoders
+    const approvedLeetcoders = await db.leetcoders.findMany({
+      where: { status: 'APPROVED' },
+      include: { group: true },
+    })
+
+    return { approvedLeetcoders, groupProblems }
+  } catch (error) {
+    console.error('Error fetching approved leetcoders:', error)
+    throw new Error('Failed to fetch approved leetcoders')
   }
 }
