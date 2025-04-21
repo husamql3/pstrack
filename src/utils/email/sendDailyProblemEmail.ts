@@ -18,18 +18,21 @@ export const sendDailyProblemEmail = async ({
 }) => {
   try {
     const projectRoot = process.cwd()
-    const templatePath = path.join(projectRoot, 'public', 'templates', 'acceptance-email.html')
+    const templatePath = path.join(projectRoot, 'public', 'templates', 'test.html')
 
     let htmlContent = await fs.readFile(templatePath, 'utf-8')
-    htmlContent = htmlContent
-      .replace(/{{group_no}}/g, group_no.toString())
-      .replace(/{{problem_slug}}/, problem_slug)
-      .replace(/{{difficulty}}/, difficulty)
-      .replace(/{{topic}}/, topic)
+    htmlContent = htmlContent.replace(/{{group_no}}/g, group_no.toString())
+
+    console.log(problem_slug, difficulty, topic)
+    // htmlContent = htmlContent
+    //   .replace(/{{group_no}}/g, group_no.toString())
+    //   .replace(/{{problem_slug}}/, problem_slug)
+    //   .replace(/{{difficulty}}/, difficulty)
+    //   .replace(/{{topic}}/, topic)
 
     await sendEmail({
       to: email,
-      subject: 'Daily Problem',
+      subject: "Today's LeetCode Problem 🧩",
       html: htmlContent,
     })
   } catch (error) {

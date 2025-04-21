@@ -2,14 +2,14 @@ import { type NextRequest, NextResponse } from 'next/server'
 import { waitUntil } from '@vercel/functions'
 
 import { db } from '@/prisma/db'
-import { initRabbitMQ } from '@/config/rabbitmq'
 import { sendAdminNotification } from '@/utils/email/sendAdminNotification'
 import { fetchApprovedLeetcodersWithProblems } from '@/dao/leetcoder.dao'
 import { env } from '@/config/env.mjs'
+import { sendDailyProblemEmail } from '@/utils/email/sendDailyProblemEmail'
 
 type EmailLog = {
   email: string
-  status: 'queued' | 'failed'
+  status: 'success' | 'failed'
   error?: string
 }
 
@@ -33,10 +33,6 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ success: false, error: 'UNAUTHORIZED' })
   }
 
-  // Initialize RabbitMQ connection with the email queue
-  const queue = 'daily_problem_email_queue'
-  const { connection, channel } = await initRabbitMQ(queue)
-
   try {
     await db.$connect()
 
@@ -57,21 +53,15 @@ export async function GET(req: NextRequest) {
 
           if (problem) {
             try {
-              // Prepare email data with problem details
-              const emailData = {
+              await sendDailyProblemEmail({
                 problem_slug: problem.problem_slug,
                 difficulty: problem.difficulty,
                 topic: problem.topic,
                 group_no: group.group_no.toString(),
                 email,
-              }
-
-              // Add email task to RabbitMQ queue with persistence enabled
-              channel.sendToQueue(queue, Buffer.from(JSON.stringify(emailData)), {
-                persistent: true,
               })
 
-              emailLogs.push({ email, status: 'queued' })
+              emailLogs.push({ email, status: 'success' })
               totalSuccess++
             } catch (error) {
               await sendAdminNotification({
@@ -120,9 +110,6 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ success: false, error: 'INTERNAL_SERVER_ERROR' })
   } finally {
-    // Clean up resources regardless of success or failure
-    await channel.close()
-    await connection.close()
     await db.$disconnect()
   }
 }
