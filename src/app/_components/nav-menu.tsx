@@ -1,18 +1,17 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { FaHome, FaMap, FaUsers } from 'react-icons/fa'
+import { usePathname } from 'next/navigation'
 
 import { cn } from '@/utils/cn'
-
-// todo: https://www.serenity-ui.com/components/navbars/tubelightnavbar
-// todo: https://21st.dev/ayushmxxn/tubelight-navbar/default
 
 export const NavMenu = () => {
   const [activeTab, setActiveTab] = useState('Home')
   const tabRefs = useRef<{ [key: string]: HTMLAnchorElement | null }>({})
+  const pathname = usePathname()
 
   const tabs = [
     { name: 'Home', url: '/', icon: <FaHome /> },
@@ -24,7 +23,14 @@ export const NavMenu = () => {
     tabRefs.current[tabName] = el
   }
 
-  // todo: get the active tab from url
+  // Set active tab based on current URL
+  useEffect(() => {
+    const currentTab = tabs.find(
+      (tab) => pathname === tab.url || pathname.startsWith(`${tab.url}/`)
+    )
+
+    if (currentTab) setActiveTab(currentTab.name)
+  }, [pathname])
 
   return (
     <div className="fixed bottom-0 left-1/2 z-50 mb-6 -translate-x-1/2 transform sm:top-0 sm:pt-8">
