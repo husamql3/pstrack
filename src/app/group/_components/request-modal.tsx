@@ -39,7 +39,7 @@ const createVariants = (heightContent: number): Variants => ({
   }),
 })
 
-export const MultiStepModal = ({ groupId }: { groupId: string }) => {
+export const RequestModal = ({ groupId }: { groupId: string }) => {
   const [activeIdx, setActiveIdx] = useState(0)
   const [direction, setDirection] = useState(1)
   const [ref, { height: heightContent }] = useMeasure()

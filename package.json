@@ -31,6 +31,7 @@
     "@radix-ui/react-dropdown-menu": "^2.1.10",
     "@radix-ui/react-hover-card": "^1.1.10",
     "@radix-ui/react-label": "^2.1.4",
+    "@radix-ui/react-progress": "^1.1.4",
     "@radix-ui/react-slot": "^1.2.0",
     "@supabase/ssr": "^0.6.1",
     "@supabase/supabase-js": "^2.49.4",

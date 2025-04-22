@@ -49,4 +49,7 @@ export const roadmapRouter = createTRPCRouter({
 
     return groupedResults
   }),
+  count: publicProcedure.query(async () => {
+    return db.roadmap.count()
+  }),
 })

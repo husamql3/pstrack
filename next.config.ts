@@ -13,6 +13,9 @@ const nextConfig: NextConfig = {
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },
+  images: {
+    domains: ['github.com'],
+  },
 }
 
 export default nextConfig

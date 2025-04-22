@@ -52,4 +52,30 @@ export const groupsRouter = createTRPCRouter({
     }
     return db.groups.findMany()
   }),
+  getAllGroupsInfo: publicProcedure.query(() => {
+    return db.groups.findMany({
+      orderBy: {
+        group_no: 'asc',
+      },
+      include: {
+        leetcoders: {
+          select: {
+            id: true,
+            name: true,
+            avatar: true,
+          },
+        },
+        group_progress: {
+          include: {
+            roadmap: {
+              select: {
+                topic: true,
+                problem_order: true,
+              },
+            },
+          },
+        },
+      },
+    })
+  }),
 })
