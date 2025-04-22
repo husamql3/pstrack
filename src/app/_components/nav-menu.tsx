@@ -24,6 +24,8 @@ export const NavMenu = () => {
     tabRefs.current[tabName] = el
   }
 
+  // todo: get the active tab from url
+
   return (
     <div className="fixed bottom-0 left-1/2 z-50 mb-6 -translate-x-1/2 transform sm:top-0 sm:pt-8">
       <div className="flex items-center gap-2 rounded-full border border-gray-500/20 bg-white/5 px-1 py-1 shadow-lg shadow-black backdrop-blur-lg">

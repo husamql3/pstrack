@@ -4,9 +4,9 @@
   - [ ] RabbitMQ
 - [ ] kickout - set submission to false
 - [x] add avatar to leetcoder
-- [ ] nav menu
-  - [ ] better nav https://v0.dev/community/vercel-tabs-BT27p0aGPsa
-  - [ ] for mobile
+- [x] nav menu
+  - [x] better nav https://v0.dev/community/vercel-tabs-BT27p0aGPsa
+  - [x] for mobile
 - [ ] use datadog
 - [ ] profile page
 - [ ] protect routes
