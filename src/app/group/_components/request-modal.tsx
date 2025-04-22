@@ -76,7 +76,7 @@ export const MultiStepModal = ({ groupId }: { groupId: string }) => {
             boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
             border: 'none',
           },
-          duration: 5000,
+          duration: 10000,
           closeButton: true,
         })
 

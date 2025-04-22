@@ -7,7 +7,7 @@
 - [x] nav menu
   - [x] better nav https://v0.dev/community/vercel-tabs-BT27p0aGPsa
   - [x] for mobile
-- [ ] use multistep for request
+- [x] use multistep for request
 - [ ] use datadog
 - [ ] profile page
 - [ ] protect routes
