@@ -82,7 +82,7 @@ const Page = async () => {
           return (
             <Card
               key={group.id}
-              className="relative z-[100] overflow-hidden border border-zinc-700/10 bg-gradient-to-br from-zinc-900/40 to-zinc-900/60 shadow-[0_8px_24px_rgba(0,0,0,0.3)] backdrop-blur-md before:absolute before:inset-0 before:-z-10 before:rounded-lg before:bg-gradient-to-br before:from-zinc-700/20 before:to-zinc-800/10 before:opacity-10 after:absolute after:inset-0 after:-z-20 after:bg-[url('/noise.png')] after:opacity-5 after:mix-blend-overlay"
+              className="relative z-[100] overflow-hidden border border-zinc-700/10 bg-gradient-to-tr from-[#141416] to-[#1C1C1C] shadow-[0_8px_24px_rgba(0,0,0,0.3)] backdrop-blur-md before:absolute before:inset-0 before:-z-10 before:rounded-lg before:bg-gradient-to-tr before:from-zinc-900/20 before:to-zinc-800/5 before:opacity-20 after:absolute after:inset-0 after:-z-20 after:bg-[url('/noise.png')] after:opacity-[0.15] after:mix-blend-overlay after:[background-size:200px]"
             >
               <CardHeader>
                 <div className="flex flex-wrap items-center justify-between gap-3">
