@@ -1,11 +1,11 @@
 'use client'
 
-import { StarsBackground } from '@/ui/stars-background'
+import { MultiStepModal } from '../group/_components/request-modal'
 
 export default function Test() {
   return (
-    <div className="flex h-screen flex-col">
-      <StarsBackground className="absolute inset-0 flex items-center justify-center rounded-xl" />
+    <div className="flex h-screen flex-col items-center justify-center">
+      <MultiStepModal groupId="1" />
     </div>
   )
 }

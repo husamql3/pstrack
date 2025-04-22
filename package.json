@@ -61,6 +61,7 @@
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-icons": "^5.5.0",
+    "react-use-measure": "^2.1.7",
     "server-only": "^0.0.1",
     "sonner": "^2.0.3",
     "superjson": "^2.2.2",

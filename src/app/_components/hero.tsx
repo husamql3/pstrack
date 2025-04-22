@@ -16,7 +16,12 @@ export const Hero = () => {
         PSTrack: The platform that helps you solve, track, and grow.
       </h4>
 
-      <InteractiveHoverLink href="group/1">Get Started</InteractiveHoverLink>
+      <InteractiveHoverLink
+        className="z-[100]"
+        href="group/1"
+      >
+        Get Started
+      </InteractiveHoverLink>
     </div>
   )
 }

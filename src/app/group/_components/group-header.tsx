@@ -1,8 +1,8 @@
 import { Suspense } from 'react'
 
 import { UserAuth } from '@/app/_components/user-auth'
-import { RequestToJoin } from '@/app/group/_components/request-to-join'
 import { Header } from '@/app/_components/header'
+import { MultiStepModal } from '@/app/group/_components/request-modal'
 
 export const GroupHeader = async ({ groupNo }: { groupNo: string }) => {
   return (
@@ -13,7 +13,7 @@ export const GroupHeader = async ({ groupNo }: { groupNo: string }) => {
 
       <div className="flex items-center gap-3">
         <Suspense fallback={null}>
-          <RequestToJoin groupId={groupNo} />
+          <MultiStepModal groupId={groupNo} />
         </Suspense>
         <UserAuth />
       </div>
