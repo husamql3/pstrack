@@ -2,7 +2,7 @@ import { VERSION } from '@/data/constants'
 
 export const Footer = () => {
   return (
-    <footer className="w-full py-4">
+    <footer className="hidden w-full py-4 sm:block">
       <div className="mx-auto max-w-5xl px-4 text-center text-white">
         <span>Built by </span>
         <a

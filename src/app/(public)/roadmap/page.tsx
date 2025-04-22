@@ -19,6 +19,7 @@ const Page = async () => {
     }
   }
 
+  // todo: make it responsive
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-col py-10">
       <h1 className="mb-10 text-4xl font-bold">

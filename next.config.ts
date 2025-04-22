@@ -9,11 +9,9 @@ const nextConfig: NextConfig = {
   output: 'standalone',
   distDir: process.env.NODE_ENV === 'production' ? '.next' : '.next-dev',
   transpilePackages: ['@t3-oss/env-nextjs', '@t3-oss/env-core'],
-  experimental: {
-    optimizeCss: true,
-    turbo: {
-      treeShaking: true,
-    },
+  optimizeCss: true,
+  turbo: {
+    treeShaking: true,
   },
   reactStrictMode: true,
   compiler: {
