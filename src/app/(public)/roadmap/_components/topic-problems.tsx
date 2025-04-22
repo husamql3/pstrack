@@ -29,7 +29,7 @@ export const TopicProblems = ({ topic, problems }: { topic: string; problems: ro
 
   return (
     <Dialog>
-      <DialogTrigger className="cursor-pointer text-lg font-semibold">
+      <DialogTrigger className="z-[100] cursor-pointer text-lg font-semibold">
         {formattedTopic}
       </DialogTrigger>
       <DialogContent className="flex flex-col gap-0 p-0 sm:max-h-[min(500px,80vh)] sm:max-w-lg [&>button:last-child]:hidden">
@@ -39,7 +39,7 @@ export const TopicProblems = ({ topic, problems }: { topic: string; problems: ro
             <DialogDescription asChild>
               <div className="p-0">
                 <ul className="divide-y">
-                  {problemItems.map((problem) => (
+                  {problemItems?.map((problem) => (
                     <li
                       key={problem.key}
                       className="hover:bg-muted/50 p-4 transition-colors"

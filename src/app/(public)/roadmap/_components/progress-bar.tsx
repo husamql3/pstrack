@@ -27,7 +27,7 @@ export const ProgressBar = ({ progress: initialProgress }: { progress?: number }
   return (
     <Progress
       value={progressValue}
-      className="w-[300px]"
+      className="w-full"
     />
   )
 }

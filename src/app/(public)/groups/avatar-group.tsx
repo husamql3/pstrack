@@ -1,5 +1,3 @@
-import Image from 'next/image'
-
 import { Button } from '@/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/ui/avatar'
 
@@ -21,7 +19,7 @@ export const AvatarGroup = ({ avatars, totalCount }: AvatarGroupProps) => {
   return (
     <div className="bg-background flex items-center rounded-full border p-1 shadow-sm">
       <div className="flex -space-x-3">
-        {displayedAvatars.map((avatar, index) => (
+        {displayedAvatars.map((avatar) => (
           <Avatar key={avatar.alt}>
             {avatar.src ? (
               <AvatarImage
