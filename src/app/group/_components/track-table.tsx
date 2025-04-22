@@ -32,6 +32,8 @@ import { LeetCoderCard } from '@/app/group/_components/leetcoder-card'
 
 const columnHelper = createColumnHelper<TableRowOutput>()
 
+// todo: for the 1st in solved count add emoji 🥇 or smth
+
 export const TrackTable = ({
   leetcoders,
   tableData,
