@@ -1,14 +1,20 @@
-import { POST, getUniqueGroupNos, kickOffLeetcoders, getAllLeetcoders, getAllAssignedProblems, getSolvedProblems, calculateUnsolvedProblems, updateIsNotified, processLeetcoder } from '@/app/api/cron/kick-out/route'
+import {
+  POST,
+  getUniqueGroupNos,
+  kickOffLeetcoders,
+  getSolvedProblems,
+  calculateUnsolvedProblems,
+  processLeetcoder,
+} from '@/app/api/cron/kick-out/route'
 import { env } from '@/config/env.mjs'
 import { db } from '@/prisma/db'
 import type { leetcoders, submissions } from '@prisma/client'
-import { PrismaPromise } from '@prisma/client'
 import { NextResponse } from 'next/server'
 
 // Mock NextResponse
 jest.mock('next/server', () => ({
   NextResponse: {
-    json: jest.fn()
+    json: jest.fn(),
   },
 }))
 
@@ -67,7 +73,7 @@ describe('kick-out API route', () => {
       expect(response.status).toBe(401)
       expect(await response.json()).toEqual({ success: false, error: 'UNAUTHORIZED' })
       expect(NextResponse.json).toHaveBeenCalledWith(
-        { success: false, error: 'UNAUTHORIZED' }, 
+        { success: false, error: 'UNAUTHORIZED' },
         { status: 401 }
       )
     })
@@ -81,26 +87,28 @@ describe('kick-out API route', () => {
       expect(response.status).toBe(401)
       expect(await response.json()).toEqual({ success: false, error: 'UNAUTHORIZED' })
       expect(NextResponse.json).toHaveBeenCalledWith(
-        { success: false, error: 'UNAUTHORIZED' }, 
+        { success: false, error: 'UNAUTHORIZED' },
         { status: 401 }
       )
     })
 
     it('should process leetcoders and return success', async () => {
       // Setup mocks for all dependencies
-      
+
       // Mock getAllLeetcoders response
-      db.leetcoders.findMany.mockResolvedValueOnce([{
-        id: 'user1',
-        group_no: 1,
-        created_at: new Date(),
-        is_notified: false,
-        submissions: [{ problem_id: 'prob1' }],
-      }])
-      
+      db.leetcoders.findMany.mockResolvedValueOnce([
+        {
+          id: 'user1',
+          group_no: 1,
+          created_at: new Date(),
+          is_notified: false,
+          submissions: [{ problem_id: 'prob1' }],
+        },
+      ])
+
       // Mock getUniqueGroupNos response
       db.leetcoders.findMany.mockResolvedValueOnce([{ group_no: 1 }])
-      
+
       // Mock getAllAssignedProblems response
       db.roadmap.findMany.mockResolvedValueOnce([
         { id: 'problem1', group_progress: [{ group_no: 1 }] },
@@ -112,10 +120,10 @@ describe('kick-out API route', () => {
         { id: 'problem7', group_progress: [{ group_no: 1 }] },
         { id: 'problem8', group_progress: [{ group_no: 1 }] },
       ])
-      
+
       // Mock updateIsNotified response
       db.leetcoders.update.mockResolvedValueOnce({ id: 'user1' })
-      
+
       // Mock kickOffLeetcoders response
       db.$transaction.mockResolvedValueOnce([{ id: 'user1' }])
 
@@ -147,7 +155,7 @@ describe('kick-out API route', () => {
         error: 'Internal Server Error',
       })
       expect(NextResponse.json).toHaveBeenCalledWith(
-        { success: false, error: 'Internal Server Error' }, 
+        { success: false, error: 'Internal Server Error' },
         { status: 500 }
       )
       expect(db.$disconnect).toHaveBeenCalled()
@@ -174,10 +182,9 @@ describe('kick-out API route', () => {
         },
       ]
 
-      jest.spyOn(db.leetcoders, 'findMany').mockResolvedValueOnce([
-        { group_no: 1 },
-        { group_no: 2 },
-      ] as any)
+      jest
+        .spyOn(db.leetcoders, 'findMany')
+        .mockResolvedValueOnce([{ group_no: 1 }, { group_no: 2 }] as { group_no: number }[])
 
       // Act
       const result = await getUniqueGroupNos(mockLeetcoders)
@@ -221,11 +228,11 @@ describe('kick-out API route', () => {
       jest.clearAllMocks()
       jest.resetAllMocks()
     })
-  
+
     it('should update leetcoder status to SUSPENDED and mark submissions as unsolved', async () => {
       // Arrange
       const mockLeetcoder = { id: 'user1', status: 'SUSPENDED' } as unknown as leetcoders
-      
+
       // Reset and setup mock properly
       jest.spyOn(db, '$transaction').mockImplementation(() => {
         return Promise.resolve([mockLeetcoder])
@@ -298,7 +305,7 @@ describe('kick-out API route', () => {
       jest.clearAllMocks()
       jest.resetAllMocks()
     })
-    
+
     it('should update notification status if threshold exceeded and not notified', async () => {
       // Arrange
       const leetcoder: LeetcoderWithSubmissions = {
@@ -311,7 +318,7 @@ describe('kick-out API route', () => {
       const assignedProblems = Array(10)
         .fill(0)
         .map((_, i) => ({ id: `prob${i + 1}` }))
-      jest.spyOn(db.leetcoders, 'update').mockResolvedValueOnce({ id: 'user1' } as any)
+      jest.spyOn(db.leetcoders, 'update').mockResolvedValueOnce({ id: 'user1' } as leetcoders)
 
       // Act
       await processLeetcoder(leetcoder, assignedProblems)
@@ -335,7 +342,7 @@ describe('kick-out API route', () => {
       const assignedProblems = Array(10)
         .fill(0)
         .map((_, i) => ({ id: `prob${i + 1}` }))
-      
+
       // Setup transaction mock
       jest.spyOn(db, '$transaction').mockImplementation(() => {
         return Promise.resolve([{ id: 'user1', status: 'SUSPENDED' }])
@@ -394,4 +401,4 @@ describe('kick-out API route', () => {
       expect(db.$transaction).not.toHaveBeenCalled()
     })
   })
-}) 
+})

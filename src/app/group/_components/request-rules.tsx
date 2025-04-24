@@ -18,15 +18,15 @@ export const RequestRules = () => {
         <li className="flex items-start">
           <span className="mt-0.5 mr-2 text-xl text-yellow-500">•</span>
           <span>
-            If you miss 6 problems, we'll send you an alert. You'll get one final chance to catch
-            up.
+            If you miss 6 problems, we&apos;ll send you an alert. You&apos;ll get one final chance
+            to catch up.
           </span>
         </li>
         <li className="flex items-start">
           <span className="mt-0.5 mr-2 text-xl text-red-500">•</span>
           <span>
-            If you don't solve your problems within one day after the alert, you'll be removed from
-            the group.
+            If you don&apos;t solve your problems within one day after the alert, you&apos;ll be
+            removed from the group.
           </span>
         </li>
       </ul>

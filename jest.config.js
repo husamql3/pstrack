@@ -7,9 +7,12 @@ const config = {
   },
   setupFilesAfterEnv: ['<rootDir>/src/tests/setup-jest.ts'],
   transform: {
-    '^.+\\.tsx?$': ['ts-jest', {
-      tsconfig: 'tsconfig.json',
-    }],
+    '^.+\\.tsx?$': [
+      'ts-jest',
+      {
+        tsconfig: 'tsconfig.json',
+      },
+    ],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   testPathIgnorePatterns: ['/node_modules/', '/.next/'],
@@ -22,6 +25,6 @@ const config = {
     forceNodeFilesystemAPI: true,
     enableSymlinks: false,
   },
-};
+}
 
-module.exports = config; 
+module.exports = config

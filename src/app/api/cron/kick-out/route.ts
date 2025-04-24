@@ -46,9 +46,7 @@ export async function POST(req: Request) {
 }
 
 // Fetch unique group numbers using Prisma query
-export const getUniqueGroupNos = async (
-  leetcoders: LeetcoderWithSubmissions[]
-): Promise<number[]> => {
+const getUniqueGroupNos = async (leetcoders: LeetcoderWithSubmissions[]): Promise<number[]> => {
   try {
     const groups = await db.leetcoders.findMany({
       where: {
@@ -66,7 +64,7 @@ export const getUniqueGroupNos = async (
 }
 
 // Update leetcoder status to SUSPENDED and set all submissions to solved: false
-export const kickOffLeetcoders = async (id: string): Promise<leetcoders> => {
+const kickOffLeetcoders = async (id: string): Promise<leetcoders> => {
   try {
     const [updatedLeetcoder] = await db.$transaction([
       db.leetcoders.update({
@@ -86,7 +84,7 @@ export const kickOffLeetcoders = async (id: string): Promise<leetcoders> => {
 }
 
 // Fetch all approved leetcoders with their solved submissions
-export const getAllLeetcoders = async (): Promise<LeetcoderWithSubmissions[]> => {
+const getAllLeetcoders = async (): Promise<LeetcoderWithSubmissions[]> => {
   try {
     return await db.leetcoders.findMany({
       where: {
@@ -111,7 +109,7 @@ export const getAllLeetcoders = async (): Promise<LeetcoderWithSubmissions[]> =>
 }
 
 // Fetch all assigned problems for given group numbers
-export const getAllAssignedProblems = async (
+const getAllAssignedProblems = async (
   groupNos: number[],
   leetcoders: LeetcoderWithSubmissions[]
 ): Promise<Map<number, { id: string }[]>> => {
@@ -155,12 +153,12 @@ export const getAllAssignedProblems = async (
 }
 
 // Get solved problem IDs for a leetcoder
-export const getSolvedProblems = (leetcoder: LeetcoderWithSubmissions): string[] => {
+const getSolvedProblems = (leetcoder: LeetcoderWithSubmissions): string[] => {
   return leetcoder.submissions.map((submission) => submission.problem_id)
 }
 
 // Calculate unsolved problems
-export const calculateUnsolvedProblems = (
+const calculateUnsolvedProblems = (
   assignedProblems: { id: string }[],
   solvedProblems: string[]
 ): { id: string }[] => {
@@ -168,7 +166,7 @@ export const calculateUnsolvedProblems = (
 }
 
 // Update notification status for a leetcoder
-export const updateIsNotified = async (leetcoderId: string): Promise<leetcoders> => {
+const updateIsNotified = async (leetcoderId: string): Promise<leetcoders> => {
   try {
     return await db.leetcoders.update({
       where: { id: leetcoderId },
@@ -181,7 +179,7 @@ export const updateIsNotified = async (leetcoderId: string): Promise<leetcoders>
 }
 
 // Process a single leetcoder
-export const processLeetcoder = async (
+const processLeetcoder = async (
   leetcoder: LeetcoderWithSubmissions,
   assignedProblems: { id: string }[],
   unsolvedThreshold: number = UNSOLVED_THRESHOLD

@@ -1,10 +1,14 @@
 import { Suspense } from 'react'
 
+import { api } from '@/trpc/server'
+
 import { UserAuth } from '@/app/_components/user-auth'
 import { Header } from '@/app/_components/header'
 import { RequestModal } from '@/app/group/_components/request-modal'
 
 export const GroupHeader = async ({ groupNo }: { groupNo: string }) => {
+  const user = await api.auth.getUser()
+
   return (
     <Header className="max-w-6xl">
       <div className="flex items-center">
@@ -15,7 +19,7 @@ export const GroupHeader = async ({ groupNo }: { groupNo: string }) => {
         <Suspense fallback={null}>
           <RequestModal groupId={groupNo} />
         </Suspense>
-        <UserAuth />
+        <UserAuth user={user} />
       </div>
     </Header>
   )

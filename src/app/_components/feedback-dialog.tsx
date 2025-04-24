@@ -53,7 +53,7 @@ export const FeedbackDialog = ({ email: defaultEmail = '' }: { email?: string })
           message: feedback,
         },
       })
-    } catch (error) {
+    } catch {
       toast.error('Invalid email', {
         description: 'Please enter a valid email address.',
       })

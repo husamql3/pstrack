@@ -1,11 +1,11 @@
 - [ ] use datadog
-- [ ] Feedback dialog
 - [ ] profile page
 - [ ] Add resources page
   - [ ] How to use LeetCode
   - [ ] Advices for problem solving
 - [ ] Add gh stars count
 - [ ] Nav bar in mobile screens, add text
+- [x] Feedback dialog
 - [x] request modal
   - [x] fix padding
   - [x] rephrase the rules
