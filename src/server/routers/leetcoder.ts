@@ -108,33 +108,49 @@ export const leetcodersRouter = createTRPCRouter({
         })
       }
 
-      const newLeetcoder = await db.leetcoders.create({
-        data: {
-          id: ctx?.user?.id as string,
-          name: input.name,
+      try {
+        const newLeetcoder = await db.leetcoders.create({
+          data: {
+            id: ctx?.user?.id as string,
+            name: input.name,
+            username: input.username,
+            email: ctx?.user?.email as string,
+            gh_username: input.gh_username,
+            lc_username: input.lc_username,
+            group_no: input.group_no,
+            status: 'PENDING',
+            avatar: ctx.user?.user_metadata?.avatar_url || null,
+          },
+        })
+
+        // Send notification to admin about new join request
+        await sendAdminNotification({
+          event: 'NEW_JOIN_REQUEST',
+          groupNo: input.group_no.toString(),
           username: input.username,
+          name: input.name,
           email: ctx?.user?.email as string,
-          gh_username: input.gh_username,
-          lc_username: input.lc_username,
-          group_no: input.group_no,
-          status: 'PENDING',
-          avatar: ctx.user?.user_metadata?.avatar_url || null,
-        },
-      })
+          leetcodeUsername: input.lc_username,
+          githubUsername: input.gh_username || 'Not provided',
+          timestamp: new Date().toISOString(),
+        })
 
-      // Send notification to admin about new join request
-      await sendAdminNotification({
-        event: 'NEW_JOIN_REQUEST',
-        groupNo: input.group_no.toString(),
-        username: input.username,
-        name: input.name,
-        email: ctx?.user?.email as string,
-        leetcodeUsername: input.lc_username,
-        githubUsername: input.gh_username || 'Not provided',
-        timestamp: new Date().toISOString(),
-      })
-
-      return newLeetcoder
+        return newLeetcoder
+      } catch (error) {
+        // Check if error is related to duplicate user ID
+        if (
+          error instanceof Error &&
+          error.message.includes('Unique constraint failed on the fields: (`id`)')
+        ) {
+          throw new TRPCError({
+            code: 'CONFLICT',
+            message:
+              'Your request to join is already submitted and waiting for approval. Please check back later for updates!',
+          })
+        }
+        // Re-throw any other errors
+        throw error
+      }
     }),
   updateLeetcoderStatus: publicProcedure
     .input(z.object({ id: z.string().uuid(), status: z.nativeEnum(LeetcodeStatus) }))

@@ -1,15 +1,24 @@
+- [ ] kickout - set submission to false
+- [ ] use datadog
+- [ ] profile page
+- [ ] Add resources page
+  - [ ] How to use LeetCode
+  - [ ] Advices for problem solving
+- [ ] Handle duplicated uuid error
+- [ ] Add stars count
+- [ ] Groups page, add leet-coders limit
+- [ ] Nav bar in mobile screens, add text
+- [ ] data dog
+- [ ] Feedback dialog
 - [x] problem
   - [x] daily problem email
-  - [ ] daily problem CRON
+  - [x] daily problem CRON
   - [x] RabbitMQ
-- [ ] kickout - set submission to false
 - [x] add avatar to leetcoder
 - [x] nav menu
   - [x] better nav https://v0.dev/community/vercel-tabs-BT27p0aGPsa
   - [x] for mobile
 - [x] use multistep for request
-- [ ] use datadog
-- [ ] profile page
-- [ ] protect routes
+- [x] protect routes
 
 collaborative progress tracking dashboards

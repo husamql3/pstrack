@@ -19,8 +19,6 @@ const Page = async () => {
     }
   }
 
-  console.log(roadmapData)
-
   // todo: make it responsive
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-1 flex-col px-3 py-10">

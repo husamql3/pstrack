@@ -1,11 +1,11 @@
 'use client'
 
 import type React from 'react'
-
 import { useCallback, useState } from 'react'
 import { AnimatePresence, type Variants, motion } from 'framer-motion'
 import { ArrowRightIcon } from 'lucide-react'
 import useMeasure from 'react-use-measure'
+import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 
 import { cn } from '@/utils/cn'
@@ -14,7 +14,6 @@ import { Button } from '@/ui/button'
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/ui/dialog'
 import { type FormDataType, RequestForm } from '@/app/group/_components/request-form'
 import { api } from '@/trpc/react'
-import { useRouter } from 'next/navigation'
 
 const createVariants = (heightContent: number): Variants => ({
   initial: (direction: number) => ({
@@ -49,6 +48,7 @@ export const RequestModal = ({ groupId }: { groupId: string }) => {
     lc_username: '',
     gh_username: '',
   })
+  const [open, setOpen] = useState(false)
 
   const router = useRouter()
   const { data: user } = api.auth.getUser.useQuery()
@@ -115,6 +115,7 @@ export const RequestModal = ({ groupId }: { groupId: string }) => {
             setFormData({ name: '', username: '', lc_username: '', gh_username: '' })
 
             setActiveIdx(0) // Reset to first step
+            setOpen(false) // Close the dialog
           },
 
           onError: (e) => {
@@ -154,7 +155,10 @@ export const RequestModal = ({ groupId }: { groupId: string }) => {
     isPending || !formData.name || !formData.username || !formData.lc_username
 
   return (
-    <Dialog>
+    <Dialog
+      open={open}
+      onOpenChange={setOpen}
+    >
       <DialogTrigger asChild>
         <div className="flex items-center justify-center">
           <div

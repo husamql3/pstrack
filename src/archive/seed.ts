@@ -1384,6 +1384,42 @@ export const group_progress: group_progressType[] = [
     group_no: 1,
     current_problem: 1,
   },
+  {
+    id: 'a7b91e32-c2d4-4e56-9f18-3d5c8e6a71f2',
+    created_at: new Date('2025-01-25 10:15:45.123+00'),
+    group_no: 1,
+    current_problem: 5,
+  },
+  {
+    id: 'b8c72f43-d3e5-4f67-a029-4e6d9f7b82a3',
+    created_at: new Date('2025-01-26 14:30:22.456+00'),
+    group_no: 1,
+    current_problem: 6,
+  },
+  {
+    id: 'c9d83f54-e4f6-5678-b13a-5f7eaf8c93b4',
+    created_at: new Date('2025-01-27 09:45:18.789+00'),
+    group_no: 1,
+    current_problem: 7,
+  },
+  {
+    id: 'd0e94f65-f5f7-6a89-c24b-6f8fba9d04c5',
+    created_at: new Date('2025-01-28 16:20:37.012+00'),
+    group_no: 1,
+    current_problem: 8,
+  },
+  {
+    id: 'e1f05a76-f6a8-7b90-d35c-7a9fcb0e15d6',
+    created_at: new Date('2025-01-29 11:55:42.345+00'),
+    group_no: 1,
+    current_problem: 9,
+  },
+  {
+    id: 'f2f16b87-a7b9-8c01-e46d-8b0adb1f26e7',
+    created_at: new Date('2025-01-30 18:40:53.678+00'),
+    group_no: 1,
+    current_problem: 10,
+  },
 ]
 
 export const groups: groupsType[] = [

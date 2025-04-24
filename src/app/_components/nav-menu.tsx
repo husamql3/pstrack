@@ -33,7 +33,7 @@ export const NavMenu = () => {
   }, [pathname])
 
   return (
-    <div className="fixed bottom-7 left-1/2 z-[100] -translate-x-1/2 transform sm:top-7">
+    <div className="fixed top-[30px] left-1/2 z-[100] -translate-x-1/2 transform">
       <div className="flex items-center gap-2 rounded-full border border-gray-500/20 bg-white/5 px-1 py-1 shadow-lg shadow-black backdrop-blur-lg">
         {tabs.map((tab) => (
           <Link
