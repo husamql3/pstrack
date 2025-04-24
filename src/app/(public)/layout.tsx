@@ -22,7 +22,7 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
       <Header>
         <Logo />
         <NavMenu />
-        <UserAuth />
+        <UserAuth user={user} />
       </Header>
 
       {children}
