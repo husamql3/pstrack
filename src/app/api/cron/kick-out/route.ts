@@ -1,5 +1,6 @@
 import { env } from '@/config/env.mjs'
 import { db } from '@/prisma/db'
+import { sendReminderEmail } from '@/utils/email/sendReminderEmail'
 import type { leetcoders, submissions } from '@prisma/client'
 import { NextResponse } from 'next/server'
 
@@ -11,6 +12,7 @@ interface LeetcoderWithSubmissions {
   id: string
   group_no: number
   created_at: Date
+  email: string
   is_notified: boolean
   submissions: Pick<submissions, 'problem_id'>[]
 }
@@ -95,6 +97,7 @@ export const getAllLeetcoders = async (): Promise<LeetcoderWithSubmissions[]> =>
         group_no: true,
         created_at: true,
         is_notified: true,
+        email: true,
         submissions: {
           where: { solved: true },
           select: { problem_id: true },
@@ -192,7 +195,13 @@ export const processLeetcoder = async (
     if (leetcoder.is_notified) {
       await kickOffLeetcoders(leetcoder.id)
     } else {
-      await updateIsNotified(leetcoder.id)
+      await Promise.all([
+        sendReminderEmail({
+          group_no: String(leetcoder.group_no),
+          email: leetcoder.email,
+        }),
+        updateIsNotified(leetcoder.id),
+      ])
     }
   }
 }
