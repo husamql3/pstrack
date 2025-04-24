@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Geist } from 'next/font/google'
 import { Toaster } from 'sonner'
 import { NuqsAdapter } from 'nuqs/adapters/next/app'
+import { GoogleAnalytics } from '@next/third-parties/google'
 
 import { TRPCReactProvider } from '@/trpc/react'
 import { cn } from '@/utils/cn'
@@ -25,6 +26,8 @@ function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const gaId = process.env.GA_MEASUREMENT_ID
+
   return (
     <html lang="en">
       <body className={cn('dark bg-zinc-950 -tracking-wide antialiased', geist.className)}>
@@ -44,6 +47,8 @@ function RootLayout({
             },
           }}
         />
+
+        <GoogleAnalytics gaId={gaId || ''} />
       </body>
     </html>
   )

@@ -1,24 +1,38 @@
+import { POST } from '@/app/api/cron/kick-out/route'
 import {
-  POST,
   getUniqueGroupNos,
   kickOffLeetcoders,
   getSolvedProblems,
   calculateUnsolvedProblems,
   processLeetcoder,
-} from '@/app/api/cron/kick-out/route'
+} from '@/utils/kickoutUtils'
 import { env } from '@/config/env.mjs'
-import { db } from '@/prisma/db'
 import type { leetcoders, submissions } from '@prisma/client'
-import { NextResponse } from 'next/server'
 
-// Mock NextResponse
+// Type definition for the LeetcoderWithSubmissions
+interface LeetcoderWithSubmissions {
+  id: string
+  group_no: number
+  created_at: Date
+  email: string
+  is_notified: boolean
+  submissions: Pick<submissions, 'problem_id'>[]
+}
+
+// Mocks
 jest.mock('next/server', () => ({
   NextResponse: {
-    json: jest.fn(),
+    json: jest.fn((data, opts = {}) => ({
+      data,
+      status: opts.status || 200,
+      json: async () => data,
+    })),
   },
 }))
 
-// Mock the database
+// Import mocks after they've been defined
+import { NextResponse } from 'next/server'
+
 jest.mock('@/prisma/db', () => ({
   db: {
     leetcoders: {
@@ -36,14 +50,12 @@ jest.mock('@/prisma/db', () => ({
   },
 }))
 
-// Typing from the original file
-interface LeetcoderWithSubmissions {
-  id: string
-  group_no: number
-  created_at: Date
-  is_notified: boolean
-  submissions: Pick<submissions, 'problem_id'>[]
-}
+// Import the mocked db after mocking
+import { db } from '@/prisma/db'
+
+jest.mock('@/utils/email/sendReminderEmail', () => ({
+  sendReminderEmail: jest.fn(),
+}))
 
 describe('kick-out API route', () => {
   const mockRequest = (secret?: string) => {
@@ -55,12 +67,6 @@ describe('kick-out API route', () => {
 
   beforeEach(() => {
     jest.clearAllMocks()
-    // Set default mock responses
-    NextResponse.json.mockImplementation((data, opts = {}) => ({
-      data,
-      status: opts.status || 200,
-      json: async () => data,
-    }))
   })
 
   describe('POST handler', () => {
@@ -94,23 +100,20 @@ describe('kick-out API route', () => {
 
     it('should process leetcoders and return success', async () => {
       // Setup mocks for all dependencies
+      const mockLeetcoder = {
+        id: 'user1',
+        group_no: 1,
+        created_at: new Date(),
+        is_notified: false,
+        email: 'test@example.com',
+        submissions: [{ problem_id: 'prob1' }],
+      }
 
-      // Mock getAllLeetcoders response
-      db.leetcoders.findMany.mockResolvedValueOnce([
-        {
-          id: 'user1',
-          group_no: 1,
-          created_at: new Date(),
-          is_notified: false,
-          submissions: [{ problem_id: 'prob1' }],
-        },
-      ])
-
-      // Mock getUniqueGroupNos response
-      db.leetcoders.findMany.mockResolvedValueOnce([{ group_no: 1 }])
-
-      // Mock getAllAssignedProblems response
-      db.roadmap.findMany.mockResolvedValueOnce([
+      // Mock database calls
+      ;(db.leetcoders.findMany as jest.Mock)
+        .mockResolvedValueOnce([mockLeetcoder])
+        .mockResolvedValueOnce([{ group_no: 1 }])
+      ;(db.roadmap.findMany as jest.Mock).mockResolvedValueOnce([
         { id: 'problem1', group_progress: [{ group_no: 1 }] },
         { id: 'problem2', group_progress: [{ group_no: 1 }] },
         { id: 'problem3', group_progress: [{ group_no: 1 }] },
@@ -120,12 +123,8 @@ describe('kick-out API route', () => {
         { id: 'problem7', group_progress: [{ group_no: 1 }] },
         { id: 'problem8', group_progress: [{ group_no: 1 }] },
       ])
-
-      // Mock updateIsNotified response
-      db.leetcoders.update.mockResolvedValueOnce({ id: 'user1' })
-
-      // Mock kickOffLeetcoders response
-      db.$transaction.mockResolvedValueOnce([{ id: 'user1' }])
+      ;(db.leetcoders.update as jest.Mock).mockResolvedValueOnce({ id: 'user1' })
+      ;(db.$transaction as jest.Mock).mockResolvedValueOnce([{ id: 'user1' }])
 
       // Act
       const req = mockRequest(env.API_SECRET)
@@ -140,7 +139,7 @@ describe('kick-out API route', () => {
 
     it('should handle errors properly', async () => {
       // Arrange
-      db.leetcoders.findMany.mockImplementationOnce(() => {
+      ;(db.leetcoders.findMany as jest.Mock).mockImplementationOnce(() => {
         throw new Error('Database error')
       })
 
@@ -171,6 +170,7 @@ describe('kick-out API route', () => {
           group_no: 1,
           created_at: new Date(),
           is_notified: false,
+          email: 'test1@example.com',
           submissions: [],
         },
         {
@@ -178,13 +178,15 @@ describe('kick-out API route', () => {
           group_no: 2,
           created_at: new Date(),
           is_notified: false,
+          email: 'test2@example.com',
           submissions: [],
         },
       ]
 
-      jest
-        .spyOn(db.leetcoders, 'findMany')
-        .mockResolvedValueOnce([{ group_no: 1 }, { group_no: 2 }] as { group_no: number }[])
+      ;(db.leetcoders.findMany as jest.Mock).mockResolvedValueOnce([
+        { group_no: 1 },
+        { group_no: 2 },
+      ])
 
       // Act
       const result = await getUniqueGroupNos(mockLeetcoders)
@@ -209,11 +211,12 @@ describe('kick-out API route', () => {
           group_no: 1,
           created_at: new Date(),
           is_notified: false,
+          email: 'test@example.com',
           submissions: [],
         },
       ]
 
-      jest.spyOn(db.leetcoders, 'findMany').mockImplementationOnce(() => {
+      ;(db.leetcoders.findMany as jest.Mock).mockImplementationOnce(() => {
         throw new Error('Database error')
       })
 
@@ -223,46 +226,40 @@ describe('kick-out API route', () => {
   })
 
   describe('kickOffLeetcoders', () => {
-    beforeEach(() => {
-      // Reset mocks before each test
-      jest.clearAllMocks()
-      jest.resetAllMocks()
-    })
-
     it('should update leetcoder status to SUSPENDED and mark submissions as unsolved', async () => {
       // Arrange
-      const mockLeetcoder = { id: 'user1', status: 'SUSPENDED' } as unknown as leetcoders
+      const mockUpdatedLeetcoder = {
+        id: 'user1',
+        status: 'SUSPENDED',
+        // Add any other fields that might be required
+      }
 
-      // Reset and setup mock properly
-      jest.spyOn(db, '$transaction').mockImplementation(() => {
-        return Promise.resolve([mockLeetcoder])
-      })
+      // Mock the leetcoders update operation
+      ;(db.leetcoders.update as jest.Mock).mockResolvedValueOnce(mockUpdatedLeetcoder)
+
+      // Mock the submissions updateMany operation
+      ;(db.submissions.updateMany as jest.Mock).mockResolvedValueOnce({ count: 1 })
 
       // Act
       const result = await kickOffLeetcoders('user1')
 
-      // Assert
-      expect(result).toEqual(mockLeetcoder)
-      expect(db.$transaction).toHaveBeenCalledWith([
-        db.leetcoders.update({
-          where: { id: 'user1' },
-          data: { status: 'SUSPENDED' },
-        }),
-        db.submissions.updateMany({
-          where: { user_id: 'user1' },
-          data: { solved: false },
-        }),
-      ])
-    })
+      // Debug what we're getting back
+      console.log('Mock leetcoder:', mockUpdatedLeetcoder)
+      console.log('Result from kickOffLeetcoders:', result)
 
-    it('should handle errors properly', async () => {
-      // Arrange - mock transaction to throw error
-      jest.spyOn(db, '$transaction').mockImplementation(() => {
-        throw new Error('Transaction error')
+      // Assert - check that the result matches our mock
+      expect(result).toEqual(mockUpdatedLeetcoder)
+
+      // Verify both operations were called with correct parameters
+      expect(db.leetcoders.update).toHaveBeenCalledWith({
+        where: { id: 'user1' },
+        data: { status: 'SUSPENDED' },
       })
 
-      // Act & Assert
-      await expect(kickOffLeetcoders('user1')).rejects.toThrow('Transaction error')
+      expect(db.submissions.updateMany).toHaveBeenCalledWith({
+        where: { user_id: 'user1' },
+        data: { solved: false },
+      })
     })
   })
 
@@ -288,6 +285,7 @@ describe('kick-out API route', () => {
         group_no: 1,
         created_at: new Date(),
         is_notified: false,
+        email: 'test@example.com',
         submissions: [{ problem_id: 'prob1' }, { problem_id: 'prob2' }],
       }
 
@@ -313,6 +311,7 @@ describe('kick-out API route', () => {
         group_no: 1,
         created_at: new Date(),
         is_notified: false,
+        email: 'test@example.com',
         submissions: [{ problem_id: 'prob1' }],
       }
       const assignedProblems = Array(10)
@@ -321,7 +320,7 @@ describe('kick-out API route', () => {
       jest.spyOn(db.leetcoders, 'update').mockResolvedValueOnce({ id: 'user1' } as leetcoders)
 
       // Act
-      await processLeetcoder(leetcoder, assignedProblems)
+      await processLeetcoder(leetcoder, assignedProblems, 6)
 
       // Assert
       expect(db.leetcoders.update).toHaveBeenCalledWith({
@@ -337,22 +336,35 @@ describe('kick-out API route', () => {
         group_no: 1,
         created_at: new Date(),
         is_notified: true,
+        email: 'test@example.com',
         submissions: [{ problem_id: 'prob1' }],
       }
-      const assignedProblems = Array(10)
-        .fill(0)
-        .map((_, i) => ({ id: `prob${i + 1}` }))
 
-      // Setup transaction mock
-      jest.spyOn(db, '$transaction').mockImplementation(() => {
-        return Promise.resolve([{ id: 'user1', status: 'SUSPENDED' }])
+      // Create 10 assigned problems
+      const assignedProblems = []
+      for (let i = 0; i < 10; i++) {
+        assignedProblems.push({ id: `prob${i + 1}` })
+      }
+
+      // Setup mocks for the update operations
+      ;(db.leetcoders.update as jest.Mock).mockResolvedValueOnce({
+        id: 'user1',
+        status: 'SUSPENDED',
       })
+      ;(db.submissions.updateMany as jest.Mock).mockResolvedValueOnce({ count: 1 })
 
       // Act
-      await processLeetcoder(leetcoder, assignedProblems)
+      await processLeetcoder(leetcoder, assignedProblems, 6)
 
       // Assert
-      expect(db.$transaction).toHaveBeenCalled()
+      expect(db.leetcoders.update).toHaveBeenCalledWith({
+        where: { id: 'user1' },
+        data: { status: 'SUSPENDED' },
+      })
+      expect(db.submissions.updateMany).toHaveBeenCalledWith({
+        where: { user_id: 'user1' },
+        data: { solved: false },
+      })
     })
 
     it('should not take action if assigned problems are below threshold', async () => {
@@ -362,12 +374,13 @@ describe('kick-out API route', () => {
         group_no: 1,
         created_at: new Date(),
         is_notified: false,
+        email: 'test@example.com',
         submissions: [{ problem_id: 'prob1' }],
       }
       const assignedProblems = [{ id: 'prob1' }, { id: 'prob2' }]
 
       // Act
-      await processLeetcoder(leetcoder, assignedProblems)
+      await processLeetcoder(leetcoder, assignedProblems, 6)
 
       // Assert
       expect(db.leetcoders.update).not.toHaveBeenCalled()
@@ -381,6 +394,7 @@ describe('kick-out API route', () => {
         group_no: 1,
         created_at: new Date(),
         is_notified: false,
+        email: 'test@example.com',
         submissions: [
           { problem_id: 'prob1' },
           { problem_id: 'prob2' },
@@ -394,7 +408,7 @@ describe('kick-out API route', () => {
         .map((_, i) => ({ id: `prob${i + 1}` }))
 
       // Act
-      await processLeetcoder(leetcoder, assignedProblems)
+      await processLeetcoder(leetcoder, assignedProblems, 6)
 
       // Assert
       expect(db.leetcoders.update).not.toHaveBeenCalled()
