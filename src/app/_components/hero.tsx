@@ -18,7 +18,7 @@ export const Hero = () => {
 
       <InteractiveHoverLink
         className="z-[100]"
-        href="group/1"
+        href="/groups"
       >
         Get Started
       </InteractiveHoverLink>

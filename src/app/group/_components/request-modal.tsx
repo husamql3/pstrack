@@ -14,6 +14,7 @@ import { Button } from '@/ui/button'
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/ui/dialog'
 import { type FormDataType, RequestForm } from '@/app/group/_components/request-form'
 import { api } from '@/trpc/react'
+import { RequestRules } from './request-rules'
 
 const createVariants = (heightContent: number): Variants => ({
   initial: (direction: number) => ({
@@ -176,9 +177,9 @@ export const RequestModal = ({ groupId }: { groupId: string }) => {
 
       <DialogContent
         showCloseButton={false}
-        className="flex w-fit items-center justify-center gap-0 border-none bg-black/20 p-0"
+        className="flex w-full items-center justify-center gap-0 border-none bg-black/20 p-0"
       >
-        <div className="w-[370px] overflow-hidden rounded-xl border border-[#dddddd] bg-white dark:border-[#222222] dark:bg-[#111111]">
+        <div className="w-full max-w-sm overflow-hidden rounded-xl border border-[#dddddd] bg-white dark:border-[#222222] dark:bg-[#111111]">
           <DialogTitle className="sr-only">Request to join form</DialogTitle>
           <div className="relative">
             <AnimatePresence
@@ -211,41 +212,7 @@ export const RequestModal = ({ groupId }: { groupId: string }) => {
                       groupId={groupId}
                     />
                   ) : (
-                    <div>
-                      <h3 className="mb-4 text-lg font-medium text-neutral-900 dark:text-neutral-100">
-                        Welcome & Rules
-                      </h3>
-                      <ul className="space-y-3 text-[15px] text-neutral-700 dark:text-neutral-300">
-                        <li className="flex items-start">
-                          <span className="mt-0.5 mr-2 text-emerald-500">•</span>
-                          <span>
-                            Welcome to our platform! This is where you can sharpen your
-                            problem-solving skills with daily challenges.
-                          </span>
-                        </li>
-                        <li className="flex items-start">
-                          <span className="mt-0.5 mr-2 text-emerald-500">•</span>
-                          <span>
-                            A new problem is added every day at 6 AM. Stay consistent to remain
-                            active in the group.
-                          </span>
-                        </li>
-                        <li className="flex items-start">
-                          <span className="mt-0.5 mr-2 text-emerald-500">•</span>
-                          <span>
-                            If you have 7 unsolved problems, you will be temporarily removed from
-                            the group.
-                          </span>
-                        </li>
-                        <li className="flex items-start">
-                          <span className="mt-0.5 mr-2 text-emerald-500">•</span>
-                          <span>
-                            You have two kickout opportunities. After each, you can rejoin and
-                            continue your journey.
-                          </span>
-                        </li>
-                      </ul>
-                    </div>
+                    <RequestRules />
                   )}
                 </div>
               </motion.div>

@@ -49,8 +49,8 @@ export const RequestForm = ({
   ]
 
   return (
-    <div>
-      <h3 className="mb-2 font-medium text-neutral-100">
+    <div className="w-full">
+      <h3 className="mb-2 text-xl font-medium text-neutral-100">
         Request to join <span className="font-semibold">Group {groupId.padStart(2, '0')}</span>
       </h3>
       <form

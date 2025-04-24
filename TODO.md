@@ -1,15 +1,18 @@
-- [ ] kickout - set submission to false
 - [ ] use datadog
+- [ ] Feedback dialog
 - [ ] profile page
 - [ ] Add resources page
   - [ ] How to use LeetCode
   - [ ] Advices for problem solving
-- [ ] Handle duplicated uuid error
 - [ ] Add stars count
-- [ ] Groups page, add leet-coders limit
 - [ ] Nav bar in mobile screens, add text
-- [ ] data dog
-- [ ] Feedback dialog
+- [x] request modal
+  - [x] fix padding
+  - [x] rephrase the rules
+  - [x] change dot colors
+- [x] Groups page, add leet-coders limit
+- [x] kickout - set submission to false
+- [x] Handle duplicated uuid error
 - [x] problem
   - [x] daily problem email
   - [x] daily problem CRON
