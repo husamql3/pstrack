@@ -1,4 +1,5 @@
 import { BookIcon, Users } from 'lucide-react'
+import { FiExternalLink } from 'react-icons/fi'
 import Link from 'next/link'
 
 import { cn } from '@/utils/cn'
@@ -34,10 +35,15 @@ export const GroupCard = ({ group, problemsCount }: GroupCardProps) => {
             <div className="flex size-9 items-center justify-center rounded-full bg-gradient-to-br from-zinc-700/40 to-zinc-800/40 text-zinc-400 ring-1 ring-zinc-600/30">
               <Users size={18} />
             </div>
-            <Link href={`/group/${group.group_no}`}>
-              <h3 className="text-xl font-semibold text-white hover:underline">
-                Group {group.group_no}
-              </h3>
+            <Link
+              href={`/group/${group.group_no}`}
+              className="flex items-center gap-2"
+            >
+              <h3 className="text-xl font-semibold text-white">Group {group.group_no}</h3>
+              <FiExternalLink
+                size={16}
+                className="text-zinc-600"
+              />
             </Link>
           </div>
           <Badge className={isFull ? 'bg-amber-600/30 text-amber-200' : ''}>

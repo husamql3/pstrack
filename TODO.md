@@ -4,7 +4,7 @@
 - [ ] Add resources page
   - [ ] How to use LeetCode
   - [ ] Advices for problem solving
-- [ ] Add stars count
+- [ ] Add gh stars count
 - [ ] Nav bar in mobile screens, add text
 - [x] request modal
   - [x] fix padding
