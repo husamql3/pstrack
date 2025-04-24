@@ -14,7 +14,7 @@
 /coverage
 
 # next.js
-/.next/
+/.next**/
 /out/
 
 # production
@@ -40,8 +40,5 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+.build
 .idea
-/src/types/supabase.ts
-/src/types/schema.sql
-package-lock.json
-/src/archive

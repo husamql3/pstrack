@@ -19,7 +19,6 @@ model group_progress {
 model groups {
   id             String           @id @default(uuid()) @db.Uuid
   group_no       Int              @unique @default(autoincrement())
-  group_name     String
   group_progress group_progress[]
   leetcoders     leetcoders[]
   submissions    submissions[]
@@ -33,6 +32,7 @@ model leetcoders {
   gh_username String?
   x_username  String?
   li_username String?
+  avatar      String?
   group_no    Int
   username    String         @unique
   created_at  DateTime       @default(now()) @db.Timestamptz(6)
@@ -66,6 +66,8 @@ model submissions {
   user       leetcoders @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@id([id, user_id])
+  @@index([user_id])
+  @@index([problem_id])
 }
 
 enum LeetcodeStatus {

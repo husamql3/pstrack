@@ -1,7 +1,26 @@
-import LoginView from '@/components/views/login-view'
+import Link from 'next/link'
+import Image from 'next/image'
+
+import logo from '../../../../public/logo.png'
+import { LoginCard } from '@/app/(auth)/_components/login-card'
 
 const Page = () => {
-  return <LoginView />
+  return (
+    <div className="flex h-screen flex-col items-center justify-center">
+      <Link href="/">
+        <Image
+          src={logo}
+          alt="PSTrack Logo"
+          width={100}
+          height={100}
+          className="mb-4 h-16 w-16"
+          priority
+        />
+      </Link>
+
+      <LoginCard />
+    </div>
+  )
 }
 
 export default Page

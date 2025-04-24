@@ -1,9 +1,7 @@
-import path from 'path'
-import fs from 'fs/promises'
+import path from 'node:path'
+import fs from 'node:fs/promises'
 
-import { SendDailyProblemEmail } from '@/types/sendEmail.type'
-import { sendEmail } from '@/utils/email/sendEmail'
-import { sendAdminEmail } from '@/utils/email/sendAdminEmail'
+import { sendEmail } from './sendEmail'
 
 export const sendDailyProblemEmail = async ({
   problem_slug,
@@ -11,26 +9,30 @@ export const sendDailyProblemEmail = async ({
   topic,
   group_no,
   email,
-}: SendDailyProblemEmail) => {
+}: {
+  problem_slug: string
+  difficulty: string
+  topic: string
+  group_no: string
+  email: string
+}) => {
   try {
     const projectRoot = process.cwd()
-    const templatePath = path.join(projectRoot, 'public', 'email', 'dailyProblemEmailTemplate.html')
+    const templatePath = path.join(projectRoot, 'public', 'templates', 'daily-problem-email.html')
 
     let htmlContent = await fs.readFile(templatePath, 'utf-8')
-    const groupLink = `https://pstrack.tech/g/${group_no}`
-
     htmlContent = htmlContent
-      .replace(/{{problem_slug}}/g, problem_slug)
-      .replace(/{{difficulty}}/g, difficulty)
-      .replace(/{{topic}}/g, topic)
-      .replace(/{{group_link}}/g, groupLink)
+      .replace(/{{group_no}}/g, group_no.toString())
+      .replace(/{{problem_slug}}/, problem_slug)
+      .replace(/{{difficulty}}/, difficulty)
+      .replace(/{{topic}}/, topic)
 
     await sendEmail({
       to: email,
-      subject: "Todays's LeetCode Problem: Can You Solve It?",
+      subject: "Today's LeetCode Problem 🧩",
       html: htmlContent,
     })
   } catch (error) {
-    await sendAdminEmail(error, 'sendDailyProblemEmail')
+    console.error('Error sending acceptance email:', error)
   }
 }

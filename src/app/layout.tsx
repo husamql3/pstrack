@@ -1,55 +1,57 @@
 import type { Metadata } from 'next'
-import { League_Spartan, Roboto } from 'next/font/google'
-import { Analytics } from '@vercel/analytics/react'
+import { Geist } from 'next/font/google'
+import { Toaster } from 'sonner'
+import { NuqsAdapter } from 'nuqs/adapters/next/app'
+import { GoogleAnalytics } from '@next/third-parties/google'
 
-import { Toaster } from '@/components/ui/toaster'
-import { cn } from '@/lib/utils'
+import { TRPCReactProvider } from '@/trpc/react'
+import { cn } from '@/utils/cn'
 import './globals.css'
 
-const leagueSpartan = League_Spartan({
-  weight: ['700', '900'],
-  subsets: ['latin'],
-})
-
-const roboto = Roboto({
-  weight: ['100', '300', '400', '700', '900'],
+const geist = Geist({
+  weight: ['400', '500', '700'],
   subsets: ['latin'],
   display: 'swap',
-  fallback: ['Arial', 'sans-serif'],
 })
 
 export const metadata: Metadata = {
   title: 'PSTrack',
-  description: 'A platform that helps you solve, track, and grow in problem-solving.',
-  openGraph: {
-    title: 'PSTrack',
-    description: 'Level up your problem-solving game with PSTrack',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'PSTrack',
-    description: 'Level up your problem-solving game with PSTrack',
-  },
+  description: '',
+  openGraph: {}, // todo
+  twitter: {}, // todo
 }
 
-export default function RootLayout({
+function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const prod = process.env.NODE_ENV === 'production'
+  const gaId = process.env.GA_MEASUREMENT_ID
 
   return (
-    <html
-      lang="en"
-      className="dark"
-      suppressHydrationWarning
-    >
-      <body className={cn('bg-zinc-950 font-roboto', roboto.className, leagueSpartan.className)}>
-        {children}
-        <Toaster />
-        {prod && <Analytics />}
+    <html lang="en">
+      <body className={cn('dark bg-zinc-950 -tracking-wide antialiased', geist.className)}>
+        <TRPCReactProvider>
+          <NuqsAdapter>{children}</NuqsAdapter>
+        </TRPCReactProvider>
+
+        <Toaster
+          position="top-center"
+          expand={true}
+          toastOptions={{
+            classNames: {
+              error: 'bg-red-400',
+              success: 'text-green-400',
+              warning: 'text-yellow-400',
+              info: 'bg-blue-400',
+            },
+          }}
+        />
+
+        <GoogleAnalytics gaId={gaId || ''} />
       </body>
     </html>
   )
 }
+
+export default RootLayout

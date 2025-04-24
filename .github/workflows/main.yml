@@ -1,39 +1,42 @@
-name: CI
+name: CI Pipeline
 
 on:
-  pull_request:
+  push:
     branches:
       - main
-  push:
+  pull_request:
     branches:
       - main
 
 jobs:
-  prettier:
-    name: Run Prettier, Eslint, and TS type checks
+  checks:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup node env
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '>=16'
-          cache: 'yarn'
+          node-version: '20'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: pnpm install
 
       - name: Run Prettier
-        run: yarn prettier:check
+        run: pnpm prettier
 
-      - name: Run Eslint
-        run: yarn lint
+      - name: Run ESLint
+        run: pnpm lint
 
-      - name: Run TS type checks
-        run: yarn tsc --noEmit
+      - name: Run TypeScript typecheck
+        run: pnpm typecheck
 
       - name: Build
-        run: yarn build
+        run: pnpm build

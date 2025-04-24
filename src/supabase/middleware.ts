@@ -1,54 +1,74 @@
 import { createServerClient } from '@supabase/ssr'
 import { type NextRequest, NextResponse } from 'next/server'
 
-const PROTECTED_PATHS = ['/dashboard']
+import { env } from '@/config/env.mjs'
+import { ADMINS_EMAILS, PROTECTED_ROUTES } from '@/data/constants'
 
 export async function updateSession(request: NextRequest) {
-  let supabaseResponse = NextResponse.next({
-    request,
+  const { searchParams, pathname } = new URL(request.url)
+  const code = searchParams.get('code')
+
+  let response = NextResponse.next({
+    request: {
+      headers: request.headers,
+    },
   })
 
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    env.NEXT_PUBLIC_SUPABASE_URL as string,
+    env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string,
     {
       cookies: {
         getAll() {
           return request.cookies.getAll()
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
-          supabaseResponse = NextResponse.next({
+          for (const { name, value } of cookiesToSet) {
+            request.cookies.set(name, value)
+          }
+          response = NextResponse.next({
             request,
           })
-          cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options)
-          )
+          for (const { name, value, options } of cookiesToSet) {
+            response.cookies.set(name, value, options)
+          }
         },
       },
     }
   )
 
-  // Do not run code between createServerClient and
-  // supabase.auth.getUser(). A simple mistake could make it very hard to debug
-  // issues with users being randomly logged out.
-  // IMPORTANT: DO NOT REMOVE auth.getUser()
+  if (code) {
+    try {
+      const { error } = await supabase.auth.exchangeCodeForSession(code)
+      if (error) {
+        console.error('Error exchanging auth code:', error.message)
+      } else {
+        const redirectUrl = new URL(request.url)
+        redirectUrl.searchParams.delete('code')
 
+        const redirectResponse = NextResponse.redirect(redirectUrl)
+        for (const cookie of response.cookies.getAll()) {
+          redirectResponse.cookies.set(cookie.name, cookie.value)
+        }
+
+        return redirectResponse
+      }
+    } catch (err) {
+      console.error('Exception during auth code exchange:', err)
+    }
+  }
+
+  // IMPORTANT: DO NOT REMOVE auth.getUser()
   const {
     data: { user },
   } = await supabase.auth.getUser()
   console.log('middleware user', user?.email)
 
-  const allowedUserEmail = process.env.ADMIN_EMAIL
-
-  // Check if the user is trying to access the protected route
-  if (PROTECTED_PATHS.some((path) => request.nextUrl.pathname.startsWith(path))) {
-    if (!user || user.email !== allowedUserEmail) {
-      const url = request.nextUrl.clone()
-      url.pathname = '/404'
-      return NextResponse.redirect(url)
+  if (PROTECTED_ROUTES.some((route) => pathname.startsWith(route))) {
+    if (!user || !user.email || !ADMINS_EMAILS.includes(user.email)) {
+      return NextResponse.redirect(new URL('/not-found', request.url))
     }
   }
 
-  return supabaseResponse
+  return response
 }

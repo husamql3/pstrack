@@ -1,0 +1,18 @@
+export type Topic =
+  | 'arrays-hashing'
+  | 'strings'
+  | 'two-pointers'
+  | 'sliding-window'
+  | 'stack-queue'
+  | 'linked-list'
+  | 'recursion'
+  | 'trees'
+  | 'matrix'
+  | 'graphs'
+  | 'dynamic-programming'
+  | 'sorting-searching'
+  | 'heap-priority-queue'
+  | 'tries'
+  | 'bit-manipulation'
+
+export type Difficulty = 'easy' | 'medium' | 'hard'
