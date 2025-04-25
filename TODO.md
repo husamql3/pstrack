@@ -1,4 +1,6 @@
 - [ ] profile page
+- [ ] update metadata
+- [ ] unified sonner styles (success - loading - error)
 - [ ] Add resources page
   - [ ] How to use LeetCode
   - [ ] Advices for problem solving

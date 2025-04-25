@@ -18,9 +18,7 @@ PSTrack is a modern collaborative progress tracking progress on Leetcode problem
 ![Origin UI](https://img.shields.io/badge/Origin%20UI-000000?logo=originui&logoColor=white)
 ![Framer Motion](https://img.shields.io/badge/Framer%20Motion-0055FF?logo=framer&logoColor=white)
 ![Zustand](https://img.shields.io/badge/Zustand-6D4FA7?logo=zustand&logoColor=white)
-![React Query](https://img.shields.io/badge/React%20Query-FF4154?logo=reactquery&logoColor=white)
 ![Nuqs](https://img.shields.io/badge/Nuqs-000000?logo=nuqs&logoColor=white)
-![Sonner](https://img.shields.io/badge/Sonner-000000?logo=sonner&logoColor=white)
 ![Prisma](https://img.shields.io/badge/Prisma-2D3748?logo=prisma&logoColor=white)
 ![Supabase](https://img.shields.io/badge/Supabase%20Auth-3ECF8E?logo=supabase&logoColor=white)
 ![tRPC](https://img.shields.io/badge/tRPC-2596BE?logo=trpc&logoColor=white)
@@ -32,7 +30,6 @@ PSTrack is a modern collaborative progress tracking progress on Leetcode problem
 ![Tanstack Table](https://img.shields.io/badge/Tanstack%20Table-FF0000?logo=tanstack&logoColor=white)
 ![Jest](https://img.shields.io/badge/Jest-C21325?logo=jest&logoColor=white)
 ![Vercel](https://img.shields.io/badge/Vercel-000000?logo=vercel&logoColor=white)
-![React Icons](https://img.shields.io/badge/React%20Icons-E91E63?logo=react&logoColor=white)
 
 ## 🚦 Getting Started
 
