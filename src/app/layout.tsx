@@ -24,7 +24,10 @@ function RootLayout({
   const gaId = process.env.GA_MEASUREMENT_ID
 
   return (
-    <html lang="en">
+    <html
+      lang="en"
+      className="dark"
+    >
       <body className={cn('dark bg-zinc-950 -tracking-wide antialiased', geist.className)}>
         <TRPCReactProvider>
           <NuqsAdapter>{children}</NuqsAdapter>

@@ -42,7 +42,7 @@ export const NavMenu = () => {
             ref={(el) => setTabRef(el, tab.name)}
             onClick={() => setActiveTab(tab.name)}
             className={cn(
-              'relative cursor-pointer rounded-full px-6 py-2 text-sm text-white',
+              'relative cursor-pointer rounded-full px-5 py-2 text-sm text-white md:px-6',
               activeTab === tab.name ? 'bg-zinc-500' : ''
             )}
             style={{

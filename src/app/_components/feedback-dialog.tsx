@@ -66,10 +66,13 @@ export const FeedbackDialog = ({ email: defaultEmail = '' }: { email?: string })
       onOpenChange={setOpen}
     >
       <DialogTrigger
-        className="fixed right-5 bottom-5 sm:right-10 sm:bottom-10"
+        className="fixed right-5 bottom-5 z-[100] sm:right-10 sm:bottom-10"
         asChild
       >
-        <Button size="icon">
+        <Button
+          size="icon"
+          className="border border-zinc-900"
+        >
           <MdFeedback />
         </Button>
       </DialogTrigger>
@@ -78,7 +81,16 @@ export const FeedbackDialog = ({ email: defaultEmail = '' }: { email?: string })
           <DialogTitle className="mb-2">Share Your Thoughts</DialogTitle>
           <DialogDescription>
             We value your input! Help us enhance PSTrack by sharing your experience and suggestions
-            for improvement.
+            for improvement. You can also{' '}
+            <a
+              href="https://github.com/husamahmud/pstrack/issues/new"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary underline"
+            >
+              open an issue on GitHub
+            </a>
+            .
           </DialogDescription>
         </DialogHeader>
         <form
