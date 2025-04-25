@@ -16,6 +16,7 @@
     "prettier": "prettier --check .",
     "prettier:fix": "prettier --write .",
     "typecheck": "tsc --noEmit",
+    "dead-code": "npx ts-prune || exit 1",
     "scan": "npx react-scan@latest https://localhost:3000",
     "prisma:generate": "prisma generate --schema=./src/prisma/schema.prisma",
     "prisma:migrate:dev": "prisma migrate dev --name init --schema=./src/prisma/schema.prisma",
