@@ -4,6 +4,7 @@
   - [ ] Advices for problem solving
 - [ ] change checkbox color
 - [ ] Nav bar in mobile screens, add text
+- [ ] add banner & stars count & techs
 - [x] Add gh stars count
 - [x] use google analytics
 - [x] Feedback dialog

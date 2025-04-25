@@ -1,28 +1,38 @@
 # PSTrack
 
+![License](https://img.shields.io/github/license/husamahmud/pstrack)
+![Stars](https://img.shields.io/github/stars/husamahmud/pstrack)
+![Version](https://img.shields.io/github/package-json/v/husamahmud/pstrack?color=0066CC&label=Version&style=flat)
+
+![PSTrack Banner](/public/banner.png)
+
 PSTrack is a modern collaborative progress tracking progress on Leetcode problem-solving.
 
 ## 🛠️ Tech Stack
 
-- [Next.js 15.3](https://nextjs.org/)
-- [React 19](https://react.dev/)
-- [TypeScript](https://www.typescriptlang.org/)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [Radix UI](https://www.radix-ui.com/)
-- [Origin UI](https://originui.com/)
-- [Framer Motion](https://www.framer.com/motion/)
-- [Zustand](https://zustand.docs.pmnd.rs/)
-- [React Query](https://tanstack.com/query/)
-- [Nuqs](https://nuqs.47ng.com/)
-- [Sonner](https://sonner.emilkowal.ski/)
-- [Prisma](https://www.prisma.io/)
-- [Supabase Auth](https://supabase.com/docs/guides/auth)
-- [tRPC](https://trpc.io/)
-- [Zod](https://zod.dev/)
-- [RabbitMQ](https://www.rabbitmq.com/)
-- [Redis](https://redis.io/)
-- [Nodemailer](https://nodemailer.com/)
-- [T3 Env](https://env.t3.gg/)
+![Next.js](https://img.shields.io/badge/Next.js-000000?logo=nextdotjs&logoColor=white)
+![React](https://img.shields.io/badge/React-61DAFB?logo=react&logoColor=black)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-06B6D4?logo=tailwind-css&logoColor=white)
+![ShadCN](https://img.shields.io/badge/shadcn%2Fui-000000?logo=shadcnui&logoColor=white)
+![Origin UI](https://img.shields.io/badge/Origin%20UI-000000?logo=originui&logoColor=white)
+![Framer Motion](https://img.shields.io/badge/Framer%20Motion-0055FF?logo=framer&logoColor=white)
+![Zustand](https://img.shields.io/badge/Zustand-6D4FA7?logo=zustand&logoColor=white)
+![React Query](https://img.shields.io/badge/React%20Query-FF4154?logo=reactquery&logoColor=white)
+![Nuqs](https://img.shields.io/badge/Nuqs-000000?logo=nuqs&logoColor=white)
+![Sonner](https://img.shields.io/badge/Sonner-000000?logo=sonner&logoColor=white)
+![Prisma](https://img.shields.io/badge/Prisma-2D3748?logo=prisma&logoColor=white)
+![Supabase](https://img.shields.io/badge/Supabase%20Auth-3ECF8E?logo=supabase&logoColor=white)
+![tRPC](https://img.shields.io/badge/tRPC-2596BE?logo=trpc&logoColor=white)
+![Zod](https://img.shields.io/badge/Zod-3068B7?logo=zod&logoColor=white)
+![RabbitMQ](https://img.shields.io/badge/RabbitMQ-FF6600?logo=rabbitmq&logoColor=white)
+![Redis](https://img.shields.io/badge/Redis-DC382D?logo=redis&logoColor=white)
+![Nodemailer](https://img.shields.io/badge/Nodemailer-22B573?logo=nodemailer&logoColor=white)
+![T3 Env](https://img.shields.io/badge/T3%20Env-000000?logo=t3&logoColor=white)
+![Tanstack Table](https://img.shields.io/badge/Tanstack%20Table-FF0000?logo=tanstack&logoColor=white)
+![Jest](https://img.shields.io/badge/Jest-C21325?logo=jest&logoColor=white)
+![Vercel](https://img.shields.io/badge/Vercel-000000?logo=vercel&logoColor=white)
+![React Icons](https://img.shields.io/badge/React%20Icons-E91E63?logo=react&logoColor=white)
 
 ## 🚦 Getting Started
 
@@ -56,6 +66,9 @@ pnpm lint
 
 # Run type checking
 pnpm typecheck
+
+# Run prettier to fix formatting
+pnpm prettier:fix
 ```
 
 ## 🤝 Contributing
