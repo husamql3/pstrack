@@ -1,6 +1,6 @@
 'use client'
 
-import { IoPersonOutline } from 'react-icons/io5'
+// import { IoPersonOutline } from 'react-icons/io5'
 import type { User } from '@supabase/supabase-js'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/ui/avatar'
@@ -9,7 +9,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
-  DropdownMenuItem,
+  // DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
@@ -37,16 +37,16 @@ export const UserMenu = ({ user }: { user: User }) => {
         <DropdownMenuLabel className="flex min-w-0 flex-col">
           <span className="text-muted-foreground truncate text-xs font-normal">{user?.email}</span>
         </DropdownMenuLabel>
-        <DropdownMenuSeparator />
+        {/* <DropdownMenuSeparator /> */}
         <DropdownMenuGroup>
-          <DropdownMenuItem>
+          {/* <DropdownMenuItem>
             <IoPersonOutline
               size={16}
               className="opacity-60"
               aria-hidden="true"
             />
             <span>Profile</span>
-          </DropdownMenuItem>
+          </DropdownMenuItem> */}
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <LogoutBtn />

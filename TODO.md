@@ -1,5 +1,4 @@
 - [ ] profile page
-- [ ] update metadata
 - [ ] unified sonner styles (success - loading - error)
 - [ ] Add resources page
   - [ ] How to use LeetCode
@@ -7,6 +6,7 @@
 - [ ] change checkbox color
 - [ ] Nav bar in mobile screens, add text
 - [ ] update problems scrollbar
+- [x] update metadata
 - [x] add banner & stars count & techs
 - [x] Add gh stars count
 - [x] use google analytics

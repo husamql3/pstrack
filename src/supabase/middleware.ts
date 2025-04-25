@@ -5,10 +5,9 @@ import { env } from '@/config/env.mjs'
 import { ADMINS_EMAILS, PROTECTED_ROUTES } from '@/data/constants'
 
 export async function updateSession(request: NextRequest) {
-  const { searchParams, pathname } = new URL(request.url)
-  const code = searchParams.get('code')
+  const { pathname } = new URL(request.url)
 
-  let response = NextResponse.next({
+  const response = NextResponse.next({
     request: {
       headers: request.headers,
     },
@@ -23,12 +22,6 @@ export async function updateSession(request: NextRequest) {
           return request.cookies.getAll()
         },
         setAll(cookiesToSet) {
-          for (const { name, value } of cookiesToSet) {
-            request.cookies.set(name, value)
-          }
-          response = NextResponse.next({
-            request,
-          })
           for (const { name, value, options } of cookiesToSet) {
             response.cookies.set(name, value, options)
           }
@@ -37,33 +30,13 @@ export async function updateSession(request: NextRequest) {
     }
   )
 
-  if (code) {
-    try {
-      const { error } = await supabase.auth.exchangeCodeForSession(code)
-      if (error) {
-        console.error('Error exchanging auth code:', error.message)
-      } else {
-        const redirectUrl = new URL(request.url)
-        redirectUrl.searchParams.delete('code')
-
-        const redirectResponse = NextResponse.redirect(redirectUrl)
-        for (const cookie of response.cookies.getAll()) {
-          redirectResponse.cookies.set(cookie.name, cookie.value)
-        }
-
-        return redirectResponse
-      }
-    } catch (err) {
-      console.error('Exception during auth code exchange:', err)
-    }
-  }
-
-  // IMPORTANT: DO NOT REMOVE auth.getUser()
+  // Get the current user session
   const {
     data: { user },
   } = await supabase.auth.getUser()
-  console.log('middleware user', user?.email)
+  console.log('Middleware user:', user?.email)
 
+  // Protect specific routes
   if (PROTECTED_ROUTES.some((route) => pathname.startsWith(route))) {
     if (!user || !user.email || !ADMINS_EMAILS.includes(user.email)) {
       return NextResponse.redirect(new URL('/not-found', request.url))
@@ -71,4 +44,8 @@ export async function updateSession(request: NextRequest) {
   }
 
   return response
+}
+
+export const config = {
+  matcher: ['/dashboard/:path*', '/profile/:path*'],
 }
