@@ -20,20 +20,7 @@ const Page = async () => {
     }
   }
 
-  const groupsCacheKey = 'groups:data'
-  let groupsInfo: GetAllGroupsInfo[] = []
-  const groupsCacheData = (await redis.get(groupsCacheKey)) as GetAllGroupsInfo[]
-  if (groupsCacheData) {
-    console.log('##### Using cached groups data')
-    groupsInfo = groupsCacheData
-  } else {
-    console.log('Groups cache miss, fetching from API')
-    groupsInfo = await api.groups.getAllGroupsInfo()
-    if (groupsInfo) {
-      console.log('Caching groups data for one hour')
-      await redis.set(groupsCacheKey, groupsInfo, { ex: 3600 }) // cache for one hour
-    }
-  }
+  const groupsInfo: GetAllGroupsInfo[] = await api.groups.getAllGroupsInfo()
 
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-1 flex-col px-3 py-10">
