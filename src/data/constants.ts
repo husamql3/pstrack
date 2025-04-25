@@ -6,5 +6,5 @@ export const AUTHOR_EMAIL = 'husamahmud@gmail.com'
 export const ADMINS_EMAILS = ['husamahmud@gmail.com', 'nezhataghy@gmail.com']
 export const PROTECTED_ROUTES = ['/dashboard', '/profile']
 export const UNSOLVED_THRESHOLD = 6
-export const USERNAME = 'pstrack-org'
+export const USERNAME = 'husamahmud'
 export const REPO_NAME = 'pstrack'

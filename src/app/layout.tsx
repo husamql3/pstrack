@@ -1,4 +1,3 @@
-import type { Metadata } from 'next'
 import { Geist } from 'next/font/google'
 import { Toaster } from 'sonner'
 import { NuqsAdapter } from 'nuqs/adapters/next/app'
@@ -6,6 +5,7 @@ import { GoogleAnalytics } from '@next/third-parties/google'
 
 import { TRPCReactProvider } from '@/trpc/react'
 import { cn } from '@/utils/cn'
+import { siteMetaData } from '@/data/metadata'
 import './globals.css'
 
 const geist = Geist({
@@ -14,12 +14,7 @@ const geist = Geist({
   display: 'swap',
 })
 
-export const metadata: Metadata = {
-  title: 'PSTrack',
-  description: '',
-  openGraph: {}, // todo
-  twitter: {}, // todo
-}
+export const metadata = siteMetaData
 
 function RootLayout({
   children,
