@@ -1,11 +1,11 @@
 import { api } from '@/trpc/server'
-import { generateTableData } from '@/utils/generateTableData'
+// import { generateTableData } from '@/utils/generateTableData'
 import { redis } from '@/config/redis'
 import type { GroupData } from '@/types/tableRow.type'
 import type { roadmap } from '@prisma/client'
 
-import { TrackTable } from '@/app/group/_components/track-table'
-import { ConfettiFireworks } from '@/app/group/_components/confetti-fireworks'
+// import { TrackTable } from '@/app/group/_components/track-table'
+// import { ConfettiFireworks } from '@/app/group/_components/confetti-fireworks'
 
 type CachedData = {
   groupData: GroupData
@@ -16,7 +16,7 @@ const Page = async ({ params }: { params: Promise<{ groupId: string }> }) => {
   const { groupId } = await params
 
   const user = await api.auth.getUser()
-  console.log(user)
+  console.log('user?.user_metadata', user?.user_metadata)
 
   const cacheKey = `group:${groupId}:data`
   let groupData: GroupData | null = null
@@ -34,39 +34,39 @@ const Page = async ({ params }: { params: Promise<{ groupId: string }> }) => {
     roadmap = await api.roadmap.getGroupProblems(groupData?.group_progress || [])
 
     if (groupData && roadmap) {
-      await redis.set(cacheKey, { groupData, roadmap }, { ex: 300 })
+      await redis.set(cacheKey, { groupData, roadmap }, { ex: 300 }) // cache for
     }
   }
 
-  if (!groupData || !roadmap || roadmap.length === 0) {
-    return (
-      <div className="flex flex-1 flex-col items-center justify-center gap-3 px-4">
-        <h1 className="max-w-2xl text-center text-lg font-semibold md:text-2xl">
-          Get ready! Your group&apos;s journey is being prepared. We will notify you when it&apos;s
-          ready. 🔥
-        </h1>
-      </div>
-    )
-  }
-
-  const tableData = generateTableData({
-    group_no: groupData.group_no,
-    submission: groupData.submissions,
-    roadmap,
-    group_progress: groupData.group_progress,
-  })
-
+  // if (!groupData || !roadmap || roadmap.length === 0) {
   return (
-    <>
-      <TrackTable
-        leetcoders={groupData.leetcoders}
-        tableData={tableData}
-        groupId={groupId}
-      />
-
-      <ConfettiFireworks />
-    </>
+    <div className="flex flex-1 flex-col items-center justify-center gap-3 px-4">
+      <h1 className="max-w-2xl text-center text-lg font-semibold md:text-2xl">
+        Get ready! Your group&apos;s journey is being prepared. We will notify you when it&apos;s
+        ready. 🔥
+      </h1>
+    </div>
   )
+  // }
+
+  // const tableData = generateTableData({
+  //   group_no: groupData.group_no,
+  //   submission: groupData.submissions,
+  //   roadmap,
+  //   group_progress: groupData.group_progress,
+  // })
+
+  // return (
+  //   <>
+  //     <TrackTable
+  //       leetcoders={groupData.leetcoders}
+  //       tableData={tableData}
+  //       groupId={groupId}
+  //     />
+
+  //     <ConfettiFireworks />
+  //   </>
+  // )
 }
 
 export default Page
