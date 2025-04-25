@@ -1,13 +1,13 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/supabase/server'
 
-import { sendAdminNotification } from '@/utils/email/sendAdminNotification'
-import { env } from '@/config/env.mjs'
+// import { sendAdminNotification } from '@/utils/email/sendAdminNotification'
+// import { env } from '@/config/env.mjs'
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get('code')
-  const next = searchParams.get('next') ?? '/'
+  // const next = searchParams.get('next') ?? '/'
 
   if (!code) {
     console.error('No code provided')
