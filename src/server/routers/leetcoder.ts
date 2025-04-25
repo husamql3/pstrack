@@ -6,8 +6,8 @@ import { db } from '@/prisma/db'
 import { createTRPCRouter, publicProcedure } from '@/server/trpc'
 import { checkGHUsername, checkLCUsername } from '@/utils/checkLeetcoder'
 import { checkDuplicateUsername, checkPendingLeetcoder } from '@/dao/leetcoder.dao'
-import { env } from '@/config/env.mjs'
 import { sendAdminNotification } from '@/utils/email/sendAdminNotification'
+import { AUTHOR_EMAIL } from '@/data/constants'
 
 export const leetcodersRouter = createTRPCRouter({
   getLeetcoderById: publicProcedure
@@ -20,7 +20,7 @@ export const leetcodersRouter = createTRPCRouter({
     }),
   getAllLeetcoders: publicProcedure.query(async ({ ctx }) => {
     // Only allow access if the user is the admin
-    if (ctx.user && ctx.user.email !== env.ADMIN_EMAIL) {
+    if (ctx.user && ctx.user.email !== AUTHOR_EMAIL) {
       throw new TRPCError({
         code: 'UNAUTHORIZED',
         message: 'Only admin can access this resource',
@@ -156,7 +156,7 @@ export const leetcodersRouter = createTRPCRouter({
     .input(z.object({ id: z.string().uuid(), status: z.nativeEnum(LeetcodeStatus) }))
     .mutation(async ({ input, ctx }) => {
       // Only allow access if the user is the admin
-      if (ctx.user && ctx.user.email !== env.ADMIN_EMAIL) {
+      if (ctx.user && ctx.user.email !== AUTHOR_EMAIL) {
         throw new TRPCError({
           code: 'UNAUTHORIZED',
           message: 'Only admin can access this resource',
@@ -173,7 +173,7 @@ export const leetcodersRouter = createTRPCRouter({
     .input(z.object({ id: z.string().uuid() }))
     .mutation(async ({ input, ctx }) => {
       // Only allow access if the user is the admin
-      if (ctx.user && ctx.user.email !== env.ADMIN_EMAIL) {
+      if (ctx.user && ctx.user.email !== AUTHOR_EMAIL) {
         throw new TRPCError({
           code: 'UNAUTHORIZED',
           message: 'Only admin can access this resource',
