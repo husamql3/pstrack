@@ -29,10 +29,6 @@ export const siteMetaData: Metadata = {
     index: true,
     follow: true,
   },
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-  },
   openGraph: {
     title: 'PSTrack',
     description: 'A platform that helps you solve, track, and grow',

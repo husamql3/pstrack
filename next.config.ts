@@ -10,6 +10,7 @@ const nextConfig: NextConfig = {
   distDir: process.env.NODE_ENV === 'production' ? '.next' : '.next-dev',
   transpilePackages: ['@t3-oss/env-nextjs', '@t3-oss/env-core'],
   reactStrictMode: true,
+  // todo: uncomment
   // compiler: {
   //   removeConsole: process.env.NODE_ENV === 'production',
   // },
