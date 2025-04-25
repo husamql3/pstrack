@@ -62,6 +62,7 @@ export const RequestModal = ({ groupId }: { groupId: string }) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
   }, [])
+
   const handleRequest = useCallback(
     async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault()
@@ -97,11 +98,42 @@ export const RequestModal = ({ groupId }: { groupId: string }) => {
         closeButton: true,
       })
 
+      // Process LeetCode username if it's a profile URL
+      let lc_username = formData.lc_username
+      if (lc_username.includes('leetcode.com')) {
+        // Check if it's a valid LeetCode URL format
+        const leetcodeRegex = /leetcode\.com\/u\/([a-zA-Z0-9_-]+)/
+        const match = lc_username.match(leetcodeRegex)
+
+        if (match?.at?.(1)) {
+          lc_username = match[1] // Extract just the username
+        } else {
+          toast.dismiss(loadingToastId)
+          toast.error(
+            'Invalid LeetCode profile URL. Please provide a valid URL or just the username.',
+            {
+              style: {
+                background: '#F44336',
+                color: 'white',
+                borderRadius: '8px',
+                padding: '16px',
+                fontWeight: '600',
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                border: 'none',
+              },
+              duration: 5000,
+              closeButton: true,
+            }
+          )
+          return
+        }
+      }
+
       requestToJoin(
         {
           name: formData.name,
           username: formData.username,
-          lc_username: formData.lc_username,
+          lc_username: lc_username, // Use the processed username
           gh_username: formData.gh_username,
           group_no: groupId,
         },
@@ -168,7 +200,8 @@ export const RequestModal = ({ groupId }: { groupId: string }) => {
             )}
           >
             <div className="inline-flex items-center justify-center px-4 py-2 transition ease-out hover:text-neutral-600 hover:duration-300 hover:dark:text-neutral-400">
-              <span>✨ Request to join</span>
+              <span className="hidden sm:inline">✨ Request to join</span>
+              <span className="sm:hidden">✨ Join</span>
               <ArrowRightIcon className="ml-1 size-4 transition-transform duration-300 ease-in-out group-hover:translate-x-0.5" />
             </div>
           </div>
