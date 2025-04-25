@@ -64,28 +64,8 @@ Please be patient during the review process. We aim to review all PRs within a w
 4. Run database migrations with `pnpm prisma:migrate:dev`
 5. Start the development server with `pnpm dev`
 
-## Code Styling
-
-- Follow the existing code style in the project
-- Use TypeScript for type safety
-- Write meaningful comments for complex logic
-- Use descriptive variable and function names
-
-## Testing
-
-- Write tests for new features or bug fixes
-- Ensure all tests pass before submitting a PR
-- Run tests with `pnpm test`
-
 ## Documentation
 
 If you make changes that affect how users interact with the application, please update the documentation accordingly.
-
-## Questions?
-
-If you have any questions or need help, feel free to:
-
-- Create an issue with the "question" label
-- Reach out to the maintainers
 
 Thank you for contributing to PSTrack!

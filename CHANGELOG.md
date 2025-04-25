@@ -1,5 +1,6 @@
 ### Changelog
 
+- 2.0.0: FEATURE: Rebuild the application with modern technologies, features and more & organized & reliable structure.
 - 1.2.22: FEAT: add logout icon
 - 1.2.21: FEAT: add leetcoder card
 - 1.1.21: FIX: authorization issue

@@ -1,7 +1,12 @@
 {
   "name": "pstrack",
-  "version": "0.1.0",
-  "private": true,
+  "version": "2.0.0",
+  "private": false,
+  "author": {
+    "name": "Hüsam",
+    "email": "devhsmq@gmail.com",
+    "url": "https://www.husam.ninja/"
+  },
   "scripts": {
     "dev": "next dev --turbopack --experimental-https",
     "postinstall": "prisma generate --schema=./src/prisma/schema.prisma",
