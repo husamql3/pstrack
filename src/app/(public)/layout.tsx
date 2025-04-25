@@ -1,6 +1,7 @@
 import { Suspense } from 'react'
 
 import { api } from '@/trpc/server'
+import { VERSION } from '@/data/constants'
 
 import { Logo } from '@/app/_components/logo'
 import { UserAuth } from '@/app/_components/user-auth'
@@ -20,7 +21,12 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
       </Suspense>
 
       <Header>
-        <Logo />
+        <div className="flex items-end">
+          <Logo />
+          <span className="ml-1 hidden rounded-md bg-white/10 px-1.5 py-0.5 text-xs font-medium text-white/80 sm:block">
+            v{VERSION}
+          </span>
+        </div>
         <NavMenu />
         <UserAuth user={user} />
       </Header>

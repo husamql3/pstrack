@@ -1,10 +1,11 @@
-- [ ] use datadog
 - [ ] profile page
 - [ ] Add resources page
   - [ ] How to use LeetCode
   - [ ] Advices for problem solving
-- [ ] Add gh stars count
+- [ ] change checkbox color
 - [ ] Nav bar in mobile screens, add text
+- [x] Add gh stars count
+- [x] use google analytics
 - [x] Feedback dialog
 - [x] request modal
   - [x] fix padding

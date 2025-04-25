@@ -66,14 +66,14 @@ export const FeedbackDialog = ({ email: defaultEmail = '' }: { email?: string })
       onOpenChange={setOpen}
     >
       <DialogTrigger
-        className="fixed right-10 bottom-10"
+        className="fixed right-5 bottom-5 sm:right-10 sm:bottom-10"
         asChild
       >
         <Button size="icon">
           <MdFeedback />
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="z-[110]">
         <DialogHeader>
           <DialogTitle className="mb-2">Share Your Thoughts</DialogTitle>
           <DialogDescription>
