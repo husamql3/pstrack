@@ -9,7 +9,7 @@ export const signIn = async (provider: Provider) => {
   const { error } = await supabase.auth.signInWithOAuth({
     provider,
     options: {
-      redirectTo: `${window.location.origin}/auth/callback`,
+      redirectTo: `${env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
       queryParams: {
         returnTo: env.NEXT_PUBLIC_SITE_URL,
       },

@@ -2,26 +2,24 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@/supabase/server'
 
 import { sendAdminNotification } from '@/utils/email/sendAdminNotification'
+import { env } from '@/config/env.mjs'
 
 export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url)
+  const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get('code')
-  const redirectUrl = new URL('/', request.url)
+  const next = searchParams.get('next') ?? '/'
 
   if (!code) {
-    return NextResponse.redirect(redirectUrl)
+    console.error('No code provided')
+    return NextResponse.redirect(`${origin}/auth/auth-code-error`)
   }
 
   const supabase = await createClient()
-  const { data, error } = await supabase.auth.exchangeCodeForSession(code)
-
+  const { error } = await supabase.auth.exchangeCodeForSession(code)
   if (error) {
     console.error('Error exchanging code for session:', error)
     return NextResponse.redirect(new URL('/auth/error', request.url))
   }
-
-  // Successfully authenticated
-  console.log('User authenticated:', data?.user?.email)
 
   // Check if this is a new user (first sign-in)
   const { data: userData } = await supabase.auth.getUser()
@@ -44,5 +42,9 @@ export async function GET(request: Request) {
     })
   }
 
-  return NextResponse.redirect(redirectUrl)
+  const forwardedHost = request.headers.get('x-forwarded-host')
+  const isLocalEnv = env.NODE_ENV === 'development'
+  if (isLocalEnv) return NextResponse.redirect(`${origin}${next}`)
+  if (forwardedHost) return NextResponse.redirect(`https://${forwardedHost}${next}`)
+  return NextResponse.redirect(`${origin}${next}`)
 }
