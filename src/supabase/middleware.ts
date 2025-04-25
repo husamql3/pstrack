@@ -38,14 +38,11 @@ export async function updateSession(request: NextRequest) {
 
   // Protect specific routes
   if (PROTECTED_ROUTES.some((route) => pathname.startsWith(route))) {
+    console.log('Middleware route:', pathname)
     if (!user || !user.email || !ADMINS_EMAILS.includes(user.email)) {
       return NextResponse.redirect(new URL('/not-found', request.url))
     }
   }
 
   return response
-}
-
-export const config = {
-  matcher: ['/dashboard/:path*', '/profile/:path*'],
 }
