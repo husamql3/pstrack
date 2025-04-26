@@ -12,6 +12,7 @@ export const GroupHeader = async ({ groupNo }: { groupNo: string }) => {
   const leetcodersCount = await api.groups.getGroupLeetcodersCount()
   const isFull = leetcodersCount >= MAX_LEETCODERS
 
+  // todo: update group header style https://animate-ui.com/docs/text/highlight
   return (
     <Header className="max-w-6xl">
       <div className="flex items-center">

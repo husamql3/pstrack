@@ -3,21 +3,15 @@
 import Link from 'next/link'
 import { useState, useRef, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { FaHome, FaMap, FaUsers } from 'react-icons/fa'
 import { usePathname } from 'next/navigation'
 
 import { cn } from '@/utils/cn'
+import { TABS } from '@/data/constant-components'
 
 export const NavMenu = () => {
   const [activeTab, setActiveTab] = useState('Home')
   const tabRefs = useRef<{ [key: string]: HTMLAnchorElement | null }>({})
   const pathname = usePathname()
-
-  const tabs = [
-    { name: 'Home', url: '/', icon: <FaHome /> },
-    { name: 'Roadmap', url: '/roadmap', icon: <FaMap /> },
-    { name: 'Groups', url: '/groups', icon: <FaUsers /> },
-  ]
 
   const setTabRef = (el: HTMLAnchorElement | null, tabName: string) => {
     tabRefs.current[tabName] = el
@@ -25,7 +19,7 @@ export const NavMenu = () => {
 
   // Set active tab based on current URL
   useEffect(() => {
-    const currentTab = tabs.find(
+    const currentTab = TABS.find(
       (tab) => pathname === tab.url || pathname.startsWith(`${tab.url}/`)
     )
 
@@ -35,7 +29,7 @@ export const NavMenu = () => {
   return (
     <div className="fixed top-[30px] left-1/2 z-[100] -translate-x-1/2 transform">
       <div className="flex items-center gap-2 rounded-full border border-gray-500/20 bg-white/5 px-1 py-1 shadow-lg shadow-black backdrop-blur-lg">
-        {tabs.map((tab) => (
+        {TABS.map((tab) => (
           <Link
             key={tab.name}
             href={tab.url}
