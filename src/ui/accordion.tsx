@@ -7,8 +7,8 @@ import {
   useRef,
   useImperativeHandle,
   useEffect,
-  type ComponentProps,
   type ReactNode,
+  type ComponentProps,
 } from 'react'
 import * as AccordionPrimitive from '@radix-ui/react-accordion'
 import { ChevronDown } from 'lucide-react'
