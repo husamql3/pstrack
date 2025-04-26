@@ -8,3 +8,4 @@ export const PROTECTED_ROUTES = ['/dashboard', '/profile']
 export const UNSOLVED_THRESHOLD = 6
 export const USERNAME = 'husamahmud'
 export const REPO_NAME = 'pstrack'
+export const MAX_LEETCODERS = 35

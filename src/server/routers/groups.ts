@@ -78,4 +78,20 @@ export const groupsRouter = createTRPCRouter({
       },
     })
   }),
+  getGroupLeetcodersCount: publicProcedure.query(async () => {
+    try {
+      const count = await db.leetcoders.count({
+        where: {
+          status: {
+            in: ['APPROVED', 'PENDING'],
+          },
+        },
+      })
+
+      return count
+    } catch (error) {
+      console.error('Error fetching approved leetcoders count:', error)
+      throw new Error('Failed to fetch approved leetcoders count')
+    }
+  }),
 })
