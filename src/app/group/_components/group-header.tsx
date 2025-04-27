@@ -18,8 +18,14 @@ export const GroupHeader = async ({ groupNo }: { groupNo: string }) => {
     <Header className="max-w-6xl">
       <div className="flex items-center">
         <GradientText
-          className="text-2xl font-bold"
-          text={`Group ${groupNo.padStart(2, '0')}`}
+          className="text-xl font-bold sm:text-2xl"
+          text={
+            <>
+              <span className="sm:hidden">G</span>
+              <span className="hidden sm:inline">Group</span>{' '}
+              <span>#{groupNo.padStart(2, '0')}</span>
+            </>
+          }
         />
       </div>
 

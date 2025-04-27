@@ -5,7 +5,7 @@ import { motion, type Transition } from 'motion/react'
 import { cn } from '@/utils/cn'
 
 type GradientTextProps = React.ComponentProps<'span'> & {
-  text: string
+  text: React.ReactNode
   gradient?: string
   neon?: boolean
   transition?: Transition
