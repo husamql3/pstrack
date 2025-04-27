@@ -6,6 +6,8 @@ import { MAX_LEETCODERS } from '@/data/constants'
 import { UserAuth } from '@/app/_components/user-auth'
 import { Header } from '@/app/_components/header'
 import { RequestModal } from '@/app/group/_components/request-modal'
+import { NavMenu } from '@/app/_components/nav-menu'
+import { GradientText } from '@/ui/gradient'
 
 export const GroupHeader = async ({ groupNo }: { groupNo: string }) => {
   const user = await api.auth.getUser()
@@ -15,8 +17,13 @@ export const GroupHeader = async ({ groupNo }: { groupNo: string }) => {
   return (
     <Header className="max-w-6xl">
       <div className="flex items-center">
-        <h1 className="text-2xl font-bold">Group {groupNo.padStart(2, '0')}</h1>
+        <GradientText
+          className="text-2xl font-bold"
+          text={`Group ${groupNo.padStart(2, '0')}`}
+        />
       </div>
+
+      <NavMenu />
 
       <div className="flex items-center gap-3">
         {!isFull && (
