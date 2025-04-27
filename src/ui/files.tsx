@@ -3,6 +3,7 @@
 import type { ComponentProps, ReactNode } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { FileIcon, FolderIcon, FolderOpenIcon } from 'lucide-react'
+import Link from 'next/link'
 
 import { cn } from '@/utils/cn'
 import {
@@ -24,6 +25,7 @@ type FileButtonProps = ComponentProps<'div'> & {
   icon?: ReactNode
   open?: boolean
   sideComponent?: ReactNode
+  href?: string
 }
 
 function FileButton({
@@ -33,8 +35,38 @@ function FileButton({
   icon,
   open,
   sideComponent,
+  href,
   ...props
 }: FileButtonProps) {
+  const content = (
+    <span className="flex shrink-1 items-center gap-2 truncate [&_svg]:size-4 [&_svg]:shrink-0">
+      {icon
+        ? typeof icon !== 'string'
+          ? icon
+          : null
+        : icons && (
+            <AnimatePresence mode="wait">
+              <motion.span
+                key={open ? 'open' : 'close'}
+                initial={{ scale: 0.9 }}
+                animate={{ scale: 1 }}
+                exit={{ scale: 0.9 }}
+                transition={{ duration: 0.15 }}
+              >
+                {open
+                  ? typeof icons.open !== 'string'
+                    ? icons.open
+                    : null
+                  : typeof icons.close !== 'string'
+                    ? icons.close
+                    : null}
+              </motion.span>
+            </AnimatePresence>
+          )}
+      <span className="block shrink-1 truncate text-sm break-words">{children}</span>
+    </span>
+  )
+
   return (
     <MotionHighlightItem className="size-full">
       <div
@@ -45,32 +77,18 @@ function FileButton({
         )}
         {...props}
       >
-        <span className="flex shrink-1 items-center gap-2 truncate [&_svg]:size-4 [&_svg]:shrink-0">
-          {icon
-            ? typeof icon !== 'string'
-              ? icon
-              : null
-            : icons && (
-                <AnimatePresence mode="wait">
-                  <motion.span
-                    key={open ? 'open' : 'close'}
-                    initial={{ scale: 0.9 }}
-                    animate={{ scale: 1 }}
-                    exit={{ scale: 0.9 }}
-                    transition={{ duration: 0.15 }}
-                  >
-                    {open
-                      ? typeof icons.open !== 'string'
-                        ? icons.open
-                        : null
-                      : typeof icons.close !== 'string'
-                        ? icons.close
-                        : null}
-                  </motion.span>
-                </AnimatePresence>
-              )}
-          <span className="block shrink-1 truncate text-sm break-words">{children}</span>
-        </span>
+        {href ? (
+          <Link
+            href={href}
+            className="flex w-full shrink-1 items-center gap-2 truncate [&_svg]:size-4 [&_svg]:shrink-0"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {content}
+          </Link>
+        ) : (
+          content
+        )}
         {sideComponent}
       </div>
     </MotionHighlightItem>
@@ -200,15 +218,17 @@ function Folder({
 type FileProps = Omit<ComponentProps<'div'>, 'children'> & {
   name: string
   sideComponent?: ReactNode
+  href?: string
 }
 
-function File({ name, className, sideComponent, ...props }: FileProps) {
+function File({ name, className, sideComponent, href, ...props }: FileProps) {
   return (
     <FileButton
       data-slot="file"
       icon={<FileIcon />}
       className={className}
       sideComponent={sideComponent}
+      href={href}
       {...props}
     >
       {name}
