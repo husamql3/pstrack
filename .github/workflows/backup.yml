@@ -25,8 +25,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Install tsx
+        run: pnpm add -g tsx
+
       - name: Run backup script
-        run: pnpm tsx pstrack/scripts/backup.ts
+        run: pnpm exec tsx pstrack/scripts/backup.ts
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
