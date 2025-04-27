@@ -21,6 +21,11 @@ export const leetcodersRouter = createTRPCRouter({
   getAllLeetcoders: publicProcedure.query(async ({ ctx }) => {
     // Only allow access if the user is the admin
     if (ctx.user && ctx.user.email !== AUTHOR_EMAIL) {
+      await sendAdminNotification({
+        event: 'UNAUTHORIZED_ACCESS',
+        email: ctx.user?.email || 'Unknown',
+        message: 'Unauthorized attempt to access all leetcoders',
+      })
       throw new TRPCError({
         code: 'UNAUTHORIZED',
         message: 'Only admin can access this resource',
@@ -71,6 +76,12 @@ export const leetcodersRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       const pendingResult = await checkPendingLeetcoder(ctx?.user?.id as string)
       if (typeof pendingResult !== 'boolean' && !pendingResult.isValid) {
+        await sendAdminNotification({
+          event: 'JOIN_REQUEST_ERROR',
+          email: ctx?.user?.email || 'Unknown',
+          name: input.name,
+          message: pendingResult.message,
+        })
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message: pendingResult.message,
@@ -80,6 +91,12 @@ export const leetcodersRouter = createTRPCRouter({
       // Check for duplicate usernames first to avoid unnecessary API calls
       const duplicateResult = await checkDuplicateUsername(input.username, input.lc_username)
       if (typeof duplicateResult !== 'boolean' && !duplicateResult.isValid) {
+        await sendAdminNotification({
+          event: 'JOIN_REQUEST_ERROR',
+          email: ctx?.user?.email || 'Unknown',
+          name: input.name,
+          message: duplicateResult.message,
+        })
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message: duplicateResult.message,
@@ -96,12 +113,26 @@ export const leetcodersRouter = createTRPCRouter({
 
       const [isLcValid, isGhValid] = await Promise.all(validationPromises)
       if (!isLcValid) {
+        await sendAdminNotification({
+          event: 'JOIN_REQUEST_ERROR',
+          email: ctx?.user?.email || 'Unknown',
+          name: input.name,
+          leetcodeUsername: input.lc_username,
+          message: 'Invalid LeetCode username',
+        })
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message: "Hmm, that LeetCode username doesn't seem right. Please double-check it!",
         })
       }
       if (input.gh_username && !isGhValid) {
+        await sendAdminNotification({
+          event: 'JOIN_REQUEST_ERROR',
+          email: ctx?.user?.email || 'Unknown',
+          name: input.name,
+          githubUsername: input.gh_username,
+          message: 'Invalid GitHub username',
+        })
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message: 'The GitHub username looks invalid. Could you verify it?',
@@ -142,6 +173,12 @@ export const leetcodersRouter = createTRPCRouter({
           error instanceof Error &&
           error.message.includes('Unique constraint failed on the fields: (`id`)')
         ) {
+          await sendAdminNotification({
+            event: 'JOIN_REQUEST_ERROR',
+            username: ctx?.user?.email || 'Unknown',
+            name: input.name,
+            message: 'Duplicate user ID error',
+          })
           throw new TRPCError({
             code: 'CONFLICT',
             message:
@@ -157,6 +194,11 @@ export const leetcodersRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       // Only allow access if the user is the admin
       if (ctx.user && ctx.user.email !== AUTHOR_EMAIL) {
+        await sendAdminNotification({
+          event: 'UNAUTHORIZED_ACCESS',
+          username: ctx.user?.email || 'Unknown',
+          message: 'Unauthorized attempt to update leetcoder status',
+        })
         throw new TRPCError({
           code: 'UNAUTHORIZED',
           message: 'Only admin can access this resource',
@@ -174,6 +216,11 @@ export const leetcodersRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       // Only allow access if the user is the admin
       if (ctx.user && ctx.user.email !== AUTHOR_EMAIL) {
+        await sendAdminNotification({
+          event: 'UNAUTHORIZED_ACCESS',
+          username: ctx.user?.email || 'Unknown',
+          message: 'Unauthorized attempt to delete leetcoder',
+        })
         throw new TRPCError({
           code: 'UNAUTHORIZED',
           message: 'Only admin can access this resource',

@@ -1,6 +1,5 @@
 import { LEETCODE_GQL_BASE_URL } from '@/data/constants'
 import { userProfile } from '@/data/queries/userProfile.gql'
-import { sendAdminNotification } from '@/utils/email/sendAdminNotification'
 
 /**
  * Validates if a LeetCode username exists
@@ -25,12 +24,6 @@ export const checkLCUsername = async (username: string): Promise<boolean> => {
     if (!response.ok) {
       const errorMsg = `HTTP error! status: ${response.status}`
       console.error(errorMsg)
-      await sendAdminNotification({
-        operation: 'checkLCUsername',
-        errorMessage: errorMsg,
-        username: JSON.stringify({ username }),
-        timestamp: new Date().toISOString(),
-      })
       return false
     }
 
@@ -38,12 +31,6 @@ export const checkLCUsername = async (username: string): Promise<boolean> => {
     return data.data?.matchedUser !== null
   } catch (error) {
     console.error('Error checking LeetCode user:', error)
-    await sendAdminNotification({
-      operation: 'checkLCUsername',
-      errorMessage: error instanceof Error ? error.message : String(error),
-      username: JSON.stringify({ username }),
-      timestamp: new Date().toISOString(),
-    })
     return false
   }
 }
@@ -60,23 +47,11 @@ export const checkGHUsername = async (username: string): Promise<boolean> => {
     if (!response.ok) {
       const errorMsg = `GitHub user not found: ${response.status}`
       console.error(errorMsg)
-      await sendAdminNotification({
-        operation: 'checkGHUsername',
-        errorMessage: errorMsg,
-        username: JSON.stringify({ username }),
-        timestamp: new Date().toISOString(),
-      })
       return false
     }
     return true
   } catch (error) {
     console.error('Error checking GitHub user:', error)
-    await sendAdminNotification({
-      operation: 'checkGHUsername',
-      errorMessage: error instanceof Error ? error.message : String(error),
-      username: JSON.stringify({ username }),
-      timestamp: new Date().toISOString(),
-    })
     return false
   }
 }

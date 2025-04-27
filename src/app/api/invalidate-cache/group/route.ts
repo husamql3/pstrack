@@ -22,10 +22,9 @@ export async function POST(request: Request) {
 
     // Notify admin about the error
     await sendAdminNotification({
-      operation: 'cache-invalidation-group',
+      event: 'CACHE_INVALIDATION_GROUP_ERROR',
       errorMessage: error instanceof Error ? error.message : String(error),
-      timestamp: new Date().toISOString(),
-      groupId: groupId || 'unknown',
+      groupId: groupId,
     })
 
     return NextResponse.json({ error: 'Failed to invalidate cache' }, { status: 500 })

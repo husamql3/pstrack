@@ -57,9 +57,10 @@ export async function GET(req: NextRequest) {
               totalSuccess++
             } catch (error) {
               await sendAdminNotification({
+                event: 'DAILY_PROBLEM_EMAIL_QUEUE_ERROR',
+                message: 'Queueing email in /api/cron/send-daily-problem-email',
                 email: email,
                 error: JSON.stringify(error),
-                message: 'Queueing email in /api/cron/send-daily-problem-email',
               })
               totalFailed++
             }
@@ -68,6 +69,7 @@ export async function GET(req: NextRequest) {
 
         // Send admin notification with summary after all emails are processed
         await sendAdminNotification({
+          event: 'DAILY_PROBLEM_EMAIL_SUMMARY',
           message: '/api/cron/send-daily-problem-email',
           summary: JSON.stringify({
             total: approvedLeetcoders.length,
@@ -90,6 +92,7 @@ export async function GET(req: NextRequest) {
     })
   } catch (error) {
     await sendAdminNotification({
+      event: 'DAILY_PROBLEM_EMAIL_CRON_ERROR',
       error: JSON.stringify(error),
       message: 'Error in /api/cron/send-daily-problem-email',
     })

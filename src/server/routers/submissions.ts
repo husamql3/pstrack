@@ -4,6 +4,7 @@ import { createTRPCRouter, publicProcedure } from '@/server/trpc'
 import { db } from '@/prisma/db'
 import { recentSubmissionListQuery } from '@/data/queries/recentSubmissionList.gql'
 import { LEETCODE_GQL_BASE_URL } from '@/data/constants'
+import { sendAdminNotification } from '@/utils/email/sendAdminNotification'
 
 export const submissionsRouter = createTRPCRouter({
   create: publicProcedure
@@ -17,25 +18,41 @@ export const submissionsRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input }) => {
-      console.log('createSubmission', input)
+      try {
+        const isSolved = await validateProblemSolved(input.lcUsername, input.problemSlug)
+        if (!isSolved) {
+          console.log('validateProblemSolved', isSolved)
+          await sendAdminNotification({
+            event: 'SUBMISSION_VALIDATION_FAILED',
+            username: input.lcUsername,
+            userMetadata: JSON.stringify({
+              userId: input.userId,
+              problemSlug: input.problemSlug,
+            }),
+          })
+          throw new Error('Problem not solved')
+        }
 
-      const start = Date.now()
-      const isSolved = await validateProblemSolved(input.lcUsername, input.problemSlug)
-      console.log('Validation took:', Date.now() - start, 'ms')
-
-      if (!isSolved) {
-        console.log('validateProblemSolved', isSolved)
-        throw new Error('Problem not solved')
+        return db.submissions.create({
+          data: {
+            user_id: input.userId,
+            problem_id: input.problemId,
+            solved: true,
+            group_no: input.group_no,
+          },
+        })
+      } catch (error) {
+        await sendAdminNotification({
+          event: 'SUBMISSION_ERROR',
+          username: input.lcUsername,
+          userMetadata: JSON.stringify({
+            userId: input.userId,
+            problemSlug: input.problemSlug,
+            error: error instanceof Error ? error.message : String(error),
+          }),
+        })
+        throw error
       }
-
-      return db.submissions.create({
-        data: {
-          user_id: input.userId,
-          problem_id: input.problemId,
-          solved: true,
-          group_no: input.group_no,
-        },
-      })
     }),
 })
 

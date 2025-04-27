@@ -47,8 +47,6 @@ export const SubmitCheckbox = ({
   const { data: user } = api.auth.getUser.useQuery()
   const isCurrUser = user?.id === leetcoder.id
 
-  const { mutate: sendEmail } = api.email.sendEmail.useMutation()
-
   const handleCheckboxChange = debounce(() => {
     // If already checked, do nothing
     if (isChecked) return
@@ -140,20 +138,6 @@ export const SubmitCheckbox = ({
             duration: 5000,
             closeButton: true,
           })
-
-          // Send admin notification about the error
-          try {
-            sendEmail({
-              context: {
-                errorType: 'submitCheckbox',
-                errorMessage: errorMsg,
-                username: leetcoder.lc_username || 'unknown',
-                timestamp: new Date().toISOString(),
-              },
-            })
-          } catch (notificationError) {
-            console.error('Failed to send admin notification:', notificationError)
-          }
 
           // Reset the checked state on error
           setIsChecked(!!submission)

@@ -1,43 +1,46 @@
 # Changelog
 
+## [2.0.2]
+send admin notifications from the server for better performance
+
 ## [2.0.1]
-FIX: if the user is not logged in, redirect to the login page
+if the user is not logged in, redirect to the login page
 
 ## [2.0.0]
-FEATURE: Rebuild the application with modern technologies, features and more & organized & reliable structure.
+Rebuild the application with modern technologies, features and more & organized & reliable structure.
 
 ## [1.2.22]
-FEAT: add logout icon
+add logout icon
 
 ## [1.2.21]
-FEAT: add leetcoder card
+add leetcoder card
 
 ## [1.1.21]
-FIX: authorization issue
+authorization issue
 
 ## [1.1.20]
 ENHANCEMENT: make logo as Link instead of image
 
 ## [1.1.19]
-FIX: update fetching groupProgress logic
+update fetching groupProgress logic
 
 ## [1.1.18]
-FEAT: add update profile page
+add update profile page
 
 ## [1.0.18]
-FEAT: use [neetcode](https://neetcode.io/practice) roadmap
+use [neetcode](https://neetcode.io/practice) roadmap
 
 ## [1.0.17]
-FIX: use gmail instead of titan
+use gmail instead of titan
 
 ## [1.0.16]
 STYLE: update roadmap accordion style
 
 ## [1.0.15]
-FEAT: add `/roadmap` page
+add `/roadmap` page
 
 ## [1.0.14]
-FEAT: configure Redis
+configure Redis
 
 ## [1.0.13]
 ENHANCEMENT: use nodemailer instead of resend
@@ -49,34 +52,34 @@ STYLE: update count chart
 STYLE: update scrollbar style
 
 ## [1.0.10]
-FEAT: add navigation menu
+add navigation menu
 
 ## [1.0.9]
 STYLE: update scrollbar style
 
 ## [1.0.8]
-FEAT: add chart for count
+add chart for count
 
 ## [1.0.7]
-FEAT: add group 2
+add group 2
 
 ## [1.0.6]
-FEAT: kick off neglected leetcoders after 5 non-solved problems
+kick off neglected leetcoders after 5 non-solved problems
 
 ## [1.0.5]
-FEAT: secure cron job
+secure cron job
 
 ## [1.0.4]
 ENHANCEMENT: use [cron-jon](https://console.cron-job.org/jobs) instead of vercel cron
 
 ## [1.0.3]
-FEAT: automate "send daily problem email" cron job
+automate "send daily problem email" cron job
 
 ## [1.0.2]
-FEAT: automate "add group progress" cron job
+automate "add group progress" cron job
 
 ## [1.0.1]
-FIX: show validation error message when the form is submitted
+show validation error message when the form is submitted
 
 ## [1.0.0]
 Initial release
