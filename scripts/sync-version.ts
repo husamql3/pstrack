@@ -7,7 +7,7 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 // Read CHANGELOG.md
-const changelogPath = path.resolve(__dirname, '../../CHANGELOG.md')
+const changelogPath = path.resolve(__dirname, '../CHANGELOG.md')
 const changelogContent = fs.readFileSync(changelogPath, 'utf-8')
 
 // Extract the latest version
@@ -20,14 +20,14 @@ const latestVersion = versionMatch[1]
 console.log(`Latest version from changelog: ${latestVersion}`)
 
 // Update package.json
-const packageJsonPath = path.resolve(__dirname, '../../package.json')
+const packageJsonPath = path.resolve(__dirname, '../package.json')
 const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'))
 packageJson.version = latestVersion
 fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2), 'utf-8')
 console.log(`Updated package.json to version ${latestVersion}`)
 
 // Update constants.ts
-const constantsPath = path.resolve(__dirname, '../../src/data/constants.ts') // Adjust path as needed
+const constantsPath = path.resolve(__dirname, '../src/data/constants.ts') // Adjust path as needed
 let constantsContent = fs.readFileSync(constantsPath, 'utf-8')
 constantsContent = constantsContent.replace(
   /export const VERSION = '[^']+'/,
