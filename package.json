@@ -1,6 +1,6 @@
 {
   "name": "pstrack",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "private": false,
   "author": {
     "name": "Hüsam",
@@ -23,6 +23,7 @@
     "typecheck": "tsc --noEmit",
     "dead-code": "npx ts-prune || exit 1",
     "scan": "npx react-scan@latest https://localhost:3000",
+    "release": "node src/scripts/sync-version.js",
     "prisma:generate": "prisma generate --schema=./src/prisma/schema.prisma",
     "prisma:migrate:dev": "prisma migrate dev --name init --schema=./src/prisma/schema.prisma",
     "prisma:migrate:reset": "prisma migrate reset --schema=./src/prisma/schema.prisma",
