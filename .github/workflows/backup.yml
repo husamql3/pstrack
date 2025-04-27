@@ -1,0 +1,64 @@
+name: Database Backup
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Run daily at midnight UTC
+  workflow_dispatch:
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: latest
+          run_install: false
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Run backup script
+        run: pnpm tsx pstrack/scripts/backup.ts
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+      - name: Setup Git
+        run: |
+          git config --global user.name "GitHub Action"
+          git config --global user.email "action@github.com"
+
+      - name: Checkout backup repository
+        uses: actions/checkout@v3
+        with:
+          repository: husamahmud/pstrack-backup
+          token: ${{ secrets.PAT_TOKEN }}
+          path: pstrack-backup
+
+      - name: Copy backup files
+        run: |
+          cp -r backup/* pstrack-backup/
+          cd pstrack-backup
+
+          # Add timestamp file for this backup
+          echo "Backup created: $(date)" > latest-backup.txt
+
+          # Add all files including new ones
+          git add .
+
+          # Only commit if there are changes
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Backup $(date +'%Y-%m-%d %H:%M:%S')"
+            git push
+          fi
