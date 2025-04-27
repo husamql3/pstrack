@@ -29,7 +29,7 @@ jobs:
         run: pnpm add -g tsx
 
       - name: Run backup script
-        run: pnpm exec tsx pstrack/scripts/backup.ts
+        run: pnpm exec tsx scripts/backup.ts
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
