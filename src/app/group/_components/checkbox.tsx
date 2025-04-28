@@ -17,7 +17,9 @@ export const Checkbox = ({
   return (
     <RadixCheckbox.Root
       className={cn(
-        'flex h-5 w-5 flex-shrink-0 appearance-none items-center justify-center rounded border border-neutral-300 bg-neutral-100 outline-none dark:border-neutral-800 dark:bg-neutral-900',
+        'flex h-5 w-5 flex-shrink-0 appearance-none items-center justify-center rounded-md border border-zinc-300 bg-white transition-colors hover:border-zinc-400 outline-none dark:border-zinc-700 dark:bg-zinc-900 dark:hover:border-zinc-500',
+        'cursor-pointer',
+        disabled && 'cursor-not-allowed opacity-50',
         className
       )}
       id="terms"
@@ -27,7 +29,7 @@ export const Checkbox = ({
     >
       <RadixCheckbox.Indicator>
         <motion.div
-          className="h-[inherit] w-[inherit] rounded bg-black dark:bg-white"
+          className="h-[inherit] w-[inherit] rounded bg-blue-600 dark:bg-blue-600"
           initial={{ scale: 0, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ type: 'spring', stiffness: 400, damping: 30 }}
