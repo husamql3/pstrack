@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.0.3]
+fix email daily problem email button
+
 ## [2.0.2]
 send admin notifications from the server for better performance
 
