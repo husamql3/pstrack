@@ -29,7 +29,7 @@ export const Checkbox = ({
     >
       <RadixCheckbox.Indicator>
         <motion.div
-          className="h-[inherit] w-[inherit] rounded bg-blue-600 dark:bg-blue-600"
+          className="h-[inherit] w-[inherit] rounded bg-blue-500 brightness-110 dark:bg-blue-600 dark:brightness-110"
           initial={{ scale: 0, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ type: 'spring', stiffness: 400, damping: 30 }}
@@ -54,7 +54,7 @@ const CheckIcon = () => {
     >
       <motion.path
         d="M5 7.5L7 9.5L7.40859 8.81902C8.13346 7.6109 9.00376 6.49624 10 5.5V5.5"
-        className="stroke-white dark:stroke-black"
+        className="stroke-white dark:stroke-white"
         strokeWidth={1.5}
         strokeLinecap="round"
         strokeLinejoin="round"
