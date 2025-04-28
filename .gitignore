@@ -43,5 +43,9 @@ next-env.d.ts
 .build
 .idea
 src/archive
+src/app/api/test/*
 
 certificates
+
+
+
