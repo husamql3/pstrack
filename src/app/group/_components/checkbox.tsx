@@ -17,7 +17,7 @@ export const Checkbox = ({
   return (
     <RadixCheckbox.Root
       className={cn(
-        'flex h-5 w-5 flex-shrink-0 appearance-none items-center justify-center rounded-md border border-zinc-300 bg-white transition-colors hover:border-zinc-400 outline-none dark:border-zinc-700 dark:bg-zinc-900 dark:hover:border-zinc-500',
+        'flex h-5 w-5 flex-shrink-0 appearance-none items-center justify-center rounded-md border border-zinc-300 bg-white transition-colors outline-none hover:border-zinc-400 dark:border-zinc-700 dark:bg-zinc-900 dark:hover:border-zinc-500',
         'cursor-pointer',
         disabled && 'cursor-not-allowed opacity-50',
         className
