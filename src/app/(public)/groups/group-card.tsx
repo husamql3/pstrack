@@ -22,9 +22,12 @@ export const GroupCard = ({ group, problemsCount }: GroupCardProps) => {
 
   const leetcodersCount = group.leetcoders.length
   const currentProblem = group.group_progress[0]?.roadmap.topic as Topic
-  const progress = group.group_progress[0]?.current_problem
-    ? group.group_progress[0].current_problem / problemsCount
-    : 0
+  const latestGroupProgress = group.group_progress.reduce((latest, current) => {
+    return new Date(current.created_at) > new Date(latest.created_at) ? current : latest
+  }, group.group_progress[0])
+
+  const currentProblemNumber = latestGroupProgress?.current_problem ?? 0
+  const progress = currentProblemNumber ? currentProblemNumber / problemsCount : 0
   const isFull = leetcodersCount >= MAX_LEETCODERS
 
   return (
@@ -79,7 +82,7 @@ export const GroupCard = ({ group, problemsCount }: GroupCardProps) => {
                   <ProgressBar progress={Math.round(progress * 100)} />
                 </div>
                 <div className="flex justify-end text-xs text-zinc-500">
-                  Problem {group.group_progress[0].current_problem} of {problemsCount}
+                  Problem {currentProblemNumber} of {problemsCount}
                 </div>
               </div>
             ) : (
