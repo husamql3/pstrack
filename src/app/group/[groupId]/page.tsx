@@ -6,6 +6,7 @@ import type { roadmap } from '@prisma/client'
 
 import { TrackTable } from '@/app/group/_components/track-table'
 import { ConfettiFireworks } from '@/app/group/_components/confetti-fireworks'
+import { NotStarted } from '@/app/group/_components/not-started'
 
 type CachedData = {
   groupData: GroupData
@@ -14,6 +15,9 @@ type CachedData = {
 
 const Page = async ({ params }: { params: Promise<{ groupId: string }> }) => {
   const { groupId } = await params
+
+  // for not started groups
+  if (groupId === '5') return <NotStarted />
 
   const user = await api.auth.getUser()
   console.log('user?.user_metadata', user?.user_metadata)
@@ -34,20 +38,11 @@ const Page = async ({ params }: { params: Promise<{ groupId: string }> }) => {
     roadmap = await api.roadmap.getGroupProblems(groupData?.group_progress || [])
 
     if (groupData && roadmap) {
-      await redis.set(cacheKey, { groupData, roadmap }, { ex: 300 }) // cache for
+      await redis.set(cacheKey, { groupData, roadmap }, { ex: 180 }) // cache for 3 minutes
     }
   }
 
-  if (!groupData || !roadmap || roadmap.length === 0) {
-    return (
-      <div className="flex flex-1 flex-col items-center justify-center gap-3 px-4">
-        <h1 className="max-w-2xl text-center text-lg font-semibold md:text-2xl">
-          Get ready! Your group&apos;s journey is being prepared. We will notify you when it&apos;s
-          ready. 🔥
-        </h1>
-      </div>
-    )
-  }
+  if (!groupData || !roadmap || roadmap.length === 0) return <NotStarted />
 
   const tableData = generateTableData({
     group_no: groupData.group_no,
