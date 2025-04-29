@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.0.7]
+backup each 1 hour
+
+## [2.0.6]
+update group cards style
+
 ## [2.0.5]
 fix group progress query bug
 

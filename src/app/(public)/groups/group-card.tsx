@@ -49,7 +49,7 @@ export const GroupCard = ({ group, problemsCount }: GroupCardProps) => {
               />
             </Link>
           </div>
-          <Badge className={isFull ? 'bg-amber-600/30 text-amber-200' : ''}>
+          <Badge variant={isFull ? 'secondary' : 'default'}>
             <Users size={12} />
             {leetcodersCount}/{MAX_LEETCODERS} Leetcoders
           </Badge>
@@ -57,18 +57,21 @@ export const GroupCard = ({ group, problemsCount }: GroupCardProps) => {
       </CardHeader>
 
       <CardContent>
-        <div className="space-y-6">
-          <div>
-            <div className="mb-2 text-sm text-zinc-500">Current Topic</div>
-            <div
+        <div className="space-y-3">
+          <div className="flex items-center gap-3">
+            <div className="text-sm text-zinc-300">Current Topic</div>
+            <Badge
+              variant="default"
               className={cn(
-                'inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-sm font-medium',
-                getTopicColor(currentProblem || '')
+                'inline-flex items-center gap-1.5',
+                currentProblem
+                  ? 'bg-blue-600/20 font-medium text-blue-200 ring-1 ring-blue-600/30'
+                  : 'bg-zinc-600/20 text-zinc-400 ring-1 ring-zinc-600/30'
               )}
             >
               <BookIcon size={14} />
               {currentProblem || 'Not started'}
-            </div>
+            </Badge>
           </div>
 
           <div>
