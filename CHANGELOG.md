@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.0.4]
+update the style of checkbox
+
 ## [2.0.3]
 fix email daily problem email button
 
