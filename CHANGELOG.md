@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.0.5]
+fix group progress query bug
+
 ## [2.0.4]
 update the style of checkbox
 
