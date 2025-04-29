@@ -5,14 +5,13 @@ import Link from 'next/link'
 import { cn } from '@/utils/cn'
 import type { GroupCardProps } from '@/types/groupsPage.type'
 import type { Topic } from '@/types/problems.type'
-import { getTopicColor } from '@/utils/problemsUtils'
+import { MAX_LEETCODERS } from '@/data/constants'
 
 import { Card, CardHeader, CardContent, CardFooter } from '@/ui/card'
 import { ProgressBar } from '../roadmap/_components/progress-bar'
 import { Badge } from '@/ui/badge'
 import { AvatarGroup } from './avatar-group'
 import { RequestModal } from '@/app/group/_components/request-modal'
-import { MAX_LEETCODERS } from '@/data/constants'
 
 export const GroupCard = ({ group, problemsCount }: GroupCardProps) => {
   const avatars = group.leetcoders.map((member) => ({

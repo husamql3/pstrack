@@ -19,6 +19,7 @@ import {
 } from '@/ui/dialog'
 import { Input } from '@/ui/input'
 import { Textarea } from '@/ui/textarea'
+import { errorToastStyle } from './toast-styles'
 
 export const FeedbackDialog = ({ email: defaultEmail = '' }: { email?: string }) => {
   const [email, setEmail] = useState(defaultEmail)
@@ -36,6 +37,7 @@ export const FeedbackDialog = ({ email: defaultEmail = '' }: { email?: string })
     onError: (error) => {
       toast.error('Failed to send feedback', {
         description: error.message || 'Please try again later.',
+        style: errorToastStyle,
       })
     },
   })

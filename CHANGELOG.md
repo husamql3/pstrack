@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.0.8]
+update toast styles
+
 ## [2.0.7]
 backup each 1 hour
 

@@ -77,7 +77,7 @@ export const UserMenu = ({ user }: { user: User }) => {
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
-          className="h-auto rounded-full p-0 hover:bg-transparent"
+          className="h-auto cursor-pointer rounded-full p-0 hover:bg-transparent"
         >
           {renderAvatar(user)}
         </Button>

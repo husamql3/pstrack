@@ -12,6 +12,11 @@ import { useConfettiStore } from '@/stores/confettiStore'
 import { useSubmissionStore } from '@/stores/submissionStore'
 
 import { Checkbox } from '@/app/group/_components/checkbox'
+import {
+  errorToastStyle,
+  loadingToastStyle,
+  successToastStyle,
+} from '@/app/_components/toast-styles'
 
 export const SubmitCheckbox = ({
   info,
@@ -55,16 +60,8 @@ export const SubmitCheckbox = ({
     setIsChecked(true)
 
     // Show loading toast
-    const loadingToastId = toast.loading('Checking, Hold a second', {
-      style: {
-        background: 'white',
-        color: 'black',
-        borderRadius: '8px',
-        padding: '16px',
-        fontWeight: '600',
-        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-        border: 'none',
-      },
+    const loadingToastId = toast.loading('Verifying your solution...', {
+      style: loadingToastStyle,
       closeButton: true,
     })
 
@@ -81,15 +78,7 @@ export const SubmitCheckbox = ({
           // Dismiss loading toast and show success
           toast.dismiss(loadingToastId)
           toast.success('Submission successful!', {
-            style: {
-              background: '#4CAF50',
-              color: 'white',
-              borderRadius: '8px',
-              padding: '16px',
-              fontWeight: '600',
-              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-              border: 'none',
-            },
+            style: successToastStyle,
             closeButton: true,
           })
 
@@ -122,19 +111,11 @@ export const SubmitCheckbox = ({
 
           const errorMsg =
             error.message === 'Problem not solved'
-              ? "This problem hasn't been solved on LeetCode yet. Please submit it there first or try again if you've already solved it."
-              : 'Submission failed'
+              ? 'Problem not found on your LeetCode submissions. Solve it there first or try again.'
+              : 'Submission failed. Please try again.'
 
           toast.error(errorMsg, {
-            style: {
-              background: '#F44336',
-              color: 'white',
-              borderRadius: '8px',
-              padding: '16px',
-              fontWeight: '600',
-              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-              border: 'none',
-            },
+            style: errorToastStyle,
             duration: 5000,
             closeButton: true,
           })
