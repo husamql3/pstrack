@@ -17,7 +17,7 @@ const Page = async ({ params }: { params: Promise<{ groupId: string }> }) => {
   const { groupId } = await params
 
   // for not started groups
-  // if (groupId === '5') return <NotStarted />
+  if (groupId === '6') return <NotStarted />
 
   const user = await api.auth.getUser()
   console.log('user?.user_metadata', user?.user_metadata)
