@@ -3,7 +3,7 @@ import { z } from 'zod'
 import { createTRPCRouter, publicProcedure } from '@/server/trpc'
 import { db } from '@/prisma/db'
 import { TRPCError } from '@trpc/server'
-import { AUTHOR_EMAIL } from '@/data/constants'
+import { ADMINS_EMAILS } from '@/data/constants'
 
 export const groupsRouter = createTRPCRouter({
   getAllGroupsNo: publicProcedure.query(() => {
@@ -44,7 +44,7 @@ export const groupsRouter = createTRPCRouter({
     }),
   getAllGroups: publicProcedure.query(async ({ ctx }) => {
     // Only allow access if the user is the admin
-    if (ctx.user && ctx.user.email !== AUTHOR_EMAIL) {
+    if (ctx.user?.email && !ADMINS_EMAILS.includes(ctx.user.email)) {
       throw new TRPCError({
         code: 'UNAUTHORIZED',
         message: 'Only admin can access this resource',
