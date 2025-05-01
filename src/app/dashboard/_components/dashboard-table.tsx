@@ -171,7 +171,10 @@ export const DashboardTable = ({
                     className="rounded border px-2 py-1"
                   >
                     {groups.map((group) => (
-                      <option key={group.group_no} value={group.group_no}>
+                      <option
+                        key={group.group_no}
+                        value={group.group_no}
+                      >
                         Group {group.group_no}
                       </option>
                     ))}

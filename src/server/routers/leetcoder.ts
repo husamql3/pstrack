@@ -307,7 +307,8 @@ export const leetcodersRouter = createTRPCRouter({
             data: { group_no: newGroupNo },
           })
         })
-      } catch (error) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      } catch (_error) {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to change group. Please try again later.',
