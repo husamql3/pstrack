@@ -3,6 +3,7 @@ import { generateTableData } from '@/utils/generateTableData'
 import { redis } from '@/config/redis'
 import type { GroupData } from '@/types/tableRow.type'
 import type { roadmap } from '@prisma/client'
+import { NOT_STARTED_GROUPS } from '@/data/constants'
 
 import { TrackTable } from '@/app/group/_components/track-table'
 import { ConfettiFireworks } from '@/app/group/_components/confetti-fireworks'
@@ -17,7 +18,7 @@ const Page = async ({ params }: { params: Promise<{ groupId: string }> }) => {
   const { groupId } = await params
 
   // for not started groups
-  if (groupId === '6') return <NotStarted />
+  if (NOT_STARTED_GROUPS.includes(+groupId)) return <NotStarted />
 
   const user = await api.auth.getUser()
   console.log('user?.user_metadata', user?.user_metadata)

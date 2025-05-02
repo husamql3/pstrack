@@ -9,3 +9,4 @@ export const UNSOLVED_THRESHOLD = 6
 export const USERNAME = 'husamahmud'
 export const REPO_NAME = 'pstrack'
 export const MAX_LEETCODERS = 35
+export const NOT_STARTED_GROUPS = [6]
