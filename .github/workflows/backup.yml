@@ -2,7 +2,7 @@ name: Database Backup
 
 on:
   schedule:
-    - cron: '0 * * * *' # Run every hour
+    - cron: '0 */6 * * *' # Run every 6 hours
   workflow_dispatch:
 
 jobs:
