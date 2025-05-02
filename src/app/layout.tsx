@@ -16,11 +16,7 @@ const geist = Geist({
 
 export const metadata = siteMetaData
 
-function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode
-}>) {
+const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
   const gaId = process.env.GA_MEASUREMENT_ID
 
   return (
