@@ -10,7 +10,7 @@ function Textarea({ className, ...props }: React.ComponentProps<'textarea'>) {
       textarea.style.height = `${textarea.scrollHeight}px`
     }
   }
-  
+
   return (
     <textarea
       ref={textareaRef}
