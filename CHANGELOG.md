@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.0.9]
+fix feedback dialog textarea max width and implement auto-resizing textarea
+
 ## [2.0.8]
 update toast styles
 
