@@ -1,9 +1,10 @@
-type FileResource = {
+export type FileResource = {
   name: string
   href?: string
+  type?: 'youtube' | 'article'
 }
 
-type FolderResource = {
+export type FolderResource = {
   name: string
   isFolder: true
   children: (FileResource | FolderResource)[]
@@ -43,16 +44,25 @@ export const RESOURCES: Resource[] = [
     name: 'Strings',
     children: [
       {
-        name: 'String in Data Structure',
-        href: 'https://www.tutorialspoint.com/data_structures_algorithms/string_data_structure.htm',
-      },
-      {
-        name: 'Introduction to Strings',
-        href: 'https://www.geeksforgeeks.org/introduction-to-strings-data-structure-and-algorithm-tutorials/',
-      },
-      {
-        name: 'String cheatsheet for coding interviews',
-        href: 'https://www.techinterviewhandbook.org/algorithms/string/',
+        name: 'Articles',
+        isFolder: true,
+        children: [
+          {
+            name: 'String in Data Structure',
+            href: 'https://www.tutorialspoint.com/data_structures_algorithms/string_data_structure.htm',
+            type: 'article',
+          },
+          {
+            name: 'Introduction to Strings',
+            href: 'https://www.geeksforgeeks.org/introduction-to-strings-data-structure-and-algorithm-tutorials/',
+            type: 'article',
+          },
+          {
+            name: 'String cheatsheet for coding interviews',
+            href: 'https://www.techinterviewhandbook.org/algorithms/string/',
+            type: 'article',
+          },
+        ],
       },
     ],
   },
@@ -66,14 +76,17 @@ export const RESOURCES: Resource[] = [
           {
             name: 'Hashing | MIT',
             href: 'https://www.youtube.com/watch?v=Nu8YGneFCWE',
+            type: 'youtube',
           },
           {
             name: 'What is a HashTable Data Structure',
             href: 'https://www.youtube.com/watch?v=MfhjkfocRR0&t',
+            type: 'youtube',
           },
           {
             name: 'Hashing Technique | Abdul Bari',
             href: 'https://www.youtube.com/watch?v=mFY0J5W8Udk',
+            type: 'youtube',
           },
         ],
       },
@@ -84,14 +97,17 @@ export const RESOURCES: Resource[] = [
           {
             name: 'Array Data Structure',
             href: 'https://www.tutorialspoint.com/data_structures_algorithms/array_data_structure.htm',
+            type: 'article',
           },
           {
             name: 'Getting Started with Array Data Structure',
             href: 'https://www.geeksforgeeks.org/introduction-to-arrays-data-structure-and-algorithm-tutorials/',
+            type: 'article',
           },
           {
             name: 'Array cheatsheet for coding interviews',
             href: 'https://www.techinterviewhandbook.org/algorithms/array/',
+            type: 'article',
           },
         ],
       },

@@ -36,6 +36,11 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser()
   console.log('Middleware user:', user?.email)
 
+  // Redirect to login if accessing /resources without being logged in
+  if (pathname.startsWith('/resources') && !user) {
+    return NextResponse.redirect(new URL('/login', request.url))
+  }
+
   // Protect specific routes
   if (PROTECTED_ROUTES.some((route) => pathname.startsWith(route))) {
     console.log('Middleware route:', pathname)

@@ -1,9 +1,11 @@
 'use client'
 
+import Link from 'next/link'
+import { LuFile } from 'react-icons/lu'
+import { PiYoutubeLogo } from 'react-icons/pi'
 import type { ComponentProps, ReactNode } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
-import { FileIcon, FolderIcon, FolderOpenIcon } from 'lucide-react'
-import Link from 'next/link'
+import { FolderIcon, FolderOpenIcon } from 'lucide-react'
 
 import { cn } from '@/utils/cn'
 import {
@@ -154,7 +156,10 @@ function FolderTrigger({ children, className, sideComponent, ...props }: FolderT
     >
       <FileButton
         open={isOpen}
-        icons={{ open: <FolderOpenIcon />, close: <FolderIcon /> }}
+        icons={{
+          open: <FolderOpenIcon fill="currentColor" />,
+          close: <FolderIcon fill="currentColor" />,
+        }}
         className={className}
         sideComponent={sideComponent}
       >
@@ -219,13 +224,19 @@ type FileProps = Omit<ComponentProps<'div'>, 'children'> & {
   name: string
   sideComponent?: ReactNode
   href?: string
+  type?: 'youtube' | 'article'
 }
 
-function File({ name, className, sideComponent, href, ...props }: FileProps) {
+function File({ name, className, sideComponent, href, type, ...props }: FileProps) {
+  const getIcon = () => {
+    if (type === 'youtube') return <PiYoutubeLogo />
+    return <LuFile />
+  }
+
   return (
     <FileButton
       data-slot="file"
-      icon={<FileIcon />}
+      icon={getIcon()}
       className={className}
       sideComponent={sideComponent}
       href={href}
