@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 
 import { db } from '@/prisma/db'
 import { env } from '@/config/env.mjs'
+import { NOT_STARTED_GROUPS } from '@/data/constants'
 
 /**
  * GET handler for automated progression of group problems
@@ -17,8 +18,14 @@ export async function GET(req: Request) {
   try {
     await db.$disconnect()
 
-    // Fetch all group progress records from the database
-    const allGroupProgress = await db.group_progress.findMany()
+    // Fetch group progress records from the database, excluding NOT_STARTED_GROUPS
+    const allGroupProgress = await db.group_progress.findMany({
+      where: {
+        group_no: {
+          notIn: NOT_STARTED_GROUPS,
+        },
+      },
+    })
 
     // Create a map to track the highest problem number for each group
     const groupProgressMap = new Map()

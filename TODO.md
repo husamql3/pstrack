@@ -1,11 +1,20 @@
+- [ ] Roadmap
+  - [x] arrays hashing
+  - [x] strings
+  - [x] two pointers
+  - [x] sliding window
+  - [x] stack & queue
+  - [x] sorting
+  - [x] linked list
+  - [x] recursion
 - [ ] profile page
-- [ ] unified sonner styles (success - loading - error)
-- [ ] Add resources page
   - [ ] How to use LeetCode
   - [ ] Advices for problem solving
-- [ ] change checkbox color
-- [ ] Nav bar in mobile screens, add text
+- [ ] Add resources page
 - [ ] update problems scrollbar
+- [x] unified sonner styles (success - loading - error)
+- [x] change checkbox color
+- [x] Nav bar in mobile screens, add text
 - [x] update metadata
 - [x] add banner & stars count & techs
 - [x] Add gh stars count
