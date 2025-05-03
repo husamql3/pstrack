@@ -1,7 +1,10 @@
 # Changelog
 
-## [2.0.10]
+## [2.1.10]
 add resources page
+
+## [2.0.10]
+fix feedback dialog textarea max width and implement auto-resizing textarea
 
 ## [2.0.9]
 fix adding group progress for not started groups
