@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.1.12]
+fix feedback dialog
+
 ## [2.1.11]
 fix login card styles
 

@@ -1,4 +1,4 @@
-export const VERSION = '2.1.11'
+export const VERSION = '2.1.12'
 export const VISIBLE_COUNT = 20
 export const PROBLEM_BASE_URL = 'https://leetcode.com/problems'
 export const LEETCODE_GQL_BASE_URL = 'https://leetcode.com/graphql'

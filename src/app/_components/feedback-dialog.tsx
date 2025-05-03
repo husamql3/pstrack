@@ -1,10 +1,8 @@
 'use client'
 
 import { MdFeedback } from 'react-icons/md'
-import { MailIcon } from 'lucide-react'
 import { toast } from 'sonner'
 import { useState } from 'react'
-import { z } from 'zod'
 
 import { api } from '@/trpc/react'
 
@@ -17,15 +15,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/ui/dialog'
-import { Input } from '@/ui/input'
 import { Textarea } from '@/ui/textarea'
 import { errorToastStyle } from './toast-styles'
 
-export const FeedbackDialog = ({ email: defaultEmail = '' }: { email?: string }) => {
-  const [email, setEmail] = useState(defaultEmail)
+export const FeedbackDialog = () => {
   const [feedback, setFeedback] = useState('')
   const [open, setOpen] = useState(false)
 
+  const { data: user } = api.auth.getUser.useQuery()
   const { mutate: sendEmail, isPending } = api.email.sendEmail.useMutation({
     onSuccess: () => {
       toast.success('Feedback sent!', {
@@ -44,22 +41,23 @@ export const FeedbackDialog = ({ email: defaultEmail = '' }: { email?: string })
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
 
-    try {
-      const emailSchema = z.string().email()
-      emailSchema.parse(email)
-
-      sendEmail({
-        context: {
-          email: email,
-          subject: 'Feedback from PSTrack User',
-          message: feedback,
-        },
+    if (!user?.email) {
+      toast.error('User email not found', {
+        description: 'Please ensure you are logged in.',
       })
-    } catch {
-      toast.error('Invalid email', {
-        description: 'Please enter a valid email address.',
-      })
+      return
     }
+
+    sendEmail({
+      context: {
+        email: user.email,
+        subject: 'Feedback from PSTrack User',
+        message: feedback,
+      },
+    })
+
+    // Reset feedback even if the request is still pending
+    setFeedback('')
   }
 
   return (
@@ -100,24 +98,6 @@ export const FeedbackDialog = ({ email: defaultEmail = '' }: { email?: string })
           onSubmit={handleSubmit}
         >
           <div className="space-y-3">
-            <div className="relative">
-              <Input
-                id="dialog-subscribe"
-                className="peer ps-9"
-                placeholder="your.email@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                type="email"
-                aria-label="Email"
-                required
-              />
-              <div className="text-muted-foreground/80 pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 peer-disabled:opacity-50">
-                <MailIcon
-                  size={16}
-                  aria-hidden="true"
-                />
-              </div>
-            </div>
             <Textarea
               id="feedback"
               placeholder="What would you like to see improved in PSTrack?"
