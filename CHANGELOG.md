@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.0.10]
+add resources page
+
 ## [2.0.9]
 fix adding group progress for not started groups
 
