@@ -17,6 +17,69 @@ type Resource = {
 
 export const RESOURCES: Resource[] = [
   {
+    name: 'Bit Manipulation',
+    children: [
+      {
+        name: 'Soon',
+        type: 'article',
+      },
+    ],
+  },
+  {
+    name: 'Tries',
+    children: [
+      {
+        name: 'Soon',
+        type: 'article',
+      },
+    ],
+  },
+  {
+    name: 'DP',
+    children: [
+      {
+        name: 'Soon',
+        type: 'article',
+      },
+    ],
+  },
+  {
+    name: 'Heap',
+    children: [
+      {
+        name: 'Soon',
+        type: 'article',
+      },
+    ],
+  },
+  {
+    name: 'Graphs',
+    children: [
+      {
+        name: 'Soon',
+        type: 'article',
+      },
+    ],
+  },
+  {
+    name: 'Matrix',
+    children: [
+      {
+        name: 'Soon',
+        type: 'article',
+      },
+    ],
+  },
+  {
+    name: 'Trees',
+    children: [
+      {
+        name: 'Soon',
+        type: 'article',
+      },
+    ],
+  },
+  {
     name: 'Recursion',
     children: [
       {
@@ -60,6 +123,15 @@ export const RESOURCES: Resource[] = [
             type: 'article',
           },
         ],
+      },
+    ],
+  },
+  {
+    name: 'Sorting & Searching',
+    children: [
+      {
+        name: 'Soon',
+        type: 'article',
       },
     ],
   },
@@ -206,7 +278,12 @@ export const RESOURCES: Resource[] = [
   },
   {
     name: 'Sliding Window',
-    children: [],
+    children: [
+      {
+        name: 'Soon',
+        type: 'article',
+      },
+    ],
   },
   {
     name: 'Two Pointers',
