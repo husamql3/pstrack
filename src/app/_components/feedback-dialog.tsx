@@ -18,11 +18,10 @@ import {
 import { Textarea } from '@/ui/textarea'
 import { errorToastStyle } from './toast-styles'
 
-export const FeedbackDialog = () => {
+export const FeedbackDialog = ({ email }: { email: string }) => {
   const [feedback, setFeedback] = useState('')
   const [open, setOpen] = useState(false)
 
-  const { data: user } = api.auth.getUser.useQuery()
   const { mutate: sendEmail, isPending } = api.email.sendEmail.useMutation({
     onSuccess: () => {
       toast.success('Feedback sent!', {
@@ -41,16 +40,9 @@ export const FeedbackDialog = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (!user?.email) {
-      toast.error('User email not found', {
-        description: 'Please ensure you are logged in.',
-      })
-      return
-    }
-
     sendEmail({
       context: {
-        email: user.email,
+        email: email,
         subject: 'Feedback from PSTrack User',
         message: feedback,
       },
