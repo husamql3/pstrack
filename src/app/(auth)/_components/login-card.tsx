@@ -23,7 +23,7 @@ export const LoginCard = () => {
   }
 
   return (
-    <Card className="w-sm">
+    <Card>
       <CardHeader className="text-center">
         <CardTitle className="text-xl">Welcome to PSTrack</CardTitle>
         <CardDescription>Login with your GitHub or Google account</CardDescription>

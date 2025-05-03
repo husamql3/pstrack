@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.1.11]
+fix login card styles
+
 ## [2.1.10]
 add resources page
 

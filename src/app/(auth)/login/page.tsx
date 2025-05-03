@@ -18,7 +18,9 @@ const Page = () => {
         />
       </Link>
 
-      <LoginCard />
+      <div className="w-full max-w-sm px-3">
+        <LoginCard />
+      </div>
     </div>
   )
 }
