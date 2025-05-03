@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.1.10]
+add resources page
+
 ## [2.0.10]
 fix feedback dialog textarea max width and implement auto-resizing textarea
 
