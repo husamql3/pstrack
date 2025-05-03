@@ -1,0 +1,54 @@
+# Build outputs
+.next/
+dist/
+out/
+build/
+coverage/
+
+# Package management
+node_modules/
+.pnpm-store/
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
+# Cache directories
+.cache/
+.vercel/
+.turbo/
+
+# Environment and config files
+.env*
+!.env.example
+
+# Generated files
+public/sw.js
+public/workbox-*.js
+.contentlayer
+
+# Prisma generated files
+prisma/generated/
+
+# Test snapshots
+**/__snapshots__/**
+
+# Large data files
+public/templates/
+
+# TypeScript declaration files
+*.d.ts
+
+# Markdown files
+*.md
+
+# JSON files
+*.json
+
+# Certificates
+*.pem
+
+# Logs
+*.log
+
+# Backups
+*.bak

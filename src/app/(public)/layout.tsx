@@ -23,7 +23,7 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
       <Header>
         <div className="flex items-end">
           <Logo />
-          <span className="ml-1 hidden rounded-md bg-white/10 px-1.5 py-0.5 text-xs font-medium text-white/80 sm:block">
+          <span className="ml-1 hidden rounded-md bg-white/10 px-1.5 py-0.5 text-xs font-medium text-white/80 opacity-50 sm:block">
             v{VERSION}
           </span>
         </div>

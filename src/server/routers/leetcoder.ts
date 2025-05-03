@@ -7,7 +7,7 @@ import { createTRPCRouter, publicProcedure } from '@/server/trpc'
 import { checkGHUsername, checkLCUsername } from '@/utils/checkLeetcoder'
 import { checkDuplicateUsername, checkPendingLeetcoder } from '@/dao/leetcoder.dao'
 import { sendAdminNotification } from '@/utils/email/sendAdminNotification'
-import { AUTHOR_EMAIL } from '@/data/constants'
+import { ADMINS_EMAILS, MAX_LEETCODERS } from '@/data/constants'
 
 export const leetcodersRouter = createTRPCRouter({
   getLeetcoderById: publicProcedure
@@ -20,7 +20,12 @@ export const leetcodersRouter = createTRPCRouter({
     }),
   getAllLeetcoders: publicProcedure.query(async ({ ctx }) => {
     // Only allow access if the user is the admin
-    if (ctx.user && ctx.user.email !== AUTHOR_EMAIL) {
+    if (ctx.user?.email && !ADMINS_EMAILS.includes(ctx.user.email)) {
+      await sendAdminNotification({
+        event: 'UNAUTHORIZED_ACCESS',
+        email: ctx.user?.email || 'Unknown',
+        message: 'Unauthorized attempt to access all leetcoders',
+      })
       throw new TRPCError({
         code: 'UNAUTHORIZED',
         message: 'Only admin can access this resource',
@@ -71,6 +76,12 @@ export const leetcodersRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       const pendingResult = await checkPendingLeetcoder(ctx?.user?.id as string)
       if (typeof pendingResult !== 'boolean' && !pendingResult.isValid) {
+        await sendAdminNotification({
+          event: 'JOIN_REQUEST_ERROR',
+          email: ctx?.user?.email || 'Unknown',
+          name: input.name,
+          message: pendingResult.message,
+        })
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message: pendingResult.message,
@@ -80,6 +91,12 @@ export const leetcodersRouter = createTRPCRouter({
       // Check for duplicate usernames first to avoid unnecessary API calls
       const duplicateResult = await checkDuplicateUsername(input.username, input.lc_username)
       if (typeof duplicateResult !== 'boolean' && !duplicateResult.isValid) {
+        await sendAdminNotification({
+          event: 'JOIN_REQUEST_ERROR',
+          email: ctx?.user?.email || 'Unknown',
+          name: input.name,
+          message: duplicateResult.message,
+        })
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message: duplicateResult.message,
@@ -96,12 +113,26 @@ export const leetcodersRouter = createTRPCRouter({
 
       const [isLcValid, isGhValid] = await Promise.all(validationPromises)
       if (!isLcValid) {
+        await sendAdminNotification({
+          event: 'JOIN_REQUEST_ERROR',
+          email: ctx?.user?.email || 'Unknown',
+          name: input.name,
+          leetcodeUsername: input.lc_username,
+          message: 'Invalid LeetCode username',
+        })
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message: "Hmm, that LeetCode username doesn't seem right. Please double-check it!",
         })
       }
       if (input.gh_username && !isGhValid) {
+        await sendAdminNotification({
+          event: 'JOIN_REQUEST_ERROR',
+          email: ctx?.user?.email || 'Unknown',
+          name: input.name,
+          githubUsername: input.gh_username,
+          message: 'Invalid GitHub username',
+        })
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message: 'The GitHub username looks invalid. Could you verify it?',
@@ -142,6 +173,12 @@ export const leetcodersRouter = createTRPCRouter({
           error instanceof Error &&
           error.message.includes('Unique constraint failed on the fields: (`id`)')
         ) {
+          await sendAdminNotification({
+            event: 'JOIN_REQUEST_ERROR',
+            username: ctx?.user?.email || 'Unknown',
+            name: input.name,
+            message: 'Duplicate user ID error',
+          })
           throw new TRPCError({
             code: 'CONFLICT',
             message:
@@ -156,7 +193,12 @@ export const leetcodersRouter = createTRPCRouter({
     .input(z.object({ id: z.string().uuid(), status: z.nativeEnum(LeetcodeStatus) }))
     .mutation(async ({ input, ctx }) => {
       // Only allow access if the user is the admin
-      if (ctx.user && ctx.user.email !== AUTHOR_EMAIL) {
+      if (ctx.user?.email && !ADMINS_EMAILS.includes(ctx.user.email)) {
+        await sendAdminNotification({
+          event: 'UNAUTHORIZED_ACCESS',
+          username: ctx.user?.email || 'Unknown',
+          message: 'Unauthorized attempt to update leetcoder status',
+        })
         throw new TRPCError({
           code: 'UNAUTHORIZED',
           message: 'Only admin can access this resource',
@@ -173,7 +215,12 @@ export const leetcodersRouter = createTRPCRouter({
     .input(z.object({ id: z.string().uuid() }))
     .mutation(async ({ input, ctx }) => {
       // Only allow access if the user is the admin
-      if (ctx.user && ctx.user.email !== AUTHOR_EMAIL) {
+      if (ctx.user?.email && !ADMINS_EMAILS.includes(ctx.user.email)) {
+        await sendAdminNotification({
+          event: 'UNAUTHORIZED_ACCESS',
+          username: ctx.user?.email || 'Unknown',
+          message: 'Unauthorized attempt to delete leetcoder',
+        })
         throw new TRPCError({
           code: 'UNAUTHORIZED',
           message: 'Only admin can access this resource',
@@ -182,5 +229,90 @@ export const leetcodersRouter = createTRPCRouter({
       return db.leetcoders.delete({
         where: { id: input.id },
       })
+    }),
+  changeGroup: publicProcedure
+    .input(
+      z.object({
+        userId: z.string().uuid(),
+        newGroupNo: z.number().int().positive(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const { userId, newGroupNo } = input
+
+      if (ctx.user?.email && !ADMINS_EMAILS.includes(ctx.user.email)) {
+        await sendAdminNotification({
+          event: 'UNAUTHORIZED_ACCESS',
+          username: ctx.user?.email || 'Unknown',
+          message: 'Unauthorized attempt to change group',
+        })
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: 'Only admin can access this resource',
+        })
+      }
+
+      const user = await db.leetcoders.findUnique({
+        where: { id: userId },
+      })
+
+      if (!user) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'User not found.',
+        })
+      }
+
+      if (user.group_no === newGroupNo) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'User is already in the selected group.',
+        })
+      }
+
+      const group = await db.groups.findUnique({
+        where: { group_no: newGroupNo },
+      })
+
+      if (!group) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'Selected group does not exist.',
+        })
+      }
+
+      const count = await db.leetcoders.count({
+        where: { group_no: newGroupNo },
+      })
+
+      if (count >= MAX_LEETCODERS) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'Selected group is full.',
+        })
+      }
+
+      try {
+        return await db.$transaction(async (tx) => {
+          await tx.submissions.updateMany({
+            where: { user_id: userId },
+            data: {
+              solved: false,
+              group_no: newGroupNo,
+            },
+          })
+
+          return await tx.leetcoders.update({
+            where: { id: userId },
+            data: { group_no: newGroupNo },
+          })
+        })
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      } catch (_error) {
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to change group. Please try again later.',
+        })
+      }
     }),
 })

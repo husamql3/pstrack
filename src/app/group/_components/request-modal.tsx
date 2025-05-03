@@ -8,12 +8,18 @@ import useMeasure from 'react-use-measure'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 
+import {
+  errorToastStyle,
+  infoToastStyle,
+  loadingToastStyle,
+  successToastStyle,
+} from '@/app/_components/toast-styles'
+import { api } from '@/trpc/react'
 import { cn } from '@/utils/cn'
 
 import { Button } from '@/ui/button'
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/ui/dialog'
 import { type FormDataType, RequestForm } from '@/app/group/_components/request-form'
-import { api } from '@/trpc/react'
 import { RequestRules } from './request-rules'
 
 const createVariants = (heightContent: number): Variants => ({
@@ -69,15 +75,7 @@ export const RequestModal = ({ groupId }: { groupId: string }) => {
 
       if (!user) {
         toast.error('You must be logged in to request to join a group', {
-          style: {
-            background: '#F44336',
-            color: 'white',
-            borderRadius: '8px',
-            padding: '16px',
-            fontWeight: '600',
-            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-            border: 'none',
-          },
+          style: errorToastStyle,
           duration: 10000,
           closeButton: true,
         })
@@ -86,15 +84,7 @@ export const RequestModal = ({ groupId }: { groupId: string }) => {
       }
 
       const loadingToastId = toast.loading('Checking, please wait...', {
-        style: {
-          background: 'white',
-          color: 'black',
-          borderRadius: '8px',
-          padding: '16px',
-          fontWeight: '600',
-          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-          border: 'none',
-        },
+        style: loadingToastStyle,
         closeButton: true,
       })
 
@@ -112,15 +102,7 @@ export const RequestModal = ({ groupId }: { groupId: string }) => {
           toast.error(
             'Invalid LeetCode profile URL. Please provide a valid URL or just the username.',
             {
-              style: {
-                background: '#F44336',
-                color: 'white',
-                borderRadius: '8px',
-                padding: '16px',
-                fontWeight: '600',
-                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-                border: 'none',
-              },
+              style: errorToastStyle,
               duration: 5000,
               closeButton: true,
             }
@@ -142,7 +124,12 @@ export const RequestModal = ({ groupId }: { groupId: string }) => {
             router.refresh()
             toast.dismiss(loadingToastId)
             toast.success(
-              `Awesome! Your request to join Group ${groupId.padStart(2, '0')} has been received. We'll notify you once you're accepted!`
+              `Awesome! Your request to join Group ${groupId.padStart(2, '0')} has been received. We'll notify you once you're accepted!`,
+              {
+                style: successToastStyle,
+                duration: 5000,
+                closeButton: true,
+              }
             )
 
             setFormData({ name: '', username: '', lc_username: '', gh_username: '' })
@@ -154,19 +141,20 @@ export const RequestModal = ({ groupId }: { groupId: string }) => {
           onError: (e) => {
             console.error('Mutation error:', e)
             toast.dismiss(loadingToastId)
-            toast.error(e.message, {
-              style: {
-                background: '#F44336',
-                color: 'white',
-                borderRadius: '8px',
-                padding: '16px',
-                fontWeight: '600',
-                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-                border: 'none',
-              },
-              duration: 5000,
-              closeButton: true,
-            })
+
+            if (e.message.includes('already submitted and waiting for approval')) {
+              toast.info(e.message, {
+                style: infoToastStyle,
+                duration: 5000,
+                closeButton: true,
+              })
+            } else {
+              toast.error(e.message, {
+                style: errorToastStyle,
+                duration: 5000,
+                closeButton: true,
+              })
+            }
           },
         }
       )

@@ -21,7 +21,6 @@ export async function GET(request: Request) {
 
   // Check if this is a new user (first sign-in)
   const { data: userData } = await supabase.auth.getUser()
-  const { data: sessionData } = await supabase.auth.getSession()
   const createdAt = new Date(userData?.user?.created_at || '')
   const currentTime = new Date()
 
@@ -32,11 +31,8 @@ export async function GET(request: Request) {
   if (isNewUser && userData?.user) {
     await sendAdminNotification({
       event: 'NEW_USER_REGISTRATION',
-      userId: userData.user.id,
-      email: userData.user.email || 'No email provided',
-      provider: sessionData?.session?.provider_token ? 'OAuth' : 'Email',
+      email: userData.user.email as string,
       userMetadata: JSON.stringify(userData.user.user_metadata),
-      timestamp: new Date().toISOString(),
     })
   }
 

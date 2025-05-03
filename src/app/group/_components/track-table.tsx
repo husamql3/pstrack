@@ -209,13 +209,15 @@ export const TrackTable = ({
             cell: (info) => {
               const problemSlug = info.row.original.problem.problem_slug
               return (
-                <SubmitCheckbox
-                  info={info}
-                  leetcoder={leetcoder}
-                  groupId={groupId}
-                  problemSlug={problemSlug}
-                  onSuccessfulSubmit={handleSuccessfulSubmit}
-                />
+                <div className="flex items-center">
+                  <SubmitCheckbox
+                    info={info}
+                    leetcoder={leetcoder}
+                    groupId={groupId}
+                    problemSlug={problemSlug}
+                    onSuccessfulSubmit={handleSuccessfulSubmit}
+                  />
+                </div>
               )
             },
           }

@@ -12,6 +12,11 @@ import { useConfettiStore } from '@/stores/confettiStore'
 import { useSubmissionStore } from '@/stores/submissionStore'
 
 import { Checkbox } from '@/app/group/_components/checkbox'
+import {
+  errorToastStyle,
+  loadingToastStyle,
+  successToastStyle,
+} from '@/app/_components/toast-styles'
 
 export const SubmitCheckbox = ({
   info,
@@ -47,8 +52,6 @@ export const SubmitCheckbox = ({
   const { data: user } = api.auth.getUser.useQuery()
   const isCurrUser = user?.id === leetcoder.id
 
-  const { mutate: sendEmail } = api.email.sendEmail.useMutation()
-
   const handleCheckboxChange = debounce(() => {
     // If already checked, do nothing
     if (isChecked) return
@@ -57,16 +60,8 @@ export const SubmitCheckbox = ({
     setIsChecked(true)
 
     // Show loading toast
-    const loadingToastId = toast.loading('Checking, Hold a second', {
-      style: {
-        background: 'white',
-        color: 'black',
-        borderRadius: '8px',
-        padding: '16px',
-        fontWeight: '600',
-        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-        border: 'none',
-      },
+    const loadingToastId = toast.loading('Verifying your solution...', {
+      style: loadingToastStyle,
       closeButton: true,
     })
 
@@ -83,15 +78,7 @@ export const SubmitCheckbox = ({
           // Dismiss loading toast and show success
           toast.dismiss(loadingToastId)
           toast.success('Submission successful!', {
-            style: {
-              background: '#4CAF50',
-              color: 'white',
-              borderRadius: '8px',
-              padding: '16px',
-              fontWeight: '600',
-              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-              border: 'none',
-            },
+            style: successToastStyle,
             closeButton: true,
           })
 
@@ -124,36 +111,14 @@ export const SubmitCheckbox = ({
 
           const errorMsg =
             error.message === 'Problem not solved'
-              ? "This problem hasn't been solved on LeetCode yet. Please submit it there first or try again if you've already solved it."
-              : 'Submission failed'
+              ? 'Problem not found on your LeetCode submissions. Solve it there first or try again.'
+              : 'Submission failed. Please try again.'
 
           toast.error(errorMsg, {
-            style: {
-              background: '#F44336',
-              color: 'white',
-              borderRadius: '8px',
-              padding: '16px',
-              fontWeight: '600',
-              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-              border: 'none',
-            },
+            style: errorToastStyle,
             duration: 5000,
             closeButton: true,
           })
-
-          // Send admin notification about the error
-          try {
-            sendEmail({
-              context: {
-                errorType: 'submitCheckbox',
-                errorMessage: errorMsg,
-                username: leetcoder.lc_username || 'unknown',
-                timestamp: new Date().toISOString(),
-              },
-            })
-          } catch (notificationError) {
-            console.error('Failed to send admin notification:', notificationError)
-          }
 
           // Reset the checked state on error
           setIsChecked(!!submission)
@@ -168,7 +133,7 @@ export const SubmitCheckbox = ({
       checked={isChecked}
       onCheckedChange={handleCheckboxChange}
       disabled={isPending || isChecked || !user || !isCurrUser}
-      className="peer size-4 shrink-0 rounded-sm border border-zinc-200 shadow focus-visible:ring-1 focus-visible:ring-zinc-950 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-zinc-900 data-[state=checked]:text-zinc-50 dark:border-zinc-800 dark:focus-visible:ring-zinc-300 dark:data-[state=checked]:bg-zinc-50 dark:data-[state=checked]:text-zinc-900"
+      className="peer size-4 shrink-0 rounded-sm border border-zinc-200 shadow focus-visible:ring-1 focus-visible:ring-zinc-950 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 dark:border-zinc-400 dark:focus-visible:ring-zinc-300"
     />
   )
 }

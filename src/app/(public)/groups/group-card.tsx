@@ -5,14 +5,13 @@ import Link from 'next/link'
 import { cn } from '@/utils/cn'
 import type { GroupCardProps } from '@/types/groupsPage.type'
 import type { Topic } from '@/types/problems.type'
-import { getTopicColor } from '@/utils/problemsUtils'
+import { MAX_LEETCODERS } from '@/data/constants'
 
 import { Card, CardHeader, CardContent, CardFooter } from '@/ui/card'
 import { ProgressBar } from '../roadmap/_components/progress-bar'
 import { Badge } from '@/ui/badge'
 import { AvatarGroup } from './avatar-group'
 import { RequestModal } from '@/app/group/_components/request-modal'
-import { MAX_LEETCODERS } from '@/data/constants'
 
 export const GroupCard = ({ group, problemsCount }: GroupCardProps) => {
   const avatars = group.leetcoders.map((member) => ({
@@ -22,9 +21,12 @@ export const GroupCard = ({ group, problemsCount }: GroupCardProps) => {
 
   const leetcodersCount = group.leetcoders.length
   const currentProblem = group.group_progress[0]?.roadmap.topic as Topic
-  const progress = group.group_progress[0]?.current_problem
-    ? group.group_progress[0].current_problem / problemsCount
-    : 0
+  const latestGroupProgress = group.group_progress.reduce((latest, current) => {
+    return new Date(current.created_at) > new Date(latest.created_at) ? current : latest
+  }, group.group_progress[0])
+
+  const currentProblemNumber = latestGroupProgress?.current_problem ?? 0
+  const progress = currentProblemNumber ? currentProblemNumber / problemsCount : 0
   const isFull = leetcodersCount >= MAX_LEETCODERS
 
   return (
@@ -46,7 +48,7 @@ export const GroupCard = ({ group, problemsCount }: GroupCardProps) => {
               />
             </Link>
           </div>
-          <Badge className={isFull ? 'bg-amber-600/30 text-amber-200' : ''}>
+          <Badge variant={isFull ? 'secondary' : 'default'}>
             <Users size={12} />
             {leetcodersCount}/{MAX_LEETCODERS} Leetcoders
           </Badge>
@@ -54,18 +56,21 @@ export const GroupCard = ({ group, problemsCount }: GroupCardProps) => {
       </CardHeader>
 
       <CardContent>
-        <div className="space-y-6">
-          <div>
-            <div className="mb-2 text-sm text-zinc-500">Current Topic</div>
-            <div
+        <div className="space-y-3">
+          <div className="flex items-center gap-3">
+            <div className="text-sm text-zinc-300">Current Topic</div>
+            <Badge
+              variant="default"
               className={cn(
-                'inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-sm font-medium',
-                getTopicColor(currentProblem || '')
+                'inline-flex items-center gap-1.5',
+                currentProblem
+                  ? 'bg-blue-600/20 font-medium text-blue-200 ring-1 ring-blue-600/30'
+                  : 'bg-zinc-600/20 text-zinc-400 ring-1 ring-zinc-600/30'
               )}
             >
               <BookIcon size={14} />
               {currentProblem || 'Not started'}
-            </div>
+            </Badge>
           </div>
 
           <div>
@@ -79,7 +84,7 @@ export const GroupCard = ({ group, problemsCount }: GroupCardProps) => {
                   <ProgressBar progress={Math.round(progress * 100)} />
                 </div>
                 <div className="flex justify-end text-xs text-zinc-500">
-                  Problem {group.group_progress[0].current_problem} of {problemsCount}
+                  Problem {currentProblemNumber} of {problemsCount}
                 </div>
               </div>
             ) : (

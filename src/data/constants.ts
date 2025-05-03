@@ -1,4 +1,4 @@
-export const VERSION = '2.0.0'
+export const VERSION = '2.0.9'
 export const VISIBLE_COUNT = 20
 export const PROBLEM_BASE_URL = 'https://leetcode.com/problems'
 export const LEETCODE_GQL_BASE_URL = 'https://leetcode.com/graphql'
@@ -9,3 +9,4 @@ export const UNSOLVED_THRESHOLD = 6
 export const USERNAME = 'husamahmud'
 export const REPO_NAME = 'pstrack'
 export const MAX_LEETCODERS = 35
+export const NOT_STARTED_GROUPS = [6]

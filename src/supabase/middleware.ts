@@ -1,8 +1,7 @@
-import { createServerClient } from '@supabase/ssr'
 import { type NextRequest, NextResponse } from 'next/server'
 
-import { env } from '@/config/env.mjs'
 import { ADMINS_EMAILS, PROTECTED_ROUTES } from '@/data/constants'
+import { createClient } from './server'
 
 export async function updateSession(request: NextRequest) {
   const { pathname } = new URL(request.url)
@@ -13,22 +12,7 @@ export async function updateSession(request: NextRequest) {
     },
   })
 
-  const supabase = createServerClient(
-    env.NEXT_PUBLIC_SUPABASE_URL as string,
-    env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string,
-    {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll()
-        },
-        setAll(cookiesToSet) {
-          for (const { name, value, options } of cookiesToSet) {
-            response.cookies.set(name, value, options)
-          }
-        },
-      },
-    }
-  )
+  const supabase = await createClient()
 
   // Get the current user session
   const {
@@ -39,6 +23,10 @@ export async function updateSession(request: NextRequest) {
   // Redirect to login if accessing /resources without being logged in
   if (pathname.startsWith('/resources') && !user) {
     return NextResponse.redirect(new URL('/login', request.url))
+  }
+  
+  if (user && pathname === '/login') {
+    return NextResponse.redirect(new URL('/', request.url))
   }
 
   // Protect specific routes

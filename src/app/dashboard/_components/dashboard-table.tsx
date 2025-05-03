@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import type { groups, leetcoders } from '@prisma/client'
 import { useQueryState } from 'nuqs'
-import { Search } from 'lucide-react'
+import { Search, Loader2 } from 'lucide-react'
 import { useState, useEffect, useMemo } from 'react'
 import {
   useReactTable,
@@ -17,10 +17,14 @@ import {
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/ui/table'
 import { Button } from '@/ui/button'
 import { Input } from '@/ui/input'
+import { api as trpc } from '@/trpc/react'
+import type { TRPCClientErrorLike } from '@trpc/react-query'
+import type { AppRouter } from '@/server/root'
 import { ActionCell } from '@/app/dashboard/_components/action-cell'
 import { StatusCell } from '@/app/dashboard/_components/status-cell'
 import { GroupFilterHeader } from '@/app/dashboard/_components/group-filter-header'
 import { StatusFilterHeader } from '@/app/dashboard/_components/status-filter-header'
+import { toast } from 'sonner'
 
 // Helper function to truncate email
 const truncateEmail = (email: string | null, maxLength = 25) => {
@@ -42,6 +46,17 @@ export const DashboardTable = ({
   const [emailFilter, setEmailFilter] = useQueryState('leetcoderEmail')
   const [emailSearch, setEmailSearch] = useState(emailFilter || '')
   const [sorting, setSorting] = useState<SortingState>([])
+
+  const utils = trpc.useContext()
+  const changeGroupMutation = trpc.leetcoders.changeGroup.useMutation({
+    onSuccess: () => {
+      utils.leetcoders.getAllLeetcoders.invalidate()
+      toast.success('Group changed successfully.')
+    },
+    onError: (error: TRPCClientErrorLike<AppRouter>) => {
+      toast.error(error.message || 'Failed to change group.')
+    },
+  })
 
   const handleEmailSearch = () => {
     setEmailFilter(emailSearch || null)
@@ -126,6 +141,53 @@ export const DashboardTable = ({
         ),
         cell: (info) => info.getValue() || 'N/A',
       }),
+      columnHelper.display({
+        id: 'changeGroup',
+        header: 'Change Group',
+        cell: ({ row }) => {
+          const userId = row.original.id
+          const currentGroup = row.original.group_no
+
+          return (
+            <div className="flex items-center">
+              {groups.length === 0 ? (
+                <span>No groups available</span>
+              ) : (
+                <>
+                  <select
+                    value={currentGroup?.toString() || ''}
+                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                      const newGroupNo = parseInt(e.target.value, 10)
+                      if (newGroupNo === currentGroup) {
+                        toast.info('User is already in this group.')
+                        return
+                      }
+                      changeGroupMutation.mutate({
+                        userId,
+                        newGroupNo,
+                      })
+                    }}
+                    disabled={changeGroupMutation.isPending}
+                    className="rounded border px-2 py-1"
+                  >
+                    {groups.map((group) => (
+                      <option
+                        key={group.group_no}
+                        value={group.group_no}
+                      >
+                        Group {group.group_no}
+                      </option>
+                    ))}
+                  </select>
+                  {changeGroupMutation.isPending && (
+                    <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+                  )}
+                </>
+              )}
+            </div>
+          )
+        },
+      }),
       columnHelper.accessor('status', {
         header: () => (
           <StatusFilterHeader
@@ -156,7 +218,7 @@ export const DashboardTable = ({
         cell: (info) => <ActionCell row={info.getValue()} />,
       }),
     ],
-    [groups, groupFilter, statusFilter, setGroupFilter, setStatusFilter]
+    [groups, groupFilter, statusFilter, setGroupFilter, setStatusFilter, changeGroupMutation]
   )
 
   // Initialize TanStack Table

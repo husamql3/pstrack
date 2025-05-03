@@ -15,9 +15,8 @@ export async function POST() {
 
     // Notify admin about the error
     await sendAdminNotification({
-      operation: 'cache-invalidation-roadmap',
+      operation: 'CACHE_INVALIDATION_ROADMAP',
       errorMessage: error instanceof Error ? error.message : String(error),
-      timestamp: new Date().toISOString(),
     })
 
     return NextResponse.json({ error: 'Failed to invalidate cache' }, { status: 500 })
