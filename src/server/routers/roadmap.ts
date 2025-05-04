@@ -28,6 +28,9 @@ export const roadmapRouter = createTRPCRouter({
       orderBy: {
         problem_order: 'asc',
       },
+      where: {
+        deleted: false,
+      },
     })
 
     const problemsByTopic = allProblems.reduce(
@@ -50,6 +53,8 @@ export const roadmapRouter = createTRPCRouter({
     return groupedResults
   }),
   count: publicProcedure.query(async () => {
-    return db.roadmap.count()
+    return db.roadmap.count({
+      where: { deleted: false },
+    })
   }),
 })
