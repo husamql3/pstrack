@@ -98,13 +98,12 @@ type UncontrolledParentModeMotionHighlightProps<T extends string> = BaseMotionHi
     children: React.ReactElement | React.ReactElement[]
   }
 
-type UncontrolledChildrenModeMotionHighlightProps<T extends string> =
-  BaseMotionHighlightProps<T> & {
-    mode?: 'children'
-    controlledItems?: false
-    itemsClassName?: string
-    children: React.ReactElement | React.ReactElement[]
-  }
+type UncontrolledChildrenModeMotionHighlightProps<T extends string> = BaseMotionHighlightProps<T> & {
+  mode?: 'children'
+  controlledItems?: false
+  itemsClassName?: string
+  children: React.ReactElement | React.ReactElement[]
+}
 
 type MotionHighlightProps<T extends string> = React.ComponentProps<'div'> &
   (
@@ -198,9 +197,7 @@ function MotionHighlight<T extends string>({ ref, ...props }: MotionHighlightPro
 
     const onScroll = () => {
       if (!activeValue) return
-      const activeEl = container.querySelector<HTMLElement>(
-        `[data-value="${activeValue}"][data-highlight="true"]`
-      )
+      const activeEl = container.querySelector<HTMLElement>(`[data-value="${activeValue}"][data-highlight="true"]`)
       if (activeEl) safeSetBounds(activeEl.getBoundingClientRect())
     }
 
@@ -215,10 +212,7 @@ function MotionHighlight<T extends string>({ ref, ...props }: MotionHighlightPro
           <div
             ref={localRef}
             data-slot="motion-highlight-container"
-            className={cn(
-              'relative',
-              (props as ParentModeMotionHighlightProps)?.containerClassName
-            )}
+            className={cn('relative', (props as ParentModeMotionHighlightProps)?.containerClassName)}
           >
             <AnimatePresence initial={false}>
               {boundsState && (
@@ -378,8 +372,7 @@ function MotionHighlightItem({
     if (mode !== 'parent') return
     let rafId: number
     let previousBounds: Bounds | null = null
-    const shouldUpdateBounds =
-      forceUpdateBounds === true || (contextForceUpdateBounds && forceUpdateBounds !== false)
+    const shouldUpdateBounds = forceUpdateBounds === true || (contextForceUpdateBounds && forceUpdateBounds !== false)
 
     const updateBounds = () => {
       if (!localRef.current) return

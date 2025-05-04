@@ -10,14 +10,12 @@ import { sendAdminNotification } from '@/utils/email/sendAdminNotification'
 import { ADMINS_EMAILS, MAX_LEETCODERS } from '@/data/constants'
 
 export const leetcodersRouter = createTRPCRouter({
-  getLeetcoderById: publicProcedure
-    .input(z.object({ id: z.string().uuid() }))
-    .query(async ({ input }) => {
-      if (!input.id) return null
-      return db.leetcoders.findUnique({
-        where: { id: input.id },
-      })
-    }),
+  getLeetcoderById: publicProcedure.input(z.object({ id: z.string().uuid() })).query(async ({ input }) => {
+    if (!input.id) return null
+    return db.leetcoders.findUnique({
+      where: { id: input.id },
+    })
+  }),
   getAllLeetcoders: publicProcedure.query(async ({ ctx }) => {
     // Only allow access if the user is the admin
     if (ctx.user?.email && !ADMINS_EMAILS.includes(ctx.user.email)) {
@@ -37,15 +35,13 @@ export const leetcodersRouter = createTRPCRouter({
       },
     })
   }),
-  checkLeetcoder: publicProcedure
-    .input(z.object({ id: z.string().uuid() }))
-    .query(async ({ input }) => {
-      if (!input.id) return false
-      const leetcoder = await db.leetcoders.findUnique({
-        where: { id: input.id },
-      })
-      return !!leetcoder
-    }),
+  checkLeetcoder: publicProcedure.input(z.object({ id: z.string().uuid() })).query(async ({ input }) => {
+    if (!input.id) return false
+    const leetcoder = await db.leetcoders.findUnique({
+      where: { id: input.id },
+    })
+    return !!leetcoder
+  }),
   RequestToJoin: publicProcedure
     .input(
       z.object({
@@ -61,8 +57,7 @@ export const leetcodersRouter = createTRPCRouter({
           .string()
           .min(3, { message: 'LeetCode username must be at least 3 characters long' })
           .refine((val) => /^[a-zA-Z0-9_-]+$/.test(val), {
-            message:
-              'LeetCode username must contain only letters, numbers, underscores, and hyphens',
+            message: 'LeetCode username must contain only letters, numbers, underscores, and hyphens',
           }),
         gh_username: z
           .string()
@@ -169,10 +164,7 @@ export const leetcodersRouter = createTRPCRouter({
         return newLeetcoder
       } catch (error) {
         // Check if error is related to duplicate user ID
-        if (
-          error instanceof Error &&
-          error.message.includes('Unique constraint failed on the fields: (`id`)')
-        ) {
+        if (error instanceof Error && error.message.includes('Unique constraint failed on the fields: (`id`)')) {
           await sendAdminNotification({
             event: 'JOIN_REQUEST_ERROR',
             username: ctx?.user?.email || 'Unknown',
@@ -211,25 +203,23 @@ export const leetcodersRouter = createTRPCRouter({
         },
       })
     }),
-  deleteLeetcoder: publicProcedure
-    .input(z.object({ id: z.string().uuid() }))
-    .mutation(async ({ input, ctx }) => {
-      // Only allow access if the user is the admin
-      if (ctx.user?.email && !ADMINS_EMAILS.includes(ctx.user.email)) {
-        await sendAdminNotification({
-          event: 'UNAUTHORIZED_ACCESS',
-          username: ctx.user?.email || 'Unknown',
-          message: 'Unauthorized attempt to delete leetcoder',
-        })
-        throw new TRPCError({
-          code: 'UNAUTHORIZED',
-          message: 'Only admin can access this resource',
-        })
-      }
-      return db.leetcoders.delete({
-        where: { id: input.id },
+  deleteLeetcoder: publicProcedure.input(z.object({ id: z.string().uuid() })).mutation(async ({ input, ctx }) => {
+    // Only allow access if the user is the admin
+    if (ctx.user?.email && !ADMINS_EMAILS.includes(ctx.user.email)) {
+      await sendAdminNotification({
+        event: 'UNAUTHORIZED_ACCESS',
+        username: ctx.user?.email || 'Unknown',
+        message: 'Unauthorized attempt to delete leetcoder',
       })
-    }),
+      throw new TRPCError({
+        code: 'UNAUTHORIZED',
+        message: 'Only admin can access this resource',
+      })
+    }
+    return db.leetcoders.delete({
+      where: { id: input.id },
+    })
+  }),
   changeGroup: publicProcedure
     .input(
       z.object({

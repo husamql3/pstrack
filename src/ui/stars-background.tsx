@@ -12,13 +12,7 @@ interface StarLayerProps {
   className?: string
 }
 
-const StarLayer = ({
-  count = 1000,
-  size = 1,
-  duration = 50,
-  starColor = '#fff',
-  className,
-}: StarLayerProps) => {
+const StarLayer = ({ count = 1000, size = 1, duration = 50, starColor = '#fff', className }: StarLayerProps) => {
   const [boxShadow, setBoxShadow] = useState('')
 
   useEffect(() => {
@@ -64,12 +58,7 @@ interface StarsBackgroundProps {
   speed?: number
 }
 
-export function StarsBackground({
-  children,
-  className,
-  factor = 0.05,
-  speed = 50,
-}: StarsBackgroundProps) {
+export function StarsBackground({ children, className, factor = 0.05, speed = 50 }: StarsBackgroundProps) {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
 
   const handleMouseMove = useCallback(

@@ -11,16 +11,7 @@ import {
   type SpringOptions,
   type UseInViewOptions,
 } from 'motion/react'
-import {
-  useRef,
-  useReducer,
-  useState,
-  useMemo,
-  useEffect,
-  useCallback,
-  useImperativeHandle,
-  Fragment,
-} from 'react'
+import { useRef, useReducer, useState, useMemo, useEffect, useCallback, useImperativeHandle, Fragment } from 'react'
 
 import { cn } from '@/utils/cn'
 import { SlidingNumber } from '@/ui/sliding-number'
@@ -213,8 +204,7 @@ export const GitHubStarsButton = ({
               <motion.div
                 className="absolute inset-0 rounded-full"
                 style={{
-                  background:
-                    'radial-gradient(circle, rgba(255,215,0,0.4) 0%, rgba(255,215,0,0) 70%)',
+                  background: 'radial-gradient(circle, rgba(255,215,0,0.4) 0%, rgba(255,215,0,0) 70%)',
                 }}
                 {...animations.pulse}
               />

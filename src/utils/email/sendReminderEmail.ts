@@ -3,13 +3,7 @@ import fs from 'node:fs/promises'
 
 import { sendEmail } from './sendEmail'
 
-export const sendReminderEmail = async ({
-  group_no,
-  email,
-}: {
-  group_no: string
-  email: string
-}) => {
+export const sendReminderEmail = async ({ group_no, email }: { group_no: string; email: string }) => {
   try {
     const projectRoot = process.cwd()
     const templatePath = path.join(projectRoot, 'public', 'templates', 'leetcoder-reminder.html')

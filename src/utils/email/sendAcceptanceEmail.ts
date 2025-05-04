@@ -17,9 +17,7 @@ export const sendAcceptanceEmail = async ({
     const templatePath = path.join(projectRoot, 'public', 'templates', 'acceptance-email.html')
 
     let htmlContent = await fs.readFile(templatePath, 'utf-8')
-    htmlContent = htmlContent
-      .replace(/{{group_no}}/g, group_no.toString())
-      .replace(/{{username}}/g, username)
+    htmlContent = htmlContent.replace(/{{group_no}}/g, group_no.toString()).replace(/{{username}}/g, username)
 
     await sendEmail({
       to: email,

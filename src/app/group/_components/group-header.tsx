@@ -23,8 +23,7 @@ export const GroupHeader = async ({ groupNo }: { groupNo: string }) => {
           text={
             <>
               <span className="sm:hidden">G</span>
-              <span className="hidden sm:inline">Group</span>{' '}
-              <span>#{groupNo.padStart(2, '0')}</span>
+              <span className="hidden sm:inline">Group</span> <span>#{groupNo.padStart(2, '0')}</span>
             </>
           }
         />

@@ -30,16 +30,7 @@ type FileButtonProps = ComponentProps<'div'> & {
   href?: string
 }
 
-function FileButton({
-  children,
-  className,
-  icons,
-  icon,
-  open,
-  sideComponent,
-  href,
-  ...props
-}: FileButtonProps) {
+function FileButton({ children, className, icons, icon, open, sideComponent, href, ...props }: FileButtonProps) {
   const content = (
     <span className="flex shrink-1 items-center gap-2 truncate [&_svg]:size-4 [&_svg]:shrink-0">
       {icon
@@ -105,15 +96,7 @@ type FilesProps = ComponentProps<'div'> & {
   onOpenChange?: (open: string[]) => void
 }
 
-function Files({
-  children,
-  className,
-  activeClassName,
-  defaultOpen,
-  open,
-  onOpenChange,
-  ...props
-}: FilesProps) {
+function Files({ children, className, activeClassName, defaultOpen, open, onOpenChange, ...props }: FilesProps) {
   return (
     <div
       data-slot="files"
@@ -169,10 +152,7 @@ function FolderTrigger({ children, className, sideComponent, ...props }: FolderT
   )
 }
 
-type FolderProps = Omit<
-  AccordionItemProps,
-  'value' | 'onValueChange' | 'defaultValue' | 'children'
-> & {
+type FolderProps = Omit<AccordionItemProps, 'value' | 'onValueChange' | 'defaultValue' | 'children'> & {
   children?: ReactNode
   name: string
   open?: string[]
@@ -181,16 +161,7 @@ type FolderProps = Omit<
   sideComponent?: ReactNode
 }
 
-function Folder({
-  children,
-  className,
-  name,
-  open,
-  defaultOpen,
-  onOpenChange,
-  sideComponent,
-  ...props
-}: FolderProps) {
+function Folder({ children, className, name, open, defaultOpen, onOpenChange, sideComponent, ...props }: FolderProps) {
   return (
     <AccordionItem
       data-slot="folder"

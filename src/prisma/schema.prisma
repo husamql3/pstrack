@@ -50,6 +50,7 @@ model roadmap {
   problem_slug   String
   topic          String
   difficulty     String           @default("easy")
+  deleted        Boolean          @default(false)
   group_progress group_progress[]
   submissions    submissions[]
 }

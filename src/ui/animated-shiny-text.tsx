@@ -2,11 +2,7 @@ import type { ComponentPropsWithoutRef, CSSProperties, FC } from 'react'
 
 import { cn } from '@/utils/cn'
 
-export const AnimatedShinyText: FC<ComponentPropsWithoutRef<'span'>> = ({
-  children,
-  className,
-  ...props
-}) => {
+export const AnimatedShinyText: FC<ComponentPropsWithoutRef<'span'>> = ({ children, className, ...props }) => {
   return (
     <span
       style={

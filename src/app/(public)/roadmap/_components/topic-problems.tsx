@@ -6,14 +6,7 @@ import type { Difficulty } from '@/types/problems.type'
 import { formatTopic, getDifficultyTextColor } from '@/utils/problemsUtils'
 import { PROBLEM_BASE_URL } from '@/data/constants'
 
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/ui/dialog'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/ui/dialog'
 import { Badge } from '@/ui/badge'
 
 export const TopicProblems = ({ topic, problems }: { topic: string; problems: roadmap[] }) => {
@@ -29,9 +22,7 @@ export const TopicProblems = ({ topic, problems }: { topic: string; problems: ro
 
   return (
     <Dialog>
-      <DialogTrigger className="z-[100] cursor-pointer text-lg font-semibold">
-        {formattedTopic}
-      </DialogTrigger>
+      <DialogTrigger className="z-[100] cursor-pointer text-lg font-semibold">{formattedTopic}</DialogTrigger>
       <DialogContent className="flex flex-col gap-0 p-0 sm:max-h-[min(500px,80vh)] sm:max-w-lg [&>button:last-child]:hidden">
         <div className="overflow-y-auto">
           <DialogHeader className="contents space-y-0 text-left">
@@ -61,10 +52,7 @@ export const TopicProblems = ({ topic, problems }: { topic: string; problems: ro
                         </div>
                         <Badge
                           variant="secondary"
-                          className={cn(
-                            'capitalize',
-                            getDifficultyTextColor(problem.difficulty as Difficulty)
-                          )}
+                          className={cn('capitalize', getDifficultyTextColor(problem.difficulty as Difficulty))}
                         >
                           {problem.difficulty}
                         </Badge>

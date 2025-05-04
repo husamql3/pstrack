@@ -25,10 +25,8 @@ async function testRabbitMQConnection() {
   } finally {
     // Cleanup after a short delay to allow message consumption
     setTimeout(async () => {
-      if (channel)
-        await channel.close().catch((err) => console.error('Failed to close channel:', err))
-      if (connection)
-        await connection.close().catch((err) => console.error('Failed to close connection:', err))
+      if (channel) await channel.close().catch((err) => console.error('Failed to close channel:', err))
+      if (connection) await connection.close().catch((err) => console.error('Failed to close connection:', err))
       process.exit(0)
     }, 2000)
   }
