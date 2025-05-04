@@ -59,12 +59,7 @@ type SlidingNumberDisplayProps = {
   transition: SpringOptions
 }
 
-function SlidingNumberDisplay({
-  motionValue,
-  number,
-  height,
-  transition,
-}: SlidingNumberDisplayProps) {
+function SlidingNumberDisplay({ motionValue, number, height, transition }: SlidingNumberDisplayProps) {
   const y = useTransform(motionValue, (latest) => {
     if (!height) return 0
     const currentNumber = latest % 10
@@ -129,10 +124,7 @@ function SlidingNumber({
 
   const prevNumberRef = React.useRef<number>(0)
 
-  const effectiveNumber = React.useMemo(
-    () => (!isInView ? 0 : Math.abs(Number(number))),
-    [number, isInView]
-  )
+  const effectiveNumber = React.useMemo(() => (!isInView ? 0 : Math.abs(Number(number))), [number, isInView])
 
   const formatNumber = React.useCallback(
     (num: number) => (decimalPlaces != null ? num.toFixed(decimalPlaces) : num.toString()),
@@ -172,9 +164,7 @@ function SlidingNumber({
   const decPlaces = React.useMemo(
     () =>
       newDecStrRaw
-        ? Array.from({ length: newDecStrRaw.length }, (_, i) =>
-            Math.pow(10, newDecStrRaw.length - i - 1)
-          )
+        ? Array.from({ length: newDecStrRaw.length }, (_, i) => Math.pow(10, newDecStrRaw.length - i - 1))
         : [],
     [newDecStrRaw]
   )

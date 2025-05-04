@@ -7,14 +7,7 @@ import { useState } from 'react'
 import { api } from '@/trpc/react'
 
 import { Button } from '@/ui/button'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/ui/dialog'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/ui/dialog'
 import { Textarea } from '@/ui/textarea'
 import { errorToastStyle } from './toast-styles'
 
@@ -72,8 +65,8 @@ export const FeedbackDialog = ({ email }: { email: string }) => {
         <DialogHeader>
           <DialogTitle className="mb-2">Share Your Thoughts</DialogTitle>
           <DialogDescription>
-            We value your input! Help us enhance PSTrack by sharing your experience and suggestions
-            for improvement. You can also{' '}
+            We value your input! Help us enhance PSTrack by sharing your experience and suggestions for improvement. You
+            can also{' '}
             <a
               href="https://github.com/husamahmud/pstrack/issues/new"
               target="_blank"

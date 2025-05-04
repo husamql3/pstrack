@@ -3,12 +3,7 @@ import { NextResponse } from 'next/server'
 
 import { env } from '@/config/env.mjs'
 import { db } from '@/prisma/db'
-import {
-  getUniqueGroupNos,
-  processLeetcoder,
-  getAllLeetcoders,
-  getAllAssignedProblems,
-} from '@/utils/kickoutUtils'
+import { getUniqueGroupNos, processLeetcoder, getAllLeetcoders, getAllAssignedProblems } from '@/utils/kickoutUtils'
 import { UNSOLVED_THRESHOLD } from '@/data/constants'
 import type { LeetcoderWithSubmissions } from '@/types/leetcoders.type'
 
@@ -36,13 +31,7 @@ export async function POST(req: Request) {
       // Process each leetcoder with concurrency limit
       await Promise.all(
         batch.map((leetcoder: LeetcoderWithSubmissions) =>
-          limit(() =>
-            processLeetcoder(
-              leetcoder,
-              roadmapProblems.get(leetcoder.group_no) || [],
-              UNSOLVED_THRESHOLD
-            )
-          )
+          limit(() => processLeetcoder(leetcoder, roadmapProblems.get(leetcoder.group_no) || [], UNSOLVED_THRESHOLD))
         )
       )
 

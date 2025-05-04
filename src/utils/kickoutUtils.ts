@@ -4,9 +4,7 @@ import type { leetcoders } from '@prisma/client'
 import type { LeetcoderWithSubmissions } from '@/types/leetcoders.type'
 
 // Fetch unique group numbers using Prisma query
-export const getUniqueGroupNos = async (
-  leetcoders: LeetcoderWithSubmissions[]
-): Promise<number[]> => {
+export const getUniqueGroupNos = async (leetcoders: LeetcoderWithSubmissions[]): Promise<number[]> => {
   try {
     const groups = await db.leetcoders.findMany({
       where: {
@@ -85,11 +83,7 @@ export const getAllAssignedProblems = async (
             group_no: { in: groupNos },
             // Filter by earliest created_at for each group
             created_at: {
-              gte: new Date(
-                Math.min(
-                  ...groupNos.map((no) => (createdAtByGroup.get(no) || new Date(0)).getTime())
-                )
-              ),
+              gte: new Date(Math.min(...groupNos.map((no) => (createdAtByGroup.get(no) || new Date(0)).getTime()))),
             },
           },
         },

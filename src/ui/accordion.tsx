@@ -161,8 +161,7 @@ function AccordionContent({
             transition={transition}
             style={{
               maskImage: 'linear-gradient(black var(--mask-stop), transparent var(--mask-stop))',
-              WebkitMaskImage:
-                'linear-gradient(black var(--mask-stop), transparent var(--mask-stop))',
+              WebkitMaskImage: 'linear-gradient(black var(--mask-stop), transparent var(--mask-stop))',
             }}
             className="overflow-hidden"
             {...props}

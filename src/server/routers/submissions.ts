@@ -107,9 +107,7 @@ const validateProblemSolved = async (lcUsername: string, problemSlug: string) =>
     const submissions = (data.data?.recentSubmissionList ?? []) as RecentSubmission[]
     console.log('LeetCode response:', JSON.stringify(submissions))
 
-    return submissions.some(
-      (submission) => submission.titleSlug === problemSlug && submission.status === 10
-    )
+    return submissions.some((submission) => submission.titleSlug === problemSlug && submission.status === 10)
   } catch (error) {
     console.error('Error validating daily problem submission:', error)
     return false

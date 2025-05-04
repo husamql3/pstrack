@@ -12,11 +12,7 @@ import { useConfettiStore } from '@/stores/confettiStore'
 import { useSubmissionStore } from '@/stores/submissionStore'
 
 import { Checkbox } from '@/app/group/_components/checkbox'
-import {
-  errorToastStyle,
-  loadingToastStyle,
-  successToastStyle,
-} from '@/app/_components/toast-styles'
+import { errorToastStyle, loadingToastStyle, successToastStyle } from '@/app/_components/toast-styles'
 
 export const SubmitCheckbox = ({
   info,

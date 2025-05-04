@@ -78,10 +78,7 @@ describe('kick-out API route', () => {
       // Assert
       expect(response.status).toBe(401)
       expect(await response.json()).toEqual({ success: false, error: 'UNAUTHORIZED' })
-      expect(NextResponse.json).toHaveBeenCalledWith(
-        { success: false, error: 'UNAUTHORIZED' },
-        { status: 401 }
-      )
+      expect(NextResponse.json).toHaveBeenCalledWith({ success: false, error: 'UNAUTHORIZED' }, { status: 401 })
     })
 
     it('should return 401 if the secret is incorrect', async () => {
@@ -92,10 +89,7 @@ describe('kick-out API route', () => {
       // Assert
       expect(response.status).toBe(401)
       expect(await response.json()).toEqual({ success: false, error: 'UNAUTHORIZED' })
-      expect(NextResponse.json).toHaveBeenCalledWith(
-        { success: false, error: 'UNAUTHORIZED' },
-        { status: 401 }
-      )
+      expect(NextResponse.json).toHaveBeenCalledWith({ success: false, error: 'UNAUTHORIZED' }, { status: 401 })
     })
 
     it('should process leetcoders and return success', async () => {
@@ -183,10 +177,7 @@ describe('kick-out API route', () => {
         },
       ]
 
-      ;(db.leetcoders.findMany as jest.Mock).mockResolvedValueOnce([
-        { group_no: 1 },
-        { group_no: 2 },
-      ])
+      ;(db.leetcoders.findMany as jest.Mock).mockResolvedValueOnce([{ group_no: 1 }, { group_no: 2 }])
 
       // Act
       const result = await getUniqueGroupNos(mockLeetcoders)

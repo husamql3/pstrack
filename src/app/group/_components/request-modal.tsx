@@ -8,12 +8,7 @@ import useMeasure from 'react-use-measure'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 
-import {
-  errorToastStyle,
-  infoToastStyle,
-  loadingToastStyle,
-  successToastStyle,
-} from '@/app/_components/toast-styles'
+import { errorToastStyle, infoToastStyle, loadingToastStyle, successToastStyle } from '@/app/_components/toast-styles'
 import { api } from '@/trpc/react'
 import { cn } from '@/utils/cn'
 
@@ -99,14 +94,11 @@ export const RequestModal = ({ groupId }: { groupId: string }) => {
           lc_username = match[1] // Extract just the username
         } else {
           toast.dismiss(loadingToastId)
-          toast.error(
-            'Invalid LeetCode profile URL. Please provide a valid URL or just the username.',
-            {
-              style: errorToastStyle,
-              duration: 5000,
-              closeButton: true,
-            }
-          )
+          toast.error('Invalid LeetCode profile URL. Please provide a valid URL or just the username.', {
+            style: errorToastStyle,
+            duration: 5000,
+            closeButton: true,
+          })
           return
         }
       }
@@ -172,8 +164,7 @@ export const RequestModal = ({ groupId }: { groupId: string }) => {
     [activeIdx]
   )
 
-  const isSubmitDisabled =
-    isPending || !formData.name || !formData.username || !formData.lc_username
+  const isSubmitDisabled = isPending || !formData.name || !formData.username || !formData.lc_username
 
   return (
     <Dialog

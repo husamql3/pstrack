@@ -56,9 +56,7 @@ export const checkDuplicateUsername = async (
   }
 }
 
-export const checkPendingLeetcoder = async (
-  userId: string
-): Promise<{ isValid: boolean; message: string }> => {
+export const checkPendingLeetcoder = async (userId: string): Promise<{ isValid: boolean; message: string }> => {
   try {
     // Check if user already has a pending application
     const existingApplication = await db.leetcoders.findFirst({

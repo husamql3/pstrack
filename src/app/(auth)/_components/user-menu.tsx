@@ -23,15 +23,7 @@ import {
   DropdownMenuTrigger,
 } from '@/ui/dropdown-menu'
 
-const MenuItem = ({
-  icon,
-  label,
-  onClick,
-}: {
-  icon: React.ReactNode
-  label: string
-  onClick: () => Promise<void>
-}) => (
+const MenuItem = ({ icon, label, onClick }: { icon: React.ReactNode; label: string; onClick: () => Promise<void> }) => (
   <DropdownMenuItem onClick={onClick}>
     {icon}
     <span className="ml-2">{label}</span>

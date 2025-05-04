@@ -20,8 +20,7 @@ export const ProgressBar = ({ progress: initialProgress }: { progress?: number }
   }, [initialProgress])
 
   useEffect(() => {
-    if (progressValue >= 100 && initialProgress === undefined)
-      setTimeout(() => setProgressValue(0), 4000)
+    if (progressValue >= 100 && initialProgress === undefined) setTimeout(() => setProgressValue(0), 4000)
   }, [progressValue, initialProgress])
 
   return (

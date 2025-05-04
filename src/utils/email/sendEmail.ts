@@ -1,15 +1,7 @@
 import { env } from '@/config/env.mjs'
 import { transporter } from '@/config/nodemailer'
 
-export const sendEmail = async ({
-  to,
-  subject,
-  html,
-}: {
-  to: string
-  subject: string
-  html: string
-}) => {
+export const sendEmail = async ({ to, subject, html }: { to: string; subject: string; html: string }) => {
   const mailOptions = {
     from: env.EMAIL_USER,
     to: to,

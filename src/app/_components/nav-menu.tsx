@@ -19,9 +19,7 @@ export const NavMenu = () => {
 
   // Set active tab based on current URL
   useEffect(() => {
-    const currentTab = TABS.find(
-      (tab) => pathname === tab.url || pathname.startsWith(`${tab.url}/`)
-    )
+    const currentTab = TABS.find((tab) => pathname === tab.url || pathname.startsWith(`${tab.url}/`))
 
     if (currentTab) setActiveTab(currentTab.name)
   }, [pathname])

@@ -19,13 +19,7 @@ const getGroupExists = cache(async (groupId: number): Promise<boolean> => {
   return !!group
 })
 
-const Layout = async ({
-  children,
-  params,
-}: {
-  children: React.ReactNode
-  params: Promise<{ groupId: string }>
-}) => {
+const Layout = async ({ children, params }: { children: React.ReactNode; params: Promise<{ groupId: string }> }) => {
   const { groupId } = await params
   const groupNo = Number(groupId)
 

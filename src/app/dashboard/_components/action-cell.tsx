@@ -22,11 +22,7 @@ export const ActionCell = ({ row }: { row: leetcoders }) => {
     onSuccess: (_, variables) => {
       router.refresh()
       const statusText =
-        variables.status === 'APPROVED'
-          ? 'approved'
-          : variables.status === 'SUSPENDED'
-            ? 'suspended'
-            : 'pending'
+        variables.status === 'APPROVED' ? 'approved' : variables.status === 'SUSPENDED' ? 'suspended' : 'pending'
       toast.success(`User status successfully updated to ${statusText}`, { duration: 3000 })
 
       if (variables.status === 'APPROVED') {

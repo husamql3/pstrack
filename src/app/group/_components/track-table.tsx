@@ -3,12 +3,7 @@
 import { useState, useMemo, useCallback, useEffect } from 'react'
 import { MoveDown } from 'lucide-react'
 import type { leetcoders } from '@prisma/client'
-import {
-  createColumnHelper,
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-} from '@tanstack/react-table'
+import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 
 import { PROBLEM_BASE_URL, VISIBLE_COUNT } from '@/data/constants'
 import type { TableRowOutput } from '@/types/tableRow.type'
@@ -18,15 +13,7 @@ import { cn } from '@/utils/cn'
 import { getDifficultyColor, getTopicColor } from '@/utils/problemsUtils'
 import { useSubmissionStore } from '@/stores/submissionStore'
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/ui/table'
+import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@/ui/table'
 import { SubmitCheckbox } from '@/app/group/_components/submit-checkbox'
 import { LeetCoderCard } from '@/app/group/_components/leetcoder-card'
 
@@ -79,9 +66,7 @@ export const TrackTable = ({
         if (keyGroupId === groupId && counts[userId] !== undefined) {
           // Check if this problem's submission isn't already counted from API data
           const alreadyCounted = tableData.some(
-            (row) =>
-              row.problem.id === problemId &&
-              row.userSubmissions.some((sub) => sub.user_id === userId)
+            (row) => row.problem.id === problemId && row.userSubmissions.some((sub) => sub.user_id === userId)
           )
 
           if (!alreadyCounted) {
@@ -146,12 +131,7 @@ export const TrackTable = ({
         cell: (info) => {
           const topic = info.getValue() as Topic
           return (
-            <span
-              className={cn(
-                getTopicColor(topic),
-                'rounded-md px-2 py-0.5 text-sm font-medium whitespace-nowrap'
-              )}
-            >
+            <span className={cn(getTopicColor(topic), 'rounded-md px-2 py-0.5 text-sm font-medium whitespace-nowrap')}>
               {topic}
             </span>
           )
@@ -224,14 +204,7 @@ export const TrackTable = ({
         )
       ),
     ],
-    [
-      sortedLeetcoders,
-      leetcoderSolvedCounts,
-      leetcoders.length,
-      groupId,
-      handleSuccessfulSubmit,
-      submissions,
-    ]
+    [sortedLeetcoders, leetcoderSolvedCounts, leetcoders.length, groupId, handleSuccessfulSubmit, submissions]
   )
 
   const table = useReactTable({
@@ -255,9 +228,7 @@ export const TrackTable = ({
             >
               {headerGroup.headers.map((header) => (
                 <TableHead key={header.id}>
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(header.column.columnDef.header, header.getContext())}
+                  {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                 </TableHead>
               ))}
             </TableRow>

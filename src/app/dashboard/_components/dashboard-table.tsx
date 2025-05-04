@@ -34,13 +34,7 @@ const truncateEmail = (email: string | null, maxLength = 25) => {
 
 const columnHelper = createColumnHelper<leetcoders>()
 
-export const DashboardTable = ({
-  leetcoders,
-  groups,
-}: {
-  leetcoders: leetcoders[]
-  groups: groups[]
-}) => {
+export const DashboardTable = ({ leetcoders, groups }: { leetcoders: leetcoders[]; groups: groups[] }) => {
   const [statusFilter, setStatusFilter] = useQueryState('leetcoderStatus')
   const [groupFilter, setGroupFilter] = useQueryState('groupNo')
   const [emailFilter, setEmailFilter] = useQueryState('leetcoderEmail')
@@ -98,8 +92,7 @@ export const DashboardTable = ({
     return leetcoders.filter((coder) => {
       const statusMatches = !statusFilter || coder.status === statusFilter
       const groupMatches = !groupFilter || coder.group_no?.toString() === groupFilter
-      const emailMatches =
-        !emailFilter || coder.email?.toLowerCase().includes(emailFilter.toLowerCase())
+      const emailMatches = !emailFilter || coder.email?.toLowerCase().includes(emailFilter.toLowerCase())
 
       return statusMatches && groupMatches && emailMatches
     })
@@ -114,9 +107,7 @@ export const DashboardTable = ({
           <div className="flex items-center">
             <div>
               <div className="font-medium">{info.getValue()}</div>
-              <span className="text-muted-foreground mt-0.5 text-xs">
-                @{info.getValue().toLowerCase()}
-              </span>
+              <span className="text-muted-foreground mt-0.5 text-xs">@{info.getValue().toLowerCase()}</span>
             </div>
           </div>
         ),
@@ -127,9 +118,7 @@ export const DashboardTable = ({
       }),
       columnHelper.accessor('email', {
         header: 'Email',
-        cell: (info) => (
-          <span title={info.getValue() || 'N/A'}>{truncateEmail(info.getValue())}</span>
-        ),
+        cell: (info) => <span title={info.getValue() || 'N/A'}>{truncateEmail(info.getValue())}</span>,
       }),
       columnHelper.accessor('group_no', {
         header: () => (
@@ -179,9 +168,7 @@ export const DashboardTable = ({
                       </option>
                     ))}
                   </select>
-                  {changeGroupMutation.isPending && (
-                    <Loader2 className="ml-2 h-4 w-4 animate-spin" />
-                  )}
+                  {changeGroupMutation.isPending && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
                 </>
               )}
             </div>
@@ -299,9 +286,7 @@ export const DashboardTable = ({
                     className={header.column.getCanSort() ? 'cursor-pointer select-none' : ''}
                   >
                     <span className="flex items-center">
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(header.column.columnDef.header, header.getContext())}
+                      {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                       {{
                         asc: '↓',
                         desc: '↑',
@@ -317,9 +302,7 @@ export const DashboardTable = ({
               table.getRowModel().rows.map((row) => (
                 <TableRow key={row.id}>
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </TableCell>
+                    <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
                   ))}
                 </TableRow>
               ))

@@ -58,9 +58,7 @@ export const StatusFilterHeader = ({
           Pending
         </DropdownMenuCheckboxItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => setStatusFilter(null)}>
-          Clear Status Filter
-        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setStatusFilter(null)}>Clear Status Filter</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   </div>
