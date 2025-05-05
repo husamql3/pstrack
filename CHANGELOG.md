@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.1.14]
+add rate limit for emails
+
 ## [2.1.13]
 update roadmap
 
