@@ -7,14 +7,23 @@ export const sendEmail = async ({ to, subject, html }: { to: string; subject: st
     to: to,
     subject: subject,
     text: 'PSTrack 🔥',
+    pool: true,
     html: html,
+    maxConnections: 20,
+    maxMessages: Number.POSITIVE_INFINITY,
+    rateDelta: 1000,
+    rateLimit: 100,
   }
 
   try {
     const info = await transporter.sendMail(mailOptions)
-    console.log('Email sent:', info.response)
+    console.log('Email sent to:', to)
     return info
-  } catch (error) {
-    console.error('Error sending email:', error)
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error('Error sending email to', to, ':', error.stack)
+    } else {
+      console.error('Error sending email to', to, ':', String(error))
+    }
   }
 }

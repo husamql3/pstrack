@@ -6,6 +6,7 @@ import { sendAdminNotification } from '@/utils/email/sendAdminNotification'
 import { fetchApprovedLeetcodersWithProblems } from '@/dao/leetcoder.dao'
 import { env } from '@/config/env.mjs'
 import { sendDailyProblemEmail } from '@/utils/email/sendDailyProblemEmail'
+import { BATCH_SIZE, DELAY_MS } from '@/data/constants'
 
 /**
  * Configuration for the serverless function
@@ -24,7 +25,7 @@ export async function GET(req: NextRequest) {
   // Verify request is authorized with correct secret key
   const secret = req.headers.get('X-Secret-Key')
   if (secret !== env.API_SECRET) {
-    return NextResponse.json({ success: false, error: 'UNAUTHORIZED' })
+    return NextResponse.json({ success: false, error: 'UNAUTHORIZED' }, { status: 401 })
   }
 
   try {
@@ -36,49 +37,56 @@ export async function GET(req: NextRequest) {
     // Fetch approved users and their assigned problems
     const { approvedLeetcoders, groupProblems } = await fetchApprovedLeetcodersWithProblems()
 
-    // Use waitUntil to allow the function to continue processing after response is sent
     waitUntil(
       (async () => {
-        // Iterate through each approved user
-        for (const leetcoder of approvedLeetcoders) {
-          const { email, group } = leetcoder
-          const problem = groupProblems.get(group.group_no)
+        // Process leetcoders in batches
+        for (let i = 0; i < approvedLeetcoders.length; i += BATCH_SIZE) {
+          const batch = approvedLeetcoders.slice(i, i + BATCH_SIZE)
 
-          if (problem) {
-            try {
-              await sendDailyProblemEmail({
-                problem_slug: problem.problem_slug,
-                difficulty: problem.difficulty,
-                topic: problem.topic,
-                group_no: group.group_no.toString(),
-                email,
-              })
+          // Process each leetcoder in the batch
+          for (const leetcoder of batch) {
+            const { email, group } = leetcoder
+            const problem = groupProblems.get(group.group_no)
 
-              totalSuccess++
-            } catch (error) {
-              await sendAdminNotification({
-                event: 'DAILY_PROBLEM_EMAIL_QUEUE_ERROR',
-                message: 'Queueing email in /api/cron/send-daily-problem-email',
-                email: email,
-                error: JSON.stringify(error),
-              })
-              totalFailed++
+            if (problem) {
+              try {
+                await sendDailyProblemEmail({
+                  problem_slug: problem.problem_slug,
+                  difficulty: problem.difficulty,
+                  topic: problem.topic,
+                  group_no: group.group_no.toString(),
+                  email,
+                })
+                totalSuccess++
+              } catch (error) {
+                await sendAdminNotification({
+                  event: 'DAILY_PROBLEM_EMAIL_QUEUE_ERROR',
+                  message: 'Queueing email in /api/cron/send-daily-problem-email',
+                  email: email,
+                  error: JSON.stringify(error),
+                })
+                totalFailed++
+              }
             }
           }
-        }
 
-        // Send admin notification with summary after all emails are processed
-        await sendAdminNotification({
-          event: 'DAILY_PROBLEM_EMAIL_SUMMARY',
-          message: '/api/cron/send-daily-problem-email',
-          summary: JSON.stringify({
-            total: approvedLeetcoders.length,
-            successful: totalSuccess,
-            failed: totalFailed,
-          }),
-        })
+          // Add delay between batches (skip for the last batch)
+          if (i + BATCH_SIZE < approvedLeetcoders.length) {
+            await new Promise((resolve) => setTimeout(resolve, DELAY_MS))
+          }
+        }
       })()
     )
+    // Send admin notification with summary after all emails are processed
+    await sendAdminNotification({
+      event: 'DAILY_PROBLEM_EMAIL_SUMMARY',
+      message: '/api/cron/send-daily-problem-email',
+      summary: JSON.stringify({
+        total: approvedLeetcoders.length,
+        successful: totalSuccess,
+        failed: totalFailed,
+      }),
+    })
 
     return NextResponse.json({
       success: true,
@@ -97,7 +105,7 @@ export async function GET(req: NextRequest) {
       message: 'Error in /api/cron/send-daily-problem-email',
     })
 
-    return NextResponse.json({ success: false, error: 'INTERNAL_SERVER_ERROR' })
+    return NextResponse.json({ success: false, error: 'INTERNAL_SERVER_ERROR' }, { status: 500 })
   } finally {
     await db.$disconnect()
   }
