@@ -22,6 +22,7 @@ export const NavMenu = () => {
     const currentTab = TABS.find((tab) => pathname === tab.url || pathname.startsWith(`${tab.url}/`))
 
     if (currentTab) setActiveTab(currentTab.name)
+    else setActiveTab('') // Clear active tab if not matching any tab in TABS
   }, [pathname])
 
   return (
