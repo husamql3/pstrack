@@ -8,6 +8,7 @@ import { checkGHUsername, checkLCUsername } from '@/utils/checkLeetcoder'
 import { checkDuplicateUsername, checkPendingLeetcoder } from '@/dao/leetcoder.dao'
 import { sendAdminNotification } from '@/utils/email/sendAdminNotification'
 import { ADMINS_EMAILS, MAX_LEETCODERS } from '@/data/constants'
+import { sendRequestReceivedEmail } from '@/utils/email/sendRequestReceived'
 
 export const leetcodersRouter = createTRPCRouter({
   getLeetcoderById: publicProcedure.input(z.object({ id: z.string().uuid() })).query(async ({ input }) => {
@@ -149,17 +150,23 @@ export const leetcodersRouter = createTRPCRouter({
           },
         })
 
-        // Send notification to admin about new join request
-        await sendAdminNotification({
-          event: 'NEW_JOIN_REQUEST',
-          groupNo: input.group_no.toString(),
-          username: input.username,
-          name: input.name,
-          email: ctx?.user?.email as string,
-          leetcodeUsername: input.lc_username,
-          githubUsername: input.gh_username || 'Not provided',
-          timestamp: new Date().toISOString(),
-        })
+        await Promise.all([
+          // Send notification to admin about new join request
+          sendAdminNotification({
+            event: 'NEW_JOIN_REQUEST',
+            groupNo: input.group_no.toString(),
+            username: input.username,
+            name: input.name,
+            email: ctx?.user?.email as string,
+            leetcodeUsername: input.lc_username,
+            githubUsername: input.gh_username || 'Not provided',
+            timestamp: new Date().toISOString(),
+          }),
+          // Send notification to user about new join request
+          sendRequestReceivedEmail({
+            email: ctx?.user?.email as string,
+          }),
+        ])
 
         return newLeetcoder
       } catch (error) {
