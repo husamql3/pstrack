@@ -1,16 +1,10 @@
-import pLimit from 'p-limit'
 import { NextResponse } from 'next/server'
 
 import { env } from '@/config/env.mjs'
 import { db } from '@/prisma/db'
 import { getUniqueGroupNos, processLeetcoder, getAllLeetcoders, getAllAssignedProblems } from '@/utils/kickoutUtils'
-import { UNSOLVED_THRESHOLD } from '@/data/constants'
+import { BATCH_SIZE, DELAY_MS, LIMIT, UNSOLVED_THRESHOLD } from '@/data/constants'
 import type { LeetcoderWithSubmissions } from '@/types/leetcoders.type'
-
-// Configure throttling and rate limiting
-const batchSize = 20 // Process 20 leetcoders per batch
-const delayMs = 1000 // 1-second delay between batches
-const limit = pLimit(5) // Limit to 5 concurrent operations
 
 export async function POST(req: Request) {
   // Verify the request
@@ -25,19 +19,19 @@ export async function POST(req: Request) {
     const roadmapProblems = await getAllAssignedProblems(groupNos, neglectedLeetcoders)
 
     // Process leetcoders in batches
-    for (let i = 0; i < neglectedLeetcoders.length; i += batchSize) {
-      const batch = neglectedLeetcoders.slice(i, i + batchSize)
+    for (let i = 0; i < neglectedLeetcoders.length; i += BATCH_SIZE) {
+      const batch = neglectedLeetcoders.slice(i, i + BATCH_SIZE)
 
       // Process each leetcoder with concurrency limit
       await Promise.all(
         batch.map((leetcoder: LeetcoderWithSubmissions) =>
-          limit(() => processLeetcoder(leetcoder, roadmapProblems.get(leetcoder.group_no) || [], UNSOLVED_THRESHOLD))
+          LIMIT(() => processLeetcoder(leetcoder, roadmapProblems.get(leetcoder.group_no) || [], UNSOLVED_THRESHOLD))
         )
       )
 
       // Add delay between batches (skip for the last batch)
-      if (i + batchSize < neglectedLeetcoders.length) {
-        await new Promise((resolve) => setTimeout(resolve, delayMs))
+      if (i + BATCH_SIZE < neglectedLeetcoders.length) {
+        await new Promise((resolve) => setTimeout(resolve, DELAY_MS))
       }
     }
 

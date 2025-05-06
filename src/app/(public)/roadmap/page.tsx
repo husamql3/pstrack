@@ -2,7 +2,7 @@ import { HiCursorArrowRays } from 'react-icons/hi2'
 
 import { api } from '@/trpc/server'
 
-import { Roadmap, type RoadmapType } from '@/app/(public)/roadmap/_components/roadmap'
+import { type RoadmapType } from '@/app/(public)/roadmap/_components/roadmap'
 
 const Page = async () => {
   const roadmapData: RoadmapType[] = await api.roadmap.getRoadmap()
