@@ -68,6 +68,6 @@ export const formatTopic = (topic: string): string => {
     .trim()
     .replace(/-/g, ' ')
     .split(' ')
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .map((word) => word.charAt(0) + word.slice(1))
     .join(' ')
 }
