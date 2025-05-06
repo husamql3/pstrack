@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.2.15]
+use neetcode 250 roadmap
+
 ## [2.1.15]
 update nodemailer config
 

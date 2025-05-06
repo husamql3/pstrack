@@ -15,7 +15,7 @@ export const TopicProblems = ({ topic, problems }: { topic: string; problems: ro
     return problems.map((problem) => ({
       ...problem,
       key: `problem-${problem.id}`,
-      difficultyClass: cn('capitalize', getDifficultyTextColor(problem.difficulty as Difficulty)),
+      difficultyClass: cn('', getDifficultyTextColor(problem.difficulty as Difficulty)),
       problemUrl: `${PROBLEM_BASE_URL}/${problem.problem_slug}`,
     }))
   }, [problems])
@@ -26,7 +26,7 @@ export const TopicProblems = ({ topic, problems }: { topic: string; problems: ro
       <DialogContent className="flex flex-col gap-0 p-0 sm:max-h-[min(500px,80vh)] sm:max-w-lg [&>button:last-child]:hidden">
         <div className="overflow-y-auto">
           <DialogHeader className="contents space-y-0 text-left">
-            <DialogTitle className="border-b px-6 py-4">{formattedTopic} Problems</DialogTitle>
+            <DialogTitle className="border-b px-6 py-4 capitalize">{formattedTopic} Problems</DialogTitle>
             <DialogDescription asChild>
               <div className="p-0">
                 <ul className="divide-y">
@@ -52,7 +52,7 @@ export const TopicProblems = ({ topic, problems }: { topic: string; problems: ro
                         </div>
                         <Badge
                           variant="secondary"
-                          className={cn('capitalize', getDifficultyTextColor(problem.difficulty as Difficulty))}
+                          className={cn('', getDifficultyTextColor(problem.difficulty as Difficulty))}
                         >
                           {problem.difficulty}
                         </Badge>

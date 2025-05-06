@@ -32,6 +32,7 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
       </Header>
 
       {children}
+
       {user && <FeedbackDialog email={user.email as string} />}
       <Footer />
     </div>

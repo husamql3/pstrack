@@ -81,7 +81,6 @@ export const GitHubStarsButton = ({
   inViewOnce = true,
   inViewMargin = '0px',
   className,
-  initialStars = 0, // Default to 0 if not provided
   ...props
 }: GitHubStarsButtonProps) => {
   const motionVal = useMotionValue(0)
@@ -89,7 +88,7 @@ export const GitHubStarsButton = ({
   const motionNumberRef = useRef(0)
   const isCompletedRef = useRef(false)
   const [, forceRender] = useReducer((x) => x + 1, 0)
-  const [stars, setStars] = useState(initialStars) // Initialize with server-provided value
+  const [stars, setStars] = useState(0)
   const [isCompleted, setIsCompleted] = useState(false)
   const [displayParticles, setDisplayParticles] = useState(false)
 
