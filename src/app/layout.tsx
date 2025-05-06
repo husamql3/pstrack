@@ -1,11 +1,11 @@
+import { GoogleAnalytics } from '@next/third-parties/google'
+import { NuqsAdapter } from 'nuqs/adapters/next/app'
 import { Geist } from 'next/font/google'
 import { Toaster } from 'sonner'
-import { NuqsAdapter } from 'nuqs/adapters/next/app'
-import { GoogleAnalytics } from '@next/third-parties/google'
 
 import { TRPCReactProvider } from '@/trpc/react'
-import { cn } from '@/utils/cn'
 import { siteMetaData } from '@/data/metadata'
+import { cn } from '@/utils/cn'
 import './globals.css'
 
 const geist = Geist({

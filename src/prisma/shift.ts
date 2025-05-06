@@ -13,9 +13,7 @@ async function main() {
   const newRoadmap = JSON.parse(fs.readFileSync(path.join(__dirname, 'roadmap.json'), 'utf-8'))
   await db.$transaction([
     db.roadmap.updateMany({
-      data: {
-        deleted: true,
-      },
+      data: {},
       where: {
         problem_order: {
           gte: 200, // todo

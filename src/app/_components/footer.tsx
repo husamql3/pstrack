@@ -1,7 +1,6 @@
 import { Star } from 'lucide-react'
 import { Suspense } from 'react'
 
-import { redis } from '@/config/redis'
 import { USERNAME, REPO_NAME } from '@/data/constants'
 
 import { GitHubStarsButton } from '@/ui/github-stars'
@@ -19,28 +18,6 @@ const GitHubStarsSkeleton = () => (
 )
 
 export const Footer = async () => {
-  const githubStarsCacheKey = `github:stars:${USERNAME}:${REPO_NAME}`
-  let starsCount: number
-  const githubStarsCached = (await redis.get(githubStarsCacheKey)) as number | null
-
-  if (githubStarsCached) {
-    console.log('##### Using cached GitHub stars data')
-    starsCount = githubStarsCached
-  } else {
-    console.log('GitHub stars cache miss, fetching from API')
-    try {
-      const response = await fetch(`https://api.github.com/repos/${USERNAME}/${REPO_NAME}`)
-      const data = await response.json()
-      if (data && typeof data.stargazers_count === 'number') {
-        starsCount = data.stargazers_count
-        console.log('Caching GitHub stars data for one day')
-        await redis.set(githubStarsCacheKey, starsCount, { ex: 86400 }) // cache for one day
-      }
-    } catch (error) {
-      console.error('Error fetching GitHub stars:', error)
-    }
-  }
-
   return (
     <footer className="hidden w-full py-4 sm:block">
       <div className="mx-auto flex max-w-5xl items-center justify-center gap-3 px-4 text-center text-white">
