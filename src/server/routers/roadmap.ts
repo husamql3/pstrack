@@ -32,7 +32,7 @@ export const roadmapRouter = createTRPCRouter({
    */
   getRoadmap: publicProcedure.query(async () => {
     const cacheKey = 'roadmap:data'
-    const cachedData = (await redis.get('cacheKey')) as RoadmapType[] | null
+    const cachedData = (await redis.get(cacheKey)) as RoadmapType[] | null
     if (cachedData) {
       console.log('# roadmap data cached')
       return cachedData
