@@ -94,7 +94,7 @@ export const UserMenu = ({ user }: { user: User }) => {
           />
         )}
 
-        {isMember && (
+        {!isMember && (
           <MenuItem
             icon={
               <FaUserGroup
