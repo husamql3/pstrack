@@ -3,7 +3,7 @@ import pLimit from 'p-limit'
 /**
  * App version
  */
-export const VERSION = '2.1.14'
+export const VERSION = '2.1.15'
 
 /**
  * Repository information
@@ -40,7 +40,9 @@ export const PROTECTED_ROUTES = ['/dashboard', '/profile']
 export const UNSOLVED_THRESHOLD = 6
 export const MAX_LEETCODERS = 35
 
-// API request configuration
+/**
+ * API request configuration
+ */
 export const BATCH_SIZE = 20
-export const DELAY_MS = 1000
+export const DELAY_MS = 5000
 export const LIMIT = pLimit(5)

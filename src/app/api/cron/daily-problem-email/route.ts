@@ -2,11 +2,11 @@ import { type NextRequest, NextResponse } from 'next/server'
 import { waitUntil } from '@vercel/functions'
 
 import { db } from '@/prisma/db'
-import { sendAdminNotification } from '@/utils/email/sendAdminNotification'
-import { fetchApprovedLeetcodersWithProblems } from '@/dao/leetcoder.dao'
 import { env } from '@/config/env.mjs'
-import { sendDailyProblemEmail } from '@/utils/email/sendDailyProblemEmail'
 import { BATCH_SIZE, DELAY_MS } from '@/data/constants'
+import { fetchApprovedLeetcodersWithProblems } from '@/dao/leetcoder.dao'
+import { sendAdminNotification } from '@/utils/email/sendAdminNotification'
+import { sendDailyProblemEmail } from '@/utils/email/sendDailyProblemEmail'
 
 /**
  * Configuration for the serverless function
@@ -60,8 +60,7 @@ export async function GET(req: NextRequest) {
                 totalSuccess++
               } catch (error) {
                 await sendAdminNotification({
-                  event: 'DAILY_PROBLEM_EMAIL_QUEUE_ERROR',
-                  message: 'Queueing email in /api/cron/send-daily-problem-email',
+                  event: 'DAILY_PROBLEM_EMAIL',
                   email: email,
                   error: JSON.stringify(error),
                 })

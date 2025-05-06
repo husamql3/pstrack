@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.1.15]
+update nodemailer config
+
 ## [2.1.14]
 add rate limit for emails
 
