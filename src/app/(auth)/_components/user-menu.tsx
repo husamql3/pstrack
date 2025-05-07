@@ -2,7 +2,7 @@
 
 import { FaUserGroup } from 'react-icons/fa6'
 import { IoExitOutline } from 'react-icons/io5'
-import { FaUserShield } from 'react-icons/fa'
+import { FaUser, FaUserShield } from 'react-icons/fa'
 import type { User } from '@supabase/supabase-js'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
@@ -59,6 +59,10 @@ export const UserMenu = ({ user }: { user: User }) => {
     router.push('/dashboard')
   }
 
+  const navigateToProfile = async () => {
+    router.push('/profile')
+  }
+
   const navigateToGroup = async () => {
     if (leetcoder?.group_no) {
       router.push(`/group/${leetcoder.group_no}`)
@@ -93,6 +97,17 @@ export const UserMenu = ({ user }: { user: User }) => {
               }
               label="My Group"
               onClick={navigateToGroup}
+            />
+
+            <MenuItem
+              icon={
+                <FaUser
+                  size={16}
+                  className="opacity-60"
+                />
+              }
+              label="Profile"
+              onClick={navigateToProfile}
             />
           </>
         )}
