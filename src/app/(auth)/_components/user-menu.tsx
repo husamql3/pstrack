@@ -44,7 +44,7 @@ export const UserMenu = ({ user }: { user: User }) => {
   const router = useRouter()
   const { data: leetcoder } = api.leetcoders.getLeetcoderById.useQuery({ id: user.id })
   const isAdmin = leetcoder?.email === AUTHOR_EMAIL
-  const isMember = leetcoder?.group_no !== null
+  const isMember = leetcoder?.status === 'APPROVED' || leetcoder?.status === 'PENDING'
 
   const handleLogout = async () => {
     const { error } = await signOut()
@@ -79,7 +79,23 @@ export const UserMenu = ({ user }: { user: User }) => {
         <DropdownMenuLabel className="flex min-w-0 flex-col">
           <span className="text-muted-foreground truncate text-xs font-normal">{user?.email}</span>
         </DropdownMenuLabel>
-        <DropdownMenuSeparator />
+
+        {isMember && (
+          <>
+            <DropdownMenuSeparator />
+
+            <MenuItem
+              icon={
+                <FaUserGroup
+                  size={16}
+                  className="opacity-60"
+                />
+              }
+              label="My Group"
+              onClick={navigateToGroup}
+            />
+          </>
+        )}
 
         {isAdmin && (
           <MenuItem
@@ -91,19 +107,6 @@ export const UserMenu = ({ user }: { user: User }) => {
             }
             label="Dashboard"
             onClick={navigateToDashboard}
-          />
-        )}
-
-        {!isMember && (
-          <MenuItem
-            icon={
-              <FaUserGroup
-                size={16}
-                className="opacity-60"
-              />
-            }
-            label="My Group"
-            onClick={navigateToGroup}
           />
         )}
 

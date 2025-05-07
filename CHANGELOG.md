@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.2.17]
+fix show my group button
+
 ## [2.2.16]
 remove cached data
 
