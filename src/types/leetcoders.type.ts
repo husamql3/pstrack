@@ -1,4 +1,4 @@
-import type { submissions } from '@prisma/client'
+import type { submissions, leetcoders, groups, roadmap } from '@prisma/client'
 
 export type LeetcoderWithSubmissions = {
   id: string
@@ -8,3 +8,9 @@ export type LeetcoderWithSubmissions = {
   is_notified: boolean
   submissions: Pick<submissions, 'problem_id'>[]
 }
+
+// Definition for LeetcoderWithProblem
+export type LeetcoderWithProblem = leetcoders & {
+  group: groups;
+  problemDetails: Pick<roadmap, 'problem_slug' | 'difficulty' | 'topic'>;
+};
