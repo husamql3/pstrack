@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.2.16]
+remove cached data
+
 ## [2.2.15]
 use neetcode 250 roadmap
 
