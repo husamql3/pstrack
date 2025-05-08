@@ -2,8 +2,6 @@ import { z } from 'zod'
 
 import { createTRPCRouter, publicProcedure } from '@/server/trpc'
 import { db } from '@/prisma/db'
-import { TRPCError } from '@trpc/server'
-import { ADMINS_EMAILS } from '@/data/constants'
 
 export const groupsRouter = createTRPCRouter({
   getAllGroupsNo: publicProcedure.query(() => {
