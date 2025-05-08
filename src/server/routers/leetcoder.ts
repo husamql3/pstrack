@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { TRPCError } from '@trpc/server'
-import { LeetcodeStatus } from '@prisma/client'
+import { leetcoders, LeetcodeStatus } from '@prisma/client'
 
 import { db } from '@/prisma/db'
 import { createTRPCRouter, publicProcedure } from '@/server/trpc'
@@ -9,6 +9,7 @@ import { checkDuplicateUsername, checkPendingLeetcoder } from '@/dao/leetcoder.d
 import { sendAdminNotification } from '@/utils/email/sendAdminNotification'
 import { ADMINS_EMAILS, MAX_LEETCODERS } from '@/data/constants'
 import { sendRequestReceivedEmail } from '@/utils/email/sendRequestReceived'
+import { updateLeetcoderSchema } from '@/types/leetcoders.type'
 
 export const leetcodersRouter = createTRPCRouter({
   getLeetcoderById: publicProcedure.input(z.object({ id: z.string().uuid() })).query(async ({ input }) => {
@@ -55,17 +56,10 @@ export const leetcodersRouter = createTRPCRouter({
             message: 'Username cannot contain spaces',
           }),
         lc_username: z
-          .string()
-          .min(3, { message: 'LeetCode username must be at least 3 characters long' })
-          .refine((val) => /^[a-zA-Z0-9_-]+$/.test(val), {
-            message: 'LeetCode username must contain only letters, numbers, underscores, and hyphens',
-          }),
+          .string(),
         gh_username: z
           .string()
-          .optional()
-          .refine((val) => val === undefined || val === '' || /^[a-zA-Z0-9_-]+$/.test(val), {
-            message: 'GitHub username must contain only letters, numbers, underscores, and hyphens',
-          }),
+          .optional(),
         group_no: z.string().transform((val) => Number(val)),
       })
     )
@@ -304,12 +298,71 @@ export const leetcodersRouter = createTRPCRouter({
             data: { group_no: newGroupNo },
           })
         })
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      } catch (_error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to change group. Please try again later.',
         })
       }
     }),
+
+  update: publicProcedure.input(updateLeetcoderSchema).mutation(async ({ input, ctx }) => {
+    if (!ctx.user?.id || ctx.user.id !== input.id) {
+      throw new TRPCError({
+        code: 'UNAUTHORIZED',
+        message: 'You can only update your own profile',
+      })
+    }
+
+    // Get the current leetcoder data
+    const currentLeetcoder = await db.leetcoders.findUnique({
+      where: { id: input.id },
+    }) as leetcoders
+
+    // Check if GitHub username has changed and validate if needed
+    if (input.gh_username && input.gh_username !== currentLeetcoder.gh_username) {
+      const existingGhUser = await db.leetcoders.findFirst({
+        where: {
+          gh_username: input.gh_username,
+          id: { not: input.id },
+        },
+      })
+      if (existingGhUser) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'This GitHub username is already registered by another user',
+        })
+      }
+
+      // Validate GitHub username exists
+      const isGhValid = await checkGHUsername(input.gh_username)
+      if (!isGhValid) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'The GitHub username looks invalid. Could you verify it?',
+        })
+      }
+    }
+
+    // Prepare update data
+    const updateData = {
+      gh_username: input.gh_username,
+      x_username: input.x_username,
+      li_username: input.li_username,
+      website: input.website,
+      is_visible: input.is_visible,
+    }
+
+    try {
+      return await db.leetcoders.update({
+        where: { id: input.id },
+        data: updateData,
+      })
+    } catch (error) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Failed to update profile. Please try again later.',
+      })
+    }
+  })
 })

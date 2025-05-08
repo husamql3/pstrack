@@ -13,8 +13,6 @@ const Page = async () => {
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-1 flex-col px-3 py-10">
       <div className="z-10 mx-auto w-full max-w-md space-y-8">
-        <h1 className="mb-5 text-2xl font-bold">Hi, {leetcoder.name}</h1>
-
         <UserForm
           leetcoder={leetcoder}
           groups={groups}
