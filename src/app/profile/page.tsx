@@ -1,4 +1,3 @@
-import { notFound } from 'next/navigation'
 import type { groups } from '@prisma/client'
 
 import { api } from '@/trpc/server'
