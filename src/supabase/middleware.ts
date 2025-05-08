@@ -2,7 +2,6 @@ import { type NextRequest, NextResponse } from 'next/server'
 
 import { ADMINS_EMAILS, PROTECTED_ROUTES } from '@/data/constants'
 import { createClient } from './server'
-import { getLeetcoderById } from '@/dao/leetcoder.dao'
 
 export async function updateSession(request: NextRequest) {
   const { pathname } = new URL(request.url)
