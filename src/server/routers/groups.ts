@@ -40,7 +40,7 @@ export const groupsRouter = createTRPCRouter({
         },
       })
     }),
-  getAllGroups: publicProcedure.query(async ({ ctx }) => {
+  getAllGroups: publicProcedure.query(async () => {
     return db.groups.findMany()
   }),
   getAllGroupsInfo: publicProcedure.query(() => {
