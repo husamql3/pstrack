@@ -35,8 +35,8 @@ export const LeetCoderCard = ({ leetcoder }: { leetcoder: leetcodersType }) => {
               <AvatarFallback>{memoizedLeetcoder.name.charAt(0)}</AvatarFallback>
             </Avatar>
             <div className="overflow-hidden">
-              <h4 className="font-semibold truncate">{memoizedLeetcoder.name}</h4>
-              <p className="text-muted-foreground text-sm truncate">@{memoizedLeetcoder.lc_username}</p>
+              <h4 className="truncate font-semibold">{memoizedLeetcoder.name}</h4>
+              <p className="text-muted-foreground truncate text-sm">@{memoizedLeetcoder.lc_username}</p>
             </div>
           </div>
 
@@ -67,7 +67,7 @@ export const LeetCoderCard = ({ leetcoder }: { leetcoder: leetcodersType }) => {
                 })}
               </span>
             </div>
-            
+
             {isVisible && (
               <div className="flex space-x-2">
                 {memoizedLeetcoder.gh_username && (
@@ -77,7 +77,10 @@ export const LeetCoderCard = ({ leetcoder }: { leetcoder: leetcodersType }) => {
                     rel="noopener noreferrer"
                     className="text-muted-foreground hover:text-foreground transition-colors"
                   >
-                    <LuGithub size={16} strokeWidth={2} />
+                    <LuGithub
+                      size={16}
+                      strokeWidth={2}
+                    />
                   </a>
                 )}
                 {memoizedLeetcoder.x_username && (
@@ -87,7 +90,10 @@ export const LeetCoderCard = ({ leetcoder }: { leetcoder: leetcodersType }) => {
                     rel="noopener noreferrer"
                     className="text-muted-foreground hover:text-foreground transition-colors"
                   >
-                    <FaXTwitter size={16} strokeWidth={2} />
+                    <FaXTwitter
+                      size={16}
+                      strokeWidth={2}
+                    />
                   </a>
                 )}
                 {memoizedLeetcoder.li_username && (
@@ -97,7 +103,10 @@ export const LeetCoderCard = ({ leetcoder }: { leetcoder: leetcodersType }) => {
                     rel="noopener noreferrer"
                     className="text-muted-foreground hover:text-foreground transition-colors"
                   >
-                    <FaLinkedin size={16} strokeWidth={2} />
+                    <FaLinkedin
+                      size={16}
+                      strokeWidth={2}
+                    />
                   </a>
                 )}
                 {memoizedLeetcoder.website && (
@@ -107,7 +116,10 @@ export const LeetCoderCard = ({ leetcoder }: { leetcoder: leetcodersType }) => {
                     rel="noopener noreferrer"
                     className="text-muted-foreground hover:text-foreground transition-colors"
                   >
-                    <Globe size={16} strokeWidth={2} />
+                    <Globe
+                      size={16}
+                      strokeWidth={2}
+                    />
                   </a>
                 )}
               </div>

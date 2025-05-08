@@ -7,7 +7,7 @@ import { AuthLeetcoder } from '@/server/routers/auth'
 import { UserForm } from './_components/user-form'
 
 const Page = async () => {
-  const user = await api.auth.getUser() as AuthLeetcoder
+  const user = (await api.auth.getUser()) as AuthLeetcoder
   if (!user.leetcoder) return notFound()
 
   const groups = (await api.groups.getAllGroups()) as groups[]

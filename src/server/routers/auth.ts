@@ -23,7 +23,7 @@ export const authRouter = createTRPCRouter({
 
     // Get the associated leetcoder profile
     const leetcoder = await getLeetcoderById(session.user.id)
-    
+
     // Always return AuthLeetcoder type with consistent structure
     // If there's no leetcoder profile, leetcoder will be null
     return {

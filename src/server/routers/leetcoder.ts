@@ -55,11 +55,8 @@ export const leetcodersRouter = createTRPCRouter({
           .refine((val) => !val.includes(' '), {
             message: 'Username cannot contain spaces',
           }),
-        lc_username: z
-          .string(),
-        gh_username: z
-          .string()
-          .optional(),
+        lc_username: z.string(),
+        gh_username: z.string().optional(),
         group_no: z.string().transform((val) => Number(val)),
       })
     )
@@ -354,7 +351,7 @@ export const leetcodersRouter = createTRPCRouter({
         data: updateData,
       })
     } catch (error) {
-      console.log("update", error)
+      console.log('update', error)
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
         message: 'Failed to update profile. Please try again later.',
@@ -363,10 +360,12 @@ export const leetcodersRouter = createTRPCRouter({
   }),
 
   updateAvatar: publicProcedure
-    .input(z.object({
-      id: z.string().uuid(),
-      avatarUrl: z.string().url()
-    }))
+    .input(
+      z.object({
+        id: z.string().uuid(),
+        avatarUrl: z.string().url(),
+      })
+    )
     .mutation(async ({ input }) => {
       if (!input.id) {
         throw new TRPCError({
@@ -378,19 +377,19 @@ export const leetcodersRouter = createTRPCRouter({
       try {
         const updated = await db.leetcoders.update({
           where: {
-            id: input.id
+            id: input.id,
           },
           data: {
-            avatar: input.avatarUrl
+            avatar: input.avatarUrl,
           },
         })
         return updated
       } catch (error) {
-        console.log("updateAvatar", error)
+        console.log('updateAvatar', error)
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to update avatar. Please try again later.',
         })
       }
-    })
+    }),
 })

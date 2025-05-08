@@ -27,7 +27,7 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
             v{VERSION}
           </span>
         </div>
-        
+
         <NavMenu />
         <UserAuth user={user} />
       </Header>

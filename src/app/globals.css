@@ -1,6 +1,6 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
-@import "uploadthing/tw/v4";
+@import 'uploadthing/tw/v4';
 @source "../../node_modules/@uploadthing/react/dist";
 
 @custom-variant dark (&:is(.dark *));
@@ -46,7 +46,6 @@
   --animate-shiny-text: shiny-text 8s infinite;
 
   @keyframes shiny-text {
-
     0%,
     90%,
     100% {

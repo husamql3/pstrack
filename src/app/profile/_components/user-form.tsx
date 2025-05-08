@@ -1,4 +1,4 @@
-"use client"
+'use client'
 
 import type { leetcoders, groups } from '@prisma/client'
 import { useForm } from 'react-hook-form'
@@ -25,7 +25,7 @@ export const UserForm = ({ leetcoder, groups }: { leetcoder: leetcoders; groups:
     },
     onError: (error) => {
       toast.error(error.message || 'Failed to update profile', { style: errorToastStyle })
-    }
+    },
   })
 
   const { mutate: changeGroup, isPending: isUpdatingGroup } = api.leetcoders.changeGroup.useMutation({
@@ -34,7 +34,7 @@ export const UserForm = ({ leetcoder, groups }: { leetcoder: leetcoders; groups:
     },
     onError: (error) => {
       toast.error(error.message || 'Failed to change group', { style: errorToastStyle })
-    }
+    },
   })
 
   const {
@@ -43,17 +43,17 @@ export const UserForm = ({ leetcoder, groups }: { leetcoder: leetcoders; groups:
     reset,
     watch,
     setValue,
-    formState: { isDirty }
+    formState: { isDirty },
   } = useForm<UpdateLeetcoderInput>({
     defaultValues: {
       id: leetcoder.id,
       group_no: leetcoder.group_no,
       is_visible: leetcoder.is_visible,
-      website: leetcoder.website ?? "",
-      gh_username: leetcoder.gh_username ?? "",
-      x_username: leetcoder.x_username ?? "",
-      li_username: leetcoder.li_username ?? "",
-    }
+      website: leetcoder.website ?? '',
+      gh_username: leetcoder.gh_username ?? '',
+      x_username: leetcoder.x_username ?? '',
+      li_username: leetcoder.li_username ?? '',
+    },
   })
 
   const watchedGroupNo = watch('group_no')
@@ -63,53 +63,56 @@ export const UserForm = ({ leetcoder, groups }: { leetcoder: leetcoders; groups:
     if (groupChanged) {
       changeGroup({
         userId: leetcoder.id,
-        newGroupNo: Number(data.group_no)
+        newGroupNo: Number(data.group_no),
       })
       return
     }
 
     // Process website URL
-    if (data.website && data.website.trim() !== "") {
+    if (data.website && data.website.trim() !== '') {
       if (!isValidUrl(data.website)) {
-        toast.error('Please enter a valid website URL', { style: errorToastStyle });
-        return;
+        toast.error('Please enter a valid website URL', { style: errorToastStyle })
+        return
       }
     }
 
     // Process social media usernames
     if (data.gh_username && data.gh_username.includes('github.com')) {
-      data.gh_username = extractUsername(data.gh_username, 'github');
+      data.gh_username = extractUsername(data.gh_username, 'github')
     }
 
     if (data.x_username && (data.x_username.includes('twitter.com') || data.x_username.includes('x.com'))) {
-      data.x_username = extractUsername(data.x_username, 'twitter');
+      data.x_username = extractUsername(data.x_username, 'twitter')
     }
 
     if (data.li_username && data.li_username.includes('linkedin.com')) {
-      data.li_username = extractUsername(data.li_username, 'linkedin');
+      data.li_username = extractUsername(data.li_username, 'linkedin')
     }
 
     updateLeetcoder({
       ...data,
-      group_no: data.group_no?.toString()
+      group_no: data.group_no?.toString(),
     })
   }
 
   const handleGroupChange = (value: string) => {
-    setValue('group_no', Number(value), { shouldDirty: true });
+    setValue('group_no', Number(value), { shouldDirty: true })
   }
 
   const handleVisibilityChange = (checked: boolean) => {
-    setValue('is_visible', checked, { shouldDirty: true });
+    setValue('is_visible', checked, { shouldDirty: true })
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="space-y-8"
+    >
       <div className="space-y-2">
         <h2 className="text-xl font-semibold">Basic Information</h2>
 
-        <div className='flex items-center gap-6 justify-between'>
-          <div className='space-y-5 mt-3 flex-1'>
+        <div className="flex items-center justify-between gap-6">
+          <div className="mt-3 flex-1 space-y-5">
             <div className="space-y-2">
               <Label>Username</Label>
               <div className="relative">
@@ -118,7 +121,7 @@ export const UserForm = ({ leetcoder, groups }: { leetcoder: leetcoders; groups:
                 </div>
                 <Input
                   value={leetcoder.username}
-                  className="peer relative z-10 dark:dark:bg-zinc-950 ps-7"
+                  className="peer relative z-10 ps-7 dark:dark:bg-zinc-950"
                   disabled
                 />
               </div>
@@ -156,7 +159,7 @@ export const UserForm = ({ leetcoder, groups }: { leetcoder: leetcoders; groups:
           <div className="relative">
             <Input
               {...register('gh_username')}
-              className="peer relative z-10 dark:bg-zinc-950 ps-9"
+              className="peer relative z-10 ps-9 dark:bg-zinc-950"
               placeholder="username or full URL"
             />
             <div className="pointer-events-none absolute inset-y-0 start-0 z-20 flex items-center justify-center ps-3">
@@ -174,7 +177,7 @@ export const UserForm = ({ leetcoder, groups }: { leetcoder: leetcoders; groups:
           <div className="relative">
             <Input
               {...register('x_username')}
-              className="peer relative z-10 dark:bg-zinc-950 ps-9"
+              className="peer relative z-10 ps-9 dark:bg-zinc-950"
               placeholder="username or full URL"
             />
             <div className="pointer-events-none absolute inset-y-0 start-0 z-20 flex items-center justify-center ps-3">
@@ -192,7 +195,7 @@ export const UserForm = ({ leetcoder, groups }: { leetcoder: leetcoders; groups:
           <div className="relative">
             <Input
               {...register('li_username')}
-              className="peer relative z-10 dark:bg-zinc-950 ps-9"
+              className="peer relative z-10 ps-9 dark:bg-zinc-950"
               placeholder="username or full URL"
             />
             <div className="pointer-events-none absolute inset-y-0 start-0 z-20 flex items-center justify-center ps-3">
@@ -210,7 +213,7 @@ export const UserForm = ({ leetcoder, groups }: { leetcoder: leetcoders; groups:
           <div className="relative">
             <Input
               {...register('website')}
-              className="peer relative z-10 dark:bg-zinc-950 ps-9"
+              className="peer relative z-10 ps-9 dark:bg-zinc-950"
               placeholder="https://your-website.com"
             />
             <div className="pointer-events-none absolute inset-y-0 start-0 z-20 flex items-center justify-center ps-3">
@@ -254,7 +257,7 @@ export const UserForm = ({ leetcoder, groups }: { leetcoder: leetcoders; groups:
               onValueChange={handleGroupChange}
               defaultValue={leetcoder.group_no.toString()}
             >
-              <SelectTrigger className="relative z-10 dark:bg-zinc-950 ps-9">
+              <SelectTrigger className="relative z-10 ps-9 dark:bg-zinc-950">
                 <div className="pointer-events-none absolute inset-y-0 start-0 z-20 flex items-center justify-center ps-3">
                   <Users
                     size={16}
@@ -303,7 +306,7 @@ export const UserForm = ({ leetcoder, groups }: { leetcoder: leetcoders; groups:
           disabled={!isDirty || isUpdatingGroup || isUpdatingLeetcoder}
           className="cursor-pointer"
         >
-          {(isUpdatingLeetcoder || isUpdatingGroup) ? (
+          {isUpdatingLeetcoder || isUpdatingGroup ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               Saving...
@@ -319,31 +322,31 @@ export const UserForm = ({ leetcoder, groups }: { leetcoder: leetcoders; groups:
 
 const extractUsername = (url: string, type: 'github' | 'twitter' | 'linkedin'): string => {
   try {
-    const urlObj = new URL(url);
+    const urlObj = new URL(url)
 
     if (type === 'github' && urlObj.hostname.includes('github.com')) {
       // Extract username from github.com/username
-      return urlObj.pathname.split('/')[1] || '';
+      return urlObj.pathname.split('/')[1] || ''
     } else if (type === 'twitter' && (urlObj.hostname.includes('twitter.com') || urlObj.hostname.includes('x.com'))) {
       // Extract username from twitter.com/username or x.com/username
-      return urlObj.pathname.split('/')[1] || '';
+      return urlObj.pathname.split('/')[1] || ''
     } else if (type === 'linkedin' && urlObj.hostname.includes('linkedin.com')) {
       // Extract username from linkedin.com/in/username
-      const parts = urlObj.pathname.split('/');
-      return parts.length > 2 && parts[1] === 'in' ? parts[2] : '';
+      const parts = urlObj.pathname.split('/')
+      return parts.length > 2 && parts[1] === 'in' ? parts[2] : ''
     }
 
-    return url;
+    return url
   } catch {
-    return url;
+    return url
   }
 }
 
 const isValidUrl = (url: string): boolean => {
   try {
-    new URL(url);
-    return true;
+    new URL(url)
+    return true
   } catch {
-    return false;
+    return false
   }
 }

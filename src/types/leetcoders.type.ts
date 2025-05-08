@@ -15,7 +15,10 @@ export const updateLeetcoderSchema = z.object({
   gh_username: z.string().optional(),
   x_username: z.string().optional(),
   li_username: z.string().optional(),
-  group_no: z.string().transform((val) => Number(val)).optional(),
+  group_no: z
+    .string()
+    .transform((val) => Number(val))
+    .optional(),
   website: z.string().optional(),
   is_visible: z.boolean().optional(),
 })
