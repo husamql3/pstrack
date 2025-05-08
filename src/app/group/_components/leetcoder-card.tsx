@@ -7,10 +7,10 @@ import { IoLogoLinkedin } from 'react-icons/io'
 
 import { api } from '@/trpc/react'
 import { cn } from '@/utils/cn'
+import { getSocialLink } from '@/utils/leetcoderCard'
 
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/ui/hover-card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/ui/avatar'
-import { extractUsername, getSocialLink } from '@/utils/leetcoderCard'
 
 // todo: fix card ui
 
@@ -32,9 +32,7 @@ export const LeetCoderCard = ({ leetcoder }: { leetcoder: leetcodersType }) => {
         <div className="space-y-2">
           <div className="flex items-center space-x-3">
             <Avatar className="h-12 w-12">
-              <AvatarImage
-                src={`https://github.com/${extractUsername(memoizedLeetcoder.gh_username || '', 'github')}.png`}
-              />
+              <AvatarImage src={leetcoder.avatar ?? ""} />
               <AvatarFallback>{memoizedLeetcoder.name.charAt(0)}</AvatarFallback>
             </Avatar>
             <div>

@@ -30,16 +30,6 @@ const MenuItem = ({ icon, label, onClick }: { icon: React.ReactNode; label: stri
   </DropdownMenuItem>
 )
 
-const renderAvatar = (user: User) => (
-  <Avatar>
-    <AvatarImage
-      src={user?.user_metadata?.avatar_url || ''}
-      alt={user?.user_metadata?.full_name || ''}
-    />
-    <AvatarFallback>{user?.user_metadata?.full_name?.substring(0, 2)}</AvatarFallback>
-  </Avatar>
-)
-
 export const UserMenu = ({ user }: { user: AuthLeetcoder }) => {
   const router = useRouter()
 
@@ -76,7 +66,13 @@ export const UserMenu = ({ user }: { user: AuthLeetcoder }) => {
           variant="ghost"
           className="h-auto cursor-pointer rounded-full p-0 hover:bg-transparent"
         >
-          {renderAvatar(user)}
+          <Avatar>
+            <AvatarImage
+              src={user?.leetcoder?.avatar || ''}
+              alt={user?.leetcoder?.name || ''}
+            />
+            <AvatarFallback>{user?.user_metadata?.full_name?.substring(0, 2)}</AvatarFallback>
+          </Avatar>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="max-w-64">
