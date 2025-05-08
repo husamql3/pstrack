@@ -105,7 +105,7 @@ export const UserForm = ({ leetcoder, groups }: { leetcoder: leetcoders; groups:
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-      <div className="space-y-5">
+      <div className="space-y-2">
         <h2 className="text-xl font-semibold">Basic Information</h2>
 
         <div className='flex items-center gap-6 justify-between'>

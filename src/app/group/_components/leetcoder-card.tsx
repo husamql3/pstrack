@@ -1,9 +1,8 @@
 import { useMemo } from 'react'
 import type { leetcoders as leetcodersType } from '@prisma/client'
-import { Calendar } from 'lucide-react'
-import { FaXTwitter } from 'react-icons/fa6'
-import { IoLogoGithub } from 'react-icons/io5'
-import { IoLogoLinkedin } from 'react-icons/io'
+import { Calendar, Globe } from 'lucide-react'
+import { LuGithub } from 'react-icons/lu'
+import { FaLinkedin, FaXTwitter } from 'react-icons/fa6'
 
 import { api } from '@/trpc/react'
 import { cn } from '@/utils/cn'
@@ -12,12 +11,12 @@ import { getSocialLink } from '@/utils/leetcoderCard'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/ui/hover-card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/ui/avatar'
 
-// todo: fix card ui
-
 export const LeetCoderCard = ({ leetcoder }: { leetcoder: leetcodersType }) => {
   const { data: user } = api.auth.getUser.useQuery()
   const memoizedLeetcoder = useMemo(() => leetcoder, [leetcoder])
   const currUser = user?.id === memoizedLeetcoder.id
+
+  const isVisible = memoizedLeetcoder.is_visible
 
   return (
     <HoverCard>
@@ -29,15 +28,15 @@ export const LeetCoderCard = ({ leetcoder }: { leetcoder: leetcodersType }) => {
         </HoverCardTrigger>
       </div>
       <HoverCardContent className="w-64 space-y-2 p-4">
-        <div className="space-y-2">
+        <div className="space-y-4">
           <div className="flex items-center space-x-3">
             <Avatar className="h-12 w-12">
-              <AvatarImage src={leetcoder.avatar ?? ""} />
+              <AvatarImage src={leetcoder.avatar ?? ''} />
               <AvatarFallback>{memoizedLeetcoder.name.charAt(0)}</AvatarFallback>
             </Avatar>
-            <div>
-              <h4 className="font-semibold">{memoizedLeetcoder.name}</h4>
-              <p className="text-muted-foreground text-sm">@{memoizedLeetcoder.lc_username}</p>
+            <div className="overflow-hidden">
+              <h4 className="font-semibold truncate">{memoizedLeetcoder.name}</h4>
+              <p className="text-muted-foreground text-sm truncate">@{memoizedLeetcoder.lc_username}</p>
             </div>
           </div>
 
@@ -68,38 +67,51 @@ export const LeetCoderCard = ({ leetcoder }: { leetcoder: leetcodersType }) => {
                 })}
               </span>
             </div>
-            <div className="flex space-x-2">
-              {memoizedLeetcoder.gh_username && (
-                <a
-                  href={getSocialLink(memoizedLeetcoder.gh_username, 'github')}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  <IoLogoGithub className="size-4" />
-                </a>
-              )}
-              {memoizedLeetcoder.x_username && (
-                <a
-                  href={getSocialLink(memoizedLeetcoder.x_username, 'twitter')}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  <FaXTwitter className="size-4" />
-                </a>
-              )}
-              {memoizedLeetcoder.li_username && (
-                <a
-                  href={getSocialLink(memoizedLeetcoder.li_username, 'linkedin')}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  <IoLogoLinkedin className="size-4" />
-                </a>
-              )}
-            </div>
+            
+            {isVisible && (
+              <div className="flex space-x-2">
+                {memoizedLeetcoder.gh_username && (
+                  <a
+                    href={getSocialLink(memoizedLeetcoder.gh_username, 'github')}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    <LuGithub size={16} strokeWidth={2} />
+                  </a>
+                )}
+                {memoizedLeetcoder.x_username && (
+                  <a
+                    href={getSocialLink(memoizedLeetcoder.x_username, 'twitter')}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    <FaXTwitter size={16} strokeWidth={2} />
+                  </a>
+                )}
+                {memoizedLeetcoder.li_username && (
+                  <a
+                    href={getSocialLink(memoizedLeetcoder.li_username, 'linkedin')}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    <FaLinkedin size={16} strokeWidth={2} />
+                  </a>
+                )}
+                {memoizedLeetcoder.website && (
+                  <a
+                    href={memoizedLeetcoder.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    <Globe size={16} strokeWidth={2} />
+                  </a>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </HoverCardContent>
