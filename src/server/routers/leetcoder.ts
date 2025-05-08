@@ -367,21 +367,24 @@ export const leetcodersRouter = createTRPCRouter({
       id: z.string().uuid(),
       avatarUrl: z.string().url()
     }))
-    .mutation(async ({ input, ctx }) => {
-      if (!ctx.user?.id || ctx.user.id !== input.id) {
+    .mutation(async ({ input }) => {
+      if (!input.id) {
         throw new TRPCError({
           code: 'UNAUTHORIZED',
-          message: 'You can only update your own avatar',
+          message: 'Failed to update avatar. Please try again later.',
         })
       }
 
       try {
-        return await db.leetcoders.update({
-          where: { id: input.id },
+        const updated = await db.leetcoders.update({
+          where: {
+            id: input.id
+          },
           data: {
             avatar: input.avatarUrl
           },
         })
+        return updated
       } catch (error) {
         console.log("updateAvatar", error)
         throw new TRPCError({

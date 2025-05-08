@@ -3,7 +3,6 @@
 import { FaUserGroup } from 'react-icons/fa6'
 import { IoExitOutline } from 'react-icons/io5'
 import { FaUser, FaUserShield } from 'react-icons/fa'
-import type { User } from '@supabase/supabase-js'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 

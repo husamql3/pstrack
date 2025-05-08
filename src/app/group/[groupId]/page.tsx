@@ -15,7 +15,6 @@ const Page = async ({ params }: { params: Promise<{ groupId: string }> }) => {
   const user = await api.auth.getUser()
   console.log('user?.user_metadata', user?.user_metadata)
   const groupData = await api.groups.getGroupTableData({ group_no: groupId })
-  console.log('groupData', groupData)
   const roadmap = await api.roadmap.getGroupProblems(groupData?.group_progress || [])
 
   // const cacheKey = `group:${groupId}:data`

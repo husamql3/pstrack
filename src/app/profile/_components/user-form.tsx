@@ -109,7 +109,7 @@ export const UserForm = ({ leetcoder, groups }: { leetcoder: leetcoders; groups:
         <h2 className="text-xl font-semibold">Basic Information</h2>
 
         <div className='flex items-center gap-6 justify-between'>
-          <div className='space-y-5 flex-1'>
+          <div className='space-y-5 mt-3 flex-1'>
             <div className="space-y-2">
               <Label>Username</Label>
               <div className="relative">
@@ -134,10 +134,7 @@ export const UserForm = ({ leetcoder, groups }: { leetcoder: leetcoders; groups:
             </div>
           </div>
 
-          <UserAvatar
-            avatar={leetcoder.avatar}
-            userId={leetcoder.id}
-          />
+          <UserAvatar avatar={leetcoder.avatar} />
         </div>
 
         <div className="space-y-2">
