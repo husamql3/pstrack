@@ -1,6 +1,7 @@
 'use client'
 
 import type { leetcoders, groups } from '@prisma/client'
+import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { Globe, Users, Loader2 } from 'lucide-react'
 import { LuGithub } from 'react-icons/lu'
@@ -19,9 +20,11 @@ import { Button } from '@/ui/button'
 import { UserAvatar } from './user-avatar'
 
 export const UserForm = ({ leetcoder, groups }: { leetcoder: leetcoders; groups: groups[] }) => {
+  const router = useRouter()
   const { mutate: updateLeetcoder, isPending: isUpdatingLeetcoder } = api.leetcoders.update.useMutation({
     onSuccess: () => {
       toast.success('Profile updated successfully', { style: successToastStyle })
+      router.refresh()
     },
     onError: (error) => {
       toast.error(error.message || 'Failed to update profile', { style: errorToastStyle })

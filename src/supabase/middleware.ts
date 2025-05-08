@@ -25,8 +25,12 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(new URL('/login', request.url))
   }
 
-  if (user && pathname === '/login') {
+  if (pathname === '/login' && !user) {
     return NextResponse.redirect(new URL('/', request.url))
+  }
+
+  if (pathname === '/profile' && !user) {
+    return NextResponse.redirect(new URL('/not-found', request.url))
   }
 
   // Protect specific routes

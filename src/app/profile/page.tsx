@@ -8,7 +8,7 @@ import { UserForm } from './_components/user-form'
 
 const Page = async () => {
   const user = (await api.auth.getUser()) as AuthLeetcoder
-  if (!user.leetcoder) return notFound()
+  if (!user.leetcoder?.id) return <div>Why?</div>
 
   const groups = (await api.groups.getAllGroups()) as groups[]
 
