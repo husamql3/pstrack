@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 import { createTRPCRouter, publicProcedure } from '@/server/trpc'
 import { db } from '@/prisma/db'
+import { MAX_LEETCODERS } from '@/data/constants'
 
 export const groupsRouter = createTRPCRouter({
   getAllGroupsNo: publicProcedure.query(() => {
@@ -42,6 +43,25 @@ export const groupsRouter = createTRPCRouter({
     }),
   getAllGroups: publicProcedure.query(async () => {
     return db.groups.findMany()
+  }),
+  getAllAvailableGroups: publicProcedure.query(async () => {
+    const groups = await db.groups.findMany({
+      include: {
+        leetcoders: {
+          where: {
+            status: 'APPROVED',
+          },
+          select: {
+            id: true,
+          },
+        },
+      },
+      orderBy: {
+        group_no: 'asc',
+      },
+    })
+
+    return groups.filter((group) => group.leetcoders.length < MAX_LEETCODERS)
   }),
   getAllGroupsInfo: publicProcedure.query(() => {
     return db.groups.findMany({

@@ -21,9 +21,19 @@ import { UserAvatar } from './user-avatar'
 
 export const UserForm = ({ leetcoder, groups }: { leetcoder: leetcoders; groups: groups[] }) => {
   const router = useRouter()
+
   const { mutate: updateLeetcoder, isPending: isUpdatingLeetcoder } = api.leetcoders.update.useMutation({
-    onSuccess: () => {
+    onSuccess: (updatedData) => {
       toast.success('Profile updated successfully', { style: successToastStyle })
+      reset({
+        id: leetcoder.id,
+        group_no: updatedData.group_no ?? leetcoder.group_no,
+        is_visible: updatedData.is_visible ?? leetcoder.is_visible,
+        website: updatedData.website ?? '',
+        gh_username: updatedData.gh_username ?? '',
+        x_username: updatedData.x_username ?? '',
+        li_username: updatedData.li_username ?? '',
+      })
       router.refresh()
     },
     onError: (error) => {
@@ -34,6 +44,7 @@ export const UserForm = ({ leetcoder, groups }: { leetcoder: leetcoders; groups:
   const { mutate: changeGroup, isPending: isUpdatingGroup } = api.leetcoders.changeGroup.useMutation({
     onSuccess: () => {
       toast.success('Group changed successfully', { style: successToastStyle })
+      router.refresh()
     },
     onError: (error) => {
       toast.error(error.message || 'Failed to change group', { style: errorToastStyle })
@@ -256,10 +267,7 @@ export const UserForm = ({ leetcoder, groups }: { leetcoder: leetcoders; groups:
         <div className="space-y-2">
           <Label>Current Group</Label>
           <div className="relative">
-            <Select
-              onValueChange={handleGroupChange}
-              defaultValue={leetcoder.group_no.toString()}
-            >
+            <Select onValueChange={handleGroupChange}>
               <SelectTrigger className="relative z-10 ps-9 dark:bg-zinc-950">
                 <div className="pointer-events-none absolute inset-y-0 start-0 z-20 flex items-center justify-center ps-3">
                   <Users
@@ -268,7 +276,7 @@ export const UserForm = ({ leetcoder, groups }: { leetcoder: leetcoders; groups:
                     aria-hidden="true"
                   />
                 </div>
-                <SelectValue placeholder="Select a group" />
+                <SelectValue placeholder={`Group ${String(leetcoder.group_no)}`} />
               </SelectTrigger>
               <SelectContent>
                 {groups

@@ -225,21 +225,8 @@ export const leetcodersRouter = createTRPCRouter({
         newGroupNo: z.number().int().positive(),
       })
     )
-    .mutation(async ({ input, ctx }) => {
+    .mutation(async ({ input }) => {
       const { userId, newGroupNo } = input
-
-      if (ctx.user?.email && !ADMINS_EMAILS.includes(ctx.user.email)) {
-        await sendAdminNotification({
-          event: 'UNAUTHORIZED_ACCESS',
-          username: ctx.user?.email || 'Unknown',
-          message: 'Unauthorized attempt to change group',
-        })
-        throw new TRPCError({
-          code: 'UNAUTHORIZED',
-          message: 'Only admin can access this resource',
-        })
-      }
-
       const user = await db.leetcoders.findUnique({
         where: { id: userId },
       })

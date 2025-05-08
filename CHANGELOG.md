@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.3.19]
+fix group change func
+
 ## [2.3.18]
 fix protected routes
 
