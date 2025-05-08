@@ -2,6 +2,7 @@ import { type NextRequest, NextResponse } from 'next/server'
 
 import { ADMINS_EMAILS, PROTECTED_ROUTES } from '@/data/constants'
 import { createClient } from './server'
+import { getLeetcoderById } from '@/dao/leetcoder.dao'
 
 export async function updateSession(request: NextRequest) {
   const { pathname } = new URL(request.url)
@@ -25,12 +26,13 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(new URL('/login', request.url))
   }
 
-  if (pathname === '/login' && !user) {
+  if (pathname === '/login' && user) {
     return NextResponse.redirect(new URL('/', request.url))
   }
 
+  // Check profile access - user must be logged in
   if (pathname === '/profile' && !user) {
-    return NextResponse.redirect(new URL('/not-found', request.url))
+    return NextResponse.redirect(new URL('/login', request.url))
   }
 
   // Protect specific routes
