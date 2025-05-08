@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.3.17]
+add profile page to updat info
+
 ## [2.2.17]
 fix show my group button
 

@@ -7,7 +7,6 @@ import { Logo } from '@/app/_components/logo'
 import { UserAuth } from '@/app/_components/user-auth'
 import { Header } from '@/app/_components/header'
 import { NavMenu } from '@/app/_components/nav-menu'
-import { Footer } from '@/app/_components/footer'
 import { FeedbackDialog } from '@/app/_components/feedback-dialog'
 import { StarsBackground } from '@/ui/stars-background'
 
@@ -27,7 +26,6 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
             v{VERSION}
           </span>
         </div>
-
         <NavMenu />
         <UserAuth user={user} />
       </Header>
@@ -35,7 +33,6 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
       {children}
 
       {user && <FeedbackDialog email={user.email as string} />}
-      <Footer />
     </div>
   )
 }
