@@ -31,7 +31,7 @@ export const ADMINS_EMAILS = ['husamahmud@gmail.com', 'nezhataghy@gmail.com']
 /**
  * Authentication and authorization
  */
-export const PROTECTED_ROUTES = ['/dashboard', '/profile']
+export const PROTECTED_ROUTES = ['/dashboard']
 
 /**
  * Problem tracking thresholds

@@ -8,7 +8,7 @@ import { UserForm } from './_components/user-form'
 const Page = async () => {
   const [user, allGroups] = await Promise.all([
     api.auth.getUser() as Promise<AuthLeetcoder>,
-    api.groups.getAllGroups() as Promise<groups[]>
+    api.groups.getAllGroups() as Promise<groups[]>,
   ])
 
   const leetcoder = user.leetcoder as leetcoders
