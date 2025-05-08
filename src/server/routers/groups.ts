@@ -43,13 +43,6 @@ export const groupsRouter = createTRPCRouter({
       })
     }),
   getAllGroups: publicProcedure.query(async ({ ctx }) => {
-    // Only allow access if the user is the admin
-    if (ctx.user?.email && !ADMINS_EMAILS.includes(ctx.user.email)) {
-      throw new TRPCError({
-        code: 'UNAUTHORIZED',
-        message: 'Only admin can access this resource',
-      })
-    }
     return db.groups.findMany()
   }),
   getAllGroupsInfo: publicProcedure.query(() => {
