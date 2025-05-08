@@ -49,7 +49,9 @@ export const groupsRouter = createTRPCRouter({
       include: {
         leetcoders: {
           where: {
-            status: 'APPROVED',
+            status: {
+              in: ['APPROVED', 'PENDING']
+            },
           },
           select: {
             id: true,
