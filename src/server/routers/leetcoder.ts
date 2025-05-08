@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { TRPCError } from '@trpc/server'
-import { leetcoders, LeetcodeStatus } from '@prisma/client'
+import { LeetcodeStatus } from '@prisma/client'
 
 import { db } from '@/prisma/db'
 import { createTRPCRouter, publicProcedure } from '@/server/trpc'
@@ -307,20 +307,15 @@ export const leetcodersRouter = createTRPCRouter({
     }),
 
   update: publicProcedure.input(updateLeetcoderSchema).mutation(async ({ input, ctx }) => {
-    if (!ctx.user?.id || ctx.user.id !== input.id) {
+    if (!ctx.user?.id || !ctx.user.leetcoder || ctx.user.id !== input.id) {
       throw new TRPCError({
         code: 'UNAUTHORIZED',
         message: 'You can only update your own profile',
       })
     }
 
-    // Get the current leetcoder data
-    const currentLeetcoder = await db.leetcoders.findUnique({
-      where: { id: input.id },
-    }) as leetcoders
-
     // Check if GitHub username has changed and validate if needed
-    if (input.gh_username && input.gh_username !== currentLeetcoder.gh_username) {
+    if (input.gh_username && input.gh_username !== ctx.user.leetcoder.gh_username) {
       const existingGhUser = await db.leetcoders.findFirst({
         where: {
           gh_username: input.gh_username,
@@ -359,10 +354,40 @@ export const leetcodersRouter = createTRPCRouter({
         data: updateData,
       })
     } catch (error) {
+      console.log("update", error)
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
         message: 'Failed to update profile. Please try again later.',
       })
     }
-  })
+  }),
+
+  updateAvatar: publicProcedure
+    .input(z.object({
+      id: z.string().uuid(),
+      avatarUrl: z.string().url()
+    }))
+    .mutation(async ({ input, ctx }) => {
+      if (!ctx.user?.id || ctx.user.id !== input.id) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: 'You can only update your own avatar',
+        })
+      }
+
+      try {
+        return await db.leetcoders.update({
+          where: { id: input.id },
+          data: {
+            avatar: input.avatarUrl
+          },
+        })
+      } catch (error) {
+        console.log("updateAvatar", error)
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to update avatar. Please try again later.',
+        })
+      }
+    })
 })

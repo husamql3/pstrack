@@ -1,20 +1,22 @@
-import { User } from '@supabase/supabase-js'
+import { notFound } from 'next/navigation'
+import type { groups } from '@prisma/client'
 
 import { api } from '@/trpc/server'
-import type { leetcoders, groups } from '@prisma/client'
+import { AuthLeetcoder } from '@/server/routers/auth'
 
 import { UserForm } from './_components/user-form'
 
 const Page = async () => {
-  const user = (await api.auth.getUser()) as User
-  const leetcoder = (await api.leetcoders.getLeetcoderById({ id: user.id })) as leetcoders
+  const user = await api.auth.getUser() as AuthLeetcoder
+  if (!user.leetcoder) return notFound()
+
   const groups = (await api.groups.getAllGroups()) as groups[]
 
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-1 flex-col px-3 py-10">
       <div className="z-10 mx-auto w-full max-w-md space-y-8">
         <UserForm
-          leetcoder={leetcoder}
+          leetcoder={user.leetcoder}
           groups={groups}
         />
       </div>

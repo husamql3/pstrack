@@ -1,29 +1,47 @@
 "use client"
 
+import { useState } from "react"
 import { CircleUserRoundIcon, X } from "lucide-react"
-
-import { useFileUpload } from "@/hooks/use-file-upload"
+import { UploadButton } from "@/utils/uploadthing"
 import { toast } from "sonner"
 import { successToastStyle, errorToastStyle } from "@/app/_components/toast-styles"
 import { cn } from "@/utils/cn"
 
 import { Button } from "@/ui/button"
+import { api } from "@/trpc/react"
 
-export const UserAvatar = ({ avatar }: { avatar: string | null }) => {
+export const UserAvatar = ({ avatar, userId }: { avatar: string | null, userId: string }) => {
+  const [previewUrl, setPreviewUrl] = useState<string | null>(avatar)
+  const [imageChanged, setImageChanged] = useState(false)
 
-  const [{ files }, { removeFile, openFileDialog, getInputProps }] =
-    useFileUpload({
-      accept: "image/*",
-      maxFiles: 1,
-      maxSize: 5 * 1024 * 1024, // 5MB limit
-    })
-
-  const previewUrl = files[0]?.preview || avatar || null
-  const imageChanged = files.length > 0
-
-  const handleSave = async () => {
-    if (imageChanged) {
+  const { mutate: updateAvatar } = api.leetcoders.updateAvatar.useMutation({
+    onSuccess: () => {
+      toast("Avatar updated successfully", {
+        style: successToastStyle
+      })
+      setImageChanged(false)
+    },
+    onError: (error) => {
+      toast(`Failed to update avatar: ${error.message}`, {
+        style: errorToastStyle
+      })
+      setPreviewUrl(avatar)
+      setImageChanged(false)
     }
+  })
+
+  const handleSaveClick = () => {
+    if (previewUrl && userId) {
+      updateAvatar({
+        id: userId,
+        avatarUrl: previewUrl
+      })
+    }
+  }
+
+  const handleCancelClick = () => {
+    setPreviewUrl(avatar)
+    setImageChanged(false)
   }
 
   return (
@@ -50,24 +68,38 @@ export const UserAvatar = ({ avatar }: { avatar: string | null }) => {
           )}
         </div>
         <div className="relative w-full pt-2 inline-flex items-center gap-2">
-          <Button
-            onClick={imageChanged ? handleSave : openFileDialog}
-            variant='secondary'
-            aria-haspopup="dialog"
-            type="button"
-            className={cn(imageChanged ? "w-fit" : "w-full", "cursor-pointer")}
-          >
-            {imageChanged ? "Save" : "Upload"}
-          </Button>
-          <input
-            {...getInputProps()}
-            className="sr-only"
-            aria-label="Upload image file"
-            tabIndex={-1}
-          />
+          {!imageChanged ? (
+            <UploadButton
+              endpoint="imageUploader"
+              onClientUploadComplete={(res) => {
+                if (res && res.length > 0) {
+                  setPreviewUrl(res[0].ufsUrl)
+                  setImageChanged(true)
+                  toast("Image uploaded successfully", {
+                    style: successToastStyle
+                  })
+                }
+              }}
+              onUploadError={(error: Error) => {
+                toast(`Upload failed: ${error.message}`, {
+                  style: errorToastStyle
+                })
+              }}
+              className={cn("w-full", "cursor-pointer")}
+            />
+          ) : (
+            <Button
+              variant='secondary'
+              type="button"
+              className="w-fit cursor-pointer"
+              onClick={handleSaveClick}
+            >
+              Save
+            </Button>
+          )}
           {imageChanged && (
             <Button
-              onClick={() => removeFile(files[0]?.id)}
+              onClick={handleCancelClick}
               aria-label="Remove avatar"
               variant='destructive'
               type="button"

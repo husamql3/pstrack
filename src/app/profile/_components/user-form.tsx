@@ -134,8 +134,10 @@ export const UserForm = ({ leetcoder, groups }: { leetcoder: leetcoders; groups:
             </div>
           </div>
 
-          {/* <UserAvatar avatar={leetcoder.avatar} /> */}
-          <UserAvatar avatar={leetcoder.avatar} />
+          <UserAvatar
+            avatar={leetcoder.avatar}
+            userId={leetcoder.id}
+          />
         </div>
 
         <div className="space-y-2">
@@ -335,7 +337,7 @@ const extractUsername = (url: string, type: 'github' | 'twitter' | 'linkedin'): 
     }
 
     return url;
-  } catch (e) {
+  } catch {
     return url;
   }
 }
@@ -344,7 +346,7 @@ const isValidUrl = (url: string): boolean => {
   try {
     new URL(url);
     return true;
-  } catch (e) {
+  } catch {
     return false;
   }
 }

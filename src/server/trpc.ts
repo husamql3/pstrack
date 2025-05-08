@@ -12,6 +12,7 @@ import { ZodError } from 'zod'
 
 import { db } from '@/prisma/db'
 import { createClient } from '@/supabase/server'
+import { getLeetcoderById } from '@/dao/leetcoder.dao'
 
 /**
  * 1. CONTEXT
@@ -32,10 +33,15 @@ export const createTRPCContext = async (opts: { headers: Headers }) => {
     data: { session },
   } = await supabase.auth.getSession()
 
+  let leetcoder = null
+  if (session?.user?.id) {
+    leetcoder = await getLeetcoderById(session.user.id)
+  }
+
   return {
     db,
     ...opts,
-    user: session?.user ?? null,
+    user: session?.user ? { ...session.user, leetcoder } : null,
   }
 }
 
