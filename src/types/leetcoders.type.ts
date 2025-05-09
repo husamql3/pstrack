@@ -1,5 +1,4 @@
 import type { submissions, leetcoders, groups, roadmap } from '@prisma/client'
-import type { submissions } from '@prisma/client'
 import { z } from 'zod'
 
 export type LeetcoderWithSubmissions = {
@@ -10,7 +9,6 @@ export type LeetcoderWithSubmissions = {
   is_notified: boolean
   submissions: Pick<submissions, 'problem_id'>[]
 }
-
 
 // Definition for LeetcoderWithProblem
 export type LeetcoderWithProblem = leetcoders & {

@@ -50,7 +50,7 @@ export const groupsRouter = createTRPCRouter({
         leetcoders: {
           where: {
             status: {
-              in: ['APPROVED', 'PENDING']
+              in: ['APPROVED', 'PENDING'],
             },
           },
           select: {
