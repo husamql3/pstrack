@@ -1,5 +1,20 @@
 # Changelog
 
+## [2.3.19]
+fix group change func
+
+## [2.3.18]
+fix protected routes
+
+## [2.3.17]
+add profile page to updat info
+
+## [2.2.17]
+fix show my group button
+
+## [2.2.16]
+remove cached data
+
 ## [2.2.15]
 use neetcode 250 roadmap
 

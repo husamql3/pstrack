@@ -1,5 +1,7 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
+@import 'uploadthing/tw/v4';
+@source "../../node_modules/@uploadthing/react/dist";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -42,12 +44,14 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
   --animate-shiny-text: shiny-text 8s infinite;
+
   @keyframes shiny-text {
     0%,
     90%,
     100% {
       background-position: calc(-100% - var(--shiny-width)) 0;
     }
+
     30%,
     60% {
       background-position: calc(100% + var(--shiny-width)) 0;
@@ -140,6 +144,7 @@ body {
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
@@ -147,10 +152,12 @@ body {
 
 @theme {
   --animate-text-gradient: text-gradient 2.5s linear infinite;
+
   @keyframes text-gradient {
     from {
       background-position: 200% 0;
     }
+
     to {
       background-position: -200% 0;
     }

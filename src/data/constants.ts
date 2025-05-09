@@ -3,7 +3,7 @@ import pLimit from 'p-limit'
 /**
  * App version
  */
-export const VERSION = '2.1.15'
+export const VERSION = '2.3.18'
 
 /**
  * Repository information
@@ -31,7 +31,7 @@ export const ADMINS_EMAILS = ['husamahmud@gmail.com', 'nezhataghy@gmail.com']
 /**
  * Authentication and authorization
  */
-export const PROTECTED_ROUTES = ['/dashboard', '/profile']
+export const PROTECTED_ROUTES = ['/dashboard']
 
 /**
  * Problem tracking thresholds

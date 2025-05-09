@@ -2,8 +2,7 @@ import { z } from 'zod'
 
 import { createTRPCRouter, publicProcedure } from '@/server/trpc'
 import { db } from '@/prisma/db'
-import { TRPCError } from '@trpc/server'
-import { ADMINS_EMAILS } from '@/data/constants'
+import { MAX_LEETCODERS } from '@/data/constants'
 
 export const groupsRouter = createTRPCRouter({
   getAllGroupsNo: publicProcedure.query(() => {
@@ -42,15 +41,29 @@ export const groupsRouter = createTRPCRouter({
         },
       })
     }),
-  getAllGroups: publicProcedure.query(async ({ ctx }) => {
-    // Only allow access if the user is the admin
-    if (ctx.user?.email && !ADMINS_EMAILS.includes(ctx.user.email)) {
-      throw new TRPCError({
-        code: 'UNAUTHORIZED',
-        message: 'Only admin can access this resource',
-      })
-    }
+  getAllGroups: publicProcedure.query(async () => {
     return db.groups.findMany()
+  }),
+  getAllAvailableGroups: publicProcedure.query(async () => {
+    const groups = await db.groups.findMany({
+      include: {
+        leetcoders: {
+          where: {
+            status: {
+              in: ['APPROVED', 'PENDING']
+            },
+          },
+          select: {
+            id: true,
+          },
+        },
+      },
+      orderBy: {
+        group_no: 'asc',
+      },
+    })
+
+    return groups.filter((group) => group.leetcoders.length < MAX_LEETCODERS)
   }),
   getAllGroupsInfo: publicProcedure.query(() => {
     return db.groups.findMany({

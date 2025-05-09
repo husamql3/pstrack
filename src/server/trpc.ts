@@ -9,9 +9,11 @@
 import { initTRPC } from '@trpc/server'
 import superjson from 'superjson'
 import { ZodError } from 'zod'
+import { TRPCError } from '@trpc/server'
 
 import { db } from '@/prisma/db'
 import { createClient } from '@/supabase/server'
+import { getLeetcoderById } from '@/dao/leetcoder.dao'
 
 /**
  * 1. CONTEXT
@@ -32,10 +34,15 @@ export const createTRPCContext = async (opts: { headers: Headers }) => {
     data: { session },
   } = await supabase.auth.getSession()
 
+  let leetcoder = null
+  if (session?.user?.id) {
+    leetcoder = await getLeetcoderById(session.user.id)
+  }
+
   return {
     db,
     ...opts,
-    user: session?.user ?? null,
+    user: session?.user ? { ...session.user, leetcoder } : null,
   }
 }
 
@@ -111,3 +118,19 @@ const timingMiddleware = t.middleware(async ({ next, path }) => {
  * are logged in.
  */
 export const publicProcedure = t.procedure.use(timingMiddleware)
+
+/**
+ * Protected (authenticated) procedure
+ *
+ * This is the base piece you use to build new queries and mutations on your tRPC API. It guarantees
+ * that a user querying is authorized, and you can still access user session data if they are logged in.
+ */
+export const protectedProcedure = t.procedure.use(timingMiddleware).use(async ({ ctx, next }) => {
+  if (!ctx.user) {
+    throw new TRPCError({
+      code: 'UNAUTHORIZED',
+      message: 'You must be logged in to access this resource',
+    })
+  }
+  return next()
+})
