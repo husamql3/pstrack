@@ -11,6 +11,6 @@ export type LeetcoderWithSubmissions = {
 
 // Definition for LeetcoderWithProblem
 export type LeetcoderWithProblem = leetcoders & {
-  group: groups;
-  problemDetails: Pick<roadmap, 'problem_slug' | 'difficulty' | 'topic'>;
-};
+  group: groups
+  problemDetails: Pick<roadmap, 'problem_slug' | 'difficulty' | 'topic'>
+}
