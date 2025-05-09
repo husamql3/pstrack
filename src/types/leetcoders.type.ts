@@ -1,4 +1,4 @@
-import type { submissions } from '@prisma/client'
+import type { submissions, leetcoders, groups, roadmap } from '@prisma/client'
 import { z } from 'zod'
 
 export type LeetcoderWithSubmissions = {
@@ -8,6 +8,12 @@ export type LeetcoderWithSubmissions = {
   email: string
   is_notified: boolean
   submissions: Pick<submissions, 'problem_id'>[]
+}
+
+// Definition for LeetcoderWithProblem
+export type LeetcoderWithProblem = leetcoders & {
+  group: groups
+  problemDetails: Pick<roadmap, 'problem_slug' | 'difficulty' | 'topic'>
 }
 
 export const updateLeetcoderSchema = z.object({
