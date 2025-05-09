@@ -13,11 +13,9 @@ import { Badge } from '@/ui/badge'
 import { AvatarGroup } from './avatar-group'
 import { RequestModal } from '@/app/group/_components/request-modal'
 
-export const GroupCard = ({ group, problemsCount }: GroupCardProps) => {
-  const avatars = group.leetcoders.map((member) => ({
-    src: member.avatar,
-    alt: member.name,
-  }))
+export const GroupCard = async ({ group, problemsCount, loggedInUserID }: GroupCardProps) => {
+  const avatars = group.leetcoders.map((member) => ({ src: member.avatar, alt: member.name }))
+  const isLoggedUserGroup = group.leetcoders.find((leetcoder) => leetcoder.id === loggedInUserID)
 
   const leetcodersCount = group.leetcoders.length
   const currentProblem = group.group_progress[0]?.roadmap.topic as Topic
@@ -100,7 +98,7 @@ export const GroupCard = ({ group, problemsCount }: GroupCardProps) => {
           totalCount={leetcodersCount}
         />
 
-        {!isFull && <RequestModal groupId={String(group.group_no)} />}
+        {!isFull && !isLoggedUserGroup && <RequestModal groupId={String(group.group_no)} />}
       </CardFooter>
     </Card>
   )

@@ -7,6 +7,7 @@ import { GroupCard } from './group-card'
 const Page = async () => {
   const problemsCount = await api.roadmap.count()
   const groupsInfo: GetAllGroupsInfo[] = await api.groups.getAllGroupsInfo()
+  const loggedInUser = await api.auth.getUser()
 
   const cacheKey = 'roadmap:problemCount'
   await redis.del(cacheKey)
@@ -21,6 +22,7 @@ const Page = async () => {
             key={group.id}
             group={group}
             problemsCount={problemsCount}
+            loggedInUserID={loggedInUser?.id!}
           />
         ))}
       </div>
