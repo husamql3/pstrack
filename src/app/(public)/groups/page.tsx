@@ -1,6 +1,5 @@
 import { api } from '@/trpc/server'
 import type { GetAllGroupsInfo } from '@/types/groupsPage.type'
-import { redis } from '@/config/redis'
 
 import { GroupCard } from './group-card'
 
