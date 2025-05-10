@@ -7,9 +7,8 @@ import { GroupCard } from './group-card'
 const Page = async () => {
   const problemsCount = await api.roadmap.count()
   const groupsInfo: GetAllGroupsInfo[] = await api.groups.getAllGroupsInfo()
-
-  const cacheKey = 'roadmap:problemCount'
-  await redis.del(cacheKey)
+  const user = await api.auth.getUser()
+  const userGroup = user?.leetcoder?.group_no
 
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-1 flex-col px-3 py-10">
@@ -21,6 +20,7 @@ const Page = async () => {
             key={group.id}
             group={group}
             problemsCount={problemsCount}
+            userGroup={userGroup}
           />
         ))}
       </div>
