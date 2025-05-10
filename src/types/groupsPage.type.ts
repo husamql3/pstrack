@@ -11,4 +11,8 @@ export type GetAllGroupsInfo = {
   }[]
 }
 
-export type GroupCardProps = { group: GetAllGroupsInfo; problemsCount: number; loggedInUserID: string }
+export type GroupCardProps = {
+  group: GetAllGroupsInfo
+  problemsCount: number
+  userGroup: number | undefined
+}
