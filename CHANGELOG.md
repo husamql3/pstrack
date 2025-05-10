@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.3.20]
+hide the request button when logged in user in the group
+
 ## [2.3.19]
 fix group change func
 
