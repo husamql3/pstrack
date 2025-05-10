@@ -8,19 +8,13 @@ import { sendDailyProblemEmail } from '@/utils/email/sendDailyProblemEmail'
 
 // Configure the workflow with QStash
 export const { POST } = serve(async (context) => {
-  if (!context.headers.get('upstash-workflow-init')) {
-    return new Response('Unauthorized', { status: 401 });
-  }
-
-  await db.$connect()
-
   try {
-    // Initialize counters
     let totalSuccess = 0
     let totalFailed = 0
 
-    // Step 1: Fetch approved users and their assigned problems
+    // Step 1: Connect to database and fetch approved users and their assigned problems
     const { approvedLeetcoders, groupProblems } = await context.run('fetch-leetcoders', async () => {
+      await db.$connect()
       return await fetchApprovedLeetcodersWithProblems()
     })
 
@@ -92,6 +86,12 @@ export const { POST } = serve(async (context) => {
       }
     })
 
+    // Step 4: Disconnect from database
+    await context.run('cleanup', async () => {
+      await db.$disconnect()
+      return { success: true }
+    })
+
     return {
       success: true,
       data: {
@@ -103,14 +103,19 @@ export const { POST } = serve(async (context) => {
       },
     }
   } catch (error) {
-    await sendAdminNotification({
-      event: 'DAILY_PROBLEM_EMAIL_WORKFLOW_ERROR',
-      error: JSON.stringify(error),
-      message: 'Error in /api/workflow daily problem email',
+    // Handle errors inside a context.run to ensure database disconnection
+    await context.run('error-handling', async () => {
+      await sendAdminNotification({
+        event: 'DAILY_PROBLEM_EMAIL_WORKFLOW_ERROR',
+        error: JSON.stringify(error),
+        message: 'Error in /api/workflow daily problem email',
+      })
+
+      // Ensure database is disconnected even on error
+      await db.$disconnect()
+      return { success: false }
     })
 
     return { success: false, error: 'INTERNAL_SERVER_ERROR' }
-  } finally {
-    await db.$disconnect()
   }
 })
