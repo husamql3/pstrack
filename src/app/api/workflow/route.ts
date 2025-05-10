@@ -6,7 +6,12 @@ import { fetchApprovedLeetcodersWithProblems } from '@/dao/leetcoder.dao'
 import { sendAdminNotification } from '@/utils/email/sendAdminNotification'
 import { sendDailyProblemEmail } from '@/utils/email/sendDailyProblemEmail'
 
+// Configure the workflow with QStash
 export const { POST } = serve(async (context) => {
+  if (!context.headers.get('upstash-workflow-init')) {
+    return new Response('Unauthorized', { status: 401 });
+  }
+
   await db.$connect()
 
   try {
