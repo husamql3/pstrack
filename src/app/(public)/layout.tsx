@@ -21,7 +21,7 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
       </Suspense>
 
       <Header>
-        <div className="flex items-end">
+        <div className="flex w-32 items-end justify-start">
           <Logo />
           <span className="ml-1 hidden rounded-md bg-white/10 px-1.5 py-0.5 text-xs font-medium text-white/80 opacity-50 sm:block">
             v{VERSION}
@@ -29,7 +29,9 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
         </div>
 
         <NavMenu />
-        <UserAuth user={user} />
+        <div className="flex w-32 justify-end">
+          <UserAuth user={user} />
+        </div>
       </Header>
 
       {children}

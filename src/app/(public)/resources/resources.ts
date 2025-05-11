@@ -74,8 +74,51 @@ export const RESOURCES: Resource[] = [
     name: 'Trees',
     children: [
       {
-        name: 'Soon',
-        type: 'article',
+        name: 'Videos',
+        isFolder: true,
+        children: [
+          {
+            name: 'MIT | Binary tree P1',
+            href: 'https://www.youtube.com/watch?v=76dhtgZt38A&pp=ygUIVHJlZSBNSVQ%3D',
+            type: 'youtube',
+          },
+          {
+            name: 'MIT | Binary tree P2',
+            href: 'https://www.youtube.com/watch?v=U1JYwHcFfso&t=1s&pp=ygUIVHJlZSBNSVQ%3D',
+            type: 'youtube',
+          },
+          {
+            name: 'Abdul Bari | AVL Tree',
+            href: 'https://www.youtube.com/watch?v=jDM6_TnYIqE&t=797s',
+            type: 'youtube',
+          },
+          {
+            name: 'Abdul Bari | Trees and B+ Trees',
+            href: 'https://www.youtube.com/watch?v=aZjYr87r1b8&t=2127s',
+            type: 'youtube',
+          },
+        ],
+      },
+      {
+        name: 'Articles',
+        isFolder: true,
+        children: [
+          {
+            name: 'Tree cheatsheet for coding interviews',
+            href: 'https://www.techinterviewhandbook.org/algorithms/tree/',
+            type: 'article',
+          },
+          {
+            name: 'Programiz | Trees',
+            href: 'https://www.programiz.com/dsa/trees/',
+            type: 'article',
+          },
+          {
+            name: 'GeeksforGeeks | Introduction to Tree Data Structure',
+            href: 'https://www.geeksforgeeks.org/introduction-to-tree-data-structure/',
+            type: 'article',
+          },
+        ],
       },
     ],
   },
@@ -130,8 +173,51 @@ export const RESOURCES: Resource[] = [
     name: 'Sorting & Searching',
     children: [
       {
-        name: 'Soon',
-        type: 'article',
+        name: 'Articles',
+        isFolder: true,
+        children: [
+          {
+            name: 'Sorting and searching cheatsheet',
+            href: 'https://www.techinterviewhandbook.org/algorithms/sorting-searching/',
+            type: 'article',
+          },
+          {
+            name: 'Programiz | Sorting Algorithms',
+            href: 'https://www.programiz.com/dsa/sorting-algorithm',
+            type: 'article',
+          },
+          {
+            name: 'FreeCodeCamp | Sorting Algorithms',
+            href: 'https://www.freecodecamp.org/news/sorting-algorithms-explained-with-examples-in-python-java-and-c/',
+            type: 'article',
+          },
+          {
+            name: 'GeeksforGeeks | Searching Algorithms',
+            href: 'https://www.geeksforgeeks.org/searching-algorithms/',
+            type: 'article',
+          },
+          {
+            name: 'Understanding The Different Types of Search Algorithms',
+            href: 'https://www.luigisbox.com/blog/types-of-search-algorithms/',
+            type: 'article',
+          },
+        ],
+      },
+      {
+        name: 'Videos',
+        isFolder: true,
+        children: [
+          {
+            name: 'MIT | Searching and Sorting',
+            href: 'https://www.youtube.com/watch?v=6LOwPhPDwVc&t=1s&pp=ygUVc2VhcmNoaW5nIHNvcnRpbmcgTUlU',
+            type: 'youtube',
+          },
+          {
+            name: 'Abdul Bari | Searching and Sorting (32:37)',
+            href: 'https://www.youtube.com/playlist?list=PLDN4rrl48XKpZkf03iYFl-O29szjTrs_O',
+            type: 'youtube',
+          },
+        ],
       },
     ],
   },
@@ -280,8 +366,36 @@ export const RESOURCES: Resource[] = [
     name: 'Sliding Window',
     children: [
       {
-        name: 'Soon',
-        type: 'article',
+        name: 'Articles',
+        isFolder: true,
+        children: [
+          {
+            name: 'GeeksforGeeks | Sliding Window',
+            href: 'https://www.geeksforgeeks.org/window-sliding-technique/',
+            type: 'article',
+          },
+        ],
+      },
+      {
+        name: 'Videos',
+        isFolder: true,
+        children: [
+          {
+            name: 'Neso Academy | Sliding Window',
+            href: 'https://www.youtube.com/watch?v=LnbvhoxHn8M&t=246s',
+            type: 'youtube',
+          },
+          {
+            name: 'Sliding window technique',
+            href: 'https://www.youtube.com/watch?v=p-ss2JNynmw&t=98s',
+            type: 'youtube',
+          },
+          {
+            name: 'Sliding window technique',
+            href: 'https://www.youtube.com/watch?v=MK-NZ4hN7rs',
+            type: 'youtube',
+          },
+        ],
       },
     ],
   },
