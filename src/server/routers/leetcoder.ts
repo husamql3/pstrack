@@ -7,9 +7,10 @@ import { createTRPCRouter, publicProcedure } from '@/server/trpc'
 import { checkGHUsername, checkLCUsername } from '@/utils/checkLeetcoder'
 import { checkDuplicateUsername, checkPendingLeetcoder } from '@/dao/leetcoder.dao'
 import { sendAdminNotification } from '@/utils/email/sendAdminNotification'
-import { ADMINS_EMAILS, MAX_LEETCODERS } from '@/data/constants'
+import { ADMINS_EMAILS, MAX_LEETCODERS, REDIS_KEYS } from '@/data/constants'
 import { sendRequestReceivedEmail } from '@/utils/email/sendRequestReceived'
 import { updateLeetcoderSchema } from '@/types/leetcoders.type'
+import { redis } from '@/config/redis'
 
 export const leetcodersRouter = createTRPCRouter({
   getLeetcoderById: publicProcedure.input(z.object({ id: z.string().uuid() })).query(async ({ input }) => {
@@ -157,6 +158,9 @@ export const leetcodersRouter = createTRPCRouter({
           sendRequestReceivedEmail({
             email: ctx?.user?.email as string,
           }),
+          // Invalidate the cache
+          redis.del(REDIS_KEYS.ALL_GROUPS_INFO),
+          redis.del(REDIS_KEYS.AVAILABLE_GROUPS),
         ])
 
         return newLeetcoder
@@ -225,7 +229,7 @@ export const leetcodersRouter = createTRPCRouter({
         newGroupNo: z.number().int().positive(),
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       const { userId, newGroupNo } = input
       const user = await db.leetcoders.findUnique({
         where: { id: userId },
@@ -239,6 +243,11 @@ export const leetcodersRouter = createTRPCRouter({
       }
 
       if (user.group_no === newGroupNo) {
+        await sendAdminNotification({
+          event: 'GROUP_CHANGE_ERROR',
+          username: ctx?.user?.email || 'Unknown',
+          message: `User is already in group ${newGroupNo}`,
+        })
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message: 'User is already in the selected group.',
@@ -250,6 +259,11 @@ export const leetcodersRouter = createTRPCRouter({
       })
 
       if (!group) {
+        await sendAdminNotification({
+          event: 'GROUP_CHANGE_ERROR',
+          username: ctx?.user?.email || 'Unknown',
+          message: `Group ${newGroupNo} does not exist`,
+        })
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message: 'Selected group does not exist.',
@@ -261,6 +275,11 @@ export const leetcodersRouter = createTRPCRouter({
       })
 
       if (count >= MAX_LEETCODERS) {
+        await sendAdminNotification({
+          event: 'GROUP_CHANGE_ERROR',
+          username: ctx?.user?.email || 'Unknown',
+          message: `Group ${newGroupNo} is full`,
+        })
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message: 'Selected group is full.',
@@ -268,7 +287,7 @@ export const leetcodersRouter = createTRPCRouter({
       }
 
       try {
-        return await db.$transaction(async (tx) => {
+        const result = await db.$transaction(async (tx) => {
           await tx.submissions.updateMany({
             where: { user_id: userId },
             data: {
@@ -282,7 +301,20 @@ export const leetcodersRouter = createTRPCRouter({
             data: { group_no: newGroupNo },
           })
         })
-      } catch {
+
+        await sendAdminNotification({
+          event: 'GROUP_CHANGE_SUCCESS',
+          username: ctx?.user?.email || 'Unknown',
+          message: `User ${user.username} changed from group ${user.group_no} to group ${newGroupNo}`,
+        })
+
+        return result
+      } catch (error) {
+        await sendAdminNotification({
+          event: 'GROUP_CHANGE_ERROR',
+          username: ctx?.user?.email || 'Unknown',
+          message: `Failed to change group: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        })
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to change group. Please try again later.',
@@ -292,6 +324,11 @@ export const leetcodersRouter = createTRPCRouter({
 
   update: publicProcedure.input(updateLeetcoderSchema).mutation(async ({ input, ctx }) => {
     if (!ctx.user?.id || !ctx.user.leetcoder || ctx.user.id !== input.id) {
+      await sendAdminNotification({
+        event: 'UNAUTHORIZED_ACCESS',
+        username: ctx?.user?.email || 'Unknown',
+        message: 'Unauthorized attempt to update another user\'s profile',
+      })
       throw new TRPCError({
         code: 'UNAUTHORIZED',
         message: 'You can only update your own profile',
@@ -307,6 +344,11 @@ export const leetcodersRouter = createTRPCRouter({
         },
       })
       if (existingGhUser) {
+        await sendAdminNotification({
+          event: 'PROFILE_UPDATE_ERROR',
+          username: ctx?.user?.email || 'Unknown',
+          message: `GitHub username ${input.gh_username} is already registered by another user`,
+        })
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message: 'This GitHub username is already registered by another user',
@@ -316,6 +358,11 @@ export const leetcodersRouter = createTRPCRouter({
       // Validate GitHub username exists
       const isGhValid = await checkGHUsername(input.gh_username)
       if (!isGhValid) {
+        await sendAdminNotification({
+          event: 'PROFILE_UPDATE_ERROR',
+          username: ctx?.user?.email || 'Unknown',
+          message: `Invalid GitHub username: ${input.gh_username}`,
+        })
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message: 'The GitHub username looks invalid. Could you verify it?',
@@ -333,12 +380,25 @@ export const leetcodersRouter = createTRPCRouter({
     }
 
     try {
-      return await db.leetcoders.update({
+      const result = await db.leetcoders.update({
         where: { id: input.id },
         data: updateData,
       })
+
+      await sendAdminNotification({
+        event: 'PROFILE_UPDATE_SUCCESS',
+        username: ctx?.user?.email || 'Unknown',
+        message: `User ${ctx.user.leetcoder.username} updated their profile`,
+      })
+
+      return result
     } catch (error) {
       console.log('update', error)
+      await sendAdminNotification({
+        event: 'PROFILE_UPDATE_ERROR',
+        username: ctx?.user?.email || 'Unknown',
+        message: `Failed to update profile: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      })
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
         message: 'Failed to update profile. Please try again later.',
@@ -353,8 +413,13 @@ export const leetcodersRouter = createTRPCRouter({
         avatarUrl: z.string().url(),
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       if (!input.id) {
+        await sendAdminNotification({
+          event: 'AVATAR_UPDATE_ERROR',
+          username: ctx?.user?.email || 'Unknown',
+          message: 'Missing user ID when updating avatar',
+        })
         throw new TRPCError({
           code: 'UNAUTHORIZED',
           message: 'Failed to update avatar. Please try again later.',
@@ -370,9 +435,21 @@ export const leetcodersRouter = createTRPCRouter({
             avatar: input.avatarUrl,
           },
         })
+
+        await sendAdminNotification({
+          event: 'AVATAR_UPDATE_SUCCESS',
+          username: ctx?.user?.email || 'Unknown',
+          message: `User ${updated.username} updated their avatar`,
+        })
+
         return updated
       } catch (error) {
         console.log('updateAvatar', error)
+        await sendAdminNotification({
+          event: 'AVATAR_UPDATE_ERROR',
+          username: ctx?.user?.email || 'Unknown',
+          message: `Failed to update avatar: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        })
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to update avatar. Please try again later.',

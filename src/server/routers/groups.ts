@@ -7,6 +7,7 @@ import { MAX_LEETCODERS, REDIS_KEYS } from '@/data/constants'
 import { redis } from '@/config/redis'
 import type { GetAllGroupsInfoType, GroupTableDataType } from '@/trpc/groups.type'
 import { GetAllAvailableGroupsType } from '@/types/groups.type'
+import { logger } from '@/utils/logger'
 
 export const groupsRouter = createTRPCRouter({
   /**
@@ -19,7 +20,10 @@ export const groupsRouter = createTRPCRouter({
     .input(z.object({ group_no: z.string().transform((val) => Number(val)) }))
     .query(async ({ input }): Promise<GroupTableDataType> => {
       const cachedGroupData = (await redis.get(REDIS_KEYS.GROUP_DATA(input.group_no.toString()))) as GroupTableDataType | null
-      if (cachedGroupData) return cachedGroupData
+      if (cachedGroupData) {
+        logger.info(`[Cache] Using cached group data for group ${input.group_no}`)
+        return cachedGroupData
+      }
 
       const groupData = await db.groups.findUnique({
         where: {
@@ -51,7 +55,10 @@ export const groupsRouter = createTRPCRouter({
    */
   getAllGroups: publicProcedure.query(async () => {
     const cachedGroups = (await redis.get(REDIS_KEYS.ALL_GROUPS)) as groups[] | null
-    if (cachedGroups) return cachedGroups
+    if (cachedGroups) {
+      logger.info(`[Cache] Using cached all groups data`)
+      return cachedGroups
+    }
 
     const groups = await db.groups.findMany()
 
@@ -64,7 +71,10 @@ export const groupsRouter = createTRPCRouter({
    */
   getAllAvailableGroups: publicProcedure.query(async () => {
     const cachedGroups = (await redis.get(REDIS_KEYS.AVAILABLE_GROUPS)) as GetAllAvailableGroupsType[] | null
-    if (cachedGroups) return cachedGroups
+    if (cachedGroups) {
+      logger.info(`[Cache] Using cached available groups data`)
+      return cachedGroups
+    }
 
     const groups = await db.groups.findMany({
       include: {
@@ -97,7 +107,10 @@ export const groupsRouter = createTRPCRouter({
    */
   getAllGroupsInfo: publicProcedure.query(async () => {
     const cachedGroupsInfo = (await redis.get(REDIS_KEYS.ALL_GROUPS_INFO)) as GetAllGroupsInfoType[] | null
-    if (cachedGroupsInfo) return cachedGroupsInfo
+    if (cachedGroupsInfo) {
+      logger.info(`[Cache] Using cached all groups info data`)
+      return cachedGroupsInfo
+    }
 
     const groupsInfo = await db.groups.findMany({
       orderBy: {

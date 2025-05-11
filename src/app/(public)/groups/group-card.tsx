@@ -8,9 +8,9 @@ import type { Topic } from '@/types/problems.type'
 import { MAX_LEETCODERS } from '@/data/constants'
 
 import { Card, CardHeader, CardContent, CardFooter } from '@/ui/card'
-import { ProgressBar } from '../roadmap/_components/progress-bar'
+import { ProgressBar } from '@/app/(public)/roadmap/_components/progress-bar'
 import { Badge } from '@/ui/badge'
-import { AvatarGroup } from './avatar-group'
+import { AvatarGroup } from '@/app/(public)/groups/avatar-group'
 import { RequestModal } from '@/app/group/_components/request-modal'
 
 export const GroupCard = async ({ group, problemsCount, userGroup }: GroupCardProps) => {

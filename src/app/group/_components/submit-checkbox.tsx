@@ -10,8 +10,6 @@ import { api } from '@/trpc/react'
 import type { TableRowOutput } from '@/types/tableRow.type'
 import { useConfettiStore } from '@/stores/confettiStore'
 import { useSubmissionStore } from '@/stores/submissionStore'
-import { redis } from '@/config/redis'
-import { REDIS_KEYS } from '@/data/constants'
 
 import { Checkbox } from '@/app/group/_components/checkbox'
 import { errorToastStyle, loadingToastStyle, successToastStyle } from '@/app/_components/toast-styles'
@@ -88,10 +86,7 @@ export const SubmitCheckbox = ({
           setSubmission(submissionKey, true)
 
           // Call the callback to resort leetcoders
-          onSuccessfulSubmit()
-
-          // Invalidate the Redis cache
-          await redis.del(REDIS_KEYS.GROUP_DATA(groupId))
+          onSuccessfulSubmit()          
         },
         onError: async (error) => {
           // Dismiss loading toast and show error

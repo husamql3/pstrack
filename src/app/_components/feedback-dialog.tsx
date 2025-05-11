@@ -9,7 +9,7 @@ import { api } from '@/trpc/react'
 import { Button } from '@/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/ui/dialog'
 import { Textarea } from '@/ui/textarea'
-import { errorToastStyle } from './toast-styles'
+import { errorToastStyle } from '@/app/_components/toast-styles'
 
 export const FeedbackDialog = ({ email }: { email: string }) => {
   const [feedback, setFeedback] = useState('')

@@ -6,6 +6,7 @@ import { createTRPCRouter, publicProcedure } from '@/server/trpc'
 import type { RoadmapType } from '@/app/(public)/roadmap/_components/roadmap'
 import { REDIS_KEYS } from '@/data/constants'
 import type { roadmap } from '@prisma/client'
+import { logger } from '@/utils/logger'
 
 export const roadmapRouter = createTRPCRouter({
   /**
@@ -25,7 +26,10 @@ export const roadmapRouter = createTRPCRouter({
       if (!input.length) return []
 
       const cachedProblems = (await redis.get(REDIS_KEYS.GROUP_PROBLEMS(input[0].current_problem.toString()))) as roadmap[] | null
-      if (cachedProblems) return cachedProblems
+      if (cachedProblems) {
+        logger.info(`[Cache] Using cached group problems for problem ${input[0].current_problem}`)
+        return cachedProblems
+      }
 
       const currentProblems = input.map((gp) => gp.current_problem)
       const groupProblems = await db.roadmap.findMany({
@@ -45,7 +49,10 @@ export const roadmapRouter = createTRPCRouter({
    */
   getRoadmap: publicProcedure.query(async () => {
     const cachedData = (await redis.get(REDIS_KEYS.ROADMAP_DATA)) as RoadmapType[] | null
-    if (cachedData) return cachedData
+    if (cachedData) {
+      logger.info('[Cache] Using cached roadmap data')
+      return cachedData
+    }
 
     const allProblems = await db.roadmap.findMany({
       orderBy: {
@@ -78,7 +85,10 @@ export const roadmapRouter = createTRPCRouter({
    */
   count: publicProcedure.query(async () => {
     const cachedData = (await redis.get(REDIS_KEYS.ROADMAP_PROBLEM_COUNT)) as number | null
-    if (cachedData) return cachedData
+    if (cachedData) {
+      logger.info('[Cache] Using cached roadmap problem count')
+      return cachedData
+    }
 
     const problemsCount = await db.roadmap.count()
 

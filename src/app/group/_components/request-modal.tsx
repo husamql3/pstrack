@@ -16,8 +16,6 @@ import { Button } from '@/ui/button'
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/ui/dialog'
 import { type FormDataType, RequestForm } from '@/app/group/_components/request-form'
 import { RequestRules } from './request-rules'
-import { redis } from '@/config/redis'
-import { REDIS_KEYS } from '@/data/constants'
 
 const createVariants = (heightContent: number): Variants => ({
   initial: (direction: number) => ({
@@ -130,12 +128,6 @@ export const RequestModal = ({ groupId }: { groupId: string }) => {
 
             setActiveIdx(0) // Reset to first step
             setOpen(false) // Close the dialog
-
-            // Invalidate the cache
-            await Promise.all([
-              redis.del(REDIS_KEYS.ALL_GROUPS_INFO),
-              redis.del(REDIS_KEYS.AVAILABLE_GROUPS),
-            ])
           },
 
           onError: (e) => {
