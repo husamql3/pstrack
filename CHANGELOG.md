@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.4.21]
+cache all data for better performance
+
 ## [2.3.20]
 hide the request button when logged in user in the group
 
