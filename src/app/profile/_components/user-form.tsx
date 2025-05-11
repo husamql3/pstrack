@@ -11,6 +11,8 @@ import { toast } from 'sonner'
 import { UpdateLeetcoderInput } from '@/types/leetcoders.type'
 import { api } from '@/trpc/react'
 import { errorToastStyle, successToastStyle } from '@/app/_components/toast-styles'
+import { redis } from '@/config/redis'
+import { REDIS_KEYS } from '@/data/constants'
 
 import { Input } from '@/ui/input'
 import { Label } from '@/ui/label'
@@ -42,9 +44,10 @@ export const UserForm = ({ leetcoder, groups }: { leetcoder: leetcoders; groups:
   })
 
   const { mutate: changeGroup, isPending: isUpdatingGroup } = api.leetcoders.changeGroup.useMutation({
-    onSuccess: () => {
+    onSuccess: async () => {
       toast.success('Group changed successfully', { style: successToastStyle })
       router.refresh()
+      await redis.del(REDIS_KEYS.ALL_GROUPS_INFO)
     },
     onError: (error) => {
       toast.error(error.message || 'Failed to change group', { style: errorToastStyle })
