@@ -57,4 +57,5 @@ export const REDIS_KEYS = {
   ROADMAP_DATA: 'roadmap-data',
   AVAILABLE_GROUPS: 'available-groups',
   GROUP_DATA: (groupId: string) => `group:${groupId}:data`,
+  GROUP_PROBLEMS: (groupId: string) => `group:${groupId}:problems`,
 }

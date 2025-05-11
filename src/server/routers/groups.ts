@@ -9,19 +9,6 @@ import type { GetAllGroupsInfoType, GroupTableDataType } from '@/trpc/groups.typ
 import { GetAllAvailableGroupsType } from '@/types/groups.type'
 
 export const groupsRouter = createTRPCRouter({
-  getAllGroupsNo: publicProcedure.query(() => {
-    return db.groups.findMany({
-      select: { group_no: true },
-    })
-  }),
-  getGroupByNo: publicProcedure
-    .input(z.object({ group_no: z.string().transform((val) => Number(val)) }))
-    .query(({ input }) => {
-      return db.groups.findUnique({
-        where: { group_no: input.group_no },
-        select: { group_no: true },
-      })
-    }),
   /**
    * Get group table data for /group/[groupId] page
    * - revalidates every 24 hours
@@ -139,14 +126,5 @@ export const groupsRouter = createTRPCRouter({
 
     await redis.set(REDIS_KEYS.ALL_GROUPS_INFO, groupsInfo, { ex: 86400 }) // cache for one day
     return groupsInfo as GetAllGroupsInfoType[]
-  }),
-  getGroupLeetcodersCount: publicProcedure.query(async () => {
-    return db.leetcoders.count({
-      where: {
-        status: {
-          in: ['APPROVED', 'PENDING'],
-        },
-      },
-    })
   }),
 })

@@ -13,34 +13,14 @@ const Page = async ({ params }: { params: Promise<{ groupId: string }> }) => {
   if (NOT_STARTED_GROUPS.includes(+groupId)) return <NotStarted />
 
   const groupData = await api.groups.getGroupTableData({ group_no: groupId })
-  const roadmap = await api.roadmap.getGroupProblems(groupData?.group_progress || [])
+  const groupProblems = await api.roadmap.getGroupProblems(groupData?.group_progress || [])
 
-  // const cacheKey = `group:${groupId}:data`
-  // let groupData: GroupData | null = null
-  // let roadmap: roadmap[] = []
-
-  // const cachedData = (await redis.get(cacheKey)) as CachedData | null
-
-  // if (cachedData) {
-  //   console.log('##### Cached data found')
-  //   groupData = cachedData.groupData
-  //   roadmap = cachedData.roadmap
-  // } else {
-  //   console.log('##### No cached data found')
-  //   groupData = await api.groups.getGroupTableData({ group_no: groupId })
-  //   roadmap = await api.roadmap.getGroupProblems(groupData?.group_progress || [])
-
-  //   if (groupData && roadmap) {
-  //     await redis.set(cacheKey, { groupData, roadmap }, { ex: 180 }) // cache for 3 minutes
-  //   }
-  // }
-
-  if (!groupData || !roadmap || roadmap.length === 0) return <NotStarted />
+  if (!groupData || !groupProblems || groupProblems.length === 0) return <NotStarted />
 
   const tableData = generateTableData({
     group_no: groupData.group_no,
     submission: groupData.submissions,
-    roadmap,
+    roadmap: groupProblems,
     group_progress: groupData.group_progress,
   })
 

@@ -5,8 +5,14 @@ import { redis } from '@/config/redis'
 import { createTRPCRouter, publicProcedure } from '@/server/trpc'
 import type { RoadmapType } from '@/app/(public)/roadmap/_components/roadmap'
 import { REDIS_KEYS } from '@/data/constants'
+import type { roadmap } from '@prisma/client'
 
 export const roadmapRouter = createTRPCRouter({
+  /**
+   * Get group problems for /group/[groupId] page
+   * revalidates every 24 hours
+   * @returns {roadmap[]}
+   */
   getGroupProblems: publicProcedure
     .input(
       z.array(
@@ -17,14 +23,21 @@ export const roadmapRouter = createTRPCRouter({
     )
     .query(async ({ input }) => {
       if (!input.length) return []
+
+      const cachedProblems = (await redis.get(REDIS_KEYS.GROUP_PROBLEMS(input[0].current_problem.toString()))) as roadmap[] | null
+      if (cachedProblems) return cachedProblems
+
       const currentProblems = input.map((gp) => gp.current_problem)
-      return await db.roadmap.findMany({
+      const groupProblems = await db.roadmap.findMany({
         where: {
           problem_order: {
             in: currentProblems,
           },
         },
       })
+
+      await redis.set(REDIS_KEYS.GROUP_PROBLEMS(input[0].current_problem.toString()), groupProblems, { ex: 86400 }) // cache for one day
+      return groupProblems
     }),
 
   /**
