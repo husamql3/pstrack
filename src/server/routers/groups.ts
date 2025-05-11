@@ -5,7 +5,7 @@ import { createTRPCRouter, publicProcedure } from '@/server/trpc'
 import { db } from '@/prisma/db'
 import { MAX_LEETCODERS, REDIS_KEYS } from '@/data/constants'
 import { redis } from '@/config/redis'
-import type { GetAllGroupsInfoType } from '@/trpc/groups.type'
+import type { GetAllGroupsInfoType, GroupTableDataType } from '@/trpc/groups.type'
 import { GetAllAvailableGroupsType } from '@/types/groups.type'
 
 export const groupsRouter = createTRPCRouter({
@@ -22,10 +22,19 @@ export const groupsRouter = createTRPCRouter({
         select: { group_no: true },
       })
     }),
+  /**
+   * Get group table data for /group/[groupId] page
+   * - revalidates every 24 hours
+   * - on each leetcoder submission, the cache is invalidated
+   * @returns {GroupTableDataType}
+   */
   getGroupTableData: publicProcedure
     .input(z.object({ group_no: z.string().transform((val) => Number(val)) }))
-    .query(({ input }) => {
-      return db.groups.findUnique({
+    .query(async ({ input }): Promise<GroupTableDataType> => {
+      const cachedGroupData = (await redis.get(REDIS_KEYS.GROUP_DATA(input.group_no.toString()))) as GroupTableDataType | null
+      if (cachedGroupData) return cachedGroupData
+
+      const groupData = await db.groups.findUnique({
         where: {
           group_no: input.group_no,
         },
@@ -44,6 +53,9 @@ export const groupsRouter = createTRPCRouter({
           },
         },
       })
+
+      await redis.set(REDIS_KEYS.GROUP_DATA(input.group_no.toString()), groupData, { ex: 86400 }) // cache for one day
+      return groupData as GroupTableDataType
     }),
   /**
    * Get all groups for /dashboard page

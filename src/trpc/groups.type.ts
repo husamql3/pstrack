@@ -1,4 +1,4 @@
-import type { leetcoders, roadmap } from '@prisma/client'
+import type { group_progress, groups, leetcoders, roadmap, submissions } from '@prisma/client'
 
 export type GetAllGroupsInfoType = {
   id: string
@@ -12,3 +12,12 @@ export type GetAllGroupsInfoType = {
     roadmap: Pick<roadmap, 'topic' | 'problem_order'>
   }[]
 }
+
+export type GroupTableDataType = (groups & {
+  leetcoders: leetcoders[];
+  group_progress: group_progress[];
+  submissions: (submissions & {
+    problem: roadmap;
+    user: leetcoders;
+  })[];
+}) | null;

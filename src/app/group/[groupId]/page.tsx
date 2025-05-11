@@ -12,8 +12,6 @@ const Page = async ({ params }: { params: Promise<{ groupId: string }> }) => {
   // for not started groups
   if (NOT_STARTED_GROUPS.includes(+groupId)) return <NotStarted />
 
-  const user = await api.auth.getUser()
-  console.log('user?.user_metadata', user?.user_metadata)
   const groupData = await api.groups.getGroupTableData({ group_no: groupId })
   const roadmap = await api.roadmap.getGroupProblems(groupData?.group_progress || [])
 
