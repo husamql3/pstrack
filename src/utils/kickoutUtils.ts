@@ -134,29 +134,3 @@ export const updateIsNotified = async (leetcoderId: string): Promise<leetcoders>
     throw error
   }
 }
-
-// Process a single leetcoder
-export const processLeetcoder = async (
-  leetcoder: LeetcoderWithSubmissions,
-  assignedProblems: { id: string }[],
-  unsolvedThreshold: number
-): Promise<void> => {
-  if (assignedProblems.length < unsolvedThreshold) return
-
-  const solvedProblems = getSolvedProblems(leetcoder)
-  const unsolvedProblems = calculateUnsolvedProblems(assignedProblems, solvedProblems)
-
-  if (unsolvedProblems.length > unsolvedThreshold) {
-    if (leetcoder.is_notified) {
-      await kickOffLeetcoders(leetcoder.id)
-    } else {
-      await Promise.all([
-        sendReminderEmail({
-          group_no: String(leetcoder.group_no),
-          email: leetcoder.email,
-        }),
-        updateIsNotified(leetcoder.id),
-      ])
-    }
-  }
-}

@@ -43,6 +43,6 @@ export const NOT_STARTED_GROUPS = [7]
 /**
  * API request configuration
  */
-export const BATCH_SIZE = 20
-export const DELAY_MS = 5000
-export const LIMIT = pLimit(5)
+export const BATCH_SIZE = 50
+export const DELAY_MS = 1000
+export const LIMIT = pLimit(10)

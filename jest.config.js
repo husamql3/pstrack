@@ -1,30 +1,22 @@
-/** @type {import('jest').Config} */
-const config = {
+/** @type {import('ts-jest').JestConfigWithTsJest} */
+module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
+  transform: {
+    '^.+\\.(ts|tsx)$': ['ts-jest', {
+      useESM: true,
+    }],
+  },
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
   },
-  setupFilesAfterEnv: ['<rootDir>/src/tests/setup-jest.ts'],
-  transform: {
-    '^.+\\.tsx?$': [
-      'ts-jest',
-      {
-        tsconfig: 'tsconfig.json',
-      },
-    ],
-  },
-  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
-  testPathIgnorePatterns: ['/node_modules/', '/.next/'],
+  transformIgnorePatterns: [
+    'node_modules/(?!(p-limit|yocto-queue)/)',
+  ],
+  extensionsToTreatAsEsm: ['.ts'],
   globals: {
     'ts-jest': {
-      isolatedModules: true,
+      useESM: true,
     },
   },
-  haste: {
-    forceNodeFilesystemAPI: true,
-    enableSymlinks: false,
-  },
 }
-
-module.exports = config

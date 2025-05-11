@@ -152,6 +152,7 @@ body {
 
 @theme {
   --animate-text-gradient: text-gradient 2.5s linear infinite;
+  --animate-shine: shine 6s linear infinite;
 
   @keyframes text-gradient {
     from {
@@ -160,6 +161,16 @@ body {
 
     to {
       background-position: -200% 0;
+    }
+  }
+
+  @keyframes shine {
+    from {
+      background-position: 0 0;
+    }
+
+    to {
+      background-position: -400% 0;
     }
   }
 }
