@@ -130,7 +130,12 @@ export const RequestModal = ({ groupId }: { groupId: string }) => {
 
             setActiveIdx(0) // Reset to first step
             setOpen(false) // Close the dialog
-            await redis.del(REDIS_KEYS.ALL_GROUPS_INFO)
+
+            // Invalidate the cache
+            await Promise.all([
+              redis.del(REDIS_KEYS.ALL_GROUPS_INFO),
+              redis.del(REDIS_KEYS.AVAILABLE_GROUPS),
+            ])
           },
 
           onError: (e) => {

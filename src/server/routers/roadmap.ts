@@ -29,7 +29,6 @@ export const roadmapRouter = createTRPCRouter({
 
   /**
    * get the roadmap data for /roadmap
-   * cache for 7 days
    */
   getRoadmap: publicProcedure.query(async () => {
     const cachedData = (await redis.get(REDIS_KEYS.ROADMAP_DATA)) as RoadmapType[] | null
@@ -57,21 +56,20 @@ export const roadmapRouter = createTRPCRouter({
       problems,
     }))
 
-    await redis.set(REDIS_KEYS.ROADMAP_DATA, groupedResults, { ex: 604800 }) // cache for 7 days
+    await redis.set(REDIS_KEYS.ROADMAP_DATA, groupedResults)
     return groupedResults
   }),
 
   /**
    * get the count of problems in the roadmap
-   * cache for 7 days
    */
   count: publicProcedure.query(async () => {
     const cachedData = (await redis.get(REDIS_KEYS.ROADMAP_PROBLEM_COUNT)) as number | null
     if (cachedData) return cachedData
 
     const problemsCount = await db.roadmap.count()
-    await redis.set(REDIS_KEYS.ROADMAP_PROBLEM_COUNT, problemsCount, { ex: 604800 }) // cache for 7 days
 
+    await redis.set(REDIS_KEYS.ROADMAP_PROBLEM_COUNT, problemsCount)
     return problemsCount
   }),
 })

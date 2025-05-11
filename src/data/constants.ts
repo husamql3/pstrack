@@ -55,4 +55,5 @@ export const REDIS_KEYS = {
   ALL_GROUPS_INFO: 'all-groups-info',
   ROADMAP_PROBLEM_COUNT: 'roadmap-problem-count',
   ROADMAP_DATA: 'roadmap-data',
+  AVAILABLE_GROUPS: 'available-groups',
 }

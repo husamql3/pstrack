@@ -6,6 +6,7 @@ import { db } from '@/prisma/db'
 import { MAX_LEETCODERS, REDIS_KEYS } from '@/data/constants'
 import { redis } from '@/config/redis'
 import type { GetAllGroupsInfoType } from '@/trpc/groups.type'
+import { GetAllAvailableGroupsType } from '@/types/groups.type'
 
 export const groupsRouter = createTRPCRouter({
   getAllGroupsNo: publicProcedure.query(() => {
@@ -58,7 +59,14 @@ export const groupsRouter = createTRPCRouter({
     await redis.set(REDIS_KEYS.ALL_GROUPS, groups, { ex: 604800 }) // cache for 7 days
     return groups
   }),
+  /**
+   * Get all available groups for /profile page
+   * revalidates every 24 hours
+   */
   getAllAvailableGroups: publicProcedure.query(async () => {
+    const cachedGroups = (await redis.get(REDIS_KEYS.AVAILABLE_GROUPS)) as GetAllAvailableGroupsType[] | null
+    if (cachedGroups) return cachedGroups
+
     const groups = await db.groups.findMany({
       include: {
         leetcoders: {
@@ -77,7 +85,9 @@ export const groupsRouter = createTRPCRouter({
       },
     })
 
-    return groups.filter((group) => group.leetcoders.length < MAX_LEETCODERS)
+    const availableGroups = groups.filter((group) => group.leetcoders.length < MAX_LEETCODERS)
+    await redis.set(REDIS_KEYS.AVAILABLE_GROUPS, availableGroups, { ex: 86400 }) // cache for 24 hours
+    return availableGroups as GetAllAvailableGroupsType[]
   }),
   /**
    * Get all groups info for /groups page
