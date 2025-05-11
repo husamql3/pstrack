@@ -25,9 +25,11 @@ export const roadmapRouter = createTRPCRouter({
     .query(async ({ input }) => {
       if (!input.length) return []
 
-      const cachedProblems = (await redis.get(REDIS_KEYS.GROUP_PROBLEMS(input[0].current_problem.toString()))) as roadmap[] | null
+      const cachedProblems = (await redis.get(REDIS_KEYS.GROUP_PROBLEMS(input[0].current_problem.toString()))) as
+        | roadmap[]
+        | null
       if (cachedProblems) {
-        logger.info(`[Cache] Using cached group problems for problem ${input[0].current_problem}`)
+        logger.debug(`[Cache] Using cached group problems for problem ${input[0].current_problem}`)
         return cachedProblems
       }
 
@@ -50,7 +52,7 @@ export const roadmapRouter = createTRPCRouter({
   getRoadmap: publicProcedure.query(async () => {
     const cachedData = (await redis.get(REDIS_KEYS.ROADMAP_DATA)) as RoadmapType[] | null
     if (cachedData) {
-      logger.info('[Cache] Using cached roadmap data')
+      logger.debug('[Cache] Using cached roadmap data')
       return cachedData
     }
 
@@ -86,7 +88,7 @@ export const roadmapRouter = createTRPCRouter({
   count: publicProcedure.query(async () => {
     const cachedData = (await redis.get(REDIS_KEYS.ROADMAP_PROBLEM_COUNT)) as number | null
     if (cachedData) {
-      logger.info('[Cache] Using cached roadmap problem count')
+      logger.debug('[Cache] Using cached roadmap problem count')
       return cachedData
     }
 

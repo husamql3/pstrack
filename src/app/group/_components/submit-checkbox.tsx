@@ -86,7 +86,7 @@ export const SubmitCheckbox = ({
           setSubmission(submissionKey, true)
 
           // Call the callback to resort leetcoders
-          onSuccessfulSubmit()          
+          onSuccessfulSubmit()
         },
         onError: async (error) => {
           // Dismiss loading toast and show error

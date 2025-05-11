@@ -13,11 +13,13 @@ export type GetAllGroupsInfoType = {
   }[]
 }
 
-export type GroupTableDataType = (groups & {
-  leetcoders: leetcoders[];
-  group_progress: group_progress[];
-  submissions: (submissions & {
-    problem: roadmap;
-    user: leetcoders;
-  })[];
-}) | null;
+export type GroupTableDataType =
+  | (groups & {
+      leetcoders: leetcoders[]
+      group_progress: group_progress[]
+      submissions: (submissions & {
+        problem: roadmap
+        user: leetcoders
+      })[]
+    })
+  | null

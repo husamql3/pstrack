@@ -19,9 +19,11 @@ export const groupsRouter = createTRPCRouter({
   getGroupTableData: publicProcedure
     .input(z.object({ group_no: z.string().transform((val) => Number(val)) }))
     .query(async ({ input }): Promise<GroupTableDataType> => {
-      const cachedGroupData = (await redis.get(REDIS_KEYS.GROUP_DATA(input.group_no.toString()))) as GroupTableDataType | null
+      const cachedGroupData = (await redis.get(
+        REDIS_KEYS.GROUP_DATA(input.group_no.toString())
+      )) as GroupTableDataType | null
       if (cachedGroupData) {
-        logger.info(`[Cache] Using cached group data for group ${input.group_no}`)
+        logger.debug(`[Cache] Using cached group data for group ${input.group_no}`)
         return cachedGroupData
       }
 
@@ -56,7 +58,7 @@ export const groupsRouter = createTRPCRouter({
   getAllGroups: publicProcedure.query(async () => {
     const cachedGroups = (await redis.get(REDIS_KEYS.ALL_GROUPS)) as groups[] | null
     if (cachedGroups) {
-      logger.info(`[Cache] Using cached all groups data`)
+      logger.debug(`[Cache] Using cached all groups data`)
       return cachedGroups
     }
 
@@ -72,7 +74,7 @@ export const groupsRouter = createTRPCRouter({
   getAllAvailableGroups: publicProcedure.query(async () => {
     const cachedGroups = (await redis.get(REDIS_KEYS.AVAILABLE_GROUPS)) as GetAllAvailableGroupsType[] | null
     if (cachedGroups) {
-      logger.info(`[Cache] Using cached available groups data`)
+      logger.debug(`[Cache] Using cached available groups data`)
       return cachedGroups
     }
 
@@ -108,7 +110,7 @@ export const groupsRouter = createTRPCRouter({
   getAllGroupsInfo: publicProcedure.query(async () => {
     const cachedGroupsInfo = (await redis.get(REDIS_KEYS.ALL_GROUPS_INFO)) as GetAllGroupsInfoType[] | null
     if (cachedGroupsInfo) {
-      logger.info(`[Cache] Using cached all groups info data`)
+      logger.debug(`[Cache] Using cached all groups info data`)
       return cachedGroupsInfo
     }
 

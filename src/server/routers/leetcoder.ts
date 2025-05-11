@@ -327,7 +327,7 @@ export const leetcodersRouter = createTRPCRouter({
       await sendAdminNotification({
         event: 'UNAUTHORIZED_ACCESS',
         username: ctx?.user?.email || 'Unknown',
-        message: 'Unauthorized attempt to update another user\'s profile',
+        message: "Unauthorized attempt to update another user's profile",
       })
       throw new TRPCError({
         code: 'UNAUTHORIZED',
