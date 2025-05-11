@@ -18,10 +18,6 @@ export const env = createEnv({
     RABBITMQ_URL: z.string().url(),
     UPSTASH_REDIS_REST_URL: z.string().url().min(20),
     UPSTASH_REDIS_REST_TOKEN: z.string().min(20),
-    QSTASH_URL: z.string().url(),
-    QSTASH_TOKEN: z.string(),
-    QSTASH_CURRENT_SIGNING_KEY: z.string(),
-    QSTASH_NEXT_SIGNING_KEY: z.string(),
   },
   runtimeEnv: {
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -38,10 +34,6 @@ export const env = createEnv({
     EMAIL_PASSWORD: process.env.EMAIL_PASSWORD,
     API_SECRET: process.env.API_SECRET,
     RABBITMQ_URL: process.env.RABBITMQ_URL,
-    QSTASH_URL: process.env.QSTASH_URL,
-    QSTASH_TOKEN: process.env.QSTASH_TOKEN,
-    QSTASH_CURRENT_SIGNING_KEY: process.env.QSTASH_CURRENT_SIGNING_KEY,
-    QSTASH_NEXT_SIGNING_KEY: process.env.QSTASH_NEXT_SIGNING_KEY,
   },
   skipValidation: process.env.NODE_ENV !== 'development',
 })

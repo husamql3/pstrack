@@ -85,19 +85,6 @@ export const SubmitCheckbox = ({
           setIsChecked(true)
           setSubmission(submissionKey, true)
 
-          // Invalidate the Redis cache
-          try {
-            await fetch('/api/invalidate-cache/group', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({ groupId }),
-            })
-          } catch (error) {
-            console.error('Failed to invalidate cache:', error)
-          }
-
           // Call the callback to resort leetcoders
           onSuccessfulSubmit()
         },

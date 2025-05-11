@@ -112,7 +112,7 @@ export const RequestModal = ({ groupId }: { groupId: string }) => {
           group_no: groupId,
         },
         {
-          onSuccess: () => {
+          onSuccess: async () => {
             router.refresh()
             toast.dismiss(loadingToastId)
             toast.success(
