@@ -1,2 +1,8 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
+
+echo "🔍 Running Prettier check..."
+pnpm run prettier
+
+echo "🏗️ Running build check..."
+pnpm run build
