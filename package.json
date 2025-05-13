@@ -32,7 +32,8 @@
     "prisma:studio": "prisma studio --schema=./src/prisma/schema.prisma",
     "prisma:push": "prisma db push --schema=./src/prisma/schema.prisma",
     "prisma:pull": "prisma db pull --schema=./src/prisma/schema.prisma",
-    "prisma:seed": "ts-node ./src/prisma/seed.ts"
+    "prisma:seed": "ts-node ./src/prisma/seed.ts",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@next/third-parties": "^15.3.1",
@@ -70,6 +71,7 @@
     "critters": "^0.0.25",
     "dotenv": "^16.5.0",
     "framer-motion": "^12.7.4",
+    "husky": "^9.1.7",
     "install": "^0.13.0",
     "jiti": "^2.4.2",
     "lodash": "^4.17.21",

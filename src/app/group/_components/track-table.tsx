@@ -16,6 +16,8 @@ import { useSubmissionStore } from '@/stores/submissionStore'
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@/ui/table'
 import { SubmitCheckbox } from '@/app/group/_components/submit-checkbox'
 import { LeetCoderCard } from '@/app/group/_components/leetcoder-card'
+import { toast } from 'sonner'
+import { infoToastStyle } from '@/app/_components/toast-styles'
 
 const columnHelper = createColumnHelper<TableRowOutput>()
 
@@ -216,6 +218,13 @@ export const TrackTable = ({
   const handleShowMore = () => {
     setVisibleRecords((prev) => prev + 20) // Increment visible records by 20
   }
+
+  useEffect(() => {
+    toast.info(
+      'We currently do not have any new problems. We are pausing our progress until the exam period is over.',
+      { style: infoToastStyle, duration: 5000, closeButton: true }
+    )
+  }, [])
 
   return (
     <div className="w-svw py-5">
