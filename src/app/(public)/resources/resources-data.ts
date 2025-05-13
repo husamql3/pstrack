@@ -1,19 +1,4 @@
-export type FileResource = {
-  name: string
-  href?: string
-  type?: 'youtube' | 'article'
-}
-
-export type FolderResource = {
-  name: string
-  isFolder: true
-  children: (FileResource | FolderResource)[]
-}
-
-type Resource = {
-  name: string
-  children: (FileResource | FolderResource)[]
-}
+import { Resource } from '@/types/resources'
 
 export const RESOURCES: Resource[] = [
   {
