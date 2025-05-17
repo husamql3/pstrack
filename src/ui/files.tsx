@@ -140,12 +140,7 @@ function FolderTrigger({ children, className, sideComponent, ...props }: FolderT
       <FileButton
         open={isOpen}
         icons={{
-          // open: <FolderOpenIcon fill="currentColor" />,
-          // close: <FolderIcon fill="currentColor" />,
-          // open: <FaFolderOpen />,
-          // close: <FaFolder />,
-          // open: <FaRegFolderOpen />,
-          // close: <FaRegFolder />,
+// (Removed commented-out icon code for clarity and maintainability)
           open: <BiSolidFolderOpen />,
           close: <BiSolidFolder />,
         }}
