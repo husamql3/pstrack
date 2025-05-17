@@ -2,10 +2,10 @@
 
 import Link from 'next/link'
 import { LuFile } from 'react-icons/lu'
+import { BiSolidFolderOpen, BiSolidFolder } from 'react-icons/bi'
 import { PiYoutubeLogo } from 'react-icons/pi'
 import type { ComponentProps, ReactNode } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
-import { FolderIcon, FolderOpenIcon } from 'lucide-react'
 
 import { cn } from '@/utils/cn'
 import {
@@ -140,8 +140,14 @@ function FolderTrigger({ children, className, sideComponent, ...props }: FolderT
       <FileButton
         open={isOpen}
         icons={{
-          open: <FolderOpenIcon fill="currentColor" />,
-          close: <FolderIcon fill="currentColor" />,
+          // open: <FolderOpenIcon fill="currentColor" />,
+          // close: <FolderIcon fill="currentColor" />,
+          // open: <FaFolderOpen />,
+          // close: <FaFolder />,
+          // open: <FaRegFolderOpen />,
+          // close: <FaRegFolder />,
+          open: <BiSolidFolderOpen />,
+          close: <BiSolidFolder />,
         }}
         className={className}
         sideComponent={sideComponent}

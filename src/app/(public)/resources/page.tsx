@@ -9,7 +9,7 @@ const Page = () => {
     <div className="mx-auto w-full max-w-2xl flex-1 px-3 py-5">
       <Tabs
         defaultValue="problem-solving"
-        orientation="vertical"
+        orientation="horizontal"
         className="w-full flex-row"
       >
         <TabsList className="flex-col justify-start gap-1 rounded-none bg-transparent px-1 py-0">

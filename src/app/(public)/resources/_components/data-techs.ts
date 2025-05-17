@@ -375,8 +375,15 @@ export const RESOURCES: Resource[] = [
     name: 'C',
     children: [
       {
-        name: 'Soon',
-        type: 'article',
+        name: 'YouTube',
+        isFolder: true,
+        children: [
+          {
+            name: 'C Programming Tutorials',
+            href: 'https://www.youtube.com/playlist?list=PLA1FTfKBAEX4hblYoH6mnq0zsie2w6Wif',
+            type: 'youtube',
+          },
+        ],
       },
     ],
   },
@@ -384,17 +391,51 @@ export const RESOURCES: Resource[] = [
     name: 'C++',
     children: [
       {
-        name: 'Soon',
-        type: 'article',
+        name: 'YouTube',
+        isFolder: true,
+        children: [
+          {
+            name: 'Mosh | C++ Tutorial for Beginners',
+            href: 'https://www.youtube.com/watch?v=ZzaPdXTrSb8&pp=ygUMQysrIFR1dG9yaWFs',
+            type: 'youtube',
+          },
+          {
+            name: 'C++ Full Course',
+            href: 'https://www.youtube.com/watch?v=-TkoO8Z07hI&pp=ygUMQysrIFR1dG9yaWFs',
+            type: 'youtube',
+          },
+          {
+            name: 'FreeCodeCamp | C++ Tutorial for Beginners',
+            href: 'https://www.youtube.com/watch?v=vLnPwxZdW4Y&pp=ygUMQysrIFR1dG9yaWFs',
+            type: 'youtube',
+          },
+        ],
       },
     ],
   },
   {
-    name: 'DataBase',
+    name: 'DB',
     children: [
       {
-        name: 'Soon',
-        type: 'article',
+        name: 'YouTube',
+        isFolder: true,
+        children: [
+          {
+            name: 'AMR Elhelw | Relational Database Internals (English)',
+            href: 'https://www.youtube.com/playlist?list=PLE8kQVoC67PywFpq0VXxGFbStvtskNVkW',
+            type: 'youtube',
+          },
+          {
+            name: 'AMR Elhelw | Relational Database Internals (Arabic)',
+            href: 'https://www.youtube.com/playlist?list=PLE8kQVoC67PzGwMMsSk3C8MvfAqcYjusF',
+            type: 'youtube',
+          },
+          {
+            name: '(Not a tutorial) but a good overview',
+            href: 'https://www.youtube.com/watch?v=3gVBjTMS8FE&t=618s&pp=ygUJZGF0YSBiYXNl',
+            type: 'youtube',
+          },
+        ],
       },
     ],
   },
@@ -402,8 +443,25 @@ export const RESOURCES: Resource[] = [
     name: 'Git & GitHub',
     children: [
       {
-        name: 'Soon',
-        type: 'article',
+        name: 'YouTube',
+        isFolder: true,
+        children: [
+          {
+            name: 'Elzero | Learn Git and Github',
+            href: 'https://www.youtube.com/playlist?list=PLDoPjvoNmBAw4eOj58MZPakHjaO3frVMF',
+            type: 'youtube',
+          },
+          {
+            name: 'Ghareeb | Github in one hour',
+            href: 'https://www.youtube.com/watch?v=fDkR0TDR9dI&t=2226s&pp=ygUPZ2l0aHViIHR1dG9yaWFs',
+            type: 'youtube',
+          },
+          {
+            name: 'Big Data | Github in depth',
+            href: 'https://www.youtube.com/watch?v=Q6G-J54vgKc&t=9965s&pp=ygUPZ2l0aHViINi02K3YqNi3',
+            type: 'youtube',
+          },
+        ],
       },
     ],
   },
