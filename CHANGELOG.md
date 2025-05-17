@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.4.24]
+fix roadmap in small screens
+
+## [2.4.23]
+roadmap is a protected route
+
 ## [2.4.21]
 cache all data for better performance
 
