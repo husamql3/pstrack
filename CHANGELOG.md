@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.4.23]
+add optimize optimization
+
 ## [2.4.21]
 cache all data for better performance
 
