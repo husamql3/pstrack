@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.4.22]
+add links menu in small screens
+
 ## [2.4.21]
 cache all data for better performance
 
