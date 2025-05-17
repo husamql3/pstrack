@@ -31,7 +31,10 @@ export const LinksMenu = ({ className }: { className?: string }) => {
           />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent>
+      <DropdownMenuContent
+        sideOffset={10}
+        align="start"
+      >
         {TABS.map((tab) => (
           <DropdownMenuItem
             key={tab.name}
