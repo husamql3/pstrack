@@ -3,7 +3,7 @@ import pLimit from 'p-limit'
 /**
  * App version
  */
-export const VERSION = '2.4.22'
+export const VERSION = '2.5.24'
 
 /**
  * Repository information
