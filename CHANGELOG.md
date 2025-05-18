@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.5.26]
+add links menu in small screens
+
 ## [2.5.25]
 Add Prisma Optimize extension to client
 
