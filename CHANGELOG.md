@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.5.24]
+add techs resources
+
 ## [2.4.24]
 fix roadmap in small screens
 
