@@ -140,7 +140,7 @@ function FolderTrigger({ children, className, sideComponent, ...props }: FolderT
       <FileButton
         open={isOpen}
         icons={{
-// (Removed commented-out icon code for clarity and maintainability)
+          // (Removed commented-out icon code for clarity and maintainability)
           open: <BiSolidFolderOpen />,
           close: <BiSolidFolder />,
         }}
