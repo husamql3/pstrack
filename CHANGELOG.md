@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.5.25]
+Add Prisma Optimize extension to client
+
 ## [2.5.24]
 add techs resources
 
