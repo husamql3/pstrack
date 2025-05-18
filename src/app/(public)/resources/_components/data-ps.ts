@@ -1,6 +1,6 @@
 import { Resource } from '@/types/resources'
 
-export const RESOURCES: Resource[] = [
+export const PROBLEM_SOLVING_RESOURCES: Resource[] = [
   {
     name: 'Bit Manipulation',
     children: [

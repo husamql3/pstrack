@@ -1,6 +1,6 @@
 import { Resource } from '@/types/resources'
 
-export const RESOURCES: Resource[] = [
+export const TECHNOLOGIES_RESOURCES: Resource[] = [
   {
     name: 'NodeJs',
     children: [

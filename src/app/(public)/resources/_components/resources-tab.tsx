@@ -1,12 +1,13 @@
 import { FileResource, FolderResource } from '@/types/resources'
-import { RESOURCES } from './data-ps'
+
+import { PROBLEM_SOLVING_RESOURCES } from './data-ps'
 
 import { Files, File, Folder } from '@/ui/files'
 
 export const ProblemSolvingTab = () => {
   return (
     <Files className="w-full border-none bg-transparent">
-      {[...RESOURCES].reverse().map((resource) => (
+      {[...PROBLEM_SOLVING_RESOURCES].reverse().map((resource) => (
         <Folder
           key={resource.name}
           name={resource.name}

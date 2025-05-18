@@ -1,12 +1,11 @@
-import { FileResource, FolderResource } from '@/types/resources'
-import { TECHNOLOGIES_RESOURCES } from './data-techs'
+import { FileResource, FolderResource, Resource } from '@/types/resources'
 
 import { Files, File, Folder } from '@/ui/files'
 
-export const TechsTab = () => {
+export const ResourcesTree = ({ resources }: { resources: Resource[] }) => {
   return (
     <Files className="w-full border-none bg-transparent">
-      {[...TECHNOLOGIES_RESOURCES].reverse().map((resource) => (
+      {[...resources].reverse().map((resource) => (
         <Folder
           key={resource.name}
           name={resource.name}
