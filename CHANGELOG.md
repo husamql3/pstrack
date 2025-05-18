@@ -1,7 +1,19 @@
 # Changelog
 
-## [2.4.22]
+## [2.5.26]
 add links menu in small screens
+
+## [2.5.25]
+Add Prisma Optimize extension to client
+
+## [2.5.24]
+add techs resources
+
+## [2.4.24]
+fix roadmap in small screens
+
+## [2.4.23]
+roadmap is a protected route
 
 ## [2.4.21]
 cache all data for better performance

@@ -1,48 +1,46 @@
 'use client'
 
-import { File, Files, Folder } from '@/ui/files'
-import { type FileResource, type FolderResource, RESOURCES } from './resources'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/ui/tabs'
+import { ResourcesTree } from './_components/resources-tree'
+import { PROBLEM_SOLVING_RESOURCES } from './_components/data-ps'
+import { TECHNOLOGIES_RESOURCES } from './_components/data-techs'
 
 const Page = () => {
   return (
-    <div className="mx-auto w-full max-w-lg flex-1 px-3 py-5">
-      <div className="relative mx-auto w-full max-w-[600px] overflow-hidden rounded-lg border border-zinc-700/10 bg-gradient-to-tr from-[#141416] to-[#1C1C1C] p-2 shadow-[0_8px_24px_rgba(0,0,0,0.3)] backdrop-blur-md before:absolute before:inset-0 before:-z-10 before:rounded-lg before:bg-gradient-to-tr before:from-zinc-900/20 before:to-zinc-800/5 before:opacity-20 after:absolute after:inset-0 after:-z-20 after:[background-size:200px] after:opacity-[0.15] after:mix-blend-overlay">
-        <Files className="w-full max-w-[500px] border-none bg-transparent">
-          {[...RESOURCES].reverse().map((resource) => (
-            <Folder
-              key={resource.name}
-              name={resource.name}
-              className="cursor-pointer"
-            >
-              {resource.children.map((child) =>
-                'isFolder' in child ? (
-                  <Folder
-                    key={child.name}
-                    name={child.name}
-                    className="cursor-pointer"
-                  >
-                    {[...(child as FolderResource).children].map((subChild) => (
-                      <File
-                        key={subChild.name}
-                        name={subChild.name}
-                        href={'href' in subChild ? subChild.href : undefined}
-                        type={'type' in subChild ? subChild.type : undefined}
-                      />
-                    ))}
-                  </Folder>
-                ) : (
-                  <File
-                    key={child.name}
-                    name={child.name}
-                    href={'href' in child ? child.href : undefined}
-                    type={'type' in child ? (child as FileResource).type : undefined}
-                  />
-                )
-              )}
-            </Folder>
-          ))}
-        </Files>
-      </div>
+    <div className="mx-auto w-full max-w-2xl flex-1 px-3 py-5">
+      <Tabs
+        defaultValue="problem-solving"
+        orientation="horizontal"
+        className="w-full flex-col gap-4 sm:flex-row sm:gap-0"
+      >
+        <TabsList className="flex-row justify-start gap-1.5 rounded-none bg-transparent px-1 py-0 sm:flex-col">
+          <TabsTrigger
+            value="problem-solving"
+            className="hover:bg-accent hover:text-foreground data-[state=active]:after:bg-primary data-[state=active]:hover:bg-accent relative w-full justify-start after:absolute after:inset-y-0 after:start-0 after:-ms-1 after:w-0.5 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+          >
+            Problem Solving
+          </TabsTrigger>
+          <TabsTrigger
+            value="programming"
+            className="hover:bg-accent hover:text-foreground data-[state=active]:after:bg-primary data-[state=active]:hover:bg-accent relative w-full justify-start after:absolute after:inset-y-0 after:start-0 after:-ms-1 after:w-0.5 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+          >
+            Technologies
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent
+          value="problem-solving"
+          className="relative mx-auto w-full overflow-hidden rounded-lg border border-zinc-700/10 bg-gradient-to-tr from-[#141416] to-[#1C1C1C] p-2 shadow-[0_8px_24px_rgba(0,0,0,0.3)] backdrop-blur-md before:absolute before:inset-0 before:-z-10 before:rounded-lg before:bg-gradient-to-tr before:from-zinc-900/20 before:to-zinc-800/5 before:opacity-20 after:absolute after:inset-0 after:-z-20 after:[background-size:200px] after:opacity-[0.15] after:mix-blend-overlay"
+        >
+          <ResourcesTree resources={PROBLEM_SOLVING_RESOURCES} />
+        </TabsContent>
+        <TabsContent
+          value="programming"
+          className="relative mx-auto w-full overflow-hidden rounded-lg border border-zinc-700/10 bg-gradient-to-tr from-[#141416] to-[#1C1C1C] p-2 shadow-[0_8px_24px_rgba(0,0,0,0.3)] backdrop-blur-md before:absolute before:inset-0 before:-z-10 before:rounded-lg before:bg-gradient-to-tr before:from-zinc-900/20 before:to-zinc-800/5 before:opacity-20 after:absolute after:inset-0 after:-z-20 after:[background-size:200px] after:opacity-[0.15] after:mix-blend-overlay"
+        >
+          <ResourcesTree resources={TECHNOLOGIES_RESOURCES} />
+        </TabsContent>
+      </Tabs>
     </div>
   )
 }

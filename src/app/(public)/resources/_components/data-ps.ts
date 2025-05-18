@@ -1,21 +1,6 @@
-export type FileResource = {
-  name: string
-  href?: string
-  type?: 'youtube' | 'article'
-}
+import { Resource } from '@/types/resources'
 
-export type FolderResource = {
-  name: string
-  isFolder: true
-  children: (FileResource | FolderResource)[]
-}
-
-type Resource = {
-  name: string
-  children: (FileResource | FolderResource)[]
-}
-
-export const RESOURCES: Resource[] = [
+export const PROBLEM_SOLVING_RESOURCES: Resource[] = [
   {
     name: 'Bit Manipulation',
     children: [
