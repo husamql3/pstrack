@@ -1,7 +1,7 @@
 # Changelog
 
 ## [2.4.23]
-add optimize optimization
+Add Prisma Optimize extension to client
 
 ## [2.4.21]
 cache all data for better performance
