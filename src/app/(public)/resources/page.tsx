@@ -11,9 +11,9 @@ const Page = () => {
       <Tabs
         defaultValue="problem-solving"
         orientation="horizontal"
-        className="w-full flex-row"
+        className="w-full flex-col gap-4 sm:flex-row sm:gap-0"
       >
-        <TabsList className="flex-col justify-start gap-1 rounded-none bg-transparent px-1 py-0">
+        <TabsList className="flex-row justify-start gap-1.5 rounded-none bg-transparent px-1 py-0 sm:flex-col">
           <TabsTrigger
             value="problem-solving"
             className="hover:bg-accent hover:text-foreground data-[state=active]:after:bg-primary data-[state=active]:hover:bg-accent relative w-full justify-start after:absolute after:inset-y-0 after:start-0 after:-ms-1 after:w-0.5 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
