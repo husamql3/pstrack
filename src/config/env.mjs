@@ -18,7 +18,6 @@ export const env = createEnv({
     RABBITMQ_URL: z.string().url(),
     UPSTASH_REDIS_REST_URL: z.string().url().min(20),
     UPSTASH_REDIS_REST_TOKEN: z.string().min(20),
-    OPTIMIZE_API_KEY: z.string(),
   },
   runtimeEnv: {
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
