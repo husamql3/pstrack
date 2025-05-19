@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { useState } from 'react'
 import { HiOutlineMenu } from 'react-icons/hi'
 import { usePathname } from 'next/navigation'
 
@@ -12,9 +13,13 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 
 export const LinksMenu = ({ className }: { className?: string }) => {
   const pathname = usePathname()
+  const [open, setOpen] = useState(false)
 
   return (
-    <DropdownMenu>
+    <DropdownMenu
+      open={open}
+      onOpenChange={setOpen}
+    >
       <DropdownMenuTrigger asChild>
         <Button
           size="icon"
@@ -34,15 +39,17 @@ export const LinksMenu = ({ className }: { className?: string }) => {
       <DropdownMenuContent
         sideOffset={10}
         align="start"
+        className="space-y-0.5"
       >
         {TABS.map((tab) => (
           <DropdownMenuItem
             key={tab.name}
-            className={cn(pathname === tab.url || pathname.startsWith(`${tab.url}/`) ? 'bg-accent' : '')}
+            className={cn(pathname === tab.url || pathname.startsWith(`${tab.url}/`) ? 'bg-accent' : '', 'p-0')}
           >
             <Link
               href={tab.url}
-              className="w-full"
+              className="w-full px-2 py-1.5"
+              onClick={() => setOpen(false)}
             >
               {tab.name}
             </Link>
