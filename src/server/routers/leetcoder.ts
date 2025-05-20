@@ -296,6 +296,7 @@ export const leetcodersRouter = createTRPCRouter({
             },
           })
 
+          await redis.del(REDIS_KEYS.ALL_GROUPS_INFO)
           return await tx.leetcoders.update({
             where: { id: userId },
             data: { group_no: newGroupNo },
