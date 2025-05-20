@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.5.27]
+close nav menu when a link is clicked
+
 ## [2.5.26]
 add links menu in small screens
 
