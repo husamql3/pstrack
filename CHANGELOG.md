@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.5.28]
+updated the automated backup frequency to run every 6 hours
+
 ## [2.5.27]
 close nav menu when a link is clicked
 

@@ -2,7 +2,7 @@ name: Database Backup
 
 on:
   schedule:
-    - cron: '0 */6 * * *' # Run every 6 hours
+    - cron: '0 */12 * * *' # Run every 12 hours
   workflow_dispatch:
 
 jobs:
@@ -47,19 +47,31 @@ jobs:
 
       - name: Copy backup files
         run: |
-          cp -r backup/* pstrack-backup/
+          # Define target directories based on current date
+          YEAR_MONTH=$(date +'%Y-%m')
+          YEAR_MONTH_DAY=$(date +'%Y-%m-%d')
+          TARGET_DIR="pstrack-backup/${YEAR_MONTH}/${YEAR_MONTH_DAY}"
+
+          # Create the target directory structure inside the backup repo path
+          mkdir -p "${TARGET_DIR}"
+
+          # Copy backup files (assuming they are in a 'backup/' directory after the script runs)
+          cp -r backup/* "${TARGET_DIR}/"
+
+          # Navigate into the backup repository directory
           cd pstrack-backup
 
-          # Add timestamp file for this backup
+          # Add timestamp file for this backup run (at the root of the backup repo)
           echo "Backup created: $(date)" > latest-backup.txt
 
-          # Add all files including new ones
+          # Add all files including the new directory and updated timestamp file
           git add .
 
           # Only commit if there are changes
+          COMMIT_MESSAGE="Backup ${YEAR_MONTH_DAY} $(date +'%H:%M:%S')"
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
-            git commit -m "Backup $(date +'%Y-%m-%d %H:%M:%S')"
+            git commit -m "${COMMIT_MESSAGE}"
             git push
           fi
