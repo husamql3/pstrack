@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.5.31]
+update localStorage key to fix sumissions issue, reload after success submission
+
 ## [2.5.30]
 update navmenu in small screens
 

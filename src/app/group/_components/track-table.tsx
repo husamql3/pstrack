@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useCallback, useEffect } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { MoveDown } from 'lucide-react'
 import type { leetcoders } from '@prisma/client'
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
@@ -31,16 +31,9 @@ export const TrackTable = ({
   groupId: string
 }) => {
   const [visibleRecords, setVisibleRecords] = useState(VISIBLE_COUNT)
-  // Add state to force re-render and re-sort
-  const [refreshKey, setRefreshKey] = useState(0)
 
-  // Get the submissions from the store
+  // Get both submissions and refreshTrigger from the store
   const { submissions } = useSubmissionStore()
-
-  // Listen for changes in the submission store and update refreshKey
-  useEffect(() => {
-    setRefreshKey((prev) => prev + 1)
-  }, [submissions])
 
   // Calculate leetcoder solved counts from both API data and local submissions
   const leetcoderSolvedCounts: Record<string, number> = useMemo(() => {
@@ -79,7 +72,7 @@ export const TrackTable = ({
     }
 
     return counts
-  }, [leetcoders, tableData, submissions, groupId, refreshKey])
+  }, [leetcoders, tableData, submissions, groupId])
 
   // Sort leetcoders by the number of problems solved (descending order)
   const sortedLeetcoders = useMemo(() => {
@@ -89,10 +82,6 @@ export const TrackTable = ({
   }, [leetcoders, leetcoderSolvedCounts])
 
   // Callback to trigger re-sorting after successful submission
-  const handleSuccessfulSubmit = useCallback(() => {
-    setRefreshKey((prev) => prev + 1)
-  }, [])
-
   const visibleTableData = useMemo(() => {
     // Sort the tableData by groupProgressDate in descending order
     const sortedData = [...tableData].sort((a, b) => {
@@ -197,7 +186,6 @@ export const TrackTable = ({
                     leetcoder={leetcoder}
                     groupId={groupId}
                     problemSlug={problemSlug}
-                    onSuccessfulSubmit={handleSuccessfulSubmit}
                   />
                 </div>
               )
@@ -206,7 +194,7 @@ export const TrackTable = ({
         )
       ),
     ],
-    [sortedLeetcoders, leetcoderSolvedCounts, leetcoders.length, groupId, handleSuccessfulSubmit, submissions]
+    [sortedLeetcoders, leetcoders.length, groupId, submissions]
   )
 
   const table = useReactTable({

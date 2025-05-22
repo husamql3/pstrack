@@ -5,6 +5,7 @@ import { debounce } from 'lodash'
 import { toast } from 'sonner'
 import type { CellContext } from '@tanstack/react-table'
 import type { leetcoders } from '@prisma/client'
+import { useRouter } from 'next/navigation'
 
 import { api } from '@/trpc/react'
 import type { TableRowOutput } from '@/types/tableRow.type'
@@ -19,20 +20,20 @@ export const SubmitCheckbox = ({
   leetcoder,
   groupId,
   problemSlug,
-  onSuccessfulSubmit,
 }: {
   info: CellContext<TableRowOutput, unknown>
   leetcoder: leetcoders
   groupId: string
   problemSlug: string
-  onSuccessfulSubmit: () => void
 }) => {
+  const router = useRouter()
+
   // Get the submission from the table data
   const submission = info.getValue()
   const problemId = info.row.original.problem.id
 
   // Create a unique submission key for the store
-  const submissionKey = `${groupId}:${leetcoder.id}:${problemId}`
+  const submissionKey = `${leetcoder.id}:${leetcoder.group_no}:${problemId}`
 
   // Get submission state and setter from the Zustand store
   const { isSubmitted, setSubmission } = useSubmissionStore()
@@ -85,8 +86,8 @@ export const SubmitCheckbox = ({
           setIsChecked(true)
           setSubmission(submissionKey, true)
 
-          // Call the callback to resort leetcoders
-          onSuccessfulSubmit()
+          // Refresh the page to re-sort the table
+          router.refresh()
         },
         onError: async (error) => {
           // Dismiss loading toast and show error
