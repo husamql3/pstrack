@@ -33,7 +33,7 @@ export const SubmitCheckbox = ({
   const problemId = info.row.original.problem.id
 
   // Create a unique submission key for the store
-  const submissionKey = `${leetcoder.id}:${leetcoder.group_no}:${problemId}`
+  const submissionKey = `${leetcoder.group_no}:${leetcoder.id}:${problemId}`
 
   // Get submission state and setter from the Zustand store
   const { isSubmitted, setSubmission } = useSubmissionStore()

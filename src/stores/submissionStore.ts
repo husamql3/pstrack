@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
-type SubmissionKey = string // Format: `${groupId}:${userId}:${problemId}`
+type SubmissionKey = string // Format: `${leetcoder.group_no}:${leetcoder.id}:${problemId}`
 
 type SubmissionStore = {
   submissions: Record<SubmissionKey, boolean>
@@ -23,7 +23,7 @@ export const useSubmissionStore = create<SubmissionStore>()(
       isSubmitted: (key) => !!get().submissions[key],
     }),
     {
-      name: 'submission-storage',
+      name: 'submissions-storage',
     }
   )
 )
