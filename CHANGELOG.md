@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.5.30]
+update navmenu in small screens
+
+## [2.5.29]
+remove feedback dialog
+
 ## [2.5.28]
 updated the automated backup frequency to run every 6 hours
 

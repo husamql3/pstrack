@@ -7,7 +7,6 @@ import { Logo } from '@/app/_components/logo'
 import { UserAuth } from '@/app/_components/user-auth'
 import { Header } from '@/app/_components/header'
 import { NavMenu } from '@/app/_components/nav-menu'
-import { FeedbackDialog } from '@/app/_components/feedback-dialog'
 import { StarsBackground } from '@/ui/stars-background'
 
 const Layout = async ({ children }: { children: React.ReactNode }) => {
@@ -31,8 +30,6 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
       </Header>
 
       {children}
-
-      {user && <FeedbackDialog email={user.email as string} />}
     </div>
   )
 }
