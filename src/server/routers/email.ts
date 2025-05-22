@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import { z } from 'zod/v4'
 import { TRPCError } from '@trpc/server'
 
 import { createTRPCRouter, publicProcedure } from '@/server/trpc'
@@ -33,7 +33,7 @@ export const emailRouter = createTRPCRouter({
   sendEmail: publicProcedure
     .input(
       z.object({
-        context: z.record(z.string()),
+        context: z.record(z.string(), z.string()),
       })
     )
     .mutation(async ({ input }) => {

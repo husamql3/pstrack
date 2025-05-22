@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import { z } from 'zod/v4'
 
 import { db } from '@/prisma/db'
 import { redis } from '@/config/redis'
