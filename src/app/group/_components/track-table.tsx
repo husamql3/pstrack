@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useCallback, useEffect } from 'react'
+import { useMemo, useCallback } from 'react'
 import { FaTrophy } from 'react-icons/fa6'
 import { Target, Calendar, Hash, Tag, Puzzle } from 'lucide-react'
 import type { leetcoders } from '@prisma/client'
@@ -29,56 +29,106 @@ export const TrackTable = ({
   tableData: TableRowOutput[]
   groupId: string
 }) => {
-  const [refreshKey, setRefreshKey] = useState(0)
-
   const { submissions } = useSubmissionStore()
-
-  useEffect(() => {
-    setRefreshKey((prev) => prev + 1)
-  }, [submissions])
 
   const leetcoderSolvedCounts: Record<string, number> = useMemo(() => {
     const counts: Record<string, number> = {}
+    const userSolvedProblems: Record<string, Set<string>> = {}
 
+    // Initialize counters and problem sets for each user
     for (const leetcoder of leetcoders) {
       counts[leetcoder.id] = 0
+      userSolvedProblems[leetcoder.id] = new Set()
     }
 
+    // Count submissions from tableData (API data) - use all tableData, not just visible
     for (const row of tableData) {
       for (const submission of row.userSubmissions) {
-        if (counts[submission.user_id] !== undefined) {
-          counts[submission.user_id]++
+        if (userSolvedProblems[submission.user_id] !== undefined) {
+          userSolvedProblems[submission.user_id].add(row.problem.id)
         }
       }
     }
 
+    // Count submissions from local store
     for (const key in submissions) {
-      if (submissions[key]) {
+      const submission = submissions[key]
+      // Handle backward compatibility - check if it's boolean or object
+      const isSolved = typeof submission === 'boolean' ? submission : submission?.solved
+      if (isSolved) {
         const [keyGroupId, userId, problemId] = key.split(':')
-        if (keyGroupId === groupId && counts[userId] !== undefined) {
-          const alreadyCounted = tableData.some(
-            (row) => row.problem.id === problemId && row.userSubmissions.some((sub) => sub.user_id === userId)
-          )
-
-          if (!alreadyCounted) {
-            counts[userId]++
+        if (keyGroupId === groupId && userSolvedProblems[userId] !== undefined) {
+          // Only add if not already in the set (avoids double counting)
+          if (!userSolvedProblems[userId].has(problemId)) {
+            userSolvedProblems[userId].add(problemId)
           }
         }
       }
     }
 
+    // Convert sets to counts
+    for (const leetcoder of leetcoders) {
+      counts[leetcoder.id] = userSolvedProblems[leetcoder.id].size
+    }
+
     return counts
-  }, [leetcoders, tableData, submissions, groupId, refreshKey])
+  }, [leetcoders, tableData, submissions, groupId])
 
   const sortedLeetcoders = useMemo(() => {
-    return [...leetcoders].sort((a, b) => {
-      return leetcoderSolvedCounts[b.id] - leetcoderSolvedCounts[a.id]
-    })
-  }, [leetcoders, leetcoderSolvedCounts])
+    const sorted = [...leetcoders].sort((a, b) => {
+      const countA = leetcoderSolvedCounts[a.id] || 0
+      const countB = leetcoderSolvedCounts[b.id] || 0
+      const countDiff = countB - countA
 
-  const handleSuccessfulSubmit = useCallback(() => {
-    setRefreshKey((prev) => prev + 1)
-  }, [])
+      // If submission counts are different, sort by count (descending)
+      if (countDiff !== 0) {
+        return countDiff
+      }
+
+      // If counts are equal, sort by earliest submission time (ascending - who solved first)
+      // Get all submissions for user A from tableData
+      const userASubmissions = tableData
+        .filter((row) => row.userSubmissions.some((sub) => sub.user_id === a.id))
+        .flatMap((row) => row.userSubmissions.filter((sub) => sub.user_id === a.id))
+
+      // Get all submissions for user B from tableData
+      const userBSubmissions = tableData
+        .filter((row) => row.userSubmissions.some((sub) => sub.user_id === b.id))
+        .flatMap((row) => row.userSubmissions.filter((sub) => sub.user_id === b.id))
+
+      // If one user has no submissions from API, they go last
+      if (userASubmissions.length === 0 && userBSubmissions.length === 0) {
+        // Final fallback: sort by username for consistency
+        return a.lc_username.localeCompare(b.lc_username)
+      }
+      if (userASubmissions.length === 0) {
+        return 1
+      }
+      if (userBSubmissions.length === 0) {
+        return -1
+      }
+
+      // Find earliest submission for each user
+      const earliestA = userASubmissions.reduce((earliest, current) => {
+        return new Date(current.created_at) < new Date(earliest.created_at) ? current : earliest
+      })
+      const earliestB = userBSubmissions.reduce((earliest, current) => {
+        return new Date(current.created_at) < new Date(earliest.created_at) ? current : earliest
+      })
+
+      const timeDiff = new Date(earliestA.created_at).getTime() - new Date(earliestB.created_at).getTime()
+
+      // If times are very close (within 1 second), use username as final tiebreaker
+      if (Math.abs(timeDiff) < 1000) {
+        return a.lc_username.localeCompare(b.lc_username)
+      }
+
+      // Sort by earliest submission time (ascending - earlier submissions first)
+      return timeDiff
+    })
+
+    return sorted
+  }, [leetcoders, leetcoderSolvedCounts, tableData, submissions, groupId])
 
   const visibleTableData = useMemo(() => {
     const sortedData = [...tableData].sort((a, b) => {
@@ -183,7 +233,7 @@ export const TrackTable = ({
         {
           id: 'count',
           header: () => (
-            <div className="flex items-center gap-2 font-semibold text-zinc-100">
+            <div className="flex items-center gap-2 pr-5 pl-3 font-semibold text-zinc-100">
               <Target className="size-4 text-neutral-400" />
               Progress
             </div>
@@ -192,7 +242,7 @@ export const TrackTable = ({
             const { totalSolved, total } = info.getValue()
             const percentage = (totalSolved / total) * 100
             return (
-              <div className="flex h-8 items-center">
+              <div className="mx-auto flex h-8 items-center pr-5 pl-3">
                 <div className="flex w-full flex-col gap-1">
                   <div className="flex items-center justify-center gap-1 text-xs font-bold text-zinc-200">
                     <span className="text-zinc-100">{totalSolved}</span>
@@ -250,7 +300,6 @@ export const TrackTable = ({
                     leetcoder={leetcoder}
                     groupId={groupId}
                     problemSlug={problemSlug}
-                    onSuccessfulSubmit={handleSuccessfulSubmit}
                   />
                 </div>
               )
@@ -259,7 +308,7 @@ export const TrackTable = ({
         )
       ),
     ],
-    [sortedLeetcoders, leetcoderSolvedCounts, leetcoders.length, groupId, handleSuccessfulSubmit, submissions]
+    [sortedLeetcoders, groupId, submissions, leetcoders.length]
   )
 
   const table = useReactTable({

@@ -19,13 +19,11 @@ export const SubmitCheckbox = ({
   leetcoder,
   groupId,
   problemSlug,
-  onSuccessfulSubmit,
 }: {
   info: CellContext<TableRowOutput, unknown>
   leetcoder: leetcoders
   groupId: string
   problemSlug: string
-  onSuccessfulSubmit: () => void
 }) => {
   // Get the submission from the table data
   const submission = info.getValue()
@@ -97,9 +95,6 @@ export const SubmitCheckbox = ({
           } catch (error) {
             console.error('Failed to invalidate cache:', error)
           }
-
-          // Call the callback to resort leetcoders
-          onSuccessfulSubmit()
         },
         onError: async (error) => {
           // Dismiss loading toast and show error
