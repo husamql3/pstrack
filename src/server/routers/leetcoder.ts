@@ -457,38 +457,4 @@ export const leetcodersRouter = createTRPCRouter({
         })
       }
     }),
-
-  getLeaderboard: publicProcedure.input(z.object({ groupNo: z.number() })).query(async ({ input }) => {
-    try {
-      // Get top 3 leetcoders with most submissions
-      const topLeetcoders = await db.leetcoders.findMany({
-        where: {
-          status: 'APPROVED',
-          group_no: input.groupNo,
-        },
-        include: {
-          submissions: {
-            where: {
-              solved: true,
-            },
-          },
-        },
-        take: 3,
-      })
-
-      return topLeetcoders.map((leetcoder) => ({
-        id: leetcoder.id,
-        name: leetcoder.name,
-        username: leetcoder.username,
-        avatar: leetcoder.avatar,
-        submissionCount: leetcoder.submissions.length,
-      }))
-    } catch (error) {
-      console.log('getLeaderboard', error)
-      throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: 'Failed to fetch leaderboard. Please try again later.',
-      })
-    }
-  }),
 })

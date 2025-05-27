@@ -17,6 +17,6 @@ export const sendReminderEmail = async ({ group_no, email }: { group_no: string;
       html: htmlContent,
     })
   } catch (error) {
-    console.error('Error sending reminder email:', error)
+    console.error('Error sending acceptance email:', error)
   }
 }
