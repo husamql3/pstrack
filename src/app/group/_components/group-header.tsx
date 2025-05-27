@@ -10,7 +10,7 @@ export const GroupHeader = async ({ groupNo }: { groupNo: string }) => {
   const user = await api.auth.getUser()
 
   return (
-    <Header className="max-w-6xl">
+    <Header className="max-w-none sm:px-10">
       <div className="flex items-center gap-3">
         <LinksMenu className="sm:hidden" />
 

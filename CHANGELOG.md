@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.6.32]
+align table header with table
+
 ## [2.6.31]
 - update table styling
 - highlight st & nd & rd places in the table
