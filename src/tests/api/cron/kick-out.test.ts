@@ -117,7 +117,8 @@ describe('kick-out API route', () => {
       mockFindMany
         .mockResolvedValueOnce([mockLeetcoder]) // getAllLeetcoders
         .mockResolvedValueOnce([{ group_no: 1 }]) // getUniqueGroupNos
-        .mockResolvedValueOnce([ // getAllAssignedProblems
+        .mockResolvedValueOnce([
+          // getAllAssignedProblems
           { id: 'problem1', group_progress: [{ group_no: 1 }] },
           { id: 'problem2', group_progress: [{ group_no: 1 }] },
           { id: 'problem3', group_progress: [{ group_no: 1 }] },
@@ -215,7 +216,7 @@ describe('kick-out API route', () => {
       const assignedProblems = Array(10)
         .fill(0)
         .map((_, i) => ({ id: `prob${i + 1}` }))
-      
+
       // Mock email sending
       jest.mocked(sendReminderEmail).mockResolvedValueOnce(undefined)
       mockUpdate.mockResolvedValueOnce({ id: 'user1' })

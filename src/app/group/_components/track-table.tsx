@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useMemo, useCallback, useEffect } from 'react'
-import { MoveDown } from 'lucide-react'
+import { FaTrophy } from 'react-icons/fa6'
+import { Target, Calendar, Hash, Tag, Puzzle } from 'lucide-react'
 import type { leetcoders } from '@prisma/client'
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 
@@ -10,10 +11,10 @@ import type { TableRowOutput } from '@/types/tableRow.type'
 import type { Difficulty, Topic } from '@/types/problems.type'
 import { parseDate } from '@/utils/parseDate'
 import { cn } from '@/utils/cn'
-import { getDifficultyColor, getTopicColor } from '@/utils/problemsUtils'
 import { useSubmissionStore } from '@/stores/submissionStore'
+import { getDifficultyColor, getTopicColor } from '@/utils/problemsUtils'
 
-import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@/ui/table'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/ui/table'
 import { SubmitCheckbox } from '@/app/group/_components/submit-checkbox'
 import { LeetCoderCard } from '@/app/group/_components/leetcoder-card'
 
@@ -28,28 +29,21 @@ export const TrackTable = ({
   tableData: TableRowOutput[]
   groupId: string
 }) => {
-  const [visibleRecords, setVisibleRecords] = useState(VISIBLE_COUNT)
-  // Add state to force re-render and re-sort
   const [refreshKey, setRefreshKey] = useState(0)
 
-  // Get the submissions from the store
   const { submissions } = useSubmissionStore()
 
-  // Listen for changes in the submission store and update refreshKey
   useEffect(() => {
     setRefreshKey((prev) => prev + 1)
   }, [submissions])
 
-  // Calculate leetcoder solved counts from both API data and local submissions
   const leetcoderSolvedCounts: Record<string, number> = useMemo(() => {
     const counts: Record<string, number> = {}
 
-    // Initialize counts for all leetcoders
     for (const leetcoder of leetcoders) {
       counts[leetcoder.id] = 0
     }
 
-    // Count from API data
     for (const row of tableData) {
       for (const submission of row.userSubmissions) {
         if (counts[submission.user_id] !== undefined) {
@@ -58,13 +52,10 @@ export const TrackTable = ({
       }
     }
 
-    // Add counts from local submission store
     for (const key in submissions) {
       if (submissions[key]) {
         const [keyGroupId, userId, problemId] = key.split(':')
-        // Only count submissions for the current group
         if (keyGroupId === groupId && counts[userId] !== undefined) {
-          // Check if this problem's submission isn't already counted from API data
           const alreadyCounted = tableData.some(
             (row) => row.problem.id === problemId && row.userSubmissions.some((sub) => sub.user_id === userId)
           )
@@ -79,77 +70,108 @@ export const TrackTable = ({
     return counts
   }, [leetcoders, tableData, submissions, groupId, refreshKey])
 
-  // Sort leetcoders by the number of problems solved (descending order)
   const sortedLeetcoders = useMemo(() => {
     return [...leetcoders].sort((a, b) => {
       return leetcoderSolvedCounts[b.id] - leetcoderSolvedCounts[a.id]
     })
   }, [leetcoders, leetcoderSolvedCounts])
 
-  // Callback to trigger re-sorting after successful submission
   const handleSuccessfulSubmit = useCallback(() => {
     setRefreshKey((prev) => prev + 1)
   }, [])
 
   const visibleTableData = useMemo(() => {
-    // Sort the tableData by groupProgressDate in descending order
     const sortedData = [...tableData].sort((a, b) => {
       const dateA = parseDate(a.groupProgressDate || '')
       const dateB = parseDate(b.groupProgressDate || '')
-      return dateB.getTime() - dateA.getTime() // Sort in descending order
+      return dateB.getTime() - dateA.getTime()
     })
 
-    // Slice the sorted data to only show the first `visibleRecords` items
-    return sortedData.slice(0, visibleRecords)
-  }, [tableData, visibleRecords])
+    return sortedData.slice(0, VISIBLE_COUNT)
+  }, [tableData])
 
   const columns = useMemo(
     () => [
       columnHelper.accessor('groupProgressDate', {
-        header: () => 'Date',
-        cell: (info) => info.getValue() || 'N/A',
+        header: () => (
+          <div className="flex items-center justify-center gap-2 font-semibold text-slate-300">
+            <Calendar className="size-4 text-zinc-100" />
+            Date
+          </div>
+        ),
+        cell: (info) => (
+          <div className="flex h-8 items-center justify-center rounded-lg border border-zinc-700 px-2 font-mono text-xs text-slate-300">
+            {info.getValue()}
+          </div>
+        ),
       }),
       columnHelper.accessor('problem', {
-        header: () => 'Problem',
+        header: () => (
+          <div className="flex items-center justify-center gap-2 font-semibold text-slate-300">
+            <Hash className="size-4 text-blue-400" />
+            Problem
+          </div>
+        ),
         cell: (info) => {
           const problem = info.getValue()
           return (
-            <a
-              href={`${PROBLEM_BASE_URL}/${problem.problem_slug}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              title="Open problem in a new tab"
-              className="text-blue-600 hover:underline"
-            >
-              {problem.problem_no}
-            </a>
+            <div className="flex items-center justify-center">
+              <a
+                href={`${PROBLEM_BASE_URL}/${problem.problem_slug}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                title="Open problem in a new tab"
+                className="group flex h-7 items-center justify-center gap-2 rounded-lg border border-zinc-700 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 px-2 font-semibold text-blue-400 transition-all duration-200 hover:text-blue-300"
+              >
+                #{problem.problem_no}
+              </a>
+            </div>
           )
         },
       }),
       columnHelper.accessor('problem.topic', {
-        header: () => 'Topic',
+        header: () => (
+          <div className="flex items-center justify-center gap-2 font-semibold text-slate-300">
+            <Tag className="size-4 text-blue-700" />
+            Topic
+          </div>
+        ),
         cell: (info) => {
           const topic = info.getValue() as Topic
           return (
-            <span className={cn(getTopicColor(topic), 'rounded-md px-2 py-0.5 text-sm font-medium whitespace-nowrap')}>
-              {topic}
-            </span>
+            <div className="flex items-center justify-center">
+              <div
+                className={cn(
+                  getTopicColor(topic),
+                  'flex h-7 items-center justify-center rounded-lg border border-zinc-700 px-2 text-sm font-semibold whitespace-nowrap transition-all duration-200 hover:scale-105'
+                )}
+              >
+                {topic}
+              </div>
+            </div>
           )
         },
       }),
       columnHelper.accessor('problem.difficulty', {
-        header: () => 'Difficulty',
+        header: () => (
+          <div className="flex items-center justify-center gap-2 font-semibold text-slate-300">
+            <Puzzle className="size-4 text-zinc-300" />
+            Difficulty
+          </div>
+        ),
         cell: (info) => {
           const difficulty = info.getValue() as Difficulty
           return (
-            <span
-              className={cn(
-                getDifficultyColor(difficulty),
-                'w-fit rounded-md px-2 py-0.5 text-sm font-medium capitalize'
-              )}
-            >
-              {difficulty}
-            </span>
+            <div className="flex items-center justify-center">
+              <div
+                className={cn(
+                  getDifficultyColor(difficulty),
+                  'flex h-7 items-center justify-center rounded-lg border border-zinc-700 px-2 text-sm font-semibold transition-all duration-200 hover:scale-105'
+                )}
+              >
+                {difficulty}
+              </div>
+            </div>
           )
         },
       }),
@@ -160,23 +182,38 @@ export const TrackTable = ({
         }),
         {
           id: 'count',
-          header: () => 'Count',
+          header: () => (
+            <div className="flex items-center gap-2 font-semibold text-zinc-100">
+              <Target className="size-4 text-neutral-400" />
+              Progress
+            </div>
+          ),
           cell: (info) => {
             const { totalSolved, total } = info.getValue()
+            const percentage = (totalSolved / total) * 100
             return (
-              <div className="flex items-center justify-between">
-                <span className="flex-1 text-right text-sm font-medium">{totalSolved}</span>
-                <span className="flex-1 text-right text-sm font-medium">/{total}</span>
+              <div className="flex h-8 items-center">
+                <div className="flex w-full flex-col gap-1">
+                  <div className="flex items-center justify-center gap-1 text-xs font-bold text-zinc-200">
+                    <span className="text-zinc-100">{totalSolved}</span>
+                    <span className="text-neutral-400">/</span>
+                    <span className="text-neutral-300">{total}</span>
+                  </div>
+                  <div className="h-1.5 w-full overflow-hidden rounded-full bg-zinc-700">
+                    <div
+                      className="h-full bg-gradient-to-r from-zinc-400 to-neutral-200 transition-all duration-300"
+                      style={{ width: `${percentage}%` }}
+                    />
+                  </div>
+                </div>
               </div>
             )
           },
         }
       ),
-      // Use the sortedLeetcoders array instead of the original leetcoders array
-      ...sortedLeetcoders.map((leetcoder) =>
+      ...sortedLeetcoders.map((leetcoder, index) =>
         columnHelper.accessor(
           (row) => {
-            // Check both the API data and the local store for submission
             const apiSubmission = row.userSubmissions.find((sub) => sub.user_id === leetcoder.id)
             const storeKey = `${groupId}:${leetcoder.id}:${row.problem.id}`
             const localSubmission = submissions[storeKey]
@@ -185,11 +222,25 @@ export const TrackTable = ({
           },
           {
             id: leetcoder.id,
-            header: () => <LeetCoderCard leetcoder={leetcoder} />,
+            header: () => (
+              <div className="relative pr-2">
+                <LeetCoderCard leetcoder={leetcoder} />
+                {index < 3 && (
+                  <div className="absolute top-1/2 -right-2 -translate-y-1/2 transform">
+                    <FaTrophy
+                      className={cn(
+                        'size-3',
+                        index === 0 ? 'text-yellow-400' : index === 1 ? 'text-gray-300' : 'text-amber-600'
+                      )}
+                    />
+                  </div>
+                )}
+              </div>
+            ),
             cell: (info) => {
               const problemSlug = info.row.original.problem.problem_slug
               return (
-                <div className="flex items-center">
+                <div className="flex h-8 items-center justify-center pr-2">
                   <SubmitCheckbox
                     info={info}
                     leetcoder={leetcoder}
@@ -208,85 +259,103 @@ export const TrackTable = ({
   )
 
   const table = useReactTable({
-    data: visibleTableData, // Use the sliced data
+    data: visibleTableData,
     columns,
     getCoreRowModel: getCoreRowModel(),
   })
 
-  const handleShowMore = () => {
-    setVisibleRecords((prev) => prev + 20) // Increment visible records by 20
-  }
-
   return (
-    <div className="w-svw py-5">
-      <Table className="mx-auto px-3">
-        <TableHeader className="border-t border-zinc-700">
-          {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow
-              key={headerGroup.id}
-              className="border-zinc-700 text-sm font-medium"
-            >
-              {headerGroup.headers.map((header) => (
-                <TableHead key={header.id}>
-                  {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                </TableHead>
-              ))}
-            </TableRow>
-          ))}
-        </TableHeader>
-        <TableBody>
-          {table.getRowModel().rows.map((row) => (
-            <TableRow
-              key={row.id}
-              className="border-zinc-700 text-sm"
-            >
-              {row.getVisibleCells().map((cell) => (
-                <TableCell
-                  key={cell.id}
-                  className="text-sm"
-                >
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </TableCell>
-              ))}
-            </TableRow>
-          ))}
-        </TableBody>
+    <div className="min-h-screen w-full px-3 py-8">
+      {/* Table Container */}
+      <div className="overflow-hidden rounded-lg border border-zinc-700 shadow-2xl backdrop-blur-sm">
+        <div className="flex">
+          {/* Fixed Columns */}
+          <div className="flex-shrink-0">
+            <Table className="w-auto">
+              <TableHeader className="border-r !border-zinc-700">
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <TableRow
+                    key={headerGroup.id}
+                    className="border-zinc-700 transition-colors duration-200"
+                  >
+                    {headerGroup.headers.slice(0, 5).map((header) => (
+                      <TableHead
+                        key={header.id}
+                        className="px-3 py-2 align-middle font-semibold whitespace-nowrap text-slate-200"
+                      >
+                        {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                      </TableHead>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableHeader>
+              <TableBody>
+                {table.getRowModel().rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    className={cn('group !border-r border-zinc-700')}
+                  >
+                    {row
+                      .getVisibleCells()
+                      .slice(0, 5)
+                      .map((cell) => (
+                        <TableCell
+                          key={cell.id}
+                          className="px-3 py-2 align-middle whitespace-nowrap"
+                        >
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </TableCell>
+                      ))}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
 
-        <TableFooter className="border-y border-zinc-700 text-sm font-medium">
-          {/* Show "Show More" button if there are more records */}
-          {tableData.length > visibleRecords && (
-            <TableRow
-              className="cursor-pointer border-y border-zinc-700"
-              onClick={handleShowMore}
-            >
-              <TableCell
-                colSpan={tableData.length}
-                className="flex w-full items-center justify-center py-2 text-sm whitespace-nowrap text-gray-500"
-              >
-                <MoveDown
-                  size={12}
-                  className="mr-1"
-                />
-                Load more
-              </TableCell>
-              <TableCell colSpan={tableData.length} />
-            </TableRow>
-          )}
-
-          {/* Show total count */}
-          <TableRow className="border-0">
-            <TableCell
-              colSpan={5}
-              className="text-right text-sm font-medium text-gray-500"
-            >
-              Total
-            </TableCell>
-            {sortedLeetcoders.map((leetcoder) => (
-              <TableCell key={leetcoder.id}>{leetcoderSolvedCounts[leetcoder.id]}</TableCell>
-            ))}
-          </TableRow>
-        </TableFooter>
-      </Table>
+          {/* Scrollable Leetcoder Columns */}
+          <div className="flex-1 overflow-x-auto">
+            <Table className="w-auto">
+              <TableHeader className="border-b border-zinc-700">
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <TableRow
+                    key={headerGroup.id}
+                    className="border-zinc-700 transition-colors duration-200"
+                  >
+                    {headerGroup.headers.slice(5).map((header) => (
+                      <TableHead
+                        key={header.id}
+                        className="px-3 py-2 align-middle font-semibold whitespace-nowrap text-slate-200"
+                      >
+                        {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                      </TableHead>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableHeader>
+              <TableBody>
+                {table.getRowModel().rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    className={cn('group border-b border-zinc-700')}
+                  >
+                    {row
+                      .getVisibleCells()
+                      .slice(5)
+                      .map((cell) => (
+                        <TableCell
+                          key={cell.id}
+                          className="px-3 py-2 align-middle text-slate-300"
+                        >
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </TableCell>
+                      ))}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

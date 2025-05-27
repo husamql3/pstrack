@@ -3,7 +3,15 @@ import { waitUntil } from '@vercel/functions'
 
 import { env } from '@/config/env.mjs'
 import { db } from '@/prisma/db'
-import { getUniqueGroupNos, getAllLeetcoders, getAllAssignedProblems, getSolvedProblems, calculateUnsolvedProblems, kickOffLeetcoders, updateIsNotified } from '@/utils/kickoutUtils'
+import {
+  getUniqueGroupNos,
+  getAllLeetcoders,
+  getAllAssignedProblems,
+  getSolvedProblems,
+  calculateUnsolvedProblems,
+  kickOffLeetcoders,
+  updateIsNotified,
+} from '@/utils/kickoutUtils'
 import { BATCH_SIZE, DELAY_MS, LIMIT, UNSOLVED_THRESHOLD } from '@/data/constants'
 import type { LeetcoderWithSubmissions } from '@/types/leetcoders.type'
 import { sendReminderEmail } from '@/utils/email/sendReminderEmail'
@@ -37,7 +45,7 @@ export async function POST(req: NextRequest) {
     const groupNos = await getUniqueGroupNos(neglectedLeetcoders)
     const roadmapProblems = await getAllAssignedProblems(groupNos, neglectedLeetcoders)
     console.log(neglectedLeetcoders)
-    
+
     waitUntil(
       (async () => {
         // Process leetcoders in batches
@@ -48,7 +56,9 @@ export async function POST(req: NextRequest) {
           await Promise.all(
             batch.map(async (leetcoder: LeetcoderWithSubmissions) => {
               try {
-                await LIMIT(() => processLeetcoder(leetcoder, roadmapProblems.get(leetcoder.group_no) || [], UNSOLVED_THRESHOLD))
+                await LIMIT(() =>
+                  processLeetcoder(leetcoder, roadmapProblems.get(leetcoder.group_no) || [], UNSOLVED_THRESHOLD)
+                )
                 totalSuccess++
 
                 // Track specific actions
