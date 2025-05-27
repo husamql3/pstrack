@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.6.31]
+- update table styling
+- highlight st & nd & rd places in the table
+- update table coloumns sorting (by submission count & by date)
+- update syncing layers of table
+
 ## [2.5.31]
 update localStorage key to fix sumissions issue, reload after success submission
 
