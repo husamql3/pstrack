@@ -42,7 +42,7 @@ export const UserForm = ({ leetcoder, groups }: { leetcoder: leetcoders; groups:
   })
 
   const { mutate: changeGroup, isPending: isUpdatingGroup } = api.leetcoders.changeGroup.useMutation({
-    onSuccess: () => {
+    onSuccess: async () => {
       toast.success('Group changed successfully', { style: successToastStyle })
       router.refresh()
     },

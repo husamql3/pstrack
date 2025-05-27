@@ -54,7 +54,7 @@ export const useSubmissionStore = create<SubmissionStore>()(
         }),
     }),
     {
-      name: 'submission-storage',
+      name: 'submissions-storage',
       // Don't persist hasPendingSubmission as it should reset on page reload
       partialize: (state) => ({ submissions: state.submissions }),
     }

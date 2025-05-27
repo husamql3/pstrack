@@ -1,10 +1,11 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import { FaTrophy } from 'react-icons/fa6'
 import { Target, Calendar, Hash, Tag, Puzzle } from 'lucide-react'
 import type { leetcoders } from '@prisma/client'
 import { createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table'
+import { toast } from 'sonner'
 
 import { PROBLEM_BASE_URL, VISIBLE_COUNT } from '@/data/constants'
 import type { TableRowOutput } from '@/types/tableRow.type'
@@ -19,6 +20,7 @@ import { SubmitCheckbox } from '@/app/group/_components/submit-checkbox'
 import { LeetCoderCard } from '@/app/group/_components/leetcoder-card'
 import { LargeScreenTable } from '@/app/group/_components/large-screen-table'
 import { SmallScreenTable } from '@/app/group/_components/small-screen-table'
+import { infoToastStyle } from '@/app/_components/toast-styles'
 
 const columnHelper = createColumnHelper<TableRowOutput>()
 
@@ -34,6 +36,13 @@ export const TrackTable = ({
   const { submissions } = useSubmissionStore()
   const [currentVisibleCount, setCurrentVisibleCount] = useState(VISIBLE_COUNT)
   const isLargeScreen = useScreenSize()
+
+  useEffect(() => {
+    toast.info(
+      'We currently do not have any new problems. We are pausing our progress until the exam period is over.',
+      { style: infoToastStyle, duration: 5000, closeButton: true }
+    )
+  }, [])
 
   const leetcoderSolvedCounts: Record<string, number> = useMemo(() => {
     const counts: Record<string, number> = {}
@@ -143,10 +152,6 @@ export const TrackTable = ({
 
     return sortedData.slice(0, currentVisibleCount)
   }, [tableData, currentVisibleCount])
-
-  const totalSolvedCount = useMemo(() => {
-    return visibleTableData.reduce((total, row) => total + row.totalSolved, 0)
-  }, [visibleTableData])
 
   const handleShowMore = () => {
     setCurrentVisibleCount((prev) => Math.min(prev + VISIBLE_COUNT, tableData.length))

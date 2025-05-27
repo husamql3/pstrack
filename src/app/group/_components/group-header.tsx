@@ -4,16 +4,18 @@ import { UserAuth } from '@/app/_components/user-auth'
 import { Header } from '@/app/_components/header'
 import { NavMenu } from '@/app/_components/nav-menu'
 import { GradientText } from '@/ui/gradient'
+import { LinksMenu } from '@/app/_components/links-menu'
 
 export const GroupHeader = async ({ groupNo }: { groupNo: string }) => {
   const user = await api.auth.getUser()
 
-  // todo: update group header style https://animate-ui.com/docs/text/highlight
   return (
-    <Header className="max-w-none sm:px-10">
-      <div className="flex items-center">
+    <Header className="max-w-6xl">
+      <div className="flex items-center gap-3">
+        <LinksMenu className="sm:hidden" />
+
         <GradientText
-          className="text-xl font-bold sm:text-2xl"
+          className="text-2xl font-bold"
           text={
             <>
               <span className="sm:hidden">G</span>
@@ -23,7 +25,7 @@ export const GroupHeader = async ({ groupNo }: { groupNo: string }) => {
         />
       </div>
 
-      <NavMenu />
+      <NavMenu className="hidden sm:block" />
 
       <UserAuth user={user} />
     </Header>

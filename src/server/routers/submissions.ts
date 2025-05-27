@@ -1,10 +1,11 @@
-import { z } from 'zod'
+import { z } from 'zod/v4'
 
 import { createTRPCRouter, publicProcedure } from '@/server/trpc'
 import { db } from '@/prisma/db'
 import { recentSubmissionListQuery } from '@/data/queries/recentSubmissionList.gql'
-import { LEETCODE_GQL_BASE_URL } from '@/data/constants'
+import { LEETCODE_GQL_BASE_URL, REDIS_KEYS } from '@/data/constants'
 import { sendAdminNotification } from '@/utils/email/sendAdminNotification'
+import { redis } from '@/config/redis'
 
 export const submissionsRouter = createTRPCRouter({
   create: publicProcedure
@@ -33,6 +34,7 @@ export const submissionsRouter = createTRPCRouter({
           throw new Error('Problem not solved')
         }
 
+        await redis.del(REDIS_KEYS.GROUP_DATA(input.group_no.toString()))
         return db.submissions.create({
           data: {
             user_id: input.userId,

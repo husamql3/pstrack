@@ -5,6 +5,7 @@ import { debounce } from 'lodash'
 import { toast } from 'sonner'
 import type { CellContext } from '@tanstack/react-table'
 import type { leetcoders } from '@prisma/client'
+import { useRouter } from 'next/navigation'
 
 import { api } from '@/trpc/react'
 import type { TableRowOutput } from '@/types/tableRow.type'
@@ -25,12 +26,14 @@ export const SubmitCheckbox = ({
   groupId: string
   problemSlug: string
 }) => {
+  const router = useRouter()
+
   // Get the submission from the table data
   const submission = info.getValue()
   const problemId = info.row.original.problem.id
 
   // Create a unique submission key for the store
-  const submissionKey = `${groupId}:${leetcoder.id}:${problemId}`
+  const submissionKey = `${leetcoder.group_no}:${leetcoder.id}:${problemId}`
 
   // Get submission state and setter from the Zustand store
   const { isSubmitted, setSubmission, hasPendingSubmission, setPendingSubmission } = useSubmissionStore()
@@ -89,18 +92,8 @@ export const SubmitCheckbox = ({
           // Clear pending state
           setPendingSubmission(false)
 
-          // Invalidate the Redis cache
-          try {
-            await fetch('/api/invalidate-cache/group', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({ groupId }),
-            })
-          } catch (error) {
-            console.error('Failed to invalidate cache:', error)
-          }
+          // Refresh the page to re-sort the table
+          router.refresh()
         },
         onError: async (error) => {
           // Dismiss loading toast and show error

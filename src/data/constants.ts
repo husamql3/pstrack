@@ -3,7 +3,7 @@ import pLimit from 'p-limit'
 /**
  * App version
  */
-export const VERSION = '2.3.18'
+export const VERSION = '2.5.31'
 
 /**
  * Repository information
@@ -38,11 +38,24 @@ export const PROTECTED_ROUTES = ['/dashboard']
  */
 export const UNSOLVED_THRESHOLD = 6
 export const MAX_LEETCODERS = 35
-export const NOT_STARTED_GROUPS = [7]
+export const NOT_STARTED_GROUPS = [7, 8]
 
 /**
  * API request configuration
  */
-export const BATCH_SIZE = 50
-export const DELAY_MS = 1000
-export const LIMIT = pLimit(10)
+export const BATCH_SIZE = 20
+export const DELAY_MS = 5000
+export const LIMIT = pLimit(5)
+
+/**
+ * Redis cache configuration
+ */
+export const REDIS_KEYS = {
+  ALL_GROUPS: 'all-groups',
+  ALL_GROUPS_INFO: 'all-groups-info',
+  ROADMAP_PROBLEM_COUNT: 'roadmap-problem-count',
+  ROADMAP_DATA: 'roadmap-data',
+  AVAILABLE_GROUPS: 'available-groups',
+  GROUP_DATA: (groupId: string) => `group:${groupId}:data`,
+  GROUP_PROBLEMS: (groupId: string) => `group:${groupId}:problems`,
+}

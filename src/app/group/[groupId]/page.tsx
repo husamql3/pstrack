@@ -13,13 +13,14 @@ const Page = async ({ params }: { params: Promise<{ groupId: string }> }) => {
   if (NOT_STARTED_GROUPS.includes(+groupId)) return <NotStarted />
 
   const groupData = await api.groups.getGroupTableData({ group_no: groupId })
-  const roadmap = await api.roadmap.getGroupProblems(groupData?.group_progress || [])
-  if (!groupData || !roadmap || roadmap.length === 0) return <NotStarted />
+  const groupProblems = await api.roadmap.getGroupProblems(groupData?.group_progress || [])
+
+  if (!groupData || !groupProblems || groupProblems.length === 0) return <NotStarted />
 
   const tableData = generateTableData({
     group_no: groupData.group_no,
     submission: groupData.submissions,
-    roadmap,
+    roadmap: groupProblems,
     group_progress: groupData.group_progress,
   })
 

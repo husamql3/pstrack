@@ -22,4 +22,4 @@ export const useScreenSize = () => {
   }, [])
 
   return isLargeScreen
-} 
+}

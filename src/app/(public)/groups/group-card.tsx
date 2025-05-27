@@ -8,17 +8,13 @@ import type { Topic } from '@/types/problems.type'
 import { MAX_LEETCODERS } from '@/data/constants'
 
 import { Card, CardHeader, CardContent, CardFooter } from '@/ui/card'
-import { ProgressBar } from '../roadmap/_components/progress-bar'
+import { ProgressBar } from '@/app/(public)/roadmap/_components/progress-bar'
 import { Badge } from '@/ui/badge'
-import { AvatarGroup } from './avatar-group'
+import { AvatarGroup } from '@/app/(public)/groups/avatar-group'
 import { RequestModal } from '@/app/group/_components/request-modal'
 
-export const GroupCard = ({ group, problemsCount }: GroupCardProps) => {
-  const avatars = group.leetcoders.map((member) => ({
-    src: member.avatar,
-    alt: member.name,
-  }))
-
+export const GroupCard = async ({ group, problemsCount, userGroup }: GroupCardProps) => {
+  const avatars = group.leetcoders.map((member) => ({ src: member.avatar, alt: member.name }))
   const leetcodersCount = group.leetcoders.length
   const currentProblem = group.group_progress[0]?.roadmap.topic as Topic
   const latestGroupProgress = group.group_progress.reduce((latest, current) => {
@@ -27,7 +23,9 @@ export const GroupCard = ({ group, problemsCount }: GroupCardProps) => {
 
   const currentProblemNumber = latestGroupProgress?.current_problem ?? 0
   const progress = currentProblemNumber ? currentProblemNumber / problemsCount : 0
+
   const isFull = leetcodersCount >= MAX_LEETCODERS
+  const isInTheGroup = userGroup === group.group_no
 
   return (
     <Card className="relative z-50 overflow-hidden border border-zinc-700/10 bg-gradient-to-tr from-[#141416] to-[#1C1C1C] shadow-[0_8px_24px_rgba(0,0,0,0.3)] backdrop-blur-md before:absolute before:inset-0 before:-z-10 before:rounded-lg before:bg-gradient-to-tr before:from-zinc-900/20 before:to-zinc-800/5 before:opacity-20 after:absolute after:inset-0 after:-z-20 after:[background-size:200px] after:opacity-[0.15] after:mix-blend-overlay">
@@ -100,7 +98,7 @@ export const GroupCard = ({ group, problemsCount }: GroupCardProps) => {
           totalCount={leetcodersCount}
         />
 
-        {!isFull && <RequestModal groupId={String(group.group_no)} />}
+        {!isFull && !isInTheGroup && <RequestModal groupId={String(group.group_no)} />}
       </CardFooter>
     </Card>
   )

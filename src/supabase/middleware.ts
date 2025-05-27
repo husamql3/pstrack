@@ -30,7 +30,7 @@ export async function updateSession(request: NextRequest) {
   }
 
   // Check profile access - user must be logged in
-  if (pathname === '/profile' && !user) {
+  if ((pathname === '/profile' && !user) || (pathname === '/roadmap' && !user)) {
     return NextResponse.redirect(new URL('/login', request.url))
   }
 
