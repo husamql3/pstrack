@@ -5,7 +5,7 @@ import type { Difficulty, Topic } from '@/types/problems.type'
  * @param topic - The topic to get the color for.
  * @returns The color for the given topic.
  */
-export const getTopicColor = (topic: Topic) => {
+export const getTopicColor = (topic: Topic): string => {
   switch (topic) {
     case 'arrays-hashing':
       return 'bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-green-400 border border-green-500/30'
