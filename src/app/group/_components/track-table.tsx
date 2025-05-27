@@ -330,9 +330,9 @@ export const TrackTable = ({
                         key={header.id}
                         className={cn(
                           'px-3 py-2 align-middle font-semibold whitespace-nowrap text-slate-200',
-                          index === 0 && 'bg-[#1D1D0B]', // Gold for first column
-                          index === 1 && 'bg-[#212123]', // Silver for second column
-                          index === 2 && 'bg-[#21160F]' // Bronze for third column
+                          index === 0 && 'bg-first',
+                          index === 1 && 'bg-second',
+                          index === 2 && 'bg-third'
                         )}
                       >
                         {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
@@ -355,9 +355,9 @@ export const TrackTable = ({
                           key={cell.id}
                           className={cn(
                             'px-3 py-2 align-middle text-slate-300',
-                            index === 0 && 'bg-[#1D1D0B]',
-                            index === 1 && 'bg-[#212123]',
-                            index === 2 && 'bg-[#21160F]'
+                            index === 0 && 'bg-first',
+                            index === 1 && 'bg-second',
+                            index === 2 && 'bg-third'
                           )}
                         >
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}

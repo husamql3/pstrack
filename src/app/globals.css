@@ -44,6 +44,10 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
   --animate-shiny-text: shiny-text 8s infinite;
+  /* variables */
+  --color-first: #1d1d0b;
+  --color-second: #212123;
+  --color-third: #21160f;
 
   @keyframes shiny-text {
     0%,
