@@ -100,7 +100,7 @@ export const TrackTable = ({
           </div>
         ),
         cell: (info) => (
-          <div className="flex h-8 items-center justify-center rounded-lg border border-zinc-700 px-2 font-mono text-xs text-slate-300">
+          <div className="flex h-8 items-center justify-center rounded-lg border border-zinc-800 px-2 font-mono text-xs text-slate-300">
             {info.getValue()}
           </div>
         ),
@@ -121,7 +121,7 @@ export const TrackTable = ({
                 target="_blank"
                 rel="noopener noreferrer"
                 title="Open problem in a new tab"
-                className="group flex h-7 items-center justify-center gap-2 rounded-lg border border-zinc-700 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 px-2 font-semibold text-blue-400 transition-all duration-200 hover:text-blue-300"
+                className="group flex h-7 items-center justify-center gap-2 rounded-lg border bg-gradient-to-r from-blue-500/20 to-cyan-500/20 px-2 font-semibold text-blue-400 transition-all duration-200 hover:text-blue-300"
               >
                 #{problem.problem_no}
               </a>
@@ -143,7 +143,7 @@ export const TrackTable = ({
               <div
                 className={cn(
                   getTopicColor(topic),
-                  'flex h-7 items-center justify-center rounded-lg border border-zinc-700 px-2 text-sm font-semibold whitespace-nowrap transition-all duration-200 hover:scale-105'
+                  'flex h-7 items-center justify-center rounded-lg border px-2 text-sm font-semibold whitespace-nowrap transition-all duration-200 hover:scale-105'
                 )}
               >
                 {topic}
@@ -166,7 +166,7 @@ export const TrackTable = ({
               <div
                 className={cn(
                   getDifficultyColor(difficulty),
-                  'flex h-7 items-center justify-center rounded-lg border border-zinc-700 px-2 text-sm font-semibold transition-all duration-200 hover:scale-105'
+                  'flex h-7 items-center justify-center rounded-lg px-2 text-sm font-semibold transition-all duration-200 hover:scale-105'
                 )}
               >
                 {difficulty}
@@ -199,7 +199,7 @@ export const TrackTable = ({
                     <span className="text-neutral-400">/</span>
                     <span className="text-neutral-300">{total}</span>
                   </div>
-                  <div className="h-1.5 w-full overflow-hidden rounded-full bg-zinc-700">
+                  <div className="h-1.5 w-full overflow-hidden rounded-full bg-zinc-800">
                     <div
                       className="h-full bg-gradient-to-r from-zinc-400 to-neutral-200 transition-all duration-300"
                       style={{ width: `${percentage}%` }}
@@ -223,10 +223,14 @@ export const TrackTable = ({
           {
             id: leetcoder.id,
             header: () => (
-              <div className="relative pr-2">
-                <LeetCoderCard leetcoder={leetcoder} />
+              // add extra padding right for the trophy icon
+              <div className={cn('relative', index <= 2 && 'pr-4')}>
+                <LeetCoderCard
+                  leetcoder={leetcoder}
+                  className={cn(index <= 2 && 'font-semibold')}
+                />
                 {index < 3 && (
-                  <div className="absolute top-1/2 -right-2 -translate-y-1/2 transform">
+                  <div className="absolute top-1/2 -right-1 -translate-y-1/2 transform">
                     <FaTrophy
                       className={cn(
                         'size-3',
@@ -267,16 +271,16 @@ export const TrackTable = ({
   return (
     <div className="min-h-screen w-full px-3 py-8">
       {/* Table Container */}
-      <div className="overflow-hidden rounded-lg border border-zinc-700 shadow-2xl backdrop-blur-sm">
+      <div className="overflow-hidden rounded-lg border border-zinc-800 shadow-2xl backdrop-blur-sm">
         <div className="flex">
           {/* Fixed Columns */}
           <div className="flex-shrink-0">
             <Table className="w-auto">
-              <TableHeader className="border-r !border-zinc-700">
+              <TableHeader className="border-r !border-zinc-800">
                 {table.getHeaderGroups().map((headerGroup) => (
                   <TableRow
                     key={headerGroup.id}
-                    className="border-zinc-700 transition-colors duration-200"
+                    className="border-zinc-800 transition-colors duration-200"
                   >
                     {headerGroup.headers.slice(0, 5).map((header) => (
                       <TableHead
@@ -293,7 +297,7 @@ export const TrackTable = ({
                 {table.getRowModel().rows.map((row) => (
                   <TableRow
                     key={row.id}
-                    className={cn('group !border-r border-zinc-700')}
+                    className={cn('group !border-r border-zinc-800')}
                   >
                     {row
                       .getVisibleCells()
@@ -315,16 +319,21 @@ export const TrackTable = ({
           {/* Scrollable Leetcoder Columns */}
           <div className="flex-1 overflow-x-auto">
             <Table className="w-auto">
-              <TableHeader className="border-b border-zinc-700">
+              <TableHeader className="border-b border-zinc-800">
                 {table.getHeaderGroups().map((headerGroup) => (
                   <TableRow
                     key={headerGroup.id}
-                    className="border-zinc-700 transition-colors duration-200"
+                    className="border-zinc-800 transition-colors duration-200"
                   >
-                    {headerGroup.headers.slice(5).map((header) => (
+                    {headerGroup.headers.slice(5).map((header, index) => (
                       <TableHead
                         key={header.id}
-                        className="px-3 py-2 align-middle font-semibold whitespace-nowrap text-slate-200"
+                        className={cn(
+                          'px-3 py-2 align-middle font-semibold whitespace-nowrap text-slate-200',
+                          index === 0 && 'bg-[#1D1D0B]', // Gold for first column
+                          index === 1 && 'bg-[#212123]', // Silver for second column
+                          index === 2 && 'bg-[#21160F]' // Bronze for third column
+                        )}
                       >
                         {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                       </TableHead>
@@ -336,15 +345,20 @@ export const TrackTable = ({
                 {table.getRowModel().rows.map((row) => (
                   <TableRow
                     key={row.id}
-                    className={cn('group border-b border-zinc-700')}
+                    className={cn('group border-b border-zinc-800')}
                   >
                     {row
                       .getVisibleCells()
                       .slice(5)
-                      .map((cell) => (
+                      .map((cell, index) => (
                         <TableCell
                           key={cell.id}
-                          className="px-3 py-2 align-middle text-slate-300"
+                          className={cn(
+                            'px-3 py-2 align-middle text-slate-300',
+                            index === 0 && 'bg-[#1D1D0B]',
+                            index === 1 && 'bg-[#212123]',
+                            index === 2 && 'bg-[#21160F]'
+                          )}
                         >
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </TableCell>

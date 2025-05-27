@@ -11,7 +11,7 @@ import { getSocialLink } from '@/utils/leetcoderCard'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/ui/hover-card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/ui/avatar'
 
-export const LeetCoderCard = ({ leetcoder }: { leetcoder: leetcodersType }) => {
+export const LeetCoderCard = ({ leetcoder, className }: { leetcoder: leetcodersType; className?: string }) => {
   const { data: user } = api.auth.getUser.useQuery()
   const memoizedLeetcoder = useMemo(() => leetcoder, [leetcoder])
   const currUser = user?.id === memoizedLeetcoder.id
@@ -22,7 +22,13 @@ export const LeetCoderCard = ({ leetcoder }: { leetcoder: leetcodersType }) => {
     <HoverCard>
       <div className="flex items-center gap-3">
         <HoverCardTrigger asChild>
-          <p className={cn('text-sm font-medium hover:underline', currUser && 'text-emerald-500')}>
+          <p
+            className={cn(
+              'text-sm font-medium hover:underline',
+              currUser && 'font-semibold text-emerald-500',
+              className
+            )}
+          >
             @{memoizedLeetcoder.username}
           </p>
         </HoverCardTrigger>
