@@ -10,15 +10,18 @@ type SubmissionData = {
 
 type SubmissionStore = {
   submissions: Record<SubmissionKey, SubmissionData | boolean>
+  hasPendingSubmission: boolean // Track if current user has any pending submission
   setSubmission: (key: SubmissionKey, value: boolean) => void
   isSubmitted: (key: SubmissionKey) => boolean
   getSubmissionDate: (key: SubmissionKey) => Date | null
+  setPendingSubmission: (pending: boolean) => void
 }
 
 export const useSubmissionStore = create<SubmissionStore>()(
   persist(
     (set, get) => ({
       submissions: {},
+      hasPendingSubmission: false,
       setSubmission: (key, value) =>
         set((state) => ({
           submissions: {
@@ -45,9 +48,15 @@ export const useSubmissionStore = create<SubmissionStore>()(
         }
         return submission ? new Date(submission.created_at) : null
       },
+      setPendingSubmission: (pending) =>
+        set({
+          hasPendingSubmission: pending,
+        }),
     }),
     {
       name: 'submission-storage',
+      // Don't persist hasPendingSubmission as it should reset on page reload
+      partialize: (state) => ({ submissions: state.submissions }),
     }
   )
 )

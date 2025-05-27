@@ -10,7 +10,7 @@ export const GroupHeader = async ({ groupNo }: { groupNo: string }) => {
 
   // todo: update group header style https://animate-ui.com/docs/text/highlight
   return (
-    <Header className="max-w-none px-10">
+    <Header className="max-w-none sm:px-10">
       <div className="flex items-center">
         <GradientText
           className="text-xl font-bold sm:text-2xl"

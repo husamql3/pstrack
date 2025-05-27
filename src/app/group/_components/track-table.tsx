@@ -1,10 +1,10 @@
 'use client'
 
-import { useMemo, useCallback } from 'react'
+import { useMemo, useState } from 'react'
 import { FaTrophy } from 'react-icons/fa6'
 import { Target, Calendar, Hash, Tag, Puzzle } from 'lucide-react'
 import type { leetcoders } from '@prisma/client'
-import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
+import { createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 
 import { PROBLEM_BASE_URL, VISIBLE_COUNT } from '@/data/constants'
 import type { TableRowOutput } from '@/types/tableRow.type'
@@ -12,11 +12,13 @@ import type { Difficulty, Topic } from '@/types/problems.type'
 import { parseDate } from '@/utils/parseDate'
 import { cn } from '@/utils/cn'
 import { useSubmissionStore } from '@/stores/submissionStore'
-import { getDifficultyColor, getTopicColor } from '@/utils/problemsUtils'
+import { getDifficultyColor } from '@/utils/problemsUtils'
+import { useScreenSize } from '@/hooks/use-screen-size'
 
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/ui/table'
 import { SubmitCheckbox } from '@/app/group/_components/submit-checkbox'
 import { LeetCoderCard } from '@/app/group/_components/leetcoder-card'
+import { LargeScreenTable } from '@/app/group/_components/large-screen-table'
+import { SmallScreenTable } from '@/app/group/_components/small-screen-table'
 
 const columnHelper = createColumnHelper<TableRowOutput>()
 
@@ -30,6 +32,8 @@ export const TrackTable = ({
   groupId: string
 }) => {
   const { submissions } = useSubmissionStore()
+  const [currentVisibleCount, setCurrentVisibleCount] = useState(VISIBLE_COUNT)
+  const isLargeScreen = useScreenSize()
 
   const leetcoderSolvedCounts: Record<string, number> = useMemo(() => {
     const counts: Record<string, number> = {}
@@ -137,8 +141,18 @@ export const TrackTable = ({
       return dateB.getTime() - dateA.getTime()
     })
 
-    return sortedData.slice(0, VISIBLE_COUNT)
-  }, [tableData])
+    return sortedData.slice(0, currentVisibleCount)
+  }, [tableData, currentVisibleCount])
+
+  const totalSolvedCount = useMemo(() => {
+    return visibleTableData.reduce((total, row) => total + row.totalSolved, 0)
+  }, [visibleTableData])
+
+  const handleShowMore = () => {
+    setCurrentVisibleCount((prev) => Math.min(prev + VISIBLE_COUNT, tableData.length))
+  }
+
+  const hasMoreToShow = currentVisibleCount < tableData.length
 
   const columns = useMemo(
     () => [
@@ -158,7 +172,7 @@ export const TrackTable = ({
       columnHelper.accessor('problem', {
         header: () => (
           <div className="flex items-center justify-center gap-2 font-semibold text-slate-300">
-            <Hash className="size-4 text-blue-400" />
+            <Hash className="size-4 text-indigo-400" />
             Problem
           </div>
         ),
@@ -171,7 +185,10 @@ export const TrackTable = ({
                 target="_blank"
                 rel="noopener noreferrer"
                 title="Open problem in a new tab"
-                className="group flex h-7 items-center justify-center gap-2 rounded-lg border bg-gradient-to-r from-blue-500/20 to-cyan-500/20 px-2 font-semibold text-blue-400 transition-all duration-200 hover:text-blue-300"
+                className={cn(
+                  'group flex h-7 items-center justify-center gap-2 rounded-lg border px-2 font-semibold transition-all duration-200 hover:text-blue-300',
+                  'border border-indigo-500/30 bg-gradient-to-r from-indigo-500/20 to-blue-500/20 text-indigo-400'
+                )}
               >
                 #{problem.problem_no}
               </a>
@@ -182,7 +199,7 @@ export const TrackTable = ({
       columnHelper.accessor('problem.topic', {
         header: () => (
           <div className="flex items-center justify-center gap-2 font-semibold text-slate-300">
-            <Tag className="size-4 text-blue-700" />
+            <Tag className="size-4 text-blue-400" />
             Topic
           </div>
         ),
@@ -192,7 +209,7 @@ export const TrackTable = ({
             <div className="flex items-center justify-center">
               <div
                 className={cn(
-                  getTopicColor(topic),
+                  'bg-gradient-to-r from-blue-500/20 to-cyan-500/20 text-blue-400',
                   'flex h-7 items-center justify-center rounded-lg border px-2 text-sm font-semibold whitespace-nowrap transition-all duration-200 hover:scale-105'
                 )}
               >
@@ -317,107 +334,23 @@ export const TrackTable = ({
     getCoreRowModel: getCoreRowModel(),
   })
 
-  return (
-    <div className="min-h-screen w-full px-3 py-8">
-      {/* Table Container */}
-      <div className="overflow-hidden rounded-lg border border-zinc-800 shadow-2xl backdrop-blur-sm">
-        <div className="flex">
-          {/* Fixed Columns */}
-          <div className="flex-shrink-0">
-            <Table className="w-auto">
-              <TableHeader className="border-r !border-zinc-800">
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow
-                    key={headerGroup.id}
-                    className="border-zinc-800 transition-colors duration-200"
-                  >
-                    {headerGroup.headers.slice(0, 5).map((header) => (
-                      <TableHead
-                        key={header.id}
-                        className="px-3 py-2 align-middle font-semibold whitespace-nowrap text-slate-200"
-                      >
-                        {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                      </TableHead>
-                    ))}
-                  </TableRow>
-                ))}
-              </TableHeader>
-              <TableBody>
-                {table.getRowModel().rows.map((row) => (
-                  <TableRow
-                    key={row.id}
-                    className={cn('group !border-r border-zinc-800')}
-                  >
-                    {row
-                      .getVisibleCells()
-                      .slice(0, 5)
-                      .map((cell) => (
-                        <TableCell
-                          key={cell.id}
-                          className="px-3 py-2 align-middle whitespace-nowrap"
-                        >
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </TableCell>
-                      ))}
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+  if (isLargeScreen === null) {
+    return null
+  }
 
-          {/* Scrollable Leetcoder Columns */}
-          <div className="flex-1 overflow-x-auto">
-            <Table className="w-auto">
-              <TableHeader className="border-b border-zinc-800">
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow
-                    key={headerGroup.id}
-                    className="border-zinc-800 transition-colors duration-200"
-                  >
-                    {headerGroup.headers.slice(5).map((header, index) => (
-                      <TableHead
-                        key={header.id}
-                        className={cn(
-                          'px-3 py-2 align-middle font-semibold whitespace-nowrap text-slate-200',
-                          index === 0 && 'bg-first',
-                          index === 1 && 'bg-second',
-                          index === 2 && 'bg-third'
-                        )}
-                      >
-                        {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                      </TableHead>
-                    ))}
-                  </TableRow>
-                ))}
-              </TableHeader>
-              <TableBody>
-                {table.getRowModel().rows.map((row) => (
-                  <TableRow
-                    key={row.id}
-                    className={cn('group border-b border-zinc-800')}
-                  >
-                    {row
-                      .getVisibleCells()
-                      .slice(5)
-                      .map((cell, index) => (
-                        <TableCell
-                          key={cell.id}
-                          className={cn(
-                            'px-3 py-2 align-middle text-slate-300',
-                            index === 0 && 'bg-first',
-                            index === 1 && 'bg-second',
-                            index === 2 && 'bg-third'
-                          )}
-                        >
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </TableCell>
-                      ))}
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        </div>
+  const tableProps = {
+    table,
+    sortedLeetcoders,
+    leetcoderSolvedCounts,
+    hasMoreToShow,
+    handleShowMore,
+  }
+
+  return (
+    <div className="w-full px-3 py-8">
+      {/* Table Container - Conditionally render only the appropriate component */}
+      <div className="overflow-x-auto rounded-lg border border-zinc-800 shadow-2xl backdrop-blur-sm">
+        {isLargeScreen ? <LargeScreenTable {...tableProps} /> : <SmallScreenTable {...tableProps} />}
       </div>
     </div>
   )
