@@ -62,7 +62,7 @@ export const GroupCard = async ({ group, problemsCount, userGroup }: GroupCardPr
               className={cn(
                 'inline-flex items-center gap-1.5',
                 currentProblem
-                  ? 'bg-blue-600/20 font-medium text-blue-200 ring-1 ring-blue-600/30'
+                  ? 'bg-gradient-to-r from-blue-500/20 to-cyan-500/20 text-blue-400'
                   : 'bg-zinc-600/20 text-zinc-400 ring-1 ring-zinc-600/30'
               )}
             >

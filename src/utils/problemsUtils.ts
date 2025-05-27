@@ -8,51 +8,50 @@ import type { Difficulty, Topic } from '@/types/problems.type'
 export const getTopicColor = (topic: Topic): string => {
   switch (topic) {
     case 'arrays-hashing':
-      return 'bg-green-200 text-green-900'
+      return 'bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-green-400 border border-green-500/30'
     case 'two-pointers':
-      return 'bg-yellow-200 text-yellow-900'
+      return 'bg-gradient-to-r from-yellow-500/20 to-amber-500/20 text-yellow-400 border border-yellow-500/30'
     case 'sliding-window':
-      return 'bg-red-200 text-red-900'
+      return 'bg-gradient-to-r from-red-500/20 to-rose-500/20 text-red-400 border border-red-500/30'
     case 'stack':
-      return 'bg-purple-200 text-purple-900'
+      return 'bg-gradient-to-r from-purple-500/20 to-violet-500/20 text-purple-400 border border-purple-500/30'
     case 'binary-search':
-      return 'bg-blue-200 text-blue-900'
+      return 'bg-gradient-to-r from-blue-500/20 to-cyan-500/20 text-blue-400 border border-blue-500/30'
     case 'linkedlist':
-      return 'bg-orange-200 text-orange-900'
+      return 'bg-gradient-to-r from-orange-500/20 to-amber-500/20 text-orange-400 border border-orange-500/30'
     case 'tree':
-      return 'bg-emerald-200 text-emerald-900'
+      return 'bg-gradient-to-r from-emerald-500/20 to-green-500/20 text-emerald-400 border border-emerald-500/30'
     case 'priority-queue':
-      return 'bg-amber-200 text-amber-900'
+      return 'bg-gradient-to-r from-amber-500/20 to-yellow-500/20 text-amber-400 border border-yellow-500/30'
     case 'backtracking':
-      return 'bg-pink-200 text-pink-900'
+      return 'bg-gradient-to-r from-pink-500/20 to-rose-500/20 text-pink-400 border border-pink-500/30'
     case 'tries':
-      return 'bg-rose-200 text-rose-900'
+      return 'bg-gradient-to-r from-rose-500/20 to-pink-500/20 text-rose-400 border border-rose-500/30'
     case 'graphs':
-      return 'bg-indigo-200 text-indigo-900'
+      return 'bg-gradient-to-r from-indigo-500/20 to-blue-500/20 text-indigo-400 border border-indigo-500/30'
     case '1d-dp':
-      return 'bg-teal-200 text-teal-900'
+      return 'bg-gradient-to-r from-teal-500/20 to-cyan-500/20 text-teal-400 border border-teal-500/30'
     case '2d-dp':
-      return 'bg-cyan-200 text-cyan-900'
+      return 'bg-gradient-to-r from-cyan-500/20 to-blue-500/20 text-cyan-400 border border-cyan-500/30'
     default:
-      return 'bg-gray-200 text-gray-900'
+      return 'bg-gradient-to-r from-gray-500/20 to-slate-500/20 text-gray-400 border border-gray-500/30'
   }
 }
-
 /**
  * Get the color for a given difficulty.
  * @param difficulty - The difficulty to get the color for.
  * @returns The color for the given difficulty.
  */
-export function getDifficultyColor(difficulty: Difficulty): string {
+export const getDifficultyColor = (difficulty: Difficulty) => {
   switch (difficulty) {
     case 'easy':
-      return 'bg-[#2cbb5d40] text-[rgb(0,184,163)]'
+      return 'bg-gradient-to-r from-emerald-500/20 to-teal-500/20 text-emerald-400 border border-emerald-500/30'
     case 'medium':
-      return 'bg-[#ffc01e40] text-[rgb(255,192,30)]'
+      return 'bg-gradient-to-r from-amber-500/20 to-orange-500/20 text-amber-400 border border-amber-500/30'
     case 'hard':
-      return 'bg-[#ef474340] text-[rgb(255,55,95)]'
+      return 'bg-gradient-to-r from-red-500/20 to-pink-500/20 text-red-400 border border-red-500/30'
     default:
-      return 'bg-gray-100 text-gray-500'
+      return 'bg-gradient-to-r from-gray-500/20 to-slate-500/20 text-gray-400 border border-gray-500/30'
   }
 }
 

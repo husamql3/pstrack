@@ -36,7 +36,7 @@ export const SubmitCheckbox = ({
   const submissionKey = `${leetcoder.group_no}:${leetcoder.id}:${problemId}`
 
   // Get submission state and setter from the Zustand store
-  const { isSubmitted, setSubmission } = useSubmissionStore()
+  const { isSubmitted, setSubmission, hasPendingSubmission, setPendingSubmission } = useSubmissionStore()
 
   // Check both the API data and the store for submission state
   const [isChecked, setIsChecked] = useState(() => {
@@ -52,6 +52,9 @@ export const SubmitCheckbox = ({
   const handleCheckboxChange = debounce(() => {
     // If already checked, do nothing
     if (isChecked) return
+
+    // Set pending submission state
+    setPendingSubmission(true)
 
     // Optimistically update the UI
     setIsChecked(true)
@@ -86,6 +89,9 @@ export const SubmitCheckbox = ({
           setIsChecked(true)
           setSubmission(submissionKey, true)
 
+          // Clear pending state
+          setPendingSubmission(false)
+
           // Refresh the page to re-sort the table
           router.refresh()
         },
@@ -107,6 +113,9 @@ export const SubmitCheckbox = ({
           // Reset the checked state on error
           setIsChecked(!!submission)
           setSubmission(submissionKey, false)
+
+          // Clear pending state
+          setPendingSubmission(false)
         },
       }
     )
@@ -116,7 +125,7 @@ export const SubmitCheckbox = ({
     <Checkbox
       checked={isChecked}
       onCheckedChange={handleCheckboxChange}
-      disabled={isPending || isChecked || !user || !isCurrUser}
+      disabled={isPending || isChecked || !user || !isCurrUser || hasPendingSubmission}
       className="peer size-4 shrink-0 rounded-sm border border-zinc-200 shadow focus-visible:ring-1 focus-visible:ring-zinc-950 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 dark:border-zinc-400 dark:focus-visible:ring-zinc-300"
     />
   )

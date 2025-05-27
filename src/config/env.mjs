@@ -34,7 +34,6 @@ export const env = createEnv({
     EMAIL_PASSWORD: process.env.EMAIL_PASSWORD,
     API_SECRET: process.env.API_SECRET,
     RABBITMQ_URL: process.env.RABBITMQ_URL,
-    OPTIMIZE_API_KEY: process.env.OPTIMIZE_API_KEY,
   },
   skipValidation: process.env.NODE_ENV !== 'development',
 })
