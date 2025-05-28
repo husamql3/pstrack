@@ -15,7 +15,7 @@ const Page = async ({ params }: { params: Promise<{ groupId: string }> }) => {
   const groupData = await api.groups.getGroupTableData({ group_no: groupId })
   const groupProblems = await api.roadmap.getGroupProblems(groupData?.group_progress || [])
 
-  if (!groupData || !groupProblems || groupProblems.length === 0) return <NotStarted />
+  if (!groupData || !groupProblems) return <NotStarted />
 
   const tableData = generateTableData({
     group_no: groupData.group_no,

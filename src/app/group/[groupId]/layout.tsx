@@ -2,7 +2,6 @@ import { cache } from 'react'
 import { notFound } from 'next/navigation'
 
 import { getAllGroupsNo, getGroupByNo } from '@/dao/groups.dao'
-import { redis } from '@/config/redis'
 
 import { GroupHeader } from '@/app/group/_components/group-header'
 
@@ -28,9 +27,6 @@ const Layout = async ({ children, params }: { children: React.ReactNode; params:
   if (!groupExists) {
     notFound()
   }
-
-  const cacheKey = `group:${groupId}:data`
-  await redis.del(cacheKey)
 
   return (
     <div className="flex min-h-screen flex-col">

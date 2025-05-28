@@ -15,7 +15,7 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
   const user = await api.auth.getUser()
 
   return (
-    <div className="relative flex h-screen flex-col">
+    <div className="relative flex min-h-screen flex-col">
       <Suspense fallback={<div className="absolute inset-0 bg-black" />}>
         <StarsBackground className="fixed inset-0 -z-10" />
       </Suspense>
