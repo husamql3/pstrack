@@ -1,6 +1,10 @@
-import { execSync } from 'child_process'
+import { PrismaClient } from '@prisma/client'
+import { execSync } from 'node:child_process'
+
+const db = new PrismaClient()
 
 async function main() {
+  await db.$connect()
   console.log('🌱 Starting database seeding...')
 
   try {

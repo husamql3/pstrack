@@ -1,29 +1,25 @@
-import { ResourceTab } from '@prisma/client'
-
 import { db } from '@/prisma/db'
 import { createTRPCRouter, publicProcedure } from '@/server/trpc'
 import { REDIS_KEYS } from '@/data/constants'
 import { logger } from '@/utils/logger'
 import { redis } from '@/config/redis'
-import { ResourcesResponse } from '@/types/resources.type'
-import { groupByTopic } from '@/utils/resources'
+import type { ResourcesResponse, ResourceTabOption, ResourceTypeOption } from '@/types/resources.type'
+import { formatTabLabel, groupByTopic } from '@/utils/resources'
+import { AddNewResourceSchema } from '@/types/schema/resources.schema'
+import { resources } from '@prisma/client'
 
 export const resourcesRouter = createTRPCRouter({
   /**
    * Get all resources grouped by topic for `/resources` page
    * Returns separate arrays for technologies and problem solving
-   * - revalidates every 24 hours
+   * Revalidates every 24 hours
    * @returns {ResourcesResponse}
    */
   getResources: publicProcedure.query(async (): Promise<ResourcesResponse> => {
-    try {
-      const cachedResources = await redis.get(REDIS_KEYS.RESOURCES)
-      if (cachedResources && typeof cachedResources === 'string') {
-        logger.debug(`[Cache] Using cached resources`)
-        return JSON.parse(cachedResources) as ResourcesResponse
-      }
-    } catch (error) {
-      logger.warn(`[Cache] Failed to retrieve cached resources:`, error)
+    const cachedResources = (await redis.get(REDIS_KEYS.RESOURCES)) as ResourcesResponse | null
+    if (cachedResources) {
+      logger.debug('[Cache] Using cached resources')
+      return cachedResources as ResourcesResponse
     }
 
     const resources = await db.resources.findMany({
@@ -31,28 +27,101 @@ export const resourcesRouter = createTRPCRouter({
         is_visible: true,
         is_approved: true,
       },
+      include: {
+        type: true,
+        tab: true,
+      },
       orderBy: [{ created_at: 'asc' }],
     })
 
-    const techResources = resources.filter((resource) => resource.tab === ResourceTab.TECHNOLOGIES)
-    const psResources = resources.filter((resource) => resource.tab === ResourceTab.PROBLEM_SOLVING)
+    const resourcesByTab = resources.reduce(
+      (acc, resource) => {
+        const tabName = resource.tab.name
+        if (!acc[tabName]) {
+          acc[tabName] = []
+        }
+        acc[tabName].push(resource)
+        return acc
+      },
+      {} as Record<string, typeof resources>
+    )
+
+    const techResources = resourcesByTab['TECHNOLOGIES'] || []
+    const psResources = resourcesByTab['PROBLEM_SOLVING'] || []
 
     const response: ResourcesResponse = {
       technologies: groupByTopic(techResources),
       problemSolving: groupByTopic(psResources),
     }
 
-    // Cache the response
-    try {
-      await redis.set(REDIS_KEYS.RESOURCES, JSON.stringify(response), { ex: 60 * 60 * 24 }) // 24 hours
-    } catch (error) {
-      logger.warn(`[Cache] Failed to cache resources:`, error)
-    }
-
+    await redis.set(REDIS_KEYS.RESOURCES, response, { ex: 60 * 60 * 24 }) // 24 hours
     return response
   }),
 
-  // add a new resource
-  // approve a resource - invalidate cache
-  // hide a resource
+  /**
+   * Get all resource tabs for the dropdown
+   * @returns {ResourceTabOption[]}
+   */
+  getResourceTabs: publicProcedure.query(async (): Promise<ResourceTabOption[]> => {
+    try {
+      const tabs = await db.resource_tabs.findMany({
+        orderBy: { name: 'asc' },
+      })
+
+      return tabs.map((tab) => ({
+        value: tab.name,
+        label: formatTabLabel(tab.name),
+      }))
+    } catch (error) {
+      logger.error(`Failed to fetch resource tabs: ${error}`)
+      return []
+    }
+  }),
+
+  /**
+   * Get all resource types for the dropdown
+   * @returns {ResourceTypeOption[]}
+   */
+  getResourceTypes: publicProcedure.query(async (): Promise<ResourceTypeOption[]> => {
+    try {
+      const types = await db.resource_types.findMany({
+        orderBy: { name: 'asc' },
+      })
+
+      return types.map((type) => ({
+        value: type.name,
+        label: formatTabLabel(type.name),
+      }))
+    } catch (error) {
+      logger.error(`Failed to fetch resource types: ${error}`)
+      return []
+    }
+  }),
+
+  /**
+   * Add a new resource
+   * @param {AddNewResourceSchemaType} input
+   * @returns {Resource | null}
+   */
+  addResource: publicProcedure.input(AddNewResourceSchema).mutation(async ({ input }): Promise<resources | null> => {
+    try {
+      const resource = await db.resources.create({
+        data: {
+          title: input.title,
+          url: input.url,
+          type_id: input.type,
+          tab_id: input.tab,
+          contributor: input.contributor,
+          topic: input.topic,
+          is_visible: input.is_visible,
+          is_approved: input.is_approved,
+        },
+      })
+
+      return resource
+    } catch (error) {
+      logger.error(`Failed to create resource: ${error}`)
+      return null
+    }
+  }),
 })

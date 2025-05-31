@@ -14,8 +14,8 @@ import { cn } from '@/utils/cn'
 
 import { Button } from '@/ui/button'
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/ui/dialog'
+import { RequestRules } from '@/app/group/_components/request-rules'
 import { type FormDataType, RequestForm } from '@/app/group/_components/request-form'
-import { RequestRules } from './request-rules'
 
 const createVariants = (heightContent: number): Variants => ({
   initial: (direction: number) => ({

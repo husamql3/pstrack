@@ -1,13 +1,12 @@
-import { resources, ResourceType } from '@prisma/client'
-import { GroupedResources, ResourceFolder } from '@/types/resources.type'
+import type { GroupedResources, ResourceFolder, ResourceWithRelations } from '@/types/resources.type'
 
 /**
  * Group resources by topic, then by type (creating folders)
- * @param resourceList - list of resources
+ * @param resourceList - list of resources with type and tab relations
  * @returns grouped resources by topic and type
  */
-export const groupByTopic = (resourceList: resources[]): GroupedResources => {
-  // First group by topic
+export const groupByTopic = (resourceList: ResourceWithRelations[]): GroupedResources => {
+  // group by topic
   const topicMap = resourceList.reduce(
     (acc, resource) => {
       const topic = resource.topic
@@ -17,26 +16,26 @@ export const groupByTopic = (resourceList: resources[]): GroupedResources => {
       acc[topic].push(resource)
       return acc
     },
-    {} as Record<string, resources[]>
+    {} as Record<string, ResourceWithRelations[]>
   )
 
   // Then group each topic's resources by type (creating folders)
   return Object.entries(topicMap).map(([topic, topicResources]) => {
     const typeMap = topicResources.reduce(
       (acc, resource) => {
-        const type = resource.type
-        if (!acc[type]) {
-          acc[type] = []
+        const typeName = resource.type.name
+        if (!acc[typeName]) {
+          acc[typeName] = []
         }
-        acc[type].push(resource)
+        acc[typeName].push(resource)
         return acc
       },
-      {} as Record<string, resources[]>
+      {} as Record<string, ResourceWithRelations[]>
     )
 
-    const folders: ResourceFolder[] = Object.entries(typeMap).map(([type, resources]) => ({
-      type: type as ResourceType,
-      resources,
+    const folders: ResourceFolder[] = Object.entries(typeMap).map(([typeName, resources]) => ({
+      type: typeName,
+      resources: resources,
     }))
 
     return {
@@ -44,4 +43,25 @@ export const groupByTopic = (resourceList: resources[]): GroupedResources => {
       folders,
     }
   })
+}
+
+/**
+ * Convert resource name to human-readable label
+ * @param name - resource name
+ * @returns formatted label string
+ */
+export const formatTabLabel = (name: string): string => {
+  return name
+    .split('_')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ')
+}
+
+/**
+ * Map resource type name to display-friendly format
+ * @param typeName - resource type name from database
+ * @returns formatted type name
+ */
+export const formatResourceType = (typeName: string): string => {
+  return formatTabLabel(typeName)
 }

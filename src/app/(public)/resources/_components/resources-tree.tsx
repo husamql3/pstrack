@@ -2,7 +2,11 @@ import type { GroupedResources } from '@/types/resources.type'
 
 import { Files, File, Folder } from '@/ui/files'
 
-export const ResourcesTree = ({ resources }: { resources: GroupedResources }) => {
+interface ResourcesTreeProps {
+  resources: GroupedResources
+}
+
+export const ResourcesTree = ({ resources }: ResourcesTreeProps) => {
   return (
     <Files className="w-full border-none bg-transparent">
       {resources.map((resource) => (
@@ -22,7 +26,7 @@ export const ResourcesTree = ({ resources }: { resources: GroupedResources }) =>
                   key={item.id}
                   name={item.title}
                   href={item.url}
-                  type={item.type}
+                  type={item.type.name}
                 />
               ))}
             </Folder>

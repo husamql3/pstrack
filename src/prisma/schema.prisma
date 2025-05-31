@@ -79,27 +79,41 @@ model submissions {
 }
 
 model resources {
-  id          String       @id @default(uuid()) @db.Uuid
-  created_at  DateTime     @default(now()) @db.Timestamptz(6)
+  id          String         @id @default(uuid()) @db.Uuid
+  created_at  DateTime       @default(now()) @db.Timestamptz(6)
   title       String
   url         String
   contributor String
   topic       String
-  is_visible  Boolean      @default(false)
-  is_approved Boolean      @default(false)
-  type        ResourceType
-  tab         ResourceTab
+  is_visible  Boolean        @default(false)
+  is_approved Boolean        @default(false)
+  type_id     Int
+  tab_id      Int
+  type        resource_types @relation(fields: [type_id], references: [id])
+  tab         resource_tabs  @relation(fields: [tab_id], references: [id])
 }
 
-enum ResourceType {
-  ARTICLE
-  VIDEO
-  YOUTUBE
-  FRONTEND_MASTER
-  UDEMY
+model resource_tabs {
+  id        Int         @id @default(autoincrement())
+  name      String      @unique
+  resources resources[]
 }
 
-enum ResourceTab {
-  PROBLEM_SOLVING
-  TECHNOLOGIES
+model resource_types {
+  id        Int         @id @default(autoincrement())
+  name      String      @unique
+  resources resources[]
 }
+
+// enum ResourceTab {
+// PROBLEM_SOLVING
+// TECHNOLOGIES
+// }
+
+// enum ResourceType {
+// ARTICLE
+// VIDEO
+// YOUTUBE
+// FRONTEND_MASTER
+// UDEMY
+// }

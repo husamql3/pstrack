@@ -4,9 +4,10 @@ import Link from 'next/link'
 import { LuFile } from 'react-icons/lu'
 import { BiSolidFolderOpen, BiSolidFolder } from 'react-icons/bi'
 import { PiYoutubeLogo } from 'react-icons/pi'
+import { SiUdemy } from 'react-icons/si'
+import { MdVideoLibrary } from 'react-icons/md'
 import type { ComponentProps, ReactNode } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
-import { ResourceType } from '@prisma/client'
 
 import { cn } from '@/utils/cn'
 import {
@@ -19,6 +20,7 @@ import {
   useAccordionItem,
 } from '@/ui/accordion'
 import { MotionHighlight, MotionHighlightItem } from '@/ui/motion-highlight'
+import Image from 'next/image'
 
 type FileButtonProps = ComponentProps<'div'> & {
   icons?: {
@@ -141,7 +143,6 @@ function FolderTrigger({ children, className, sideComponent, ...props }: FolderT
       <FileButton
         open={isOpen}
         icons={{
-          // (Removed commented-out icon code for clarity and maintainability)
           open: <BiSolidFolderOpen />,
           close: <BiSolidFolder />,
         }}
@@ -197,20 +198,14 @@ type FileProps = Omit<ComponentProps<'div'>, 'children'> & {
   name: string
   sideComponent?: ReactNode
   href?: string
-  type?: ResourceType
+  type?: string
 }
 
 function File({ name, className, sideComponent, href, type, ...props }: FileProps) {
-  const getIcon = () => {
-    if (type === ResourceType.YOUTUBE) return <PiYoutubeLogo />
-    if (type === ResourceType.ARTICLE) return <LuFile />
-    return <LuFile />
-  }
-
   return (
     <FileButton
       data-slot="file"
-      icon={getIcon()}
+      icon={getIcon(type)}
       className={className}
       sideComponent={sideComponent}
       href={href}
@@ -219,6 +214,29 @@ function File({ name, className, sideComponent, href, type, ...props }: FileProp
       {name}
     </FileButton>
   )
+}
+
+const getIcon = (type: string | undefined) => {
+  switch (type?.toLowerCase()) {
+    case 'youtube':
+      return <PiYoutubeLogo className="text-red-500" />
+    case 'video':
+      return <MdVideoLibrary className="text-blue-500" />
+    case 'udemy':
+      return <SiUdemy className="text-purple-500" />
+    case 'frontendmasters':
+      return (
+        <Image
+          src="/fem.png"
+          alt="Frontend Masters"
+          width={20}
+          height={20}
+        />
+      )
+    case 'article':
+    default:
+      return <LuFile className="text-gray-500" />
+  }
 }
 
 export { Files, Folder, File, type FilesProps, type FolderProps, type FileProps }
