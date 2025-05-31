@@ -1,8 +1,8 @@
 # PSTrack
 
-![License](https://img.shields.io/github/license/husamahmud/pstrack)
-![Stars](https://img.shields.io/github/stars/husamahmud/pstrack)
-![Version](https://img.shields.io/github/package-json/v/husamahmud/pstrack?color=0066CC&label=Version&style=flat)
+![License](https://img.shields.io/github/license/husamql3/pstrack)
+![Stars](https://img.shields.io/github/stars/husamql3/pstrack)
+![Version](https://img.shields.io/github/package-json/v/husamql3/pstrack?color=0066CC&label=Version&style=flat)
 
 ![PSTrack Banner](/public/banner.png)
 

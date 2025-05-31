@@ -41,7 +41,7 @@ jobs:
       - name: Checkout backup repository
         uses: actions/checkout@v3
         with:
-          repository: husamahmud/pstrack-backup
+          repository: husamql3/pstrack-backup
           token: ${{ secrets.PAT_TOKEN }}
           path: pstrack-backup
 

@@ -8,7 +8,7 @@ export const VERSION = '2.6.32'
 /**
  * Repository information
  */
-export const USERNAME = 'husamahmud'
+export const USERNAME = 'husamql3'
 export const REPO_NAME = 'pstrack'
 
 /**
