@@ -1,41 +1,32 @@
-import { FileResource, FolderResource, Resource } from '@/types/resources'
+import type { GroupedResources } from '@/types/resources.type'
 
 import { Files, File, Folder } from '@/ui/files'
 
-export const ResourcesTree = ({ resources }: { resources: Resource[] }) => {
+export const ResourcesTree = ({ resources }: { resources: GroupedResources }) => {
   return (
     <Files className="w-full border-none bg-transparent">
-      {[...resources].reverse().map((resource) => (
+      {resources.map((resource) => (
         <Folder
-          key={resource.name}
-          name={resource.name}
+          key={resource.topic}
+          name={resource.topic}
           className="cursor-pointer"
         >
-          {resource.children.map((child) =>
-            'isFolder' in child ? (
-              <Folder
-                key={child.name}
-                name={child.name}
-                className="cursor-pointer"
-              >
-                {[...(child as FolderResource).children].map((subChild) => (
-                  <File
-                    key={subChild.name}
-                    name={subChild.name}
-                    href={'href' in subChild ? subChild.href : undefined}
-                    type={'type' in subChild ? subChild.type : undefined}
-                  />
-                ))}
-              </Folder>
-            ) : (
-              <File
-                key={child.name}
-                name={child.name}
-                href={'href' in child ? child.href : undefined}
-                type={'type' in child ? (child as FileResource).type : undefined}
-              />
-            )
-          )}
+          {resource.folders.map((folder) => (
+            <Folder
+              key={folder.type}
+              name={folder.type}
+              className="cursor-pointer"
+            >
+              {folder.resources?.map((item) => (
+                <File
+                  key={item.id}
+                  name={item.title}
+                  href={item.url}
+                  type={item.type}
+                />
+              ))}
+            </Folder>
+          ))}
         </Folder>
       ))}
     </Files>

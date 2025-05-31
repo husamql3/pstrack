@@ -1,7 +1,9 @@
+import { ResourceType } from '@prisma/client'
+
 export type FileResource = {
   name: string
   href?: string
-  type?: 'youtube' | 'article'
+  type?: ResourceType
 }
 
 export type FolderResource = {

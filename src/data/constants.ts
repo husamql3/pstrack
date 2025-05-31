@@ -58,4 +58,5 @@ export const REDIS_KEYS = {
   AVAILABLE_GROUPS: 'available-groups',
   GROUP_DATA: (groupId: string) => `group:${groupId}:data`,
   GROUP_PROBLEMS: (groupId: string) => `group:${groupId}:problems`,
+  RESOURCES: 'resources',
 }

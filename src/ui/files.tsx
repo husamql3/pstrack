@@ -6,6 +6,7 @@ import { BiSolidFolderOpen, BiSolidFolder } from 'react-icons/bi'
 import { PiYoutubeLogo } from 'react-icons/pi'
 import type { ComponentProps, ReactNode } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
+import { ResourceType } from '@prisma/client'
 
 import { cn } from '@/utils/cn'
 import {
@@ -174,7 +175,7 @@ function Folder({ children, className, name, open, defaultOpen, onOpenChange, si
         className={className}
         sideComponent={sideComponent}
       >
-        {name}
+        {name.toLowerCase()}
       </FolderTrigger>
       {children && (
         <AccordionContent className="before:bg-border relative !ml-7 pb-0 before:absolute before:inset-y-0 before:-left-3 before:h-full before:w-px">
@@ -196,12 +197,13 @@ type FileProps = Omit<ComponentProps<'div'>, 'children'> & {
   name: string
   sideComponent?: ReactNode
   href?: string
-  type?: 'youtube' | 'article'
+  type?: ResourceType
 }
 
 function File({ name, className, sideComponent, href, type, ...props }: FileProps) {
   const getIcon = () => {
-    if (type === 'youtube') return <PiYoutubeLogo />
+    if (type === ResourceType.YOUTUBE) return <PiYoutubeLogo />
+    if (type === ResourceType.ARTICLE) return <LuFile />
     return <LuFile />
   }
 

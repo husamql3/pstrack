@@ -32,7 +32,7 @@
     "prisma:studio": "prisma studio --schema=./src/prisma/schema.prisma",
     "prisma:push": "prisma db push --schema=./src/prisma/schema.prisma",
     "prisma:pull": "prisma db pull --schema=./src/prisma/schema.prisma",
-    "prisma:seed": "ts-node ./src/prisma/seed.ts",
+    "prisma:seed": "tsx ./src/prisma/seed.ts",
     "prepare": "husky install"
   },
   "dependencies": {
@@ -117,6 +117,8 @@
     "prisma": "^5.22.0",
     "tailwindcss": "^4.1.7",
     "ts-jest": "^29.3.4",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.19.4",
     "typescript": "^5.8.3"
   },
   "overrides": {

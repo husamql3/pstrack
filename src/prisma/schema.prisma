@@ -1,5 +1,5 @@
 generator client {
-  provider        = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -44,6 +44,12 @@ model leetcoders {
   submissions submissions[]
 }
 
+enum LeetcodeStatus {
+  PENDING
+  APPROVED
+  SUSPENDED
+}
+
 model roadmap {
   id             String           @id @default(uuid()) @db.Uuid
   created_at     DateTime         @default(now()) @db.Timestamptz(6)
@@ -72,8 +78,28 @@ model submissions {
   @@index([problem_id])
 }
 
-enum LeetcodeStatus {
-  PENDING
-  APPROVED
-  SUSPENDED
+model resources {
+  id          String       @id @default(uuid()) @db.Uuid
+  created_at  DateTime     @default(now()) @db.Timestamptz(6)
+  title       String
+  url         String
+  contributor String
+  topic       String
+  is_visible  Boolean      @default(false)
+  is_approved Boolean      @default(false)
+  type        ResourceType
+  tab         ResourceTab
+}
+
+enum ResourceType {
+  ARTICLE
+  VIDEO
+  YOUTUBE
+  FRONTEND_MASTER
+  UDEMY
+}
+
+enum ResourceTab {
+  PROBLEM_SOLVING
+  TECHNOLOGIES
 }
