@@ -1,4 +1,7 @@
-import { InteractiveHoverLink } from '@/ui/hover-link'
+import Link from 'next/link'
+import { ArrowRight } from 'lucide-react'
+
+import { cn } from '@/utils/cn'
 
 export const Hero = () => {
   return (
@@ -21,12 +24,31 @@ export const Hero = () => {
         PSTrack: The platform that helps you solve, track, and grow.
       </h4>
 
-      <InteractiveHoverLink
-        className="z-[100]"
-        href="/groups"
-      >
-        Get Started
-      </InteractiveHoverLink>
+      <CTA />
     </div>
+  )
+}
+
+const CTA = () => {
+  return (
+    <Link
+      href="/groups"
+      prefetch={true}
+      className={cn(
+        'group bg-foreground border-zinc- relative w-auto cursor-pointer overflow-hidden rounded-full border p-2 px-6 text-center font-semibold',
+        'z-[100]'
+      )}
+    >
+      <div className="flex items-center gap-2">
+        <div className="h-2 w-2 rounded-full bg-zinc-900 transition-all duration-300 group-hover:scale-[100.8]" />
+        <span className="inline-block text-zinc-900 transition-all duration-300 group-hover:translate-x-12 group-hover:opacity-0">
+          Get Started
+        </span>
+      </div>
+      <div className="text-primary absolute top-0 z-10 flex h-full w-full translate-x-12 items-center justify-center gap-2 opacity-0 transition-all duration-300 group-hover:-translate-x-5 group-hover:opacity-100">
+        <span>Get Started</span>
+        <ArrowRight />
+      </div>
+    </Link>
   )
 }
