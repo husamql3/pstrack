@@ -21,7 +21,7 @@ export type ResourcesResponse = {
 }
 
 export type ResourceTabOption = {
-  value: string
+  value: number
   label: string
 }
 

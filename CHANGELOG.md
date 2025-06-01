@@ -3,6 +3,7 @@
 ## [2.7.34]
 - integrate resources page
 - ability to share resources with the community
+- show contributor gh username
 
 ## [2.6.34]
 - update author gh username

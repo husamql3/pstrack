@@ -3,7 +3,7 @@ import pLimit from 'p-limit'
 /**
  * App version
  */
-export const VERSION = '2.6.32'
+export const VERSION = '2.7.34'
 
 /**
  * Repository information
@@ -59,7 +59,4 @@ export const REDIS_KEYS = {
   GROUP_DATA: (groupId: string) => `group:${groupId}:data`,
   GROUP_PROBLEMS: (groupId: string) => `group:${groupId}:problems`,
   RESOURCES: 'resources',
-  RESOURCE_TOPICS: 'resource-topics',
-  RESOURCE_TYPES: 'resource-types',
-  RESOURCE_TABS: 'resource-tabs',
 }
