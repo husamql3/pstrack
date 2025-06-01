@@ -7,6 +7,7 @@ import type { ResourcesResponse, ResourceTabOption, ResourceTypeOption } from '@
 import { formatTabLabel, groupByTopic } from '@/utils/resources'
 import { AddNewResourceSchema } from '@/types/schema/resources.schema'
 import { resources } from '@prisma/client'
+import { sendAdminNotification } from '@/utils/email/sendAdminNotification'
 
 export const resourcesRouter = createTRPCRouter({
   /**
@@ -120,25 +121,33 @@ export const resourcesRouter = createTRPCRouter({
    * @param {AddNewResourceSchemaType} input
    * @returns {Resource | null}
    */
-  addResource: publicProcedure.input(AddNewResourceSchema).mutation(async ({ input }): Promise<resources | null> => {
-    try {
-      const resource = await db.resources.create({
-        data: {
-          title: input.title,
-          url: input.url,
-          type_id: Number(input.type),
-          tab_id: Number(input.tab),
-          contributor: input.contributor ?? '',
-          topic: input.topic,
-          is_visible: false,
-          is_approved: false,
-        },
-      })
+  addResource: publicProcedure
+    .input(AddNewResourceSchema)
+    .mutation(async ({ input, ctx }): Promise<resources | null> => {
+      try {
+        const resource = await db.resources.create({
+          data: {
+            title: input.title,
+            url: input.url,
+            type_id: Number(input.type),
+            tab_id: Number(input.tab),
+            contributor: input.contributor ?? '',
+            topic: input.topic,
+            is_visible: false,
+            is_approved: false,
+          },
+        })
 
-      return resource
-    } catch (error) {
-      logger.error(`Failed to create resource: ${error}`)
-      return null
-    }
-  }),
+        await sendAdminNotification({
+          event: 'NEW_RESOURCE_SUBMITTED',
+          email: ctx.user?.leetcoder?.email as string,
+          message: `New resource submitted: ${input.title}`,
+        })
+
+        return resource
+      } catch (error) {
+        logger.error(`Failed to create resource: ${error}`)
+        return null
+      }
+    }),
 })
