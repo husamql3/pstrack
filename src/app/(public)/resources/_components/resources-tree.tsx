@@ -23,6 +23,7 @@ export const ResourcesTree = ({ resources }: { resources: GroupedResources }) =>
                   name={item.title}
                   href={item.url}
                   type={item.type}
+                  contributor={item.contributor}
                 />
               ))}
             </Folder>

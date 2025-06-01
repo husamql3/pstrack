@@ -31,9 +31,20 @@ type FileButtonProps = ComponentProps<'div'> & {
   open?: boolean
   sideComponent?: ReactNode
   href?: string
+  contributor?: string
 }
 
-function FileButton({ children, className, icons, icon, open, sideComponent, href, ...props }: FileButtonProps) {
+function FileButton({
+  children,
+  className,
+  icons,
+  icon,
+  open,
+  sideComponent,
+  href,
+  contributor,
+  ...props
+}: FileButtonProps) {
   const content = (
     <span className="flex shrink-1 items-center gap-2 truncate [&_svg]:size-4 [&_svg]:shrink-0">
       {icon
@@ -68,7 +79,7 @@ function FileButton({ children, className, icons, icon, open, sideComponent, hre
       <div
         data-slot="file-button"
         className={cn(
-          'relative z-10 flex h-10 w-full cursor-default items-center gap-2 truncate rounded-lg p-2',
+          'relative z-10 flex h-10 w-full cursor-default items-center justify-between gap-2 truncate rounded-lg p-2',
           className
         )}
         {...props}
@@ -84,6 +95,18 @@ function FileButton({ children, className, icons, icon, open, sideComponent, hre
           </Link>
         ) : (
           content
+        )}
+        {contributor && (
+          <span className="text-muted-foreground shrink-0 text-xs hover:underline">
+            By:{' '}
+            <Link
+              href={`https://github.com/${contributor}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {contributor}
+            </Link>
+          </span>
         )}
         {sideComponent}
       </div>
@@ -199,9 +222,10 @@ type FileProps = Omit<ComponentProps<'div'>, 'children'> & {
   sideComponent?: ReactNode
   href?: string
   type?: string
+  contributor?: string
 }
 
-function File({ name, className, sideComponent, href, type, ...props }: FileProps) {
+function File({ name, className, sideComponent, href, type, contributor, ...props }: FileProps) {
   const getIcon = () => {
     switch (type?.toLowerCase()) {
       case 'youtube':
@@ -232,6 +256,7 @@ function File({ name, className, sideComponent, href, type, ...props }: FileProp
       className={className}
       sideComponent={sideComponent}
       href={href}
+      contributor={contributor}
       {...props}
     >
       {name}
