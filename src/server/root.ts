@@ -5,6 +5,7 @@ import { groupsRouter } from '@/server/routers/groups'
 import { roadmapRouter } from '@/server/routers/roadmap'
 import { submissionsRouter } from '@/server/routers/submissions'
 import { emailRouter } from '@/server/routers/email'
+import { resourcesRouter } from '@/server/routers/resources'
 
 /**
  * This is the primary router for your server.
@@ -18,6 +19,7 @@ export const appRouter = createTRPCRouter({
   roadmap: roadmapRouter,
   submissions: submissionsRouter,
   email: emailRouter,
+  resources: resourcesRouter,
 })
 
 // export type definition of API

@@ -14,7 +14,7 @@ export const siteMetaData: Metadata = {
     'neetcode.io',
   ],
   authors: [{ name: 'Hüsam' }],
-  creator: '@husamahmud',
+  creator: '@husamql3',
   publisher: 'PSTrack',
   formatDetection: {
     email: false,
@@ -49,7 +49,7 @@ export const siteMetaData: Metadata = {
     card: 'summary_large_image',
     title: 'PSTrack',
     description: 'A platform that helps you solve, track, and grow',
-    creator: '@husamahmud',
+    creator: '@husamql3',
     images: ['https://www.pstrack.tech/og-image.jpg'],
   },
 }

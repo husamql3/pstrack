@@ -3,12 +3,12 @@ import pLimit from 'p-limit'
 /**
  * App version
  */
-export const VERSION = '2.6.32'
+export const VERSION = '2.7.34'
 
 /**
  * Repository information
  */
-export const USERNAME = 'husamahmud'
+export const USERNAME = 'husamql3'
 export const REPO_NAME = 'pstrack'
 
 /**
@@ -58,4 +58,5 @@ export const REDIS_KEYS = {
   AVAILABLE_GROUPS: 'available-groups',
   GROUP_DATA: (groupId: string) => `group:${groupId}:data`,
   GROUP_PROBLEMS: (groupId: string) => `group:${groupId}:problems`,
+  RESOURCES: 'resources',
 }
