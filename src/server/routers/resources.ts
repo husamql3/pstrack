@@ -19,7 +19,7 @@ export const resourcesRouter = createTRPCRouter({
     const cachedResources = (await redis.get(REDIS_KEYS.RESOURCES)) as ResourcesResponse | null
     if (cachedResources) {
       logger.debug('[Cache] Using cached resources')
-      return cachedResources as ResourcesResponse
+      return cachedResources
     }
 
     const resources = await db.resources.findMany({
@@ -63,19 +63,23 @@ export const resourcesRouter = createTRPCRouter({
    * @returns {ResourceTabOption[]}
    */
   getResourceTabs: publicProcedure.query(async (): Promise<ResourceTabOption[]> => {
-    try {
-      const tabs = await db.resource_tabs.findMany({
-        orderBy: { name: 'asc' },
-      })
-
-      return tabs.map((tab) => ({
-        value: tab.name,
-        label: formatTabLabel(tab.name),
-      }))
-    } catch (error) {
-      logger.error(`Failed to fetch resource tabs: ${error}`)
-      return []
+    const cachedTabs = (await redis.get(REDIS_KEYS.RESOURCE_TABS)) as ResourceTabOption[] | null
+    if (cachedTabs) {
+      logger.debug('[Cache] Using cached resource tabs')
+      return cachedTabs
     }
+
+    const tabs = await db.resource_tabs.findMany({
+      orderBy: { name: 'asc' },
+    })
+
+    const response = tabs.map((tab) => ({
+      value: tab.name,
+      label: formatTabLabel(tab.name),
+    }))
+
+    await redis.set(REDIS_KEYS.RESOURCE_TABS, response, { ex: 60 * 60 * 24 }) // 24 hours
+    return response
   }),
 
   /**
@@ -83,19 +87,23 @@ export const resourcesRouter = createTRPCRouter({
    * @returns {ResourceTypeOption[]}
    */
   getResourceTypes: publicProcedure.query(async (): Promise<ResourceTypeOption[]> => {
-    try {
-      const types = await db.resource_types.findMany({
-        orderBy: { name: 'asc' },
-      })
-
-      return types.map((type) => ({
-        value: type.name,
-        label: formatTabLabel(type.name),
-      }))
-    } catch (error) {
-      logger.error(`Failed to fetch resource types: ${error}`)
-      return []
+    const cachedTypes = (await redis.get(REDIS_KEYS.RESOURCE_TYPES)) as ResourceTypeOption[] | null
+    if (cachedTypes) {
+      logger.debug('[Cache] Using cached resource types')
+      return cachedTypes
     }
+
+    const types = await db.resource_types.findMany({
+      orderBy: { name: 'asc' },
+    })
+
+    const response = types.map((type) => ({
+      value: type.id,
+      label: formatTabLabel(type.name),
+    }))
+
+    await redis.set(REDIS_KEYS.RESOURCE_TYPES, response, { ex: 60 * 60 * 24 }) // 24 hours
+    return response
   }),
 
   getResourceTopics: publicProcedure.query(async (): Promise<{ topic: string }[]> => {
@@ -109,6 +117,9 @@ export const resourcesRouter = createTRPCRouter({
       distinct: ['topic'],
       select: {
         topic: true,
+      },
+      orderBy: {
+        topic: 'asc',
       },
     })
 
@@ -129,10 +140,10 @@ export const resourcesRouter = createTRPCRouter({
           url: input.url,
           type_id: input.type,
           tab_id: input.tab,
-          contributor: input.contributor,
+          contributor: input.contributor ?? '',
           topic: input.topic,
-          is_visible: input.is_visible,
-          is_approved: input.is_approved,
+          is_visible: false,
+          is_approved: false,
         },
       })
 

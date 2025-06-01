@@ -18,6 +18,7 @@ function PopoverTrigger({ ...props }: React.ComponentProps<typeof PopoverPrimiti
   return (
     <PopoverPrimitive.Trigger
       data-slot="popover-trigger"
+      className="bg-background!"
       {...props}
     />
   )

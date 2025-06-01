@@ -104,16 +104,3 @@ model resource_types {
   name      String      @unique
   resources resources[]
 }
-
-// enum ResourceTab {
-// PROBLEM_SOLVING
-// TECHNOLOGIES
-// }
-
-// enum ResourceType {
-// ARTICLE
-// VIDEO
-// YOUTUBE
-// FRONTEND_MASTER
-// UDEMY
-// }

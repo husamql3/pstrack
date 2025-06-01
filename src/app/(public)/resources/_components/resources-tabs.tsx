@@ -1,7 +1,7 @@
 import type { ResourcesResponse } from '@/types/resources.type'
 
 import { ResourcesTree } from '@/app/(public)/resources/_components/resources-tree'
-// import { AddNewResourceBtn } from '@/app/(public)/resources/_components/add-new-resource-btn'
+import { AddNewResourceBtn } from '@/app/(public)/resources/_components/add-new-resource-btn'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/ui/tabs'
 
 export const ResourcesTabs = ({ resources }: { resources: ResourcesResponse }) => {
@@ -29,7 +29,7 @@ export const ResourcesTabs = ({ resources }: { resources: ResourcesResponse }) =
             </TabsTrigger>
           </TabsList>
 
-          {/* <AddNewResourceBtn /> */}
+          <AddNewResourceBtn />
         </div>
 
         <TabsContent

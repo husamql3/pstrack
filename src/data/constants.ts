@@ -60,4 +60,6 @@ export const REDIS_KEYS = {
   GROUP_PROBLEMS: (groupId: string) => `group:${groupId}:problems`,
   RESOURCES: 'resources',
   RESOURCE_TOPICS: 'resource-topics',
+  RESOURCE_TYPES: 'resource-types',
+  RESOURCE_TABS: 'resource-tabs',
 }

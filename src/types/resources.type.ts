@@ -26,6 +26,6 @@ export type ResourceTabOption = {
 }
 
 export type ResourceTypeOption = {
-  value: string
+  value: number
   label: string
 }
