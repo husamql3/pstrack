@@ -5,7 +5,6 @@ import { ResourcesTree } from '@/app/(public)/resources/_components/resources-tr
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/ui/tabs'
 
 export const ResourcesTabs = ({ resources }: { resources: ResourcesResponse }) => {
-  console.log(resources.technologies)
   return (
     <div className="mx-auto w-full max-w-2xl flex-1 px-3 py-5">
       <Tabs
