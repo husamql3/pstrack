@@ -1,14 +1,11 @@
 import type { ResourcesResponse } from '@/types/resources.type'
 
 import { ResourcesTree } from '@/app/(public)/resources/_components/resources-tree'
+// import { AddNewResourceBtn } from '@/app/(public)/resources/_components/add-new-resource-btn'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/ui/tabs'
-import { AddNewResourceBtn } from './add-new-resource-btn'
 
-interface ResourcesTabsProps {
-  resources: ResourcesResponse
-}
-
-export const ResourcesTabs = ({ resources }: ResourcesTabsProps) => {
+export const ResourcesTabs = ({ resources }: { resources: ResourcesResponse }) => {
+  console.log(resources.technologies)
   return (
     <div className="mx-auto w-full max-w-2xl flex-1 px-3 py-5">
       <Tabs
@@ -33,7 +30,7 @@ export const ResourcesTabs = ({ resources }: ResourcesTabsProps) => {
             </TabsTrigger>
           </TabsList>
 
-          <AddNewResourceBtn />
+          {/* <AddNewResourceBtn /> */}
         </div>
 
         <TabsContent

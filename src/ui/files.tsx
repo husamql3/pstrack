@@ -202,10 +202,33 @@ type FileProps = Omit<ComponentProps<'div'>, 'children'> & {
 }
 
 function File({ name, className, sideComponent, href, type, ...props }: FileProps) {
+  const getIcon = () => {
+    switch (type?.toLowerCase()) {
+      case 'youtube':
+        return <PiYoutubeLogo className="text-red-500" />
+      case 'video':
+        return <MdVideoLibrary className="text-blue-500" />
+      case 'udemy':
+        return <SiUdemy className="text-purple-500" />
+      case 'frontendmasters':
+        return (
+          <Image
+            src="/fem.png"
+            alt="Frontend Masters"
+            width={18}
+            height={18}
+          />
+        )
+      case 'article':
+      default:
+        return <LuFile className="text-gray-500" />
+    }
+  }
+
   return (
     <FileButton
       data-slot="file"
-      icon={getIcon(type)}
+      icon={getIcon()}
       className={className}
       sideComponent={sideComponent}
       href={href}
@@ -214,29 +237,6 @@ function File({ name, className, sideComponent, href, type, ...props }: FileProp
       {name}
     </FileButton>
   )
-}
-
-const getIcon = (type: string | undefined) => {
-  switch (type?.toLowerCase()) {
-    case 'youtube':
-      return <PiYoutubeLogo className="text-red-500" />
-    case 'video':
-      return <MdVideoLibrary className="text-blue-500" />
-    case 'udemy':
-      return <SiUdemy className="text-purple-500" />
-    case 'frontendmasters':
-      return (
-        <Image
-          src="/fem.png"
-          alt="Frontend Masters"
-          width={20}
-          height={20}
-        />
-      )
-    case 'article':
-    default:
-      return <LuFile className="text-gray-500" />
-  }
 }
 
 export { Files, Folder, File, type FilesProps, type FolderProps, type FileProps }

@@ -1,8 +1,8 @@
-import type { resource_types, resource_tabs, resources } from '@prisma/client'
+import type { resources } from '@prisma/client'
 
 export type ResourceWithRelations = resources & {
-  type: resource_types
-  tab: resource_tabs
+  type: string
+  tab: string
 }
 
 export type ResourceFolder = {

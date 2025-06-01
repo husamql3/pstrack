@@ -50,8 +50,8 @@ export const resourcesRouter = createTRPCRouter({
     const psResources = resourcesByTab['PROBLEM_SOLVING'] || []
 
     const response: ResourcesResponse = {
-      technologies: groupByTopic(techResources),
-      problemSolving: groupByTopic(psResources),
+      technologies: groupByTopic(techResources.map((r) => ({ ...r, type: r.type.name, tab: r.tab.name }))),
+      problemSolving: groupByTopic(psResources.map((r) => ({ ...r, type: r.type.name, tab: r.tab.name }))),
     }
 
     await redis.set(REDIS_KEYS.RESOURCES, response, { ex: 60 * 60 * 24 }) // 24 hours
@@ -96,6 +96,24 @@ export const resourcesRouter = createTRPCRouter({
       logger.error(`Failed to fetch resource types: ${error}`)
       return []
     }
+  }),
+
+  getResourceTopics: publicProcedure.query(async (): Promise<{ topic: string }[]> => {
+    const cachedTopics = (await redis.get(REDIS_KEYS.RESOURCE_TOPICS)) as { topic: string }[] | null
+    if (cachedTopics) {
+      logger.debug('[Cache] Using cached resource topics')
+      return cachedTopics
+    }
+
+    const topics = await db.resources.findMany({
+      distinct: ['topic'],
+      select: {
+        topic: true,
+      },
+    })
+
+    await redis.set(REDIS_KEYS.RESOURCE_TOPICS, topics, { ex: 60 * 60 * 24 }) // 24 hours
+    return topics
   }),
 
   /**

@@ -23,7 +23,7 @@ export const groupByTopic = (resourceList: ResourceWithRelations[]): GroupedReso
   return Object.entries(topicMap).map(([topic, topicResources]) => {
     const typeMap = topicResources.reduce(
       (acc, resource) => {
-        const typeName = resource.type.name
+        const typeName = resource.type
         if (!acc[typeName]) {
           acc[typeName] = []
         }
@@ -55,13 +55,4 @@ export const formatTabLabel = (name: string): string => {
     .split('_')
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join(' ')
-}
-
-/**
- * Map resource type name to display-friendly format
- * @param typeName - resource type name from database
- * @returns formatted type name
- */
-export const formatResourceType = (typeName: string): string => {
-  return formatTabLabel(typeName)
 }
