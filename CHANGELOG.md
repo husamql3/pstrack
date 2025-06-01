@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.7.35]
+- fix resources page select styles
+
 ## [2.7.34]
 - integrate resources page
 - ability to share resources with the community
