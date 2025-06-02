@@ -1,13 +1,15 @@
 import { db } from '@/prisma/db'
 import { createTRPCRouter, publicProcedure } from '@/server/trpc'
-import { REDIS_KEYS } from '@/data/constants'
+import { ADMINS_EMAILS, REDIS_KEYS } from '@/data/constants'
 import { logger } from '@/utils/logger'
 import { redis } from '@/config/redis'
 import type { ResourcesResponse, ResourceTabOption, ResourceTypeOption } from '@/types/resources.type'
 import { formatTabLabel, groupByTopic } from '@/utils/resources'
 import { AddNewResourceSchema } from '@/types/schema/resources.schema'
-import { resources } from '@prisma/client'
+import type { Prisma, resources } from '@prisma/client'
 import { sendAdminNotification } from '@/utils/email/sendAdminNotification'
+import { z } from 'zod'
+import { TRPCError } from '@trpc/server'
 
 export const resourcesRouter = createTRPCRouter({
   /**
@@ -150,4 +152,126 @@ export const resourcesRouter = createTRPCRouter({
         return null
       }
     }),
+
+  /**
+   * Get all resources for admin with pagination and filtering
+   * Only admins can access this
+   */
+  getAllResourcesAdmin: publicProcedure
+    .input(
+      z.object({
+        page: z.number().optional().default(1),
+        limit: z.number().optional().default(50),
+        showPendingOnly: z.boolean().optional().default(false),
+        tabFilter: z.string().optional(),
+        typeFilter: z.string().optional(),
+        search: z.string().optional(),
+      })
+    )
+    .query(async ({ input, ctx }) => {
+      // Check admin permissions
+      if (ctx.user?.email && !ADMINS_EMAILS.includes(ctx.user.email)) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: 'Only admin can access this resource',
+        })
+      }
+
+      const { page, limit, showPendingOnly, tabFilter, typeFilter, search } = input
+      const skip = (page - 1) * limit
+
+      const whereClause: Prisma.resourcesWhereInput = {}
+
+      if (showPendingOnly) {
+        whereClause.is_visible = false
+        whereClause.is_approved = false
+      }
+
+      // Fix: Use the actual database values, not the formatted labels
+      if (tabFilter && tabFilter !== 'all') {
+        // Convert formatted label back to database value
+        const tabName = tabFilter.toUpperCase().replace(' ', '_')
+        whereClause.tab = { name: tabName }
+      }
+
+      if (typeFilter && typeFilter !== 'all') {
+        // Convert formatted label back to database value
+        const typeName = typeFilter.toLowerCase()
+        whereClause.type = { name: typeName }
+      }
+
+      if (search && search.trim() !== '') {
+        whereClause.OR = [
+          { title: { contains: search, mode: 'insensitive' } },
+          { topic: { contains: search, mode: 'insensitive' } },
+          { contributor: { contains: search, mode: 'insensitive' } },
+        ]
+      }
+
+      const [resources, totalCount] = await Promise.all([
+        db.resources.findMany({
+          where: whereClause,
+          include: {
+            type: true,
+            tab: true,
+          },
+          orderBy: { created_at: 'desc' },
+          skip,
+          take: limit,
+        }),
+        db.resources.count({ where: whereClause }),
+      ])
+
+      return {
+        resources,
+        totalCount,
+        totalPages: Math.ceil(totalCount / limit),
+        currentPage: page,
+      }
+    }),
+
+  /**
+   * Update resource admin actions (approve, visibility, etc.)
+   */
+  updateResourceAdmin: publicProcedure
+    .input(
+      z.object({
+        id: z.string().uuid(),
+        is_approved: z.boolean().optional(),
+        is_visible: z.boolean().optional(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      // Check admin permissions
+      if (ctx.user?.email && !ADMINS_EMAILS.includes(ctx.user.email)) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: 'Only admin can access this resource',
+        })
+      }
+
+      const { id, ...updates } = input
+
+      return db.resources.update({
+        where: { id },
+        data: updates,
+      })
+    }),
+
+  /**
+   * Delete resource (admin only)
+   */
+  deleteResourceAdmin: publicProcedure.input(z.object({ id: z.string().uuid() })).mutation(async ({ input, ctx }) => {
+    // Check admin permissions
+    if (ctx.user?.email && !ADMINS_EMAILS.includes(ctx.user.email)) {
+      throw new TRPCError({
+        code: 'UNAUTHORIZED',
+        message: 'Only admin can access this resource',
+      })
+    }
+
+    return db.resources.delete({
+      where: { id: input.id },
+    })
+  }),
 })

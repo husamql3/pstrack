@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.7.37]
+- update dashboard tables
+
 ## [2.7.36]
 - add new topic to resources form
 

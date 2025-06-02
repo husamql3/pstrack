@@ -457,4 +457,145 @@ export const leetcodersRouter = createTRPCRouter({
         })
       }
     }),
+
+  /**
+   * Admin-only endpoint to update any leetcoder's basic information
+   */
+  updateLeetcoderAdmin: publicProcedure
+    .input(
+      z.object({
+        id: z.string().uuid(),
+        name: z.string().min(3).max(100).optional(),
+        username: z.string().min(3).max(100).optional(),
+        email: z.string().email().optional(),
+        lc_username: z.string().optional(),
+        gh_username: z.string().optional(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      // Check admin permissions
+      if (ctx.user?.email && !ADMINS_EMAILS.includes(ctx.user.email)) {
+        await sendAdminNotification({
+          event: 'UNAUTHORIZED_ACCESS',
+          username: ctx.user?.email || 'Unknown',
+          message: 'Unauthorized attempt to update leetcoder as admin',
+        })
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: 'Only admin can access this resource',
+        })
+      }
+
+      const { id, ...updateData } = input
+
+      // Remove undefined values
+      const cleanedData = Object.fromEntries(Object.entries(updateData).filter(([, value]) => value !== undefined))
+
+      // Check for duplicate usernames if username is being updated
+      if (cleanedData.username) {
+        const existingUser = await db.leetcoders.findFirst({
+          where: {
+            username: cleanedData.username,
+            id: { not: id },
+          },
+        })
+        if (existingUser) {
+          throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message: 'Username is already taken by another user',
+          })
+        }
+      }
+
+      // Check for duplicate emails if email is being updated
+      if (cleanedData.email) {
+        const existingUser = await db.leetcoders.findFirst({
+          where: {
+            email: cleanedData.email,
+            id: { not: id },
+          },
+        })
+        if (existingUser) {
+          throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message: 'Email is already registered by another user',
+          })
+        }
+      }
+
+      // Check for duplicate LeetCode usernames if lc_username is being updated
+      if (cleanedData.lc_username) {
+        const existingUser = await db.leetcoders.findFirst({
+          where: {
+            lc_username: cleanedData.lc_username,
+            id: { not: id },
+          },
+        })
+        if (existingUser) {
+          throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message: 'LeetCode username is already registered by another user',
+          })
+        }
+
+        // Validate LeetCode username exists
+        const isLcValid = await checkLCUsername(cleanedData.lc_username)
+        if (!isLcValid) {
+          throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message: 'The LeetCode username looks invalid. Could you verify it?',
+          })
+        }
+      }
+
+      // Check for duplicate GitHub usernames if gh_username is being updated
+      if (cleanedData.gh_username) {
+        const existingUser = await db.leetcoders.findFirst({
+          where: {
+            gh_username: cleanedData.gh_username,
+            id: { not: id },
+          },
+        })
+        if (existingUser) {
+          throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message: 'GitHub username is already registered by another user',
+          })
+        }
+
+        // Validate GitHub username exists
+        const isGhValid = await checkGHUsername(cleanedData.gh_username)
+        if (!isGhValid) {
+          throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message: 'The GitHub username looks invalid. Could you verify it?',
+          })
+        }
+      }
+
+      try {
+        const result = await db.leetcoders.update({
+          where: { id },
+          data: cleanedData,
+        })
+
+        await sendAdminNotification({
+          event: 'ADMIN_LEETCODER_UPDATE',
+          username: ctx?.user?.email || 'Unknown',
+          message: `Admin updated leetcoder ${result.username} (${result.email})`,
+        })
+
+        return result
+      } catch (error) {
+        await sendAdminNotification({
+          event: 'ADMIN_LEETCODER_UPDATE_ERROR',
+          username: ctx?.user?.email || 'Unknown',
+          message: `Failed to update leetcoder: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        })
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to update leetcoder. Please try again later.',
+        })
+      }
+    }),
 })
