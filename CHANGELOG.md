@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.7.36]
+- add new topic to resources form
+
 ## [2.7.35]
 - fix resources page select styles
 
