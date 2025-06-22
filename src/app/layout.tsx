@@ -3,6 +3,7 @@ import { NuqsAdapter } from 'nuqs/adapters/next/app'
 import { Geist } from 'next/font/google'
 import { Toaster } from 'sonner'
 
+import { DevTab } from '@/app/_components/dev-tab'
 import { TRPCReactProvider } from '@/trpc/react'
 import { siteMetaData } from '@/data/metadata'
 import { cn } from '@/utils/cn'
@@ -28,6 +29,8 @@ const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
         <TRPCReactProvider>
           <NuqsAdapter>{children}</NuqsAdapter>
         </TRPCReactProvider>
+
+        <DevTab />
 
         <Toaster
           position="top-center"
