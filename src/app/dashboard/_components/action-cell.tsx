@@ -1,8 +1,8 @@
-import { api } from '@/trpc/react'
 import type { leetcoders } from '@prisma/client'
+import { MoreHorizontal } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
-
+import { api } from '@/trpc/react'
 import { Button } from '@/ui/button'
 import {
   DropdownMenu,
@@ -11,7 +11,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/ui/dropdown-menu'
-import { MoreHorizontal } from 'lucide-react'
 
 export const ActionCell = ({ row }: { row: leetcoders }) => {
   const router = useRouter()
@@ -23,7 +22,9 @@ export const ActionCell = ({ row }: { row: leetcoders }) => {
       router.refresh()
       const statusText =
         variables.status === 'APPROVED' ? 'approved' : variables.status === 'SUSPENDED' ? 'suspended' : 'pending'
-      toast.success(`User status successfully updated to ${statusText}`, { duration: 3000 })
+      toast.success(`User status successfully updated to ${statusText}`, {
+        duration: 3000,
+      })
 
       if (variables.status === 'APPROVED') {
         sendAcceptanceEmail({
@@ -34,7 +35,9 @@ export const ActionCell = ({ row }: { row: leetcoders }) => {
       }
     },
     onError: (error) => {
-      toast.error(`Failed to update status: ${error.message}`, { duration: 5000 })
+      toast.error(`Failed to update status: ${error.message}`, {
+        duration: 5000,
+      })
     },
   })
 
@@ -44,7 +47,9 @@ export const ActionCell = ({ row }: { row: leetcoders }) => {
       toast.success('Leetcoder successfully deleted', { duration: 3000 })
     },
     onError: (error) => {
-      toast.error(`Failed to delete leetcoder: ${error.message}`, { duration: 5000 })
+      toast.error(`Failed to delete leetcoder: ${error.message}`, {
+        duration: 5000,
+      })
     },
   })
 

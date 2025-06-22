@@ -1,12 +1,11 @@
 'use client'
 
-import Link from 'next/link'
-import { useState, useRef, useEffect } from 'react'
 import { motion } from 'framer-motion'
+import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-
-import { cn } from '@/utils/cn'
+import { useEffect, useRef, useState } from 'react'
 import { TABS } from '@/data/constant-components'
+import { cn } from '@/utils/cn'
 
 export const NavMenu = ({ className }: { className?: string }) => {
   const [activeTab, setActiveTab] = useState('Home')

@@ -1,21 +1,20 @@
 'use client'
 
+import { AnimatePresence, motion, type Variants } from 'framer-motion'
+import { ArrowRightIcon } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import type React from 'react'
 import { useCallback, useState } from 'react'
-import { AnimatePresence, type Variants, motion } from 'framer-motion'
-import { ArrowRightIcon } from 'lucide-react'
 import useMeasure from 'react-use-measure'
-import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 
 import { errorToastStyle, infoToastStyle, loadingToastStyle, successToastStyle } from '@/app/_components/toast-styles'
+import { type FormDataType, RequestForm } from '@/app/group/_components/request-form'
+import { RequestRules } from '@/app/group/_components/request-rules'
 import { api } from '@/trpc/react'
-import { cn } from '@/utils/cn'
-
 import { Button } from '@/ui/button'
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/ui/dialog'
-import { RequestRules } from '@/app/group/_components/request-rules'
-import { type FormDataType, RequestForm } from '@/app/group/_components/request-form'
+import { cn } from '@/utils/cn'
 
 const createVariants = (heightContent: number): Variants => ({
   initial: (direction: number) => ({
@@ -124,7 +123,12 @@ export const RequestModal = ({ groupId }: { groupId: string }) => {
               }
             )
 
-            setFormData({ name: '', username: '', lc_username: '', gh_username: '' })
+            setFormData({
+              name: '',
+              username: '',
+              lc_username: '',
+              gh_username: '',
+            })
 
             setActiveIdx(0) // Reset to first step
             setOpen(false) // Close the dialog

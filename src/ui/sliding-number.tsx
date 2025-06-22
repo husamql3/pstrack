@@ -1,15 +1,15 @@
 'use client'
 
-import * as React from 'react'
 import {
-  useSpring,
-  useTransform,
-  motion,
-  useInView,
   type MotionValue,
+  motion,
   type SpringOptions,
   type UseInViewOptions,
+  useInView,
+  useSpring,
+  useTransform,
 } from 'motion/react'
+import * as React from 'react'
 import useMeasure from 'react-use-measure'
 
 import { cn } from '@/utils/cn'
@@ -158,14 +158,12 @@ function SlidingNumber({
 
   const intDigitCount = newIntStr.length
   const intPlaces = React.useMemo(
-    () => Array.from({ length: intDigitCount }, (_, i) => Math.pow(10, intDigitCount - i - 1)),
+    () => Array.from({ length: intDigitCount }, (_, i) => 10 ** (intDigitCount - i - 1)),
     [intDigitCount]
   )
   const decPlaces = React.useMemo(
     () =>
-      newDecStrRaw
-        ? Array.from({ length: newDecStrRaw.length }, (_, i) => Math.pow(10, newDecStrRaw.length - i - 1))
-        : [],
+      newDecStrRaw ? Array.from({ length: newDecStrRaw.length }, (_, i) => 10 ** (newDecStrRaw.length - i - 1)) : [],
     [newDecStrRaw]
   )
 

@@ -1,13 +1,12 @@
 'use client'
 
-import { ChevronDown } from 'lucide-react'
 import type { leetcoders } from '@prisma/client'
 import { flexRender, type Table as TableType } from '@tanstack/react-table'
+import { ChevronDown } from 'lucide-react'
 
 import type { TableRowOutput } from '@/types/tableRow.type'
-import { cn } from '@/utils/cn'
-
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@/ui/table'
+import { cn } from '@/utils/cn'
 
 export const SmallScreenTable = ({
   table,

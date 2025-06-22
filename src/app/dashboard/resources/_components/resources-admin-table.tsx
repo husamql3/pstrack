@@ -1,18 +1,18 @@
 'use client'
 
-import { useState, useMemo, useCallback, useEffect } from 'react'
+import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
+import { ExternalLink, Loader2, Search, Trash2 } from 'lucide-react'
 import { useQueryState } from 'nuqs'
-import { useReactTable, getCoreRowModel, flexRender, createColumnHelper } from '@tanstack/react-table'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { toast } from 'sonner'
+import { api } from '@/trpc/react'
 import { Badge } from '@/ui/badge'
 import { Button } from '@/ui/button'
 import { Input } from '@/ui/input'
-import { Switch } from '@/ui/switch'
 import { Label } from '@/ui/label'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/ui/table'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/ui/select'
-import { Search, ExternalLink, Trash2, Loader2 } from 'lucide-react'
-import { api } from '@/trpc/react'
-import { toast } from 'sonner'
+import { Switch } from '@/ui/switch'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/ui/table'
 
 type ResourceWithRelations = {
   id: string
@@ -36,8 +36,12 @@ export const ResourcesAdminTable = () => {
     parse: (value) => value === 'true',
     serialize: (value) => (value ? 'true' : 'false'),
   })
-  const [tabFilter, setTabFilter] = useQueryState('tab', { defaultValue: 'all' })
-  const [typeFilter, setTypeFilter] = useQueryState('type', { defaultValue: 'all' })
+  const [tabFilter, setTabFilter] = useQueryState('tab', {
+    defaultValue: 'all',
+  })
+  const [typeFilter, setTypeFilter] = useQueryState('type', {
+    defaultValue: 'all',
+  })
   const [currentPage, setCurrentPage] = useState(1)
 
   const utils = api.useContext()

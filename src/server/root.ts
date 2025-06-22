@@ -1,11 +1,11 @@
-import { createCallerFactory, createTRPCRouter } from '@/server/trpc'
 import { authRouter } from '@/server/routers/auth'
-import { leetcodersRouter } from '@/server/routers/leetcoder'
+import { emailRouter } from '@/server/routers/email'
 import { groupsRouter } from '@/server/routers/groups'
+import { leetcodersRouter } from '@/server/routers/leetcoder'
+import { resourcesRouter } from '@/server/routers/resources'
 import { roadmapRouter } from '@/server/routers/roadmap'
 import { submissionsRouter } from '@/server/routers/submissions'
-import { emailRouter } from '@/server/routers/email'
-import { resourcesRouter } from '@/server/routers/resources'
+import { createCallerFactory, createTRPCRouter } from '@/server/trpc'
 
 /**
  * This is the primary router for your server.

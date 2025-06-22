@@ -1,7 +1,7 @@
-import { utapi } from '@/server/uploadthing'
-import { api } from '@/trpc/server'
 import { createUploadthing, type FileRouter } from 'uploadthing/next'
 import { UploadThingError } from 'uploadthing/server'
+import { utapi } from '@/server/uploadthing'
+import { api } from '@/trpc/server'
 
 const f = createUploadthing()
 

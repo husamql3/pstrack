@@ -1,7 +1,7 @@
 'use client'
 
-import { useEffect, useCallback } from 'react'
 import confetti from 'canvas-confetti'
+import { useCallback, useEffect } from 'react'
 
 import { useConfettiStore } from '@/stores/confettiStore'
 

@@ -1,24 +1,39 @@
-import { z } from 'zod/v4'
-import { TRPCError } from '@trpc/server'
 import { LeetcodeStatus } from '@prisma/client'
-
+import { TRPCError } from '@trpc/server'
+import { z } from 'zod/v4'
+import { redis } from '@/config/redis'
+import { checkDuplicateUsername, checkPendingLeetcoder } from '@/dao/leetcoder.dao'
+import { ADMINS_EMAILS, MAX_LEETCODERS, REDIS_KEYS } from '@/data/constants'
 import { db } from '@/prisma/db'
 import { createTRPCRouter, publicProcedure } from '@/server/trpc'
-import { checkGHUsername, checkLCUsername } from '@/utils/checkLeetcoder'
-import { checkDuplicateUsername, checkPendingLeetcoder } from '@/dao/leetcoder.dao'
-import { sendAdminNotification } from '@/utils/email/sendAdminNotification'
-import { ADMINS_EMAILS, MAX_LEETCODERS, REDIS_KEYS } from '@/data/constants'
-import { sendRequestReceivedEmail } from '@/utils/email/sendRequestReceived'
 import { updateLeetcoderSchema } from '@/types/leetcoders.type'
-import { redis } from '@/config/redis'
+import { checkGHUsername, checkLCUsername } from '@/utils/checkLeetcoder'
+import { sendAdminNotification } from '@/utils/email/sendAdminNotification'
+import { sendRequestReceivedEmail } from '@/utils/email/sendRequestReceived'
 
 export const leetcodersRouter = createTRPCRouter({
+  /**
+   * Retrieves a single Leetcoder by their unique ID.
+   *
+   * @param {object} input - The input object containing the Leetcoder's ID.
+   * @param {string} input.id - The unique ID of the Leetcoder.
+   * @returns {Promise<Leetcoder | null>} A promise that resolves to the Leetcoder object if found, otherwise null.
+   */
   getLeetcoderById: publicProcedure.input(z.object({ id: z.string().uuid() })).query(async ({ input }) => {
     if (!input.id) return null
     return db.leetcoders.findUnique({
       where: { id: input.id },
     })
   }),
+
+  /**
+   * Retrieves a list of all Leetcoders.
+   * This procedure is restricted to administrators only.
+   *
+   * @param {object} ctx - The tRPC context, containing user information.
+   * @throws {TRPCError} If the authenticated user is not an admin.
+   * @returns {Promise<Leetcoder[]>} A promise that resolves to an array of Leetcoder objects, ordered by creation date.
+   */
   getAllLeetcoders: publicProcedure.query(async ({ ctx }) => {
     // Only allow access if the user is the admin
     if (ctx.user?.email && !ADMINS_EMAILS.includes(ctx.user.email)) {
@@ -38,6 +53,14 @@ export const leetcodersRouter = createTRPCRouter({
       },
     })
   }),
+
+  /**
+   * Checks if a Leetcoder exists by their unique ID.
+   *
+   * @param {object} input - The input object containing the Leetcoder's ID.
+   * @param {string} input.id - The unique ID of the Leetcoder.
+   * @returns {Promise<boolean>} A promise that resolves to true if the Leetcoder exists, otherwise false.
+   */
   checkLeetcoder: publicProcedure.input(z.object({ id: z.string().uuid() })).query(async ({ input }) => {
     if (!input.id) return false
     const leetcoder = await db.leetcoders.findUnique({
@@ -45,6 +68,24 @@ export const leetcodersRouter = createTRPCRouter({
     })
     return !!leetcoder
   }),
+
+  /**
+   * Handles a new request for a user to join as a Leetcoder.
+   * Performs validation checks for pending requests, duplicate usernames,
+   * and external LeetCode/GitHub username validity. Creates a new Leetcoder entry
+   * with PENDING status and sends out notifications.
+   *
+   * @param {object} input - The input object containing the new Leetcoder's details.
+   * @param {string} input.name - The full name of the user.
+   * @param {string} input.username - The chosen unique username for the platform.
+   * @param {string} input.lc_username - The user's LeetCode username.
+   * @param {string} [input.gh_username] - The user's GitHub username (optional).
+   * @param {string} input.group_no - The group number the user wishes to join, transformed to a number.
+   * @param {object} ctx - The tRPC context, containing authenticated user details.
+   * @throws {TRPCError} If there's an existing pending request, duplicate username, invalid LeetCode/GitHub username,
+   *                     or if a user with the same ID has already submitted a request.
+   * @returns {Promise<Leetcoder>} A promise that resolves to the newly created Leetcoder object.
+   */
   RequestToJoin: publicProcedure
     .input(
       z.object({
@@ -183,6 +224,18 @@ export const leetcodersRouter = createTRPCRouter({
         throw error
       }
     }),
+
+  /**
+   * Updates the status of a specific Leetcoder (e.g., PENDING, APPROVED, SUSPENDED).
+   * This procedure is restricted to administrators only.
+   *
+   * @param {object} input - The input object containing the Leetcoder's ID and new status.
+   * @param {string} input.id - The unique ID of the Leetcoder to update.
+   * @param {LeetcodeStatus} input.status - The new status to set for the Leetcoder.
+   * @param {object} ctx - The tRPC context, containing user information.
+   * @throws {TRPCError} If the authenticated user is not an admin.
+   * @returns {Promise<Leetcoder>} A promise that resolves to the updated Leetcoder object.
+   */
   updateLeetcoderStatus: publicProcedure
     .input(z.object({ id: z.string().uuid(), status: z.nativeEnum(LeetcodeStatus) }))
     .mutation(async ({ input, ctx }) => {
@@ -205,6 +258,17 @@ export const leetcodersRouter = createTRPCRouter({
         },
       })
     }),
+
+  /**
+   * Deletes a Leetcoder entry from the database.
+   * This procedure is restricted to administrators only.
+   *
+   * @param {object} input - The input object containing the Leetcoder's ID to delete.
+   * @param {string} input.id - The unique ID of the Leetcoder to delete.
+   * @param {object} ctx - The tRPC context, containing user information.
+   * @throws {TRPCError} If the authenticated user is not an admin.
+   * @returns {Promise<Leetcoder>} A promise that resolves to the deleted Leetcoder object.
+   */
   deleteLeetcoder: publicProcedure.input(z.object({ id: z.string().uuid() })).mutation(async ({ input, ctx }) => {
     // Only allow access if the user is the admin
     if (ctx.user?.email && !ADMINS_EMAILS.includes(ctx.user.email)) {
@@ -222,6 +286,20 @@ export const leetcodersRouter = createTRPCRouter({
       where: { id: input.id },
     })
   }),
+
+  /**
+   * Changes the group number for a specific Leetcoder.
+   * This procedure is restricted to administrators only and involves a database transaction
+   * to update both the leetcoder's group and their associated submissions.
+   *
+   * @param {object} input - The input object containing the user ID and the new group number.
+   * @param {string} input.userId - The unique ID of the Leetcoder whose group is to be changed.
+   * @param {number} input.newGroupNo - The new group number to assign to the Leetcoder.
+   * @param {object} ctx - The tRPC context, containing user information.
+   * @throws {TRPCError} If the user is not found, already in the selected group, the group does not exist,
+   *                     the selected group is full, or an internal server error occurs during the transaction.
+   * @returns {Promise<Leetcoder>} A promise that resolves to the updated Leetcoder object.
+   */
   changeGroup: publicProcedure
     .input(
       z.object({
@@ -323,6 +401,18 @@ export const leetcodersRouter = createTRPCRouter({
       }
     }),
 
+  /**
+   * Allows an authenticated Leetcoder to update their own profile information.
+   * This includes optional fields like GitHub, X, LinkedIn usernames, website, and visibility.
+   * Performs validation for duplicate and invalid GitHub usernames if changed.
+   *
+   * @param {object} input - The input object containing the Leetcoder's updated profile data.
+   *                         Validated against `updateLeetcoderSchema`.
+   * @param {object} ctx - The tRPC context, containing authenticated user details.
+   * @throws {TRPCError} If the user is unauthorized (trying to update another user's profile),
+   *                     if a GitHub username is already taken or invalid, or if an internal server error occurs.
+   * @returns {Promise<Leetcoder>} A promise that resolves to the updated Leetcoder object.
+   */
   update: publicProcedure.input(updateLeetcoderSchema).mutation(async ({ input, ctx }) => {
     if (!ctx.user?.id || !ctx.user.leetcoder || ctx.user.id !== input.id) {
       await sendAdminNotification({
@@ -407,11 +497,21 @@ export const leetcodersRouter = createTRPCRouter({
     }
   }),
 
+  /**
+   * Updates the avatar URL for a specific Leetcoder.
+   *
+   * @param {object} input - The input object containing the Leetcoder's ID and the new avatar URL.
+   * @param {string} input.id - The unique ID of the Leetcoder whose avatar is to be updated.
+   * @param {string} input.avatarUrl - The new URL for the Leetcoder's avatar.
+   * @param {object} ctx - The tRPC context, containing user information for logging.
+   * @throws {TRPCError} If the user ID is missing or an internal server error occurs during the update.
+   * @returns {Promise<Leetcoder>} A promise that resolves to the updated Leetcoder object.
+   */
   updateAvatar: publicProcedure
     .input(
       z.object({
         id: z.string().uuid(),
-        avatarUrl: z.string().url(),
+        avatarUrl: z.url(),
       })
     )
     .mutation(async ({ input, ctx }) => {
@@ -459,7 +559,72 @@ export const leetcodersRouter = createTRPCRouter({
     }),
 
   /**
-   * Admin-only endpoint to update any leetcoder's basic information
+   * Allows a suspended user to request to rejoin the platform, consuming their "second chance".
+   * This updates their status to 'APPROVED', resets notification flag, and records the rejoin time.
+   *
+   * @param {object} ctx - The tRPC context, containing authenticated user details.
+   * @throws {TRPCError} If the user is not logged in, not suspended, or has already used their second chance.
+   * @returns {Promise<Leetcoder>} A promise that resolves to the updated Leetcoder object.
+   */
+  requestRejoin: publicProcedure.mutation(async ({ ctx }) => {
+    if (!ctx.user || !ctx.user.leetcoder) {
+      throw new TRPCError({
+        code: 'UNAUTHORIZED',
+        message: 'You must be logged in to request to rejoin',
+      })
+    }
+
+    if (ctx.user.leetcoder.status === 'APPROVED') {
+      throw new TRPCError({
+        code: 'BAD_REQUEST',
+        message: 'Only suspended users can request to rejoin',
+      })
+    }
+
+    if (ctx.user.leetcoder.has_second_chance) {
+      throw new TRPCError({
+        code: 'BAD_REQUEST',
+        message: 'You have already used your second chance',
+      })
+    }
+
+    const updatedUser = await db.leetcoders.update({
+      where: { id: ctx.user.leetcoder.id },
+      data: {
+        status: 'APPROVED',
+        is_notified: false,
+        has_second_chance: true,
+        rejoined_at: new Date(),
+      },
+    })
+
+    await sendAdminNotification({
+      event: 'REQUEST_REJOIN',
+      username: ctx?.user?.leetcoder.username,
+      email: ctx?.user?.leetcoder.email,
+      message: 'Missing user ID when updating avatar',
+    })
+
+    return updatedUser
+  }),
+
+  /**
+   * Admin-only endpoint to update any leetcoder's basic information (name, username, email, lc_username, gh_username).
+   * Performs validation for uniqueness of username, email, LeetCode username, and GitHub username if they are being updated.
+   * Also validates external LeetCode and GitHub usernames.
+   *
+   * @param {object} input - The input object containing the ID of the Leetcoder to update and optional fields.
+   * @param {string} input.id - The unique ID of the Leetcoder to update.
+   * @param {string} [input.name] - The new name for the Leetcoder.
+   * @param {string} [input.username] - The new username for the Leetcoder.
+   * @param {string} [input.email] - The new email for the Leetcoder.
+   * @param {string} [input.lc_username] - The new LeetCode username for the Leetcoder.
+   * @param {string} [input.gh_username] - The new GitHub username for the Leetcoder.
+   * @param {object} ctx - The tRPC context, containing user information for authentication and logging.
+   * @throws {TRPCError} If the authenticated user is not an admin,
+   *                     if any updated unique field (username, email, LC username, GH username) is already taken,
+   *                     if LeetCode or GitHub usernames are invalid, or an internal server error occurs.
+   * @returns {Promise<Leetcoder>} A promise that resolves to the updated Leetcoder object.
    */
   updateLeetcoderAdmin: publicProcedure
     .input(
@@ -467,7 +632,7 @@ export const leetcodersRouter = createTRPCRouter({
         id: z.string().uuid(),
         name: z.string().min(3).max(100).optional(),
         username: z.string().min(3).max(100).optional(),
-        email: z.string().email().optional(),
+        email: z.email().optional(),
         lc_username: z.string().optional(),
         gh_username: z.string().optional(),
       })

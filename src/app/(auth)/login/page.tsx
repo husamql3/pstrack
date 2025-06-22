@@ -1,8 +1,7 @@
-import Link from 'next/link'
 import Image from 'next/image'
-
-import logo from '../../../../public/logo.png'
+import Link from 'next/link'
 import { LoginCard } from '@/app/(auth)/_components/login-card'
+import logo from '../../../../public/logo.png'
 
 const Page = () => {
   return (

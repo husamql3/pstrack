@@ -1,15 +1,15 @@
 'use client'
 
+import type { leetcoders } from '@prisma/client'
+import { ExternalLink, Loader2 } from 'lucide-react'
 import { useState } from 'react'
+import { toast } from 'sonner'
+import { api } from '@/trpc/react'
+import { Badge } from '@/ui/badge'
 import { Button } from '@/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/ui/dialog'
-import { Badge } from '@/ui/badge'
 import { Input } from '@/ui/input'
 import { Label } from '@/ui/label'
-import { Loader2, ExternalLink } from 'lucide-react'
-import { api } from '@/trpc/react'
-import { toast } from 'sonner'
-import type { leetcoders } from '@prisma/client'
 
 interface LeetcoderDetailDialogProps {
   leetcoder: leetcoders
@@ -142,7 +142,12 @@ export const LeetcoderDetailDialog = ({ leetcoder, children }: LeetcoderDetailDi
                 <Input
                   id="username"
                   value={editedData.username}
-                  onChange={(e) => setEditedData((prev) => ({ ...prev, username: e.target.value }))}
+                  onChange={(e) =>
+                    setEditedData((prev) => ({
+                      ...prev,
+                      username: e.target.value,
+                    }))
+                  }
                 />
               </div>
               <div>
@@ -151,7 +156,12 @@ export const LeetcoderDetailDialog = ({ leetcoder, children }: LeetcoderDetailDi
                   id="email"
                   type="email"
                   value={editedData.email}
-                  onChange={(e) => setEditedData((prev) => ({ ...prev, email: e.target.value }))}
+                  onChange={(e) =>
+                    setEditedData((prev) => ({
+                      ...prev,
+                      email: e.target.value,
+                    }))
+                  }
                 />
               </div>
               <div>
@@ -171,7 +181,12 @@ export const LeetcoderDetailDialog = ({ leetcoder, children }: LeetcoderDetailDi
                   <Input
                     id="lc_username"
                     value={editedData.lc_username}
-                    onChange={(e) => setEditedData((prev) => ({ ...prev, lc_username: e.target.value }))}
+                    onChange={(e) =>
+                      setEditedData((prev) => ({
+                        ...prev,
+                        lc_username: e.target.value,
+                      }))
+                    }
                   />
                   {editedData.lc_username && (
                     <Button
@@ -196,7 +211,12 @@ export const LeetcoderDetailDialog = ({ leetcoder, children }: LeetcoderDetailDi
                   <Input
                     id="gh_username"
                     value={editedData.gh_username}
-                    onChange={(e) => setEditedData((prev) => ({ ...prev, gh_username: e.target.value }))}
+                    onChange={(e) =>
+                      setEditedData((prev) => ({
+                        ...prev,
+                        gh_username: e.target.value,
+                      }))
+                    }
                   />
                   {editedData.gh_username && (
                     <Button

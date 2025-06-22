@@ -1,13 +1,13 @@
+import type { leetcoders, submissions } from '@prisma/client'
 import { POST } from '@/app/api/cron/kick-out/route'
+import { env } from '@/config/env.mjs'
 import {
+  calculateUnsolvedProblems,
+  getSolvedProblems,
   getUniqueGroupNos,
   kickOffLeetcoders,
-  getSolvedProblems,
-  calculateUnsolvedProblems,
   processLeetcoder,
 } from '@/utils/kickoutUtils'
-import { env } from '@/config/env.mjs'
-import type { leetcoders, submissions } from '@prisma/client'
 
 // Type definition for the LeetcoderWithSubmissions
 interface LeetcoderWithSubmissions {
@@ -77,7 +77,10 @@ describe('kick-out API route', () => {
 
       // Assert
       expect(response.status).toBe(401)
-      expect(await response.json()).toEqual({ success: false, error: 'UNAUTHORIZED' })
+      expect(await response.json()).toEqual({
+        success: false,
+        error: 'UNAUTHORIZED',
+      })
       expect(NextResponse.json).toHaveBeenCalledWith({ success: false, error: 'UNAUTHORIZED' }, { status: 401 })
     })
 
@@ -88,7 +91,10 @@ describe('kick-out API route', () => {
 
       // Assert
       expect(response.status).toBe(401)
-      expect(await response.json()).toEqual({ success: false, error: 'UNAUTHORIZED' })
+      expect(await response.json()).toEqual({
+        success: false,
+        error: 'UNAUTHORIZED',
+      })
       expect(NextResponse.json).toHaveBeenCalledWith({ success: false, error: 'UNAUTHORIZED' }, { status: 401 })
     })
 
@@ -117,7 +123,9 @@ describe('kick-out API route', () => {
         { id: 'problem7', group_progress: [{ group_no: 1 }] },
         { id: 'problem8', group_progress: [{ group_no: 1 }] },
       ])
-      ;(db.leetcoders.update as jest.Mock).mockResolvedValueOnce({ id: 'user1' })
+      ;(db.leetcoders.update as jest.Mock).mockResolvedValueOnce({
+        id: 'user1',
+      })
       ;(db.$transaction as jest.Mock).mockResolvedValueOnce([{ id: 'user1' }])
 
       // Act
@@ -229,7 +237,9 @@ describe('kick-out API route', () => {
       ;(db.leetcoders.update as jest.Mock).mockResolvedValueOnce(mockUpdatedLeetcoder)
 
       // Mock the submissions updateMany operation
-      ;(db.submissions.updateMany as jest.Mock).mockResolvedValueOnce({ count: 1 })
+      ;(db.submissions.updateMany as jest.Mock).mockResolvedValueOnce({
+        count: 1,
+      })
 
       // Act
       const result = await kickOffLeetcoders('user1')
@@ -336,13 +346,14 @@ describe('kick-out API route', () => {
       for (let i = 0; i < 10; i++) {
         assignedProblems.push({ id: `prob${i + 1}` })
       }
-
       // Setup mocks for the update operations
       ;(db.leetcoders.update as jest.Mock).mockResolvedValueOnce({
         id: 'user1',
         status: 'SUSPENDED',
       })
-      ;(db.submissions.updateMany as jest.Mock).mockResolvedValueOnce({ count: 1 })
+      ;(db.submissions.updateMany as jest.Mock).mockResolvedValueOnce({
+        count: 1,
+      })
 
       // Act
       await processLeetcoder(leetcoder, assignedProblems, 6)

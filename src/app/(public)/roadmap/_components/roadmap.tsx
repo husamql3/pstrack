@@ -1,6 +1,6 @@
-import { useMemo } from 'react'
 import type { roadmap } from '@prisma/client'
-
+import { useMemo } from 'react'
+import { TopicProblems } from '@/app/(public)/roadmap/_components/topic-problems'
 import {
   Timeline,
   TimelineDate,
@@ -10,7 +10,6 @@ import {
   TimelineSeparator,
   TimelineTitle,
 } from '@/ui/timeline'
-import { TopicProblems } from '@/app/(public)/roadmap/_components/topic-problems'
 
 export type RoadmapType = {
   topic: string

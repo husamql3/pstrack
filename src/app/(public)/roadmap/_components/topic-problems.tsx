@@ -1,13 +1,11 @@
-import { useMemo } from 'react'
 import type { roadmap } from '@prisma/client'
-
-import { cn } from '@/utils/cn'
-import type { Difficulty } from '@/types/problems.type'
-import { formatTopic, getDifficultyTextColor } from '@/utils/problemsUtils'
+import { useMemo } from 'react'
 import { PROBLEM_BASE_URL } from '@/data/constants'
-
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/ui/dialog'
+import type { Difficulty } from '@/types/problems.type'
 import { Badge } from '@/ui/badge'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/ui/dialog'
+import { cn } from '@/utils/cn'
+import { formatTopic, getDifficultyTextColor } from '@/utils/problemsUtils'
 
 export const TopicProblems = ({ topic, problems }: { topic: string; problems: roadmap[] }) => {
   const formattedTopic = formatTopic(topic)

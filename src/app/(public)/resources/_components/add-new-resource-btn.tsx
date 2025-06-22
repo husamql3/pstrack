@@ -1,18 +1,18 @@
 'use client'
 
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogTitle, DialogTrigger } from '@/ui/dialog'
-import { PlusIcon, Loader2, X } from 'lucide-react'
-import { Label } from '@/ui/label'
-import { Input } from '@/ui/input'
-import { Button } from '@/ui/button'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/ui/select'
-import { api } from '@/trpc/react'
-import { useForm } from 'react-hook-form'
-import { type AddNewResourceSchemaType, AddNewResourceSchema } from '@/types/schema/resources.schema'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { Loader2, PlusIcon, X } from 'lucide-react'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { errorToastStyle, successToastStyle } from '@/app/_components/toast-styles'
-import { useState } from 'react'
+import { api } from '@/trpc/react'
+import { AddNewResourceSchema, type AddNewResourceSchemaType } from '@/types/schema/resources.schema'
+import { Button } from '@/ui/button'
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogTitle, DialogTrigger } from '@/ui/dialog'
+import { Input } from '@/ui/input'
+import { Label } from '@/ui/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/ui/select'
 
 export const AddNewResourceBtn = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false)

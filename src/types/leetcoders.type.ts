@@ -1,4 +1,4 @@
-import type { submissions, leetcoders, groups, roadmap } from '@prisma/client'
+import type { groups, leetcoders, roadmap, submissions } from '@prisma/client'
 import { z } from 'zod/v4'
 
 export type LeetcoderWithSubmissions = {

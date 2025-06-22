@@ -1,5 +1,5 @@
-import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
+import Link from 'next/link'
 
 import { cn } from '@/utils/cn'
 
@@ -21,7 +21,7 @@ export const Hero = () => {
       </div>
 
       <h4 className="text-center text-base font-medium sm:text-lg md:text-xl">
-        PSTrack: The platform that helps you solve, track, and grow.
+        The platform that helps you solve, track, and grow.
       </h4>
 
       <CTA />

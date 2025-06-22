@@ -1,7 +1,7 @@
-import { db } from '@/prisma/db'
-import { sendReminderEmail } from '@/utils/email/sendReminderEmail'
 import type { leetcoders } from '@prisma/client'
+import { db } from '@/prisma/db'
 import type { LeetcoderWithSubmissions } from '@/types/leetcoders.type'
+import { sendReminderEmail } from '@/utils/email/sendReminderEmail'
 
 // Fetch unique group numbers using Prisma query
 export const getUniqueGroupNos = async (leetcoders: LeetcoderWithSubmissions[]): Promise<number[]> => {

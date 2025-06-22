@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server'
 
 import { env } from '@/config/env.mjs'
-import { db } from '@/prisma/db'
-import { getUniqueGroupNos, processLeetcoder, getAllLeetcoders, getAllAssignedProblems } from '@/utils/kickoutUtils'
 import { BATCH_SIZE, DELAY_MS, LIMIT, UNSOLVED_THRESHOLD } from '@/data/constants'
+import { db } from '@/prisma/db'
 import type { LeetcoderWithSubmissions } from '@/types/leetcoders.type'
+import { getAllAssignedProblems, getAllLeetcoders, getUniqueGroupNos, processLeetcoder } from '@/utils/kickoutUtils'
 
 export async function POST(req: Request) {
   // Verify the request

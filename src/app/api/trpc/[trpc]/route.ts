@@ -1,5 +1,5 @@
-import type { NextRequest } from 'next/server'
 import { fetchRequestHandler } from '@trpc/server/adapters/fetch'
+import type { NextRequest } from 'next/server'
 
 import { env } from '@/config/env.mjs'
 import { appRouter } from '@/server/root'

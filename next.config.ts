@@ -1,6 +1,6 @@
 import { fileURLToPath } from 'node:url'
-import type { NextConfig } from 'next'
 import { createJiti } from 'jiti'
+import type { NextConfig } from 'next'
 
 const jiti = createJiti(fileURLToPath(import.meta.url))
 void jiti.import('./src/config/env')

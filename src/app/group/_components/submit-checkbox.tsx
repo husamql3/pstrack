@@ -1,19 +1,17 @@
 'use client'
 
-import { useState } from 'react'
-import { debounce } from 'lodash'
-import { toast } from 'sonner'
-import type { CellContext } from '@tanstack/react-table'
 import type { leetcoders } from '@prisma/client'
+import type { CellContext } from '@tanstack/react-table'
+import { debounce } from 'lodash'
 import { useRouter } from 'next/navigation'
-
-import { api } from '@/trpc/react'
-import type { TableRowOutput } from '@/types/tableRow.type'
+import { useState } from 'react'
+import { toast } from 'sonner'
+import { errorToastStyle, loadingToastStyle, successToastStyle } from '@/app/_components/toast-styles'
+import { Checkbox } from '@/app/group/_components/checkbox'
 import { useConfettiStore } from '@/stores/confettiStore'
 import { useSubmissionStore } from '@/stores/submissionStore'
-
-import { Checkbox } from '@/app/group/_components/checkbox'
-import { errorToastStyle, loadingToastStyle, successToastStyle } from '@/app/_components/toast-styles'
+import { api } from '@/trpc/react'
+import type { TableRowOutput } from '@/types/tableRow.type'
 
 export const SubmitCheckbox = ({
   info,

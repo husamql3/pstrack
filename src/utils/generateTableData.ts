@@ -1,4 +1,4 @@
-import type { TableRow, TableData } from '@/types/tableRow.type'
+import type { TableData, TableRow } from '@/types/tableRow.type'
 
 export const generateTableData = (groupData: TableRow): TableData => {
   const { roadmap, submission, group_progress } = groupData

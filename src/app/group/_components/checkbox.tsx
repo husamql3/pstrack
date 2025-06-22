@@ -1,5 +1,5 @@
-import { motion } from 'motion/react'
 import * as RadixCheckbox from '@radix-ui/react-checkbox'
+import { motion } from 'motion/react'
 
 import { cn } from '@/utils/cn'
 

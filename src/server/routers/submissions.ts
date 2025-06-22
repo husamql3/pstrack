@@ -1,11 +1,10 @@
 import { z } from 'zod/v4'
-
-import { createTRPCRouter, publicProcedure } from '@/server/trpc'
-import { db } from '@/prisma/db'
-import { recentSubmissionListQuery } from '@/data/queries/recentSubmissionList.gql'
-import { LEETCODE_GQL_BASE_URL, REDIS_KEYS } from '@/data/constants'
-import { sendAdminNotification } from '@/utils/email/sendAdminNotification'
 import { redis } from '@/config/redis'
+import { LEETCODE_GQL_BASE_URL, REDIS_KEYS } from '@/data/constants'
+import { recentSubmissionListQuery } from '@/data/queries/recentSubmissionList.gql'
+import { db } from '@/prisma/db'
+import { createTRPCRouter, publicProcedure } from '@/server/trpc'
+import { sendAdminNotification } from '@/utils/email/sendAdminNotification'
 
 export const submissionsRouter = createTRPCRouter({
   create: publicProcedure

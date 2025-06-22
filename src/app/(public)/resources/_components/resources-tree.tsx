@@ -1,6 +1,6 @@
 import type { GroupedResources } from '@/types/resources.type'
 
-import { Files, File, Folder } from '@/ui/files'
+import { File, Files, Folder } from '@/ui/files'
 
 export const ResourcesTree = ({ resources }: { resources: GroupedResources }) => {
   return (

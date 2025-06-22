@@ -1,10 +1,9 @@
-import { api } from '@/trpc/server'
-import { generateTableData } from '@/utils/generateTableData'
-import { NOT_STARTED_GROUPS } from '@/data/constants'
-
-import { TrackTable } from '@/app/group/_components/track-table'
 import { ConfettiFireworks } from '@/app/group/_components/confetti-fireworks'
 import { NotStarted } from '@/app/group/_components/not-started'
+import { TrackTable } from '@/app/group/_components/track-table'
+import { NOT_STARTED_GROUPS } from '@/data/constants'
+import { api } from '@/trpc/server'
+import { generateTableData } from '@/utils/generateTableData'
 
 const Page = async ({ params }: { params: Promise<{ groupId: string }> }) => {
   const { groupId } = await params

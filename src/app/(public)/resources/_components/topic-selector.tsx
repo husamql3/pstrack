@@ -1,14 +1,12 @@
 'use client'
 
+import { CheckIcon, ChevronDownIcon, PlusIcon, XIcon } from 'lucide-react'
 import { useState } from 'react'
-import { PlusIcon, CheckIcon, ChevronDownIcon, XIcon } from 'lucide-react'
-
-import { cn } from '@/utils/cn'
-
 import { Button } from '@/ui/button'
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/ui/command'
 import { Input } from '@/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/ui/popover'
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/ui/command'
+import { cn } from '@/utils/cn'
 
 export const TopicSelector = ({
   topics,

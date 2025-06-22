@@ -1,11 +1,11 @@
 import { GoogleAnalytics } from '@next/third-parties/google'
-import { NuqsAdapter } from 'nuqs/adapters/next/app'
 import { Geist } from 'next/font/google'
+import { NuqsAdapter } from 'nuqs/adapters/next/app'
 import { Toaster } from 'sonner'
 
 import { DevTab } from '@/app/_components/dev-tab'
-import { TRPCReactProvider } from '@/trpc/react'
 import { siteMetaData } from '@/data/metadata'
+import { TRPCReactProvider } from '@/trpc/react'
 import { cn } from '@/utils/cn'
 import './globals.css'
 

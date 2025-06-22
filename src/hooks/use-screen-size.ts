@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 export const useScreenSize = () => {
   const [isLargeScreen, setIsLargeScreen] = useState<boolean | null>(null)

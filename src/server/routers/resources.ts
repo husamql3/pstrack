@@ -1,15 +1,15 @@
+import type { Prisma, resources } from '@prisma/client'
+import { TRPCError } from '@trpc/server'
+import { z } from 'zod'
+import { redis } from '@/config/redis'
+import { ADMINS_EMAILS, REDIS_KEYS } from '@/data/constants'
 import { db } from '@/prisma/db'
 import { createTRPCRouter, publicProcedure } from '@/server/trpc'
-import { ADMINS_EMAILS, REDIS_KEYS } from '@/data/constants'
-import { logger } from '@/utils/logger'
-import { redis } from '@/config/redis'
 import type { ResourcesResponse, ResourceTabOption, ResourceTypeOption } from '@/types/resources.type'
-import { formatTabLabel, groupByTopic } from '@/utils/resources'
 import { AddNewResourceSchema } from '@/types/schema/resources.schema'
-import type { Prisma, resources } from '@prisma/client'
 import { sendAdminNotification } from '@/utils/email/sendAdminNotification'
-import { z } from 'zod'
-import { TRPCError } from '@trpc/server'
+import { logger } from '@/utils/logger'
+import { formatTabLabel, groupByTopic } from '@/utils/resources'
 
 export const resourcesRouter = createTRPCRouter({
   /**
@@ -53,7 +53,13 @@ export const resourcesRouter = createTRPCRouter({
     const psResources = resourcesByTab['PROBLEM_SOLVING'] || []
 
     const response: ResourcesResponse = {
-      technologies: groupByTopic(techResources.map((r) => ({ ...r, type: r.type.name, tab: r.tab.name }))),
+      technologies: groupByTopic(
+        techResources.map((r) => ({
+          ...r,
+          type: r.type.name,
+          tab: r.tab.name,
+        }))
+      ),
       problemSolving: groupByTopic(psResources.map((r) => ({ ...r, type: r.type.name, tab: r.tab.name }))),
     }
 

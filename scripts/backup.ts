@@ -1,6 +1,6 @@
-import { PrismaClient } from '@prisma/client'
 import fs from 'node:fs'
 import path from 'node:path'
+import { PrismaClient } from '@prisma/client'
 
 const db = new PrismaClient()
 

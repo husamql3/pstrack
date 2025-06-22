@@ -1,5 +1,5 @@
-import { api } from '@/trpc/server'
 import { DashboardTable } from '@/app/dashboard/_components/dashboard-table'
+import { api } from '@/trpc/server'
 
 const Page = async () => {
   const leetcoders = await api.leetcoders.getAllLeetcoders()

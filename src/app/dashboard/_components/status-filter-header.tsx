@@ -3,12 +3,12 @@ import { Filter } from 'lucide-react'
 import { Button } from '@/ui/button'
 import {
   DropdownMenu,
+  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-  DropdownMenuCheckboxItem,
 } from '@/ui/dropdown-menu'
 
 export const StatusFilterHeader = ({

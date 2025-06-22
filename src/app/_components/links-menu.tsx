@@ -1,15 +1,13 @@
 'use client'
 
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 import { HiOutlineMenu } from 'react-icons/hi'
-import { usePathname } from 'next/navigation'
-
-import { cn } from '@/utils/cn'
 import { TABS } from '@/data/constant-components'
-
 import { Button } from '@/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/ui/dropdown-menu'
+import { cn } from '@/utils/cn'
 
 export const LinksMenu = ({ className }: { className?: string }) => {
   const pathname = usePathname()

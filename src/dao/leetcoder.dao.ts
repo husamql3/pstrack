@@ -1,14 +1,16 @@
-import type { leetcoders, roadmap, groups } from '@prisma/client'
+import type { groups, leetcoders, roadmap } from '@prisma/client'
 
 import { db } from '@/prisma/db'
 
 export const getLeetcoderById = async (id: string): Promise<leetcoders | null> => {
   try {
-    return db.leetcoders.findFirst({
+    const leetcoder = await db.leetcoders.findUnique({
       where: {
         id,
       },
     })
+
+    return leetcoder || null
   } catch (error) {
     console.error('Error fetching user:', error)
     return null

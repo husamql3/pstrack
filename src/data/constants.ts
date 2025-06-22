@@ -27,6 +27,7 @@ export const LEETCODE_GQL_BASE_URL = 'https://leetcode.com/graphql'
  */
 export const AUTHOR_EMAIL = 'husamahmud@gmail.com'
 export const ADMINS_EMAILS = ['husamahmud@gmail.com', 'nezhataghy@gmail.com']
+export const PLATFORM_EMAIL = 'pstrack.org@gmail.com'
 
 /**
  * Authentication and authorization

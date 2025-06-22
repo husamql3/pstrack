@@ -1,22 +1,20 @@
 'use client'
 
-import type { leetcoders, groups } from '@prisma/client'
+import type { groups, leetcoders } from '@prisma/client'
+import { Globe, Loader2, Users } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
-import { Globe, Users, Loader2 } from 'lucide-react'
-import { LuGithub } from 'react-icons/lu'
 import { FaLinkedin, FaXTwitter } from 'react-icons/fa6'
+import { LuGithub } from 'react-icons/lu'
 import { toast } from 'sonner'
-
-import { UpdateLeetcoderInput } from '@/types/leetcoders.type'
-import { api } from '@/trpc/react'
 import { errorToastStyle, successToastStyle } from '@/app/_components/toast-styles'
-
+import { api } from '@/trpc/react'
+import type { UpdateLeetcoderInput } from '@/types/leetcoders.type'
+import { Button } from '@/ui/button'
 import { Input } from '@/ui/input'
 import { Label } from '@/ui/label'
-import { Switch } from '@/ui/switch'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/ui/select'
-import { Button } from '@/ui/button'
+import { Switch } from '@/ui/switch'
 import { UserAvatar } from './user-avatar'
 
 export const UserForm = ({ leetcoder, groups }: { leetcoder: leetcoders; groups: groups[] }) => {
@@ -24,7 +22,9 @@ export const UserForm = ({ leetcoder, groups }: { leetcoder: leetcoders; groups:
 
   const { mutate: updateLeetcoder, isPending: isUpdatingLeetcoder } = api.leetcoders.update.useMutation({
     onSuccess: (updatedData) => {
-      toast.success('Profile updated successfully', { style: successToastStyle })
+      toast.success('Profile updated successfully', {
+        style: successToastStyle,
+      })
       reset({
         id: leetcoder.id,
         group_no: updatedData.group_no ?? leetcoder.group_no,
@@ -37,17 +37,23 @@ export const UserForm = ({ leetcoder, groups }: { leetcoder: leetcoders; groups:
       router.refresh()
     },
     onError: (error) => {
-      toast.error(error.message || 'Failed to update profile', { style: errorToastStyle })
+      toast.error(error.message || 'Failed to update profile', {
+        style: errorToastStyle,
+      })
     },
   })
 
   const { mutate: changeGroup, isPending: isUpdatingGroup } = api.leetcoders.changeGroup.useMutation({
     onSuccess: async () => {
-      toast.success('Group changed successfully', { style: successToastStyle })
+      toast.success('Group changed successfully', {
+        style: successToastStyle,
+      })
       router.refresh()
     },
     onError: (error) => {
-      toast.error(error.message || 'Failed to change group', { style: errorToastStyle })
+      toast.error(error.message || 'Failed to change group', {
+        style: errorToastStyle,
+      })
     },
   })
 
@@ -60,7 +66,6 @@ export const UserForm = ({ leetcoder, groups }: { leetcoder: leetcoders; groups:
     formState: { isDirty },
   } = useForm<UpdateLeetcoderInput>({
     defaultValues: {
-      id: leetcoder.id,
       group_no: leetcoder.group_no,
       is_visible: leetcoder.is_visible,
       website: leetcoder.website ?? '',
@@ -85,21 +90,23 @@ export const UserForm = ({ leetcoder, groups }: { leetcoder: leetcoders; groups:
     // Process website URL
     if (data.website && data.website.trim() !== '') {
       if (!isValidUrl(data.website)) {
-        toast.error('Please enter a valid website URL', { style: errorToastStyle })
+        toast.error('Please enter a valid website URL', {
+          style: errorToastStyle,
+        })
         return
       }
     }
 
     // Process social media usernames
-    if (data.gh_username && data.gh_username.includes('github.com')) {
+    if (data?.gh_username?.includes('github.com')) {
       data.gh_username = extractUsername(data.gh_username, 'github')
     }
 
-    if (data.x_username && (data.x_username.includes('twitter.com') || data.x_username.includes('x.com'))) {
+    if (data?.x_username?.includes('twitter.com') || data?.x_username?.includes('x.com')) {
       data.x_username = extractUsername(data.x_username, 'twitter')
     }
 
-    if (data.li_username && data.li_username.includes('linkedin.com')) {
+    if (data?.li_username?.includes('linkedin.com')) {
       data.li_username = extractUsername(data.li_username, 'linkedin')
     }
 
@@ -279,16 +286,25 @@ export const UserForm = ({ leetcoder, groups }: { leetcoder: leetcoders; groups:
                 <SelectValue placeholder={`Group ${String(leetcoder.group_no)}`} />
               </SelectTrigger>
               <SelectContent>
-                {groups
-                  .sort((a, b) => a.group_no - b.group_no)
-                  .map((group) => (
-                    <SelectItem
-                      key={group.id}
-                      value={String(group.group_no)}
-                    >
-                      Group {group.group_no}
-                    </SelectItem>
-                  ))}
+                {groups.length > 0 ? (
+                  groups
+                    .sort((a, b) => a.group_no - b.group_no)
+                    .map((group) => (
+                      <SelectItem
+                        key={group.id}
+                        value={String(group.group_no)}
+                      >
+                        Group {group.group_no}
+                      </SelectItem>
+                    ))
+                ) : (
+                  <SelectItem
+                    value="none"
+                    disabled
+                  >
+                    No groups to join yet, check back soon!
+                  </SelectItem>
+                )}
               </SelectContent>
             </Select>
           </div>

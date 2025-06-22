@@ -1,5 +1,5 @@
-import winston from 'winston'
 import type { TransformableInfo } from 'logform'
+import winston from 'winston'
 
 import { env } from '@/config/env.mjs'
 

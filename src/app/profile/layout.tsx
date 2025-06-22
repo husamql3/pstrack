@@ -1,10 +1,9 @@
-import { api } from '@/trpc/server'
-import { VERSION } from '@/data/constants'
-
-import { Logo } from '@/app/_components/logo'
-import { UserAuth } from '@/app/_components/user-auth'
 import { Header } from '@/app/_components/header'
+import { Logo } from '@/app/_components/logo'
 import { NavMenu } from '@/app/_components/nav-menu'
+import { UserAuth } from '@/app/_components/user-auth'
+import { VERSION } from '@/data/constants'
+import { api } from '@/trpc/server'
 import { StarsBackgroundWrapper } from '../_components/stars-background-wrapper'
 
 const Layout = async ({ children }: { children: React.ReactNode }) => {

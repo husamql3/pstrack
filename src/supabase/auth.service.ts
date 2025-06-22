@@ -1,7 +1,6 @@
 import type { Provider } from '@supabase/supabase-js'
-import { createClient } from '@/supabase/client'
-
 import { env } from '@/config/env.mjs'
+import { createClient } from '@/supabase/client'
 
 export const signIn = async (provider: Provider) => {
   const supabase = createClient()

@@ -1,11 +1,11 @@
 'use client'
 
+import { CircleUserRoundIcon } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
-import { CircleUserRoundIcon } from 'lucide-react'
-import { UploadButton } from '@/utils/uploadthing'
 import { toast } from 'sonner'
-import { successToastStyle, errorToastStyle } from '@/app/_components/toast-styles'
+import { errorToastStyle, successToastStyle } from '@/app/_components/toast-styles'
+import { UploadButton } from '@/utils/uploadthing'
 
 export const UserAvatar = ({ avatar }: { avatar: string | null }) => {
   const router = useRouter()

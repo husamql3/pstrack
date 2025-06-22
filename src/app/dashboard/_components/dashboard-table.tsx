@@ -1,17 +1,16 @@
 'use client'
 
 import type { groups, leetcoders } from '@prisma/client'
+import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
+import { ExternalLink, Search } from 'lucide-react'
 import { useQueryState } from 'nuqs'
-import { useState, useMemo, useEffect, useCallback } from 'react'
-import { useReactTable, getCoreRowModel, flexRender, createColumnHelper } from '@tanstack/react-table'
-
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/ui/table'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { Badge } from '@/ui/badge'
 import { Button } from '@/ui/button'
 import { Input } from '@/ui/input'
 import { Label } from '@/ui/label'
-import { Badge } from '@/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/ui/select'
-import { Search, ExternalLink } from 'lucide-react'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/ui/table'
 import { LeetcoderDetailDialog } from './leetcoder-detail-dialog'
 
 const columnHelper = createColumnHelper<leetcoders>()
@@ -23,8 +22,12 @@ interface DashboardTableProps {
 
 export const DashboardTable = ({ leetcoders, groups }: DashboardTableProps) => {
   const [search, setSearch] = useQueryState('search', { defaultValue: '' })
-  const [statusFilter, setStatusFilter] = useQueryState('status', { defaultValue: 'all' })
-  const [groupFilter, setGroupFilter] = useQueryState('group', { defaultValue: 'all' })
+  const [statusFilter, setStatusFilter] = useQueryState('status', {
+    defaultValue: 'all',
+  })
+  const [groupFilter, setGroupFilter] = useQueryState('group', {
+    defaultValue: 'all',
+  })
   const [currentPage, setCurrentPage] = useState(1)
 
   const limit = 50

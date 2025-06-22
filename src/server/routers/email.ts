@@ -1,10 +1,9 @@
-import { z } from 'zod/v4'
 import { TRPCError } from '@trpc/server'
-
-import { createTRPCRouter, publicProcedure } from '@/server/trpc'
-import { sendAdminNotification } from '@/utils/email/sendAdminNotification'
-import { sendAcceptanceEmail } from '@/utils/email/sendAcceptanceEmail'
+import { z } from 'zod/v4'
 import { AUTHOR_EMAIL } from '@/data/constants'
+import { createTRPCRouter, publicProcedure } from '@/server/trpc'
+import { sendAcceptanceEmail } from '@/utils/email/sendAcceptanceEmail'
+import { sendAdminNotification } from '@/utils/email/sendAdminNotification'
 
 export const emailRouter = createTRPCRouter({
   acceptanceEmail: publicProcedure

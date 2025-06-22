@@ -1,10 +1,8 @@
-import { cache } from 'react'
 import { notFound } from 'next/navigation'
-
-import { getAllGroupsNo, getGroupByNo } from '@/dao/groups.dao'
-import { redis } from '@/config/redis'
-
+import { cache } from 'react'
 import { GroupHeader } from '@/app/group/_components/group-header'
+import { redis } from '@/config/redis'
+import { getAllGroupsNo, getGroupByNo } from '@/dao/groups.dao'
 
 // generateStaticParams for groups
 export async function generateStaticParams() {

@@ -1,15 +1,14 @@
 'use client'
 
+import { AnimatePresence, motion } from 'motion/react'
+import Image from 'next/image'
 import Link from 'next/link'
+import type { ComponentProps, ReactNode } from 'react'
+import { BiSolidFolder, BiSolidFolderOpen } from 'react-icons/bi'
 import { LuFile } from 'react-icons/lu'
-import { BiSolidFolderOpen, BiSolidFolder } from 'react-icons/bi'
+import { MdVideoLibrary } from 'react-icons/md'
 import { PiYoutubeLogo } from 'react-icons/pi'
 import { SiUdemy } from 'react-icons/si'
-import { MdVideoLibrary } from 'react-icons/md'
-import type { ComponentProps, ReactNode } from 'react'
-import { AnimatePresence, motion } from 'motion/react'
-
-import { cn } from '@/utils/cn'
 import {
   Accordion,
   AccordionContent,
@@ -20,7 +19,7 @@ import {
   useAccordionItem,
 } from '@/ui/accordion'
 import { MotionHighlight, MotionHighlightItem } from '@/ui/motion-highlight'
-import Image from 'next/image'
+import { cn } from '@/utils/cn'
 
 type FileButtonProps = ComponentProps<'div'> & {
   icons?: {

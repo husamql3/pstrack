@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server'
-
-import { db } from '@/prisma/db'
 import { env } from '@/config/env.mjs'
 import { NOT_STARTED_GROUPS } from '@/data/constants'
+import { db } from '@/prisma/db'
 
 /**
  * GET handler for automated progression of group problems
@@ -58,7 +57,10 @@ export async function GET(req: Request) {
     return NextResponse.json({ success: true, data: 'group progress added' })
   } catch (error) {
     console.error(error)
-    return NextResponse.json({ success: false, error: 'Internal Server Error' })
+    return NextResponse.json({
+      success: false,
+      error: 'Internal Server Error',
+    })
   } finally {
     await db.$disconnect()
   }

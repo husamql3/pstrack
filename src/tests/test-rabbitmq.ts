@@ -8,7 +8,9 @@ async function testRabbitMQConnection() {
   try {
     // Optional: Send a test message to the queue
     const testMessage = { test: 'Hello, RabbitMQ!' }
-    channel.sendToQueue(queueName, Buffer.from(JSON.stringify(testMessage)), { persistent: true })
+    channel.sendToQueue(queueName, Buffer.from(JSON.stringify(testMessage)), {
+      persistent: true,
+    })
     console.log('Sent test message to queue:', testMessage)
 
     // Optional: Consume the test message to verify

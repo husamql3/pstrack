@@ -1,18 +1,18 @@
 'use client'
 
-import {
-  createContext,
-  useContext,
-  useState,
-  useRef,
-  useImperativeHandle,
-  useEffect,
-  type ReactNode,
-  type ComponentProps,
-} from 'react'
 import * as AccordionPrimitive from '@radix-ui/react-accordion'
 import { ChevronDown } from 'lucide-react'
-import { motion, AnimatePresence, type Transition, type HTMLMotionProps } from 'motion/react'
+import { AnimatePresence, type HTMLMotionProps, motion, type Transition } from 'motion/react'
+import {
+  type ComponentProps,
+  createContext,
+  type ReactNode,
+  useContext,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react'
 
 import { cn } from '@/utils/cn'
 

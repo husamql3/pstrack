@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { FaHome, FaBookmark, FaMap, FaUsers } from 'react-icons/fa'
+import { FaBookmark, FaHome, FaMap, FaUsers } from 'react-icons/fa'
 
 type Tab = {
   name: string

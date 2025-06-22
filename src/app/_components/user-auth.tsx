@@ -1,6 +1,6 @@
 import { UserMenu } from '@/app/(auth)/_components/user-menu'
+import type { AuthLeetcoder } from '@/server/routers/auth'
 import { StaticLink } from '@/ui/hover-link'
-import { AuthLeetcoder } from '@/server/routers/auth'
 
 export const UserAuth = async ({ user }: { user: AuthLeetcoder | null }) => {
   return (

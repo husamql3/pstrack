@@ -1,12 +1,10 @@
-import { groups } from '@prisma/client'
+import type { groups } from '@prisma/client'
 import { z } from 'zod/v4'
-
-import { createTRPCRouter, publicProcedure } from '@/server/trpc'
-import { db } from '@/prisma/db'
-import { MAX_LEETCODERS, REDIS_KEYS } from '@/data/constants'
 import { redis } from '@/config/redis'
+import { MAX_LEETCODERS, REDIS_KEYS } from '@/data/constants'
+import { db } from '@/prisma/db'
+import { createTRPCRouter, publicProcedure } from '@/server/trpc'
 import type { GetAllGroupsInfoType, GroupTableDataType } from '@/trpc/groups.type'
-import { GetAllAvailableGroupsType } from '@/types/groups.type'
 import { logger } from '@/utils/logger'
 
 export const groupsRouter = createTRPCRouter({
@@ -72,12 +70,6 @@ export const groupsRouter = createTRPCRouter({
    * revalidates every 24 hours
    */
   getAllAvailableGroups: publicProcedure.query(async () => {
-    const cachedGroups = (await redis.get(REDIS_KEYS.AVAILABLE_GROUPS)) as GetAllAvailableGroupsType[] | null
-    if (cachedGroups) {
-      logger.debug(`[Cache] Using cached available groups data`)
-      return cachedGroups
-    }
-
     const groups = await db.groups.findMany({
       include: {
         leetcoders: {
@@ -96,9 +88,7 @@ export const groupsRouter = createTRPCRouter({
       },
     })
 
-    const availableGroups = groups.filter((group) => group.leetcoders.length < MAX_LEETCODERS)
-    await redis.set(REDIS_KEYS.AVAILABLE_GROUPS, availableGroups, { ex: 86400 }) // cache for 24 hours
-    return availableGroups as GetAllAvailableGroupsType[]
+    return groups.filter((group) => group.leetcoders.length < MAX_LEETCODERS)
   }),
   /**
    * Get all groups info for /groups page

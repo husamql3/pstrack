@@ -1,10 +1,9 @@
-import { type NextRequest, NextResponse } from 'next/server'
 import { waitUntil } from '@vercel/functions'
-
-import { db } from '@/prisma/db'
+import { type NextRequest, NextResponse } from 'next/server'
 import { env } from '@/config/env.mjs'
-import { BATCH_SIZE, DELAY_MS } from '@/data/constants'
 import { fetchApprovedLeetcodersWithProblems } from '@/dao/leetcoder.dao'
+import { BATCH_SIZE, DELAY_MS } from '@/data/constants'
+import { db } from '@/prisma/db'
 import { sendAdminNotification } from '@/utils/email/sendAdminNotification'
 import { sendDailyProblemEmail } from '@/utils/email/sendDailyProblemEmail'
 

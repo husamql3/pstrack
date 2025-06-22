@@ -1,16 +1,15 @@
 import type { groups } from '@prisma/client'
 import { Filter } from 'lucide-react'
-
+import { Button } from '@/ui/button'
 import {
   DropdownMenu,
+  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-  DropdownMenuCheckboxItem,
 } from '@/ui/dropdown-menu'
-import { Button } from '@/ui/button'
 
 export const GroupFilterHeader = ({
   groups,

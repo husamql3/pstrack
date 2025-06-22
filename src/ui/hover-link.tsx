@@ -1,6 +1,6 @@
+import Link from 'next/link'
 import React from 'react'
 import { cn } from '@/utils/cn'
-import Link from 'next/link'
 
 interface StaticLinkProps {
   children: React.ReactNode

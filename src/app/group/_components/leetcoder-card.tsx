@@ -1,15 +1,14 @@
-import { useMemo } from 'react'
 import type { leetcoders as leetcodersType } from '@prisma/client'
 import { Calendar, Globe } from 'lucide-react'
-import { LuGithub } from 'react-icons/lu'
+import { useMemo } from 'react'
 import { FaLinkedin, FaXTwitter } from 'react-icons/fa6'
+import { LuGithub } from 'react-icons/lu'
 
 import { api } from '@/trpc/react'
+import { Avatar, AvatarFallback, AvatarImage } from '@/ui/avatar'
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/ui/hover-card'
 import { cn } from '@/utils/cn'
 import { getSocialLink } from '@/utils/leetcoderCard'
-
-import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/ui/hover-card'
-import { Avatar, AvatarFallback, AvatarImage } from '@/ui/avatar'
 
 export const LeetCoderCard = ({ leetcoder, className }: { leetcoder: leetcodersType; className?: string }) => {
   const { data: user } = api.auth.getUser.useQuery()

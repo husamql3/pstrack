@@ -1,10 +1,9 @@
-import { TRPCError } from '@trpc/server'
-import { User } from '@supabase/supabase-js'
 import type { leetcoders } from '@prisma/client'
-
+import type { User } from '@supabase/supabase-js'
+import { TRPCError } from '@trpc/server'
+import { getLeetcoderById } from '@/dao/leetcoder.dao'
 import { createTRPCRouter, publicProcedure } from '@/server/trpc'
 import { createClient } from '@/supabase/server'
-import { getLeetcoderById } from '@/dao/leetcoder.dao'
 
 export type AuthLeetcoder = User & {
   leetcoder: leetcoders | null

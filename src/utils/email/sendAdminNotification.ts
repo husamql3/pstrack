@@ -1,8 +1,7 @@
-import path from 'node:path'
 import fs from 'node:fs/promises'
-
-import { sendEmail } from '@/utils/email/sendEmail'
+import path from 'node:path'
 import { AUTHOR_EMAIL } from '@/data/constants'
+import { sendEmail } from '@/utils/email/sendEmail'
 
 export const sendAdminNotification = async (context: Record<string, string>) => {
   try {

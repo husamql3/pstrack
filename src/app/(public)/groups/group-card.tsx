@@ -1,20 +1,21 @@
 import { BookIcon, Users } from 'lucide-react'
-import { FiExternalLink } from 'react-icons/fi'
 import Link from 'next/link'
-
-import { cn } from '@/utils/cn'
+import { FiExternalLink } from 'react-icons/fi'
+import { AvatarGroup } from '@/app/(public)/groups/avatar-group'
+import { ProgressBar } from '@/app/(public)/roadmap/_components/progress-bar'
+import { RequestModal } from '@/app/group/_components/request-modal'
+import { MAX_LEETCODERS } from '@/data/constants'
 import type { GroupCardProps } from '@/types/groupsPage.type'
 import type { Topic } from '@/types/problems.type'
-import { MAX_LEETCODERS } from '@/data/constants'
-
-import { Card, CardHeader, CardContent, CardFooter } from '@/ui/card'
-import { ProgressBar } from '@/app/(public)/roadmap/_components/progress-bar'
 import { Badge } from '@/ui/badge'
-import { AvatarGroup } from '@/app/(public)/groups/avatar-group'
-import { RequestModal } from '@/app/group/_components/request-modal'
+import { Card, CardContent, CardFooter, CardHeader } from '@/ui/card'
+import { cn } from '@/utils/cn'
 
 export const GroupCard = async ({ group, problemsCount, userGroup }: GroupCardProps) => {
-  const avatars = group.leetcoders.map((member) => ({ src: member.avatar, alt: member.name }))
+  const avatars = group.leetcoders.map((member) => ({
+    src: member.avatar,
+    alt: member.name,
+  }))
   const leetcodersCount = group.leetcoders.length
   const currentProblem = group.group_progress[0]?.roadmap.topic as Topic
   const latestGroupProgress = group.group_progress.reduce((latest, current) => {

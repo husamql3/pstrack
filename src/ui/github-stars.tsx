@@ -2,19 +2,18 @@
 
 import { Star } from 'lucide-react'
 import {
-  motion,
   AnimatePresence,
-  useMotionValue,
-  useSpring,
-  useInView,
   type HTMLMotionProps,
+  motion,
   type SpringOptions,
   type UseInViewOptions,
+  useInView,
+  useMotionValue,
+  useSpring,
 } from 'motion/react'
-import { useRef, useReducer, useState, useMemo, useEffect, useCallback, useImperativeHandle, Fragment } from 'react'
-
-import { cn } from '@/utils/cn'
+import { Fragment, useCallback, useEffect, useImperativeHandle, useMemo, useReducer, useRef, useState } from 'react'
 import { SlidingNumber } from '@/ui/sliding-number'
+import { cn } from '@/utils/cn'
 
 type FormatNumberResult = { number: string[]; unit: string }
 

@@ -1,14 +1,13 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
+import { FaUser, FaUserShield } from 'react-icons/fa'
 import { FaUserGroup } from 'react-icons/fa6'
 import { IoExitOutline } from 'react-icons/io5'
-import { FaUser, FaUserShield } from 'react-icons/fa'
-import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
-
-import { signOut } from '@/supabase/auth.service'
 import { AUTHOR_EMAIL } from '@/data/constants'
-
+import type { AuthLeetcoder } from '@/server/routers/auth'
+import { signOut } from '@/supabase/auth.service'
 import { Avatar, AvatarFallback, AvatarImage } from '@/ui/avatar'
 import { Button } from '@/ui/button'
 import {
@@ -20,7 +19,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/ui/dropdown-menu'
-import { AuthLeetcoder } from '@/server/routers/auth'
 
 const MenuItem = ({ icon, label, onClick }: { icon: React.ReactNode; label: string; onClick: () => Promise<void> }) => (
   <DropdownMenuItem onClick={onClick}>

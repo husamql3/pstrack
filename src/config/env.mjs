@@ -1,5 +1,5 @@
-import { z } from 'zod/v4'
 import { createEnv } from '@t3-oss/env-nextjs'
+import { z } from 'zod/v4'
 
 export const env = createEnv({
   client: {
@@ -11,13 +11,13 @@ export const env = createEnv({
   server: {
     DATABASE_URL: z.string(),
     NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
-    ADMIN_EMAIL: z.string().email(),
-    EMAIL_USER: z.string().email(),
+    ADMIN_EMAIL: z.email(),
+    EMAIL_USER: z.email(),
     EMAIL_PASSWORD: z.string(),
     API_SECRET: z.string().min(20),
-    RABBITMQ_URL: z.string().url(),
-    UPSTASH_REDIS_REST_URL: z.string().url().min(20),
+    UPSTASH_REDIS_REST_URL: z.url().min(20),
     UPSTASH_REDIS_REST_TOKEN: z.string().min(20),
+    RABBITMQ_URL: z.url().min(20),
   },
   runtimeEnv: {
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -33,7 +33,7 @@ export const env = createEnv({
     EMAIL_USER: process.env.EMAIL_USER,
     EMAIL_PASSWORD: process.env.EMAIL_PASSWORD,
     API_SECRET: process.env.API_SECRET,
-    RABBITMQ_URL: process.env.RABBITMQ_URL,
+    RABBITMQ_URL: z.url().min(20),
   },
   skipValidation: process.env.NODE_ENV !== 'development',
 })

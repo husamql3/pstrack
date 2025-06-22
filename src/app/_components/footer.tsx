@@ -1,7 +1,7 @@
 import { Star } from 'lucide-react'
 import { Suspense } from 'react'
 
-import { USERNAME, REPO_NAME } from '@/data/constants'
+import { REPO_NAME, USERNAME } from '@/data/constants'
 
 import { GitHubStarsButton } from '@/ui/github-stars'
 

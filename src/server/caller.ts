@@ -1,10 +1,9 @@
 import { headers } from 'next/headers'
-import { createClient } from '@/supabase/server'
-
-import { createCallerFactory } from '@/server/trpc'
-import { appRouter } from '@/server/root'
-import { db } from '@/prisma/db'
 import { getLeetcoderById } from '@/dao/leetcoder.dao'
+import { db } from '@/prisma/db'
+import { appRouter } from '@/server/root'
+import { createCallerFactory } from '@/server/trpc'
+import { createClient } from '@/supabase/server'
 
 // Create a type-safe caller that can be used in server components
 export const createCaller = async () => {

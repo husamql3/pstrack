@@ -1,7 +1,7 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
+import { useCallback, useEffect, useState } from 'react'
 import { cn } from '@/utils/cn'
 
 interface StarLayerProps {

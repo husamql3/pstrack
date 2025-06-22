@@ -1,4 +1,4 @@
-import { resource_types } from '@prisma/client'
+import type { resource_types } from '@prisma/client'
 
 export type FileResource = {
   name: string
