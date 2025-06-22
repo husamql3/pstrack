@@ -25,7 +25,7 @@ const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
       lang="en"
       className="dark"
     >
-      <body className={cn('dark bg-zinc-950 -tracking-wide antialiased', geist.className)}>
+      <body className={cn('dark bg-neutral-950 -tracking-wide antialiased', geist.className)}>
         <TRPCReactProvider>
           <NuqsAdapter>{children}</NuqsAdapter>
         </TRPCReactProvider>

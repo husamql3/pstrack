@@ -1,4 +1,4 @@
-import { Suspense } from 'react'
+'use server'
 
 import { api } from '@/trpc/server'
 import { VERSION } from '@/data/constants'
@@ -8,17 +8,15 @@ import { UserAuth } from '@/app/_components/user-auth'
 import { Header } from '@/app/_components/header'
 import { NavMenu } from '@/app/_components/nav-menu'
 import { Footer } from '@/app/_components/footer'
-import { StarsBackground } from '@/ui/stars-background'
 import { LinksMenu } from '@/app/_components/links-menu'
+import { StarsBackgroundWrapper } from '../_components/stars-background-wrapper'
 
 const Layout = async ({ children }: { children: React.ReactNode }) => {
   const user = await api.auth.getUser()
 
   return (
     <div className="relative flex h-screen flex-col">
-      <Suspense fallback={<div className="absolute inset-0 bg-black" />}>
-        <StarsBackground className="fixed inset-0 -z-10" />
-      </Suspense>
+      <StarsBackgroundWrapper />
 
       <Header>
         <LinksMenu className="sm:hidden" />
