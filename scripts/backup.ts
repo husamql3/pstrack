@@ -14,13 +14,17 @@ async function main() {
     }
 
     // Step 2: Fetch data from Prisma
-    const [leetcoders, groups, roadmap, group_progress, submissions] = await Promise.all([
-      db.leetcoders.findMany(),
-      db.groups.findMany(),
-      db.roadmap.findMany(),
-      db.group_progress.findMany(),
-      db.submissions.findMany(),
-    ])
+    const [leetcoders, groups, roadmap, group_progress, submissions, resources, resource_tabs, resource_types] =
+      await Promise.all([
+        db.leetcoders.findMany(),
+        db.groups.findMany(),
+        db.roadmap.findMany(),
+        db.group_progress.findMany(),
+        db.submissions.findMany(),
+        db.resources.findMany(),
+        db.resource_tabs.findMany(),
+        db.resource_types.findMany(),
+      ])
 
     console.log('Fetched data:', {
       leetcoders: leetcoders.length,
@@ -28,6 +32,9 @@ async function main() {
       roadmap: roadmap.length,
       group_progress: group_progress.length,
       submissions: submissions.length,
+      resources: resources.length,
+      resource_tabs: resource_tabs.length,
+      resource_types: resource_types.length,
     })
 
     // Step 3: Create backup directory with readable date
@@ -44,6 +51,9 @@ async function main() {
       roadmap,
       group_progress,
       submissions,
+      resources,
+      resource_tabs,
+      resource_types,
     }
 
     console.log('Backup data:', {
