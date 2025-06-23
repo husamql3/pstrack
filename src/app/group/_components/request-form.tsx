@@ -1,3 +1,6 @@
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
 import { Input } from '@/ui/input'
 import { Label } from '@/ui/label'
 
@@ -8,6 +11,21 @@ export type FormDataType = {
   gh_username: string
 }
 
+const RequestToJoinSchema = z.object({
+  name: z.string().min(3, { message: 'Name must be at least 3 characters long' }).max(100),
+  username: z
+    .string()
+    .min(3, { message: 'Username must be at least 3 characters long' })
+    .max(100)
+    .refine((val) => !val.includes(' '), {
+      message: 'Username cannot contain spaces',
+    }),
+  lc_username: z.string().min(1, { message: 'LeetCode username is required.' }),
+  gh_username: z.string().optional(),
+})
+
+type RequestToJoinSchemaType = z.infer<typeof RequestToJoinSchema>
+
 export const RequestForm = ({
   formData,
   handleInputChange,
@@ -17,10 +35,20 @@ export const RequestForm = ({
 }: {
   formData: FormDataType
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void
-  handleRequest: (e: React.FormEvent<HTMLFormElement>) => void
+  handleRequest: (data: RequestToJoinSchemaType) => void
   isPending: boolean
   groupId: string
 }) => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<RequestToJoinSchemaType>({
+    resolver: zodResolver(RequestToJoinSchema),
+    defaultValues: formData,
+    mode: 'onSubmit',
+  })
+
   const formFields = [
     {
       id: 'name',
@@ -48,13 +76,20 @@ export const RequestForm = ({
     },
   ]
 
+  // Sync input changes with parent state
+  const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    handleInputChange(e)
+    // Optionally, validate on change:
+    // trigger(e.target.name as keyof RequestToJoinSchemaType)
+  }
+
   return (
     <div className="w-full">
       <h3 className="mb-2 text-xl font-medium text-neutral-100">
         Request to join <span className="font-semibold">Group {groupId.padStart(2, '0')}</span>
       </h3>
       <form
-        onSubmit={handleRequest}
+        onSubmit={handleSubmit(handleRequest)}
         id="request-to-join-form"
         className="flex flex-col gap-5 pt-4 pb-1"
       >
@@ -69,14 +104,18 @@ export const RequestForm = ({
             </Label>
             <Input
               id={id}
+              {...register(id as keyof RequestToJoinSchemaType)}
               name={id}
               value={formData[id as keyof FormDataType]}
-              onChange={handleInputChange}
+              onChange={onInputChange}
               placeholder={placeholder}
               required={required}
               disabled={isPending}
               autoComplete="off"
             />
+            {errors[id as keyof RequestToJoinSchemaType] && (
+              <p className="text-sm text-red-500">{errors[id as keyof RequestToJoinSchemaType]?.message as string}</p>
+            )}
           </div>
         ))}
       </form>

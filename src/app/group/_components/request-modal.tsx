@@ -64,16 +64,13 @@ export const RequestModal = ({ groupId }: { groupId: string }) => {
   }, [])
 
   const handleRequest = useCallback(
-    async (e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault()
-
+    async (data: { name: string; username: string; lc_username: string; gh_username?: string }) => {
       if (!user) {
         toast.error('You must be logged in to request to join a group', {
           style: errorToastStyle,
           duration: 10000,
           closeButton: true,
         })
-
         return
       }
 
@@ -83,7 +80,7 @@ export const RequestModal = ({ groupId }: { groupId: string }) => {
       })
 
       // Process LeetCode username if it's a profile URL
-      let lc_username = formData.lc_username
+      let lc_username = data.lc_username
       if (lc_username.includes('leetcode.com')) {
         // Check if it's a valid LeetCode URL format
         const leetcodeRegex = /leetcode\.com\/u\/([a-zA-Z0-9_-]+)/
@@ -104,10 +101,10 @@ export const RequestModal = ({ groupId }: { groupId: string }) => {
 
       requestToJoin(
         {
-          name: formData.name,
-          username: formData.username,
+          name: data.name,
+          username: data.username,
           lc_username: lc_username, // Use the processed username
-          gh_username: formData.gh_username,
+          gh_username: data.gh_username,
           group_no: groupId,
         },
         {
@@ -155,7 +152,7 @@ export const RequestModal = ({ groupId }: { groupId: string }) => {
         }
       )
     },
-    [formData, groupId, requestToJoin, router, user]
+    [groupId, requestToJoin, router, user]
   )
 
   const handleSetActiveIdx = useCallback(

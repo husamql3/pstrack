@@ -132,6 +132,7 @@ export const resourcesRouter = createTRPCRouter({
   addResource: publicProcedure
     .input(AddNewResourceSchema)
     .mutation(async ({ input, ctx }): Promise<resources | null> => {
+      throw new Error('Simulated server error for testing')
       try {
         const resource = await db.resources.create({
           data: {
