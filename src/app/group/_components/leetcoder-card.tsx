@@ -18,7 +18,7 @@ export const LeetCoderCard = ({ leetcoder, className }: { leetcoder: leetcodersT
   const isVisible = memoizedLeetcoder.is_visible
 
   return (
-    <HoverCard>
+    <HoverCard openDelay={1}>
       <div className="flex items-center gap-3">
         <HoverCardTrigger asChild>
           <p
