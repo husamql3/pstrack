@@ -43,6 +43,7 @@ next-env.d.ts
 .build
 .idea
 src/archive
+src/prisma/seed/
 src/app/api/test/*
 
 certificates
