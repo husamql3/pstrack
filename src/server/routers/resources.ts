@@ -1,8 +1,8 @@
 import type { Prisma, resources } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
-import { redis } from '@/config/redis'
-import { ADMINS_EMAILS, REDIS_KEYS } from '@/data/constants'
+// import { redis } from '@/config/redis'
+import { ADMINS_EMAILS } from '@/data/constants'
 import { db } from '@/prisma/db'
 import { createTRPCRouter, publicProcedure } from '@/server/trpc'
 import type { ResourcesResponse, ResourceTabOption, ResourceTypeOption } from '@/types/resources.type'
@@ -19,11 +19,11 @@ export const resourcesRouter = createTRPCRouter({
    * @returns {ResourcesResponse}
    */
   getResources: publicProcedure.query(async (): Promise<ResourcesResponse> => {
-    const cachedResources = (await redis.get(REDIS_KEYS.RESOURCES)) as ResourcesResponse | null
-    if (cachedResources) {
-      logger.debug('[Cache] Using cached resources')
-      return cachedResources
-    }
+    // const cachedResources = (await redis.get(REDIS_KEYS.RESOURCES)) as ResourcesResponse | null
+    // if (cachedResources) {
+    //   logger.debug('[Cache] Using cached resources')
+    //   return cachedResources
+    // }
 
     const resources = await db.resources.findMany({
       where: {
@@ -63,7 +63,7 @@ export const resourcesRouter = createTRPCRouter({
       problemSolving: groupByTopic(psResources.map((r) => ({ ...r, type: r.type.name, tab: r.tab.name }))),
     }
 
-    await redis.set(REDIS_KEYS.RESOURCES, response, { ex: 900 }) // cache for 15 minutes
+    // await redis.set(REDIS_KEYS.RESOURCES, response, { ex: 900 }) // cache for 15 minutes
     return response
   }),
 
@@ -132,7 +132,6 @@ export const resourcesRouter = createTRPCRouter({
   addResource: publicProcedure
     .input(AddNewResourceSchema)
     .mutation(async ({ input, ctx }): Promise<resources | null> => {
-      throw new Error('Simulated server error for testing')
       try {
         const resource = await db.resources.create({
           data: {

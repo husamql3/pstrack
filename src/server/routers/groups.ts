@@ -1,11 +1,11 @@
-import type { groups } from '@prisma/client'
+// import type { groups } from '@prisma/client'
 import { z } from 'zod/v4'
-import { redis } from '@/config/redis'
-import { MAX_LEETCODERS, REDIS_KEYS } from '@/data/constants'
+// import { redis } from '@/config/redis'
+import { MAX_LEETCODERS } from '@/data/constants'
 import { db } from '@/prisma/db'
 import { createTRPCRouter, publicProcedure } from '@/server/trpc'
 import type { GetAllGroupsInfoType, GroupTableDataType } from '@/trpc/groups.type'
-import { logger } from '@/utils/logger'
+// import { logger } from '@/utils/logger'
 
 export const groupsRouter = createTRPCRouter({
   /**
@@ -17,13 +17,13 @@ export const groupsRouter = createTRPCRouter({
   getGroupTableData: publicProcedure
     .input(z.object({ group_no: z.string().transform((val) => Number(val)) }))
     .query(async ({ input }): Promise<GroupTableDataType> => {
-      const cachedGroupData = (await redis.get(
-        REDIS_KEYS.GROUP_DATA(input.group_no.toString())
-      )) as GroupTableDataType | null
-      if (cachedGroupData) {
-        logger.debug(`[Cache] Using cached group data for group ${input.group_no}`)
-        return cachedGroupData
-      }
+      // const cachedGroupData = (await redis.get(
+      //   REDIS_KEYS.GROUP_DATA(input.group_no.toString())
+      // )) as GroupTableDataType | null
+      // if (cachedGroupData) {
+      //   logger.debug(`[Cache] Using cached group data for group ${input.group_no}`)
+      //   return cachedGroupData
+      // }
 
       const groupData = await db.groups.findUnique({
         where: {
@@ -45,7 +45,7 @@ export const groupsRouter = createTRPCRouter({
         },
       })
 
-      await redis.set(REDIS_KEYS.GROUP_DATA(input.group_no.toString()), groupData, { ex: 900 }) // cache for 15 minutes
+      // await redis.set(REDIS_KEYS.GROUP_DATA(input.group_no.toString()), groupData, { ex: 900 }) // cache for 15 minutes
       return groupData as GroupTableDataType
     }),
   /**
@@ -54,15 +54,15 @@ export const groupsRouter = createTRPCRouter({
    * @returns {groups[]}
    */
   getAllGroups: publicProcedure.query(async () => {
-    const cachedGroups = (await redis.get(REDIS_KEYS.ALL_GROUPS)) as groups[] | null
-    if (cachedGroups) {
-      logger.debug(`[Cache] Using cached all groups data`)
-      return cachedGroups
-    }
+    // const cachedGroups = (await redis.get(REDIS_KEYS.ALL_GROUPS)) as groups[] | null
+    // if (cachedGroups) {
+    //   logger.debug(`[Cache] Using cached all groups data`)
+    //   return cachedGroups
+    // }
 
     const groups = await db.groups.findMany()
 
-    await redis.set(REDIS_KEYS.ALL_GROUPS, groups, { ex: 900 }) // cache for 15 minutes
+    // await redis.set(REDIS_KEYS.ALL_GROUPS, groups, { ex: 900 }) // cache for 15 minutes
     return groups
   }),
   /**
@@ -98,11 +98,11 @@ export const groupsRouter = createTRPCRouter({
    * @returns {GetAllGroupsInfoType[]}
    */
   getAllGroupsInfo: publicProcedure.query(async () => {
-    const cachedGroupsInfo = (await redis.get(REDIS_KEYS.ALL_GROUPS_INFO)) as GetAllGroupsInfoType[] | null
-    if (cachedGroupsInfo) {
-      logger.debug(`[Cache] Using cached all groups info data`)
-      return cachedGroupsInfo
-    }
+    // const cachedGroupsInfo = (await redis.get(REDIS_KEYS.ALL_GROUPS_INFO)) as GetAllGroupsInfoType[] | null
+    // if (cachedGroupsInfo) {
+    //   logger.debug(`[Cache] Using cached all groups info data`)
+    //   return cachedGroupsInfo
+    // }
 
     const groupsInfo = await db.groups.findMany({
       orderBy: {
@@ -129,7 +129,7 @@ export const groupsRouter = createTRPCRouter({
       },
     })
 
-    await redis.set(REDIS_KEYS.ALL_GROUPS_INFO, groupsInfo, { ex: 900 }) // cache for 15 minutes
+    // await redis.set(REDIS_KEYS.ALL_GROUPS_INFO, groupsInfo, { ex: 900 }) // cache for 15 minutes
     return groupsInfo as GetAllGroupsInfoType[]
   }),
 })

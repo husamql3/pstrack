@@ -12,11 +12,11 @@ export type FormDataType = {
 }
 
 const RequestToJoinSchema = z.object({
-  name: z.string().min(3, { message: 'Name must be at least 3 characters long' }).max(100),
+  name: z.string().min(3, { message: 'Name must be at least 3 characters long' }).max(12),
   username: z
     .string()
     .min(3, { message: 'Username must be at least 3 characters long' })
-    .max(100)
+    .max(12)
     .refine((val) => !val.includes(' '), {
       message: 'Username cannot contain spaces',
     }),
