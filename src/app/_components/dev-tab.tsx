@@ -1,8 +1,10 @@
 import { env } from '@/config/env.mjs'
 
 export const DevTab = () => {
-  const isDevDb = env.DATABASE_URL.toLowerCase().includes('pstrack-dev')
+  const prod = env.NODE_ENV === 'production'
+  if (prod) return null
 
+  const isDevDb = env.DATABASE_URL.toLowerCase().includes('pstrack-dev')
   return (
     <div className="fixed right-6 bottom-6 z-50 flex flex-col items-center gap-3">
       {isDevDb ? (
