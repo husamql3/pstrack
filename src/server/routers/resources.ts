@@ -63,7 +63,7 @@ export const resourcesRouter = createTRPCRouter({
       problemSolving: groupByTopic(psResources.map((r) => ({ ...r, type: r.type.name, tab: r.tab.name }))),
     }
 
-    await redis.set(REDIS_KEYS.RESOURCES, response, { ex: 60 * 60 * 24 }) // 24 hours
+    await redis.set(REDIS_KEYS.RESOURCES, response, { ex: 900 }) // cache for 15 minutes
     return response
   }),
 

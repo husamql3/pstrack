@@ -45,7 +45,7 @@ export const groupsRouter = createTRPCRouter({
         },
       })
 
-      await redis.set(REDIS_KEYS.GROUP_DATA(input.group_no.toString()), groupData, { ex: 86400 }) // cache for one day
+      await redis.set(REDIS_KEYS.GROUP_DATA(input.group_no.toString()), groupData, { ex: 900 }) // cache for 15 minutes
       return groupData as GroupTableDataType
     }),
   /**
@@ -62,7 +62,7 @@ export const groupsRouter = createTRPCRouter({
 
     const groups = await db.groups.findMany()
 
-    await redis.set(REDIS_KEYS.ALL_GROUPS, groups, { ex: 604800 }) // cache for 7 days
+    await redis.set(REDIS_KEYS.ALL_GROUPS, groups, { ex: 900 }) // cache for 15 minutes
     return groups
   }),
   /**
@@ -129,7 +129,7 @@ export const groupsRouter = createTRPCRouter({
       },
     })
 
-    await redis.set(REDIS_KEYS.ALL_GROUPS_INFO, groupsInfo, { ex: 86400 }) // cache for one day
+    await redis.set(REDIS_KEYS.ALL_GROUPS_INFO, groupsInfo, { ex: 900 }) // cache for 15 minutes
     return groupsInfo as GetAllGroupsInfoType[]
   }),
 })
