@@ -3,10 +3,10 @@
 import type { leetcoders } from '@prisma/client'
 import { createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import { Calendar, Hash, Puzzle, Tag, Target } from 'lucide-react'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { FaTrophy } from 'react-icons/fa6'
-import { toast } from 'sonner'
-import { infoToastStyle } from '@/app/_components/toast-styles'
+// import { toast } from 'sonner'
+// import { infoToastStyle } from '@/app/_components/toast-styles'
 import { LargeScreenTable } from '@/app/group/_components/large-screen-table'
 import { LeetCoderCard } from '@/app/group/_components/leetcoder-card'
 import { SmallScreenTable } from '@/app/group/_components/small-screen-table'
@@ -35,12 +35,12 @@ export const TrackTable = ({
   const [currentVisibleCount, setCurrentVisibleCount] = useState(VISIBLE_COUNT)
   const isLargeScreen = useScreenSize()
 
-  useEffect(() => {
-    toast.info(
-      'We currently do not have any new problems. We are pausing our progress until the exam period is over.',
-      { style: infoToastStyle, duration: 5000, closeButton: true }
-    )
-  }, [])
+  // useEffect(() => {
+  //   toast.info(
+  //     'We currently do not have any new problems. We are pausing our progress until the exam period is over.',
+  //     { style: infoToastStyle, duration: 5000, closeButton: true }
+  //   )
+  // }, [])
 
   const leetcoderSolvedCounts: Record<string, number> = useMemo(() => {
     const counts: Record<string, number> = {}
