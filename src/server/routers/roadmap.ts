@@ -1,4 +1,4 @@
-import type { roadmap } from '@prisma/client'
+// import type { roadmap } from '@prisma/client'
 import { z } from 'zod/v4'
 import type { RoadmapType } from '@/app/(public)/roadmap/_components/roadmap'
 import { redis } from '@/config/redis'
@@ -24,13 +24,13 @@ export const roadmapRouter = createTRPCRouter({
     .query(async ({ input }) => {
       if (!input.length) return []
 
-      const cachedProblems = (await redis.get(REDIS_KEYS.GROUP_PROBLEMS(input[0].current_problem.toString()))) as
-        | roadmap[]
-        | null
-      if (cachedProblems) {
-        logger.debug(`[Cache] Using cached group problems for problem ${input[0].current_problem}`)
-        return cachedProblems
-      }
+      // const cachedProblems = (await redis.get(REDIS_KEYS.GROUP_PROBLEMS(input[0].current_problem.toString()))) as
+      //   | roadmap[]
+      //   | null
+      // if (cachedProblems) {
+      //   logger.debug(`[Cache] Using cached group problems for problem ${input[0].current_problem}`)
+      //   return cachedProblems
+      // }
 
       const currentProblems = input.map((gp) => gp.current_problem)
       const groupProblems = await db.roadmap.findMany({
@@ -41,7 +41,7 @@ export const roadmapRouter = createTRPCRouter({
         },
       })
 
-      await redis.set(REDIS_KEYS.GROUP_PROBLEMS(input[0].current_problem.toString()), groupProblems, { ex: 86400 }) // cache for one day
+      // await redis.set(REDIS_KEYS.GROUP_PROBLEMS(input[0].current_problem.toString()), groupProblems, { ex: 86400 }) // cache for one day
       return groupProblems
     }),
 
