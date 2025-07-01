@@ -4,12 +4,11 @@ import type { leetcoders } from '@prisma/client'
 import type { CellContext } from '@tanstack/react-table'
 import { debounce } from 'lodash'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { errorToastStyle, loadingToastStyle, successToastStyle } from '@/app/_components/toast-styles'
 import { Checkbox } from '@/app/group/_components/checkbox'
 import { useConfettiStore } from '@/stores/confettiStore'
-import { useSubmissionStore } from '@/stores/submissionStore'
 import { api } from '@/trpc/react'
 import type { TableRowOutput } from '@/types/tableRow.type'
 
@@ -25,34 +24,30 @@ export const SubmitCheckbox = ({
   problemSlug: string
 }) => {
   const router = useRouter()
+  const utils = api.useUtils()
 
   // Get the submission from the table data
   const submission = info.getValue()
   const problemId = info.row.original.problem.id
 
-  // Create a unique submission key for the store
-  const submissionKey = `${leetcoder.group_no}:${leetcoder.id}:${problemId}`
-
-  // Get submission state and setter from the Zustand store
-  const { isSubmitted, setSubmission, hasPendingSubmission, setPendingSubmission } = useSubmissionStore()
-
-  // Check both the API data and the store for submission state
-  const [isChecked, setIsChecked] = useState(() => {
-    return isSubmitted(submissionKey) || !!submission
-  })
+  // Use server data as the single source of truth
+  const [isChecked, setIsChecked] = useState(() => !!submission)
 
   const { triggerConfetti } = useConfettiStore()
 
   const { mutate: submitMutation, isPending } = api.submissions.create.useMutation()
+
   const { data: user } = api.auth.getUser.useQuery()
   const isCurrUser = user?.id === leetcoder.id
+
+  // Update local state when server data changes
+  useEffect(() => {
+    setIsChecked(!!submission)
+  }, [submission])
 
   const handleCheckboxChange = debounce(() => {
     // If already checked, do nothing
     if (isChecked) return
-
-    // Set pending submission state
-    setPendingSubmission(true)
 
     // Optimistically update the UI
     setIsChecked(true)
@@ -73,28 +68,25 @@ export const SubmitCheckbox = ({
       },
       {
         onSuccess: async () => {
-          // Dismiss loading toast and show success
           toast.dismiss(loadingToastId)
+          triggerConfetti()
+
+          // Invalidate and refetch the group data to get updated submissions
+          await utils.groups.getGroupTableData.invalidate({ group_no: groupId })
+
+          // Show success toast
           toast.success('Submission successful!', {
             style: successToastStyle,
             closeButton: true,
           })
 
-          // Trigger confetti animation
-          triggerConfetti()
-
-          // Ensure it stays checked and save to the store
-          setIsChecked(true)
-          setSubmission(submissionKey, true)
-
-          // Clear pending state
-          setPendingSubmission(false)
-
-          // Refresh the page to re-sort the table
+          // Refresh the page to re-sort the table with updated data
           router.refresh()
         },
-        onError: async (error) => {
-          // Dismiss loading toast and show error
+        onError: (error) => {
+          // Reset the checked state to match server data
+          setIsChecked(!!submission)
+
           toast.dismiss(loadingToastId)
 
           const errorMsg =
@@ -107,13 +99,6 @@ export const SubmitCheckbox = ({
             duration: 5000,
             closeButton: true,
           })
-
-          // Reset the checked state on error
-          setIsChecked(!!submission)
-          setSubmission(submissionKey, false)
-
-          // Clear pending state
-          setPendingSubmission(false)
         },
       }
     )
@@ -123,7 +108,7 @@ export const SubmitCheckbox = ({
     <Checkbox
       checked={isChecked}
       onCheckedChange={handleCheckboxChange}
-      disabled={isPending || isChecked || !user || !isCurrUser || hasPendingSubmission}
+      disabled={isPending || isChecked || !user || !isCurrUser}
       className="peer size-4 shrink-0 rounded-sm border border-zinc-200 shadow focus-visible:ring-1 focus-visible:ring-zinc-950 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 dark:border-zinc-400 dark:focus-visible:ring-zinc-300"
     />
   )

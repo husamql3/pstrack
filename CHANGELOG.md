@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.8.37]
+- fix checkbox submission bug
+
 ## [2.7.37]
 - update dashboard tables
 
