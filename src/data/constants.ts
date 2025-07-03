@@ -39,7 +39,7 @@ export const PROTECTED_ROUTES = ['/dashboard']
  */
 export const UNSOLVED_THRESHOLD = 6
 export const MAX_LEETCODERS = 35
-export const NOT_STARTED_GROUPS = [9]
+export const NOT_STARTED_GROUPS = [0]
 
 /**
  * API request configuration
