@@ -204,12 +204,12 @@ export const GitHubStarsButton = ({
                 style={{
                   background: 'radial-gradient(circle, rgba(255,215,0,0.4) 0%, rgba(255,215,0,0) 70%)',
                 }}
-                {...animations.pulse}
+                // {...animations.pulse}
               />
               <motion.div
                 className="absolute inset-0 rounded-full"
                 style={{ boxShadow: '0 0 10px 2px rgba(255,215,0,0.6)' }}
-                {...animations.glow}
+                // {...animations.glow}
               />
               {[...Array(6)].map((_, i) => (
                 <motion.div
@@ -217,7 +217,7 @@ export const GitHubStarsButton = ({
                   className="absolute h-1 w-1 rounded-full bg-yellow-500"
                   initial={animations.particle(i).initial}
                   animate={animations.particle(i).animate}
-                  transition={animations.particle(i).transition}
+                  // transition={animations.particle(i).transition}
                 />
               ))}
             </>
