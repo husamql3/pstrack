@@ -194,14 +194,14 @@
 
 ## Key Milestones
 
-| Week | Milestone | Success Criteria |
-|------|-----------|------------------|
-| 2 | Auth Working | Users can signup/login |
-| 4 | Daily Problems | Users can solve and get verified |
-| 6 | Notifications | Users receive emails and in-app alerts |
-| 8 | Community Features | Leaderboards and solutions live |
-| 10 | Premium Tier | Stripe integration complete |
-| 12 | Beta Launch | 50+ active users |
+| Week | Milestone          | Success Criteria                       |
+|------|--------------------|----------------------------------------|
+| 2    | Auth Working       | Users can signup/login                 |
+| 4    | Daily Problems     | Users can solve and get verified       |
+| 6    | Notifications      | Users receive emails and in-app alerts |
+| 8    | Community Features | Leaderboards and solutions live        |
+| 10   | Premium Tier       | Stripe integration complete            |
+| 12   | Beta Launch        | 50+ active users                       |
 
 ---
 

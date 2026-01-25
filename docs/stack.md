@@ -4,14 +4,15 @@
 
 ### Framework & Routing
 
-- **React 18**
+- **React 19**
 - **TanStack Start**
 - **TanStack Router**
 - **TanStack Query**
 
 ### UI & Styling
 
-- **ShadCN** - Component library (based on Radix UI)
+- **ShadCN** - Component library (based on BaseUI)
+- **shadcnstudio**
 - **Tailwind CSS** - Utility-first styling
 - **tabler/icons-react** - Icon library
 - **React Email** - Email template components
