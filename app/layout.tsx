@@ -15,6 +15,41 @@ const geist = Geist({
 export const metadata: Metadata = {
   title: "PStrack",
   description: "The platform that helps you solve, track, and grow.",
+  authors: [{ name: 'Hüsam' }],
+  creator: '@husamql3',
+  publisher: 'PSTrack',
+  formatDetection: {
+    email: false,
+    telephone: false,
+    address: false,
+  },
+  metadataBase: new URL('https://www.pstrack.app'),
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    title: 'PSTrack',
+    description: 'A platform that helps you solve, track, and grow',
+    url: 'https://www.pstrack.app',
+    siteName: 'PSTrack',
+    locale: 'en_US',
+    type: 'website',
+    images: [
+      {
+        url: 'https://www.pstrack.app/og-image.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'PSTrack - A platform that helps you solve, track, and grow',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'PSTrack',
+    description: 'A platform that helps you solve, track, and grow',
+    creator: '@husamql3',
+    images: ['https://www.pstrack.app/og-image.jpg'],
+  },
 };
 
 function RootLayout({
