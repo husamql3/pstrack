@@ -14,7 +14,7 @@
 /coverage
 
 # next.js
-/.next**/
+/.next/
 /out/
 
 # production
@@ -39,11 +39,3 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-
-.build
-.idea
-src/archive
-src/prisma/seed/
-src/app/api/test/*
-
-certificates
