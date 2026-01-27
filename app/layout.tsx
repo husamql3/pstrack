@@ -65,6 +65,7 @@ function RootLayout({
         <div className="absolute inset-0 flex h-dvh w-full flex-col items-center justify-center overflow-hidden bg-zinc-950">
           <DotPattern
             glow={true}
+            cr={1.5}
             className="md:mask-[radial-gradient(300px_circle_at_center,white,transparent)] mask-[radial-gradient(250px_circle_at_center,white,transparent)]"
           />
         </div>
