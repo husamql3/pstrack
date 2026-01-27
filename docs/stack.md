@@ -11,17 +11,17 @@
 
 ### UI & Styling
 
-- **ShadCN** - Component library (based on BaseUI)
+- **ShadCN**
 - **shadcnstudio**
-- **Tailwind CSS** - Utility-first styling
+- **Tailwind CSS**
 - **tabler/icons-react** - Icon library
-- **React Email** - Email template components
+- **React Email**
 
 ### State & Forms
 
-- **Zod** - Schema validation
-- **React Hook Form** - Form management
-- **Zustand** - Lightweight state management (for global UI state)
+- **Zod**
+- **React Hook Form**
+- **Zustand**
 
 ### Code Display
 
@@ -42,14 +42,22 @@
 - **Drizzle ORM** - Type-safe ORM
 - **Drizzle Kit** - Migrations & schema management
 
-### Caching & Jobs
+### Caching & Real-time
 
-- **Upstash Redis** - Managed Redis for:
-  - Session storage
+- **Upstash Redis** - for:
   - Rate limiting
   - Leaderboard caching (sorted sets)
   - Feed caching
-- **Trigger.dev** - Background jobs & workflows:
+- **Upstash Realtime** - for:
+  - In-app notifications
+  - Live activity feed updates
+  - Real-time leaderboard updates
+  - Presence indicators (who's online)
+  - Pub/sub for user events
+
+### Background Jobs
+
+- **Trigger.dev** - for:
   - Daily problem verification checks
   - Streak calculations
   - Suspension automation
@@ -58,11 +66,7 @@
 
 ### Authentication
 
-- **Better-Auth** - Modern auth library
-  - Email/password
-  - Magic links
-  - Session management
-  - CSRF protection
+- **Better-Auth**
 
 ### File Storage
 
@@ -76,22 +80,18 @@
 
 ### Email
 
-- **Resend** - Transactional email service
+- **Resend** - email service
 - **React Email** - Type-safe email templates
 
 ### Validation & Type Safety
 
-- **Zod**
-- **T3-env**
+- **Zod** - Schema validation
+- **T3-env** - Type-safe environment variables
 
 ### Monitoring & Analytics
 
-- **Sentry** -
-- **PostHog** - Product analytics:
-  - Feature usage tracking
-  - User funnels
-  - A/B testing
-  - Session replays
+- **Sentry**
+- **PostHog**
 
 ### External APIs
 
@@ -105,26 +105,22 @@
 
 ### Deployment
 
-- **Dokploy** - Self-hosted PaaS on VPS
-  - Container orchestration
-  - Zero-downtime deployments
-  - Built-in monitoring
-- **Docker** - Containerization
-- **Docker Compose** - Multi-container orchestration
+- **Cloudflare Workers**
+- **Cloudflare Pages**
 
-### Hosting
+### Hosting & CDN
 
-- **VPS** (DigitalOcean/Hetzner) - Application server
-- **Cloudflare** - DNS, CDN, DDoS protection
-- **Supabase** - Storage hosting
+- **Cloudflare** - Web/Server
+- **Supabase** - Storage
+- **Upstash** - Redis + Realtime hosting
+- **Trigger.dev Cloud** - Background job hosting
 
 ### CI/CD
 
 - **GitHub Actions** - Automated workflows:
-  - Lint & type-check on PR
-  - Run tests
-  - Build Docker images
-  - Deploy to Dokploy via SSH
+  - Lint & Format & type-check & tests on PR
+  - Deploy to Cloudflare via Wrangler
+  - Upload source maps to Sentry
 
 ---
 
@@ -132,7 +128,7 @@
 
 ### Monorepo Management
 
-- **Turborepo**
+- **Turborepo** - Build system and task runner
 
 ### Code Quality
 
@@ -141,48 +137,60 @@
 
 ### Git Hooks
 
-- **Lefthook** - Fast git hooks manager
-  - Pre-commit: lint staged files
+- **Lefthook**
+  - Pre-commit: lint & format staged files
   - Pre-push: run tests
 
 ### Package Management
 
 - **Bun**
 
+### Local Development
+
+- **Docker Compose** - Local Postgres instance
+- **Drizzle Studio** - Database GUI
+- **Wrangler Dev** - Local Cloudflare Workers emulation
+
 ---
 
 ## Architecture Diagram
 
 ```text
-┌─────────────────────────────────────────────────────────────┐
-│                         Client Layer                        |
-│  (React + TanStack Router + TanStack Query + ShadCN)        │
-│                  Deployed via Dokploy                       │
-└─────────────────────┬───────────────────────────────────────┘
+┌───────────────────────────────────────────────────────────────┐
+│                      Client Layer (React)                     │
+│            TanStack Router + Query + ShadCN                   │
+│                  Deployed on Cloudflare Pages                 │
+└──────────────────────┬────────────────────────────────────────┘
                       │ HTTPS
                       ▼
-┌─────────────────────────────────────────────────────────────┐
-│                       Cloudflare CDN                        │
-│                    (DNS, DDoS Protection)                   │
-└─────────────────────┬───────────────────────────────────────┘
+┌───────────────────────────────────────────────────────────────┐
+│                    Cloudflare Global Network                  │
+│              (Edge CDN, DDoS Protection, WAF)                 │
+└──────────────────────┬────────────────────────────────────────┘
                       │
                       ▼
-┌─────────────────────────────────────────────────────────────┐
-│                      API Layer (Hono)                       │
-│                    Running on Bun Runtime                   │
-│                     Deployed via Dokploy                    │
-├─────────────────────────────────────────────────────────────┤
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐       │
-│  │ Better-Auth  │  │   Drizzle    │  │  Trigger.dev │       │
-│  │  (Sessions)  │  │     ORM      │  │ (Background) │       │
-│  └──────────────┘  └──────────────┘  └──────────────┘       │
-└───────┬──────────────────┬──────────────────┬───────────────┘
+┌───────────────────────────────────────────────────────────────┐
+│                 API Layer (Hono on Bun)                       │
+│              Deployed on Cloudflare Workers                   │
+├───────────────────────────────────────────────────────────────┤
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐        │
+│  │ Better-Auth  │  │   Drizzle    │  │    Sentry    │        │
+│  │  (Sessions)  │  │     ORM      │  │   (Errors)   │        │
+│  └──────────────┘  └──────────────┘  └──────────────┘        │
+└────────┬──────────────────┬──────────────────┬────────────────┘
         │                  │                  │
         ▼                  ▼                  ▼
 ┌──────────────┐  ┌──────────────┐  ┌──────────────┐
-│   Upstash    │  │  Supabase    │  │  Supabase    │
+│   Upstash    │  │  Docker      │  │  Supabase    │
 │    Redis     │  │  PostgreSQL  │  │   Storage    │
 │  (Caching)   │  │  (Database)  │  │  (Avatars)   │
+└──────────────┘  └──────────────┘  └──────────────┘
+        │
+        ▼
+┌──────────────┐  ┌──────────────┐  ┌──────────────┐
+│   Upstash    │  │ Trigger.dev  │  │   PostHog    │
+│  Realtime    │  │ (Background) │  │ (Analytics)  │
+│ (WebSocket)  │  │    Jobs      │  │              │
 └──────────────┘  └──────────────┘  └──────────────┘
 ```
 
@@ -195,9 +203,11 @@
 DATABASE_URL=postgresql://...
 DIRECT_URL=postgresql://... # For migrations
 
-# Redis
+# Redis & Realtime
 UPSTASH_REDIS_URL=
 UPSTASH_REDIS_TOKEN=
+UPSTASH_REALTIME_URL=
+UPSTASH_REALTIME_TOKEN=
 
 # Authentication
 BETTER_AUTH_SECRET=
@@ -221,6 +231,9 @@ TWITTER_ACCESS_SECRET=
 
 # Monitoring
 SENTRY_DSN=
+SENTRY_AUTH_TOKEN= # For source map uploads
+SENTRY_ORG=
+SENTRY_PROJECT=
 POSTHOG_API_KEY=
 POSTHOG_PROJECT_ID=
 
@@ -229,6 +242,7 @@ TRIGGER_API_KEY=
 TRIGGER_API_URL=
 
 # Cloudflare
+CLOUDFLARE_ACCOUNT_ID=
 CLOUDFLARE_API_TOKEN=
 CLOUDFLARE_ZONE_ID=
 ```
@@ -237,15 +251,18 @@ CLOUDFLARE_ZONE_ID=
 
 ## Package Structure
 
-```
+```text
 pstrack-v3/
 ├── apps/
+│   ├── www/                 # prelunching website
+│   │   
 │   ├── web/                 # React client
 │   │   ├── src/
 │   │   │   ├── routes/      # TanStack Router routes
 │   │   │   ├── components/  # UI components
 │   │   │   ├── lib/         # Utilities
 │   │   │   └── hooks/       # Custom hooks
+│   │   ├── wrangler.toml    # Cloudflare Pages config
 │   │   └── package.json
 │   │
 │   └── api/                 # Hono API
@@ -254,19 +271,80 @@ pstrack-v3/
 │       │   ├── lib/         # Business logic
 │       │   ├── jobs/        # Trigger.dev jobs
 │       │   └── db/          # Drizzle schema & migrations
+│       ├── wrangler.toml    # Cloudflare Workers config
 │       └── package.json
 │
 ├── packages/
-│   ├── ui/                  # Shared ShadCN components
-│   ├── db/                  # Drizzle schema (shared)
-│   ├── validation/          # Zod schemas (shared)
-│   └── tsconfig/            # Shared TS configs
+│   ├── db/  
+│   ├── auth/
+│   ├── types/
+│   ├── env/
+│   ├── infra/
+│   └── tsconfig/
 │
-├── tooling/
-│   ├── eslint/
-│   └── typescript/
-│
-├── docker-compose.yml
+├── docker-compose.yml       # Local Postgres
 ├── turbo.json
 └── package.json
+```
+
+---
+
+## Cloudflare Configuration
+
+### Workers Configuration (apps/api/wrangler.toml)
+
+```toml
+name = "pstrack-api"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+
+[env.production]
+name = "pstrack-api"
+routes = [
+  { pattern = "api.pstrack.tech/*", zone_name = "pstrack.tech" }
+]
+
+[env.development]
+name = "pstrack-api-dev"
+
+# Bindings
+[[env.production.durable_objects.bindings]]
+name = "RATE_LIMITER"
+class_name = "RateLimiter"
+
+# Environment Variables (secrets set via `wrangler secret put`)
+# DATABASE_URL, UPSTASH_REDIS_URL, etc.
+```
+
+### Pages Configuration (apps/web/wrangler.toml)
+
+```toml
+name = "pstrack-web"
+compatibility_date = "2024-01-01"
+
+[env.production]
+name = "pstrack"
+routes = [
+  { pattern = "pstrack.tech/*", zone_name = "pstrack.tech" }
+]
+
+[env.development]
+name = "pstrack-dev"
+```
+
+---
+
+## Deployment Commands
+
+```bash
+# Deploy API to Cloudflare Workers
+cd apps/api
+bun run deploy
+
+# Deploy Web to Cloudflare Pages
+cd apps/web
+bun run deploy
+
+# Run locally with Wrangler
+bun run dev # Uses wrangler dev under the hood
 ```

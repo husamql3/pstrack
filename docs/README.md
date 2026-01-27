@@ -1,29 +1,36 @@
-# pstrack.app Documentation
+# pstrack.app
+
+## Overview
+
+**pstrack** is a competitive programming accountability platform that helps developers stay consistent with daily problem-solving through group challenges, gamification, and social accountability.
+
+**Tech Stack**: React 19 + TanStack + Hono + Bun + Drizzle + PostgreSQL + Cloudflare
+
+---
 
 ## Table of Contents
 
 ### 📋 Planning & Specs
 
-- [Features Specification](./features.md) - Complete feature list
-- [Tech Stack](./stack.md) - Technologies and tooling
-- [Architecture](./architecture.md) - System design and infrastructure
-- [Timeline](./timeline.md) - Development phases and milestones
+- [**Features Specification**](./features.md) - Complete feature list and requirements
+- [**Tech Stack**](./stack.md) - Technologies, tools, and architecture
+- [**Architecture**](./architecture.md) - System design, data flows, and security
+- [**Timeline**](./timeline.md) - 12-week development roadmap
 
 ### 💰 Business
 
-- [Freemium Model](./freemium-model.md) - Pricing and monetization
+- [**Freemium Model**](./freemium-model.md) - Pricing tiers and monetization strategy
 
-### 🔧 Technical Details
+---
 
-- [Notifications](./notifications.md) - Notification system architecture
-- [Resources](./resources.md) - Resource management system
-- [API Documentation](./api/) - API endpoints and usage
+## License
 
-### 🚀 Getting Started
+MIT License - see [LICENSE](../LICENSE)
 
-- [Local Development Setup](./setup.md) - How to run locally
-- [Deployment Guide](./deployment.md) - Production deployment
+## Support
 
-### 📝 Contributing
+- **GitHub Issues**: [github.com/yourusername/pstrack/issues](https://github.com/yourusername/pstrack/issues)
+- **Email**: <support@pstrack.tech>
+- **Twitter**: [@husamql3](https://twitter.com/husamql3)
 
-See [CONTRIBUTING.md](../CONTRIBUTING.md)
+---

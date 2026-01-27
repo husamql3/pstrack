@@ -12,16 +12,19 @@
 
 ### Week 1: Project Setup
 
-- [ ] Initialize Turborepo monorepo
-- [ ] Configure Bun, TypeScript, ESLint, Prettier
-- [ ] Setup Lefthook git hooks
-- [ ] Create Docker Compose for local dev
+- [ ] Initialize project
+- [ ] Configure Turborepo monorepo structure
+- [ ] Setup Lefthook git hooks (pre-commit, pre-push)
+- [ ] Configure Oxlint for linting
+- [ ] Setup Docker Compose for local Postgres
 - [ ] Configure Drizzle ORM + migrations
 - [ ] Setup Supabase (Postgres + Storage)
-- [ ] Initialize Upstash Redis
+- [ ] Initialize Upstash Redis + Realtime
 - [ ] Configure T3-env for environment variables
+- [ ] Setup Wrangler for Cloudflare deployment
+- [ ] Configure Sentry error tracking
 
-**Deliverable**: Development environment ready
+**Deliverable**: Development environment ready with local dev server running
 
 ### Week 2: Authentication & Database
 
@@ -82,12 +85,15 @@
 
 - [ ] Build email templates (React Email)
 - [ ] Implement in-app notification panel
-- [ ] Setup SSE for real-time updates
+- [ ] Setup Upstash Realtime for WebSocket notifications
+- [ ] Create React hooks for real-time updates
+- [ ] Implement notification bell with unread count
 - [ ] Create notification preferences UI
 - [ ] Build daily digest job (Trigger.dev)
 - [ ] Implement notification batching
+- [ ] Add presence indicators (who's online)
 
-**Deliverable**: Users receive timely notifications
+**Deliverable**: Users receive timely notifications via email and real-time in-app updates
 
 ---
 
@@ -161,12 +167,16 @@
 - [ ] Create onboarding flow/tutorial
 - [ ] Build landing page (marketing site)
 - [ ] Write documentation (user guide, API docs)
-- [ ] Setup Dokploy deployment
-- [ ] Configure CI/CD (GitHub Actions)
+- [ ] Configure Cloudflare Workers production deployment
+- [ ] Configure Cloudflare Pages production deployment
+- [ ] Setup CI/CD with GitHub Actions + Wrangler
+- [ ] Configure custom domain (pstrack.tech)
+- [ ] Setup Cloudflare DNS and SSL
 - [ ] Perform security audit
+- [ ] Configure Sentry source map uploads
 - [ ] Soft launch to beta testers (50-100 users)
 
-**Deliverable**: Beta launch 🚀
+**Deliverable**: Beta launch ðŸš€
 
 ---
 
@@ -210,8 +220,8 @@
 ### Technical Risks
 
 - **API rate limits**: Implement aggressive caching, batch requests
-- **Bun stability**: Have Node.js fallback ready
-- **Scaling issues**: Start with vertical scaling, plan horizontal later
+- **Cloudflare Workers limits**: Monitor execution time (max 50ms CPU), optimize queries
+- **WebSocket connections**: Upstash Realtime handles auto-reconnection, test connection stability
 
 ### Product Risks
 

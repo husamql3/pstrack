@@ -88,7 +88,7 @@
 1. **Create Group**:
    - User requests group creation
    - Admin approves (prevents spam)
-   - Creator becomes group admin ⁉️
+   - Creator becomes group admin â‰ï¸
 2. **Join Group**:
    - Public: request + admin approval
    - Private: request + admin approval
@@ -101,7 +101,7 @@
    - Set expiration (7/30/90 days or never)
    - Track invite usage
 
-### Group Settings (Admin) ⁉️
+### Group Settings (Admin) â‰ï¸
 
 - Approve/deny join requests
 - Manage members (suspend, remove)
@@ -168,7 +168,7 @@
   - New user joined group
 - Pagination: 20 items per page
 - Filter by activity type
-- Subscribe to user activity (follow feature) ⁉️
+- Subscribe to user activity (follow feature) â‰ï¸
 
 ---
 
@@ -197,18 +197,18 @@
 
 ### Streak Multipliers
 
-- **7-day streak**: 1.2× all points
-- **14-day streak**: 1.5× all points
-- **30-day streak**: 2× all points + exclusive badge
+- **7-day streak**: 1.2 — all points
+- **14-day streak**: 1.5 — all points
+- **30-day streak**: 2 — all points + exclusive badge
 - **Streak protection**: Premium users get 1 "streak freeze" per month
 
 ### Badges
 
-- 🔥 Fire Streak (7/14/30/100 days)
-- 🏆 First Solver (10/50/100 times first in group)
-- 💡 Solution Master (50/100/250 solutions shared)
-- 🎯 Consistent (solve 30 days in a row without pauses)
-- 👑 Legend (top 10 all-time leaderboard)
+- ðŸ”¥ Fire Streak (7/14/30/100 days)
+- ðŸ† First Solver (10/50/100 times first in group)
+- ðŸ’¡ Solution Master (50/100/250 solutions shared)
+- ðŸŽ¯ Consistent (solve 30 days in a row without pauses)
+- ðŸ‘‘ Legend (top 10 all-time leaderboard)
 
 ---
 
@@ -291,35 +291,3 @@
 | `/profile/:username` | Public user profile |
 | `/settings` | Account settings |
 | `/admin` | Admin dashboard (restricted) |
-
----
-
-## Premium Features (Freemium Model) ⁉️
-
-### Free Tier
-
-- Join 1 public group
-- 2 pauses per month
-- Basic profile
-- View top 50 leaderboard
-- Standard notifications
-
-### Premium ($7/month)
-
-- Join up to 5 groups
-- Create private groups (limit 3)
-- 4 pauses per month + 1 streak freeze
-- Detailed analytics dashboard
-- Custom avatar uploads
-- Priority support
-- Ad-free experience
-- Early access to new features
-
-### Team Tier ($25/month)
-
-- For group admins
-- Up to 50 members
-- Custom group branding
-- Bulk operations (approve all requests)
-- Weekly progress reports
-- API access
