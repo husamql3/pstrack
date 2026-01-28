@@ -16,9 +16,9 @@
 - [x] Configure Turborepo monorepo structure
 - [x] Setup Lefthook git hooks (pre-commit, pre-push)
 - [x] Configure Oxlint for linting
-- [ ] Setup Docker Compose for local Postgres
+- [ ] Setup Neon databse for `dev`
 - [ ] Configure Drizzle ORM + migrations
-- [ ] Setup Supabase (Postgres + Storage)
+- [ ] Setup Supabase (Storage)
 - [ ] Initialize Upstash Redis + Realtime
 - [ ] Configure T3-env for environment variables
 - [ ] Setup Wrangler for Cloudflare deployment
