@@ -1,0 +1,17 @@
+{
+	"name": "@pstrack/server",
+	"scripts": {
+		"dev": "bun run --hot src/index.ts",
+		"build": "tsdown",
+		"check-types": "tsc -b",
+		"compile": "bun build --compile --minify --sourcemap --bytecode ./src/index.ts --outfile server",
+		"start": "bun run dist/index.js"
+	},
+	"dependencies": {
+		"hono": "^4.11.7"
+	},
+	"devDependencies": {
+		"@types/bun": "catalog:",
+		"tsdown": "^0.20.1"
+	}
+}

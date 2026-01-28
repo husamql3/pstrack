@@ -1,0 +1,43 @@
+#   Refer for explanation to following link:
+#   https://lefthook.dev/configuration/
+
+pre-commit:
+  parallel: true
+  commands:
+    oxlint:
+      tags: frontend style
+      glob: "**/*.{ts,tsx,js,jsx}"
+      run: bunx oxlint --fix {staged_files} && git add {staged_files}
+
+    oxfmt:
+      tags: frontend style
+      glob: "**/*.{ts,tsx,js,jsx,json,md}"
+      run: bunx oxfmt --write {staged_files} && git add {staged_files}
+
+    typecheck:
+      tags: backend frontend
+      run: bun turbo run check-types --filter=[origin/main..HEAD]
+
+pre-push:
+  parallel: true
+  commands:
+    build:
+      tags: ci build
+      run: bun turbo run build --filter=[origin/main..HEAD]
+
+    typecheck-full:
+      tags: ci types
+      run: bun turbo run check-types
+
+    audit:
+      tags: ci audit
+      run: bun audit
+
+    # TODO
+    # test:
+    #   run: bun turbo run test --filter=[origin/main..HEAD]
+# TODO
+# commit-msg:
+#   commands:
+#     conventional:
+#       run: bunx commitlint --edit {1} # @commitlint/cli
