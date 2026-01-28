@@ -12,10 +12,10 @@
 
 ### Week 1: Project Setup
 
-- [ ] Initialize project
-- [ ] Configure Turborepo monorepo structure
-- [ ] Setup Lefthook git hooks (pre-commit, pre-push)
-- [ ] Configure Oxlint for linting
+- [x] Initialize project
+- [x] Configure Turborepo monorepo structure
+- [x] Setup Lefthook git hooks (pre-commit, pre-push)
+- [x] Configure Oxlint for linting
 - [ ] Setup Docker Compose for local Postgres
 - [ ] Configure Drizzle ORM + migrations
 - [ ] Setup Supabase (Postgres + Storage)
@@ -205,7 +205,7 @@
 ## Key Milestones
 
 | Week | Milestone          | Success Criteria                       |
-|------|--------------------|----------------------------------------|
+| ---- | ------------------ | -------------------------------------- |
 | 2    | Auth Working       | Users can signup/login                 |
 | 4    | Daily Problems     | Users can solve and get verified       |
 | 6    | Notifications      | Users receive emails and in-app alerts |

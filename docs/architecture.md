@@ -93,7 +93,7 @@
       │ User B  │    │ User C  │    │ User D  │
       │ Client  │    │ Client  │    │ Client  │
       └─────────┘    └─────────┘    └─────────┘
-      
+
       (4) Toast notification appears instantly
 ```
 

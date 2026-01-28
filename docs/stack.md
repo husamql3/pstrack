@@ -255,7 +255,7 @@ CLOUDFLARE_ZONE_ID=
 pstrack-v3/
 ├── apps/
 │   ├── www/                 # prelunching website
-│   │   
+│   │
 │   ├── web/                 # React client
 │   │   ├── src/
 │   │   │   ├── routes/      # TanStack Router routes
@@ -275,7 +275,7 @@ pstrack-v3/
 │       └── package.json
 │
 ├── packages/
-│   ├── db/  
+│   ├── db/
 │   ├── auth/
 │   ├── types/
 │   ├── env/

@@ -1,0 +1,6 @@
+{
+	"extends": "../../packages/typescript-config/tsconfig.base.json",
+	"compilerOptions": {
+		"jsxImportSource": "hono/jsx"
+	}
+}

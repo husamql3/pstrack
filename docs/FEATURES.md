@@ -176,24 +176,24 @@
 
 ### Earning Points
 
-| Action | Points | Notes |
-|--------|--------|-------|
-| Solve daily problem | +10 | Base reward |
-| Solve within 6 hours | +5 | Early bird bonus |
-| First in group | +15 | Competition incentive |
-| First on platform | +25 | Elite achievement |
-| Share solution | +8 | One-time per problem |
-| Quality comment | +3 | Max 5/day, auto-detected |
-| Approved resource | +5 | One-time |
-| Receive solution upvote | +1 | Max 10/day |
+| Action                  | Points | Notes                    |
+| ----------------------- | ------ | ------------------------ |
+| Solve daily problem     | +10    | Base reward              |
+| Solve within 6 hours    | +5     | Early bird bonus         |
+| First in group          | +15    | Competition incentive    |
+| First on platform       | +25    | Elite achievement        |
+| Share solution          | +8     | One-time per problem     |
+| Quality comment         | +3     | Max 5/day, auto-detected |
+| Approved resource       | +5     | One-time                 |
+| Receive solution upvote | +1     | Max 10/day               |
 
 ### Losing Points
 
-| Action | Penalty |
-|--------|---------|
-| Miss problem (unexcused) | -3 |
-| Spam/low-quality content | -10 |
-| Rule violation | -25 |
+| Action                   | Penalty |
+| ------------------------ | ------- |
+| Miss problem (unexcused) | -3      |
+| Spam/low-quality content | -10     |
+| Rule violation           | -25     |
 
 ### Streak Multipliers
 
@@ -270,24 +270,24 @@
 
 ## 9. Routes & Pages
 
-| Route | Description |
-|-------|-------------|
-| `/` | Landing/dashboard (logged in: today's problem) |
-| `/login` | Authentication page |
-| `/signup` | Registration flow |
-| `/onboarding` | Post-signup setup wizard |
-| `/dashboard` | User's personalized dashboard |
-| `/problems` | All problems (history & upcoming) |
-| `/resources` | Community resource hub |
-| `/roadmap` | NeetCode 250 progress tracker |
-| `/leaderboard` | Platform-wide rankings |
-| `/leaderboard/:groupId` | Group-specific rankings |
-| `/feed` | Activity feed |
-| `/solutions` | a list for latest shared solutions |
-| `/solutions/:problemSlug` | Solutions for specific problem |
-| `/groups` | Browse/create groups |
-| `/groups/:groupId` | Group detail page |
-| `/profile` | Current user's profile |
-| `/profile/:username` | Public user profile |
-| `/settings` | Account settings |
-| `/admin` | Admin dashboard (restricted) |
+| Route                     | Description                                    |
+| ------------------------- | ---------------------------------------------- |
+| `/`                       | Landing/dashboard (logged in: today's problem) |
+| `/login`                  | Authentication page                            |
+| `/signup`                 | Registration flow                              |
+| `/onboarding`             | Post-signup setup wizard                       |
+| `/dashboard`              | User's personalized dashboard                  |
+| `/problems`               | All problems (history & upcoming)              |
+| `/resources`              | Community resource hub                         |
+| `/roadmap`                | NeetCode 250 progress tracker                  |
+| `/leaderboard`            | Platform-wide rankings                         |
+| `/leaderboard/:groupId`   | Group-specific rankings                        |
+| `/feed`                   | Activity feed                                  |
+| `/solutions`              | a list for latest shared solutions             |
+| `/solutions/:problemSlug` | Solutions for specific problem                 |
+| `/groups`                 | Browse/create groups                           |
+| `/groups/:groupId`        | Group detail page                              |
+| `/profile`                | Current user's profile                         |
+| `/profile/:username`      | Public user profile                            |
+| `/settings`               | Account settings                               |
+| `/admin`                  | Admin dashboard (restricted)                   |
