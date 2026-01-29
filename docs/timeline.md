@@ -16,8 +16,8 @@
 - [x] Configure Turborepo monorepo structure
 - [x] Setup Lefthook git hooks (pre-commit, pre-push)
 - [x] Configure Oxlint for linting
-- [ ] Setup Neon databse for `dev`
-- [ ] Configure Drizzle ORM + migrations
+- [x] Setup Neon databse for `dev`
+- [x] Configure Drizzle ORM + migrations
 - [ ] Setup Supabase (Storage)
 - [ ] Initialize Upstash Redis + Realtime
 - [ ] Configure T3-env for environment variables
