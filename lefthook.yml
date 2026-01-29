@@ -31,7 +31,7 @@ pre-push:
 
     audit:
       tags: ci audit
-      run: bun audit --audit-level=high --prod --json
+      run: bun audit --audit-level=high --prod
 
     # TODO
     # test:
