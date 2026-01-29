@@ -8,9 +8,9 @@
 
 ---
 
-## Phase 1: Foundation (Weeks 1-2)
+## Phase 1
 
-### Week 1: Project Setup
+### Project Setup ([#200](https://github.com/husamql3/pstrack/issues/200))
 
 - [x] Initialize project
 - [x] Configure Turborepo monorepo structure
@@ -18,13 +18,11 @@
 - [x] Configure Oxlint for linting
 - [x] Setup Neon databse for `dev`
 - [x] Configure Drizzle ORM + migrations
-- [ ] Setup Supabase (Storage)
+- [x] Setup Supabase (Storage)
 - [ ] Initialize Upstash Redis + Realtime
-- [ ] Configure T3-env for environment variables
+- [x] Configure T3-env for environment variables
 - [ ] Setup Wrangler for Cloudflare deployment
 - [ ] Configure Sentry error tracking
-
-**Deliverable**: Development environment ready with local dev server running
 
 ### Week 2: Authentication & Database
 

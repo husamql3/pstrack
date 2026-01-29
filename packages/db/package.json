@@ -17,15 +17,15 @@
 	},
 	"dependencies": {
 		"@pstrack/env": "workspace:*",
-		"dotenv": "^17.2.3",
+		"dotenv": "catalog:",
 		"drizzle-orm": "^0.45.1",
 		"pg": "^8.17.2",
-		"zod": "^4.3.6"
+		"zod": "catalog:"
 	},
 	"devDependencies": {
 		"@pstrack/typescript-config": "workspace:*",
 		"@types/pg": "^8.16.0",
 		"drizzle-kit": "^0.31.8",
-		"typescript": "^5.9.3"
+		"typescript": "catalog:"
 	}
 }
