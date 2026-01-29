@@ -11,17 +11,24 @@
 			"zod": "^4.3.6",
 			"@types/node": "^25.1.0",
 			"@types/bun": "^1.3.7",
-			"@cloudflare/workers-types": "^4.20260128.0"
+			"@cloudflare/workers-types": "^4.20260128.0",
+			"dotenv": "^17.2.2"
 		}
 	},
 	"scripts": {
 		"build": "turbo run build",
 		"dev": "turbo run dev",
 		"check-types": "turbo run check-types",
-		"check": "oxlint && oxfmt --write"
+		"check": "oxlint && oxfmt --write",
+		"db:push": "turbo -F @pstrack/db db:push",
+		"db:studio": "turbo -F @pstrack/db db:studio",
+		"db:generate": "turbo -F @pstrack/db db:generate",
+		"db:migrate": "turbo -F @pstrack/db db:migrate"
 	},
 	"dependencies": {
-		"typescript": "catalog:"
+		"dotenv": "catalog:",
+		"typescript": "catalog:",
+		"zod": "catalog:"
 	},
 	"devDependencies": {
 		"@cloudflare/workers-types": "^4.20260128.0",

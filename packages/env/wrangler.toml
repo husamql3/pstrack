@@ -1,0 +1,4 @@
+name = "basma"
+compatibility_date = "2025-09-27"
+minify = true
+compatibility_flags = ["nodejs_als", "nodejs_compat"]
