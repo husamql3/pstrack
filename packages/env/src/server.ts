@@ -8,6 +8,9 @@ export const env = createEnv({
 		// Supabase
 		SUPABASE_URL: z.url(),
 		SUPABASE_KEY: z.string(),
+		// Upstash
+		UPSTASH_REDIS_URL: z.url(),
+		UPSTASH_REDIS_TOKEN: z.string(),
 	},
 	runtimeEnv: process.env,
 	emptyStringAsUndefined: true,

@@ -1,0 +1,22 @@
+{
+	"name": "@pstrack/realtime",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"exports": {
+		".": "./src/index.ts",
+		"./react": "./src/subscriber.ts"
+	},
+	"scripts": {
+		"check-types": "tsc --noEmit"
+	},
+	"dependencies": {
+		"@pstrack/env": "workspace:*",
+		"@upstash/redis": "^1.36.1"
+	},
+	"devDependencies": {
+		"@pstrack/typescript-config": "workspace:*",
+		"@types/bun": "catalog:",
+		"typescript": "catalog:"
+	}
+}

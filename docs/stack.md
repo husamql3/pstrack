@@ -118,7 +118,7 @@
 ### CI/CD
 
 - **GitHub Actions** - Automated workflows:
-  - Lint & Format & type-check & tests on PR
+  - Lint & Format & check-types & tests on PR
   - Deploy to Cloudflare via Wrangler
   - Upload source maps to Sentry
 
