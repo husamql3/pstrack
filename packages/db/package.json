@@ -1,0 +1,31 @@
+{
+	"name": "@pstrack/db",
+	"type": "module",
+	"exports": {
+		".": {
+			"default": "./src/index.ts"
+		},
+		"./*": {
+			"default": "./src/*.ts"
+		}
+	},
+	"scripts": {
+		"db:push": "drizzle-kit push",
+		"db:generate": "drizzle-kit generate",
+		"db:studio": "drizzle-kit studio",
+		"db:migrate": "drizzle-kit migrate"
+	},
+	"dependencies": {
+		"@pstrack/env": "workspace:*",
+		"dotenv": "catalog:",
+		"drizzle-orm": "^0.45.1",
+		"pg": "^8.17.2",
+		"zod": "catalog:"
+	},
+	"devDependencies": {
+		"@pstrack/typescript-config": "workspace:*",
+		"@types/pg": "^8.16.0",
+		"drizzle-kit": "^0.31.8",
+		"typescript": "catalog:"
+	}
+}

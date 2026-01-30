@@ -1,16 +1,21 @@
 {
 	"name": "@pstrack/server",
 	"scripts": {
-		"dev": "bun run --hot src/index.ts",
+		"predev": "./scripts/copy-env.sh",
+		"dev": "wrangler dev",
+		"dev:remote": "wrangler dev --remote",
 		"build": "tsdown",
-		"check-types": "tsc -b",
+		"deploy": "bun run predev && wrangler deploy --minify",
 		"compile": "bun build --compile --minify --sourcemap --bytecode ./src/index.ts --outfile server",
-		"start": "bun run dist/index.js"
+		"start": "bun run dist/index.js",
+		"types": "bun run predev && wrangler types"
 	},
 	"dependencies": {
+		"@sentry/cloudflare": "^10.38.0",
 		"hono": "^4.11.7"
 	},
 	"devDependencies": {
+		"@cloudflare/workers-types": "catalog:",
 		"@types/bun": "catalog:",
 		"tsdown": "^0.20.1"
 	}
