@@ -21,8 +21,8 @@
 - [x] Setup Supabase (Storage)
 - [x] Initialize Upstash Redis + Realtime
 - [x] Configure T3-env for environment variables
-- [ ] Setup Wrangler for Cloudflare deployment
-- [ ] Configure Sentry error tracking
+- [x] Setup Wrangler for Cloudflare deployment
+- [x] Configure Sentry error tracking
 
 ### Week 2: Authentication & Database
 

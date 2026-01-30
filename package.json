@@ -24,7 +24,7 @@
 		"preview": "turbo run preview",
 		"start": "turbo run start",
 		"deploy": "turbo run deploy",
-		"deploy:server": "turbo run deploy:server",
+		"deploy:server": "turbo -F @pstrack/server deploy",
 		"compile": "turbo run compile",
 		"types": "turbo run types",
 		"db:push": "turbo -F @pstrack/db db:push",

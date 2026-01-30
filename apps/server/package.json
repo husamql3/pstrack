@@ -11,6 +11,7 @@
 		"types": "bun run predev && wrangler types"
 	},
 	"dependencies": {
+		"@sentry/cloudflare": "^10.38.0",
 		"hono": "^4.11.7"
 	},
 	"devDependencies": {
