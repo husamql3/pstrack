@@ -19,7 +19,7 @@
 - [x] Setup Neon databse for `dev`
 - [x] Configure Drizzle ORM + migrations
 - [x] Setup Supabase (Storage)
-- [ ] Initialize Upstash Redis + Realtime
+- [x] Initialize Upstash Redis + Realtime
 - [x] Configure T3-env for environment variables
 - [ ] Setup Wrangler for Cloudflare deployment
 - [ ] Configure Sentry error tracking

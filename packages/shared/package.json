@@ -1,17 +1,13 @@
 {
-	"name": "@pstrack/storage",
+	"name": "@pstrack/shared",
 	"version": "0.0.0",
 	"private": true,
 	"type": "module",
 	"exports": {
-		".": "./src/index.ts"
+		"./constants": "./src/constants.ts",
+		"./types": "./src/types/index.ts"
 	},
 	"scripts": {},
-	"dependencies": {
-		"@pstrack/env": "workspace:*",
-		"@supabase/supabase-js": "^2.47.10",
-		"sharp": "^0.33.5"
-	},
 	"devDependencies": {
 		"@pstrack/typescript-config": "workspace:*",
 		"@types/bun": "catalog:",

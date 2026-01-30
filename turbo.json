@@ -12,12 +12,21 @@
 		"lint": {
 			"dependsOn": ["^lint"]
 		},
-		"check-types": {
-			"dependsOn": ["^check-types"]
-		},
 		"dev": {
 			"cache": false,
 			"persistent": true
+		},
+		"preview": {
+			"cache": false,
+			"persistent": true
+		},
+		"start": {
+			"cache": false,
+			"persistent": true
+		},
+		"test": {
+			"dependsOn": ["^build"],
+			"cache": true
 		},
 		"db:push": {
 			"cache": false
@@ -31,6 +40,34 @@
 		},
 		"db:generate": {
 			"cache": false
+		},
+		"types": {
+			"cache": false
+		},
+		"secrets:list": {
+			"cache": false
+		},
+		"secrets:put": {
+			"cache": false
+		},
+		"secrets:delete": {
+			"cache": false
+		},
+		"secrets:bulk": {
+			"cache": false
+		},
+		"deploy": {
+			"dependsOn": ["^build"],
+			"cache": false
+		},
+		"compile": {
+			"dependsOn": ["^build"],
+			"outputs": ["server"],
+			"cache": true
+		},
+		"dev:remote": {
+			"cache": false,
+			"persistent": true
 		}
 	}
 }

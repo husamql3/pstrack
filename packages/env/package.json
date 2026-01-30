@@ -5,10 +5,14 @@
 	"type": "module",
 	"exports": {
 		"./server": "./src/server.ts",
-		"./web": "./src/web.ts"
+		"./client": "./src/client.ts"
 	},
 	"scripts": {
-		"types": "wrangler types"
+		"types": "wrangler types",
+		"secrets:list": "wrangler secret list",
+		"secrets:put": "wrangler secret put",
+		"secrets:delete": "wrangler secret delete",
+		"secrets:bulk": "wrangler secret bulk .env"
 	},
 	"dependencies": {
 		"@t3-oss/env-core": "^0.13.1",

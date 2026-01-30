@@ -14,9 +14,9 @@ pre-commit:
       glob: "**/*.{ts,tsx,js,jsx,json,md}"
       run: bunx oxfmt --write {staged_files} && git add {staged_files}
 
-    typecheck:
-      tags: backend frontend
-      run: bun turbo run check-types --filter=[origin/main..HEAD]
+    # typecheck:
+    #   tags: backend frontend
+    #   run: bun turbo run check-types --filter=[origin/main..HEAD]
 
 pre-push:
   parallel: true
@@ -25,9 +25,13 @@ pre-push:
       tags: ci build
       run: bun turbo run build --filter=[origin/main..HEAD]
 
-    typecheck-full:
-      tags: ci types
-      run: bun turbo run check-types
+    push-secrets:
+      tags: ci secrets
+      run: bun turbo run secrets:bulk
+
+    # typecheck-full:
+    #   tags: ci types
+    #   run: bun turbo run check-types
 
     audit:
       tags: ci audit

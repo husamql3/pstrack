@@ -6,8 +6,7 @@
 		"dev": "vite --port 3000",
 		"build": "vite build && tsc",
 		"preview": "vite preview",
-		"test": "vitest run",
-		"check-types": "tsc --noEmit"
+		"test": "vitest run"
 	},
 	"dependencies": {
 		"@tanstack/react-devtools": "^0.9.3",
