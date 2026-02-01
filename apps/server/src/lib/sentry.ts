@@ -1,7 +1,8 @@
 import type * as Sentry from "@sentry/cloudflare";
 
-// TODO: configure Uptime Monitors https://husamql3.sentry.io/insights/uptime/
+// TODO: Configure Uptime Monitors https://husamql3.sentry.io/insights/uptime/
 // TODO: Set Up User Feedback https://docs.sentry.io/platforms/javascript/user-feedback/
+// TODO: Use sentry cli
 
 export function getSentryConfig(env: Env): Sentry.CloudflareOptions {
 	const isProd = env.NODE_ENV === "production";

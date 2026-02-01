@@ -8,10 +8,13 @@
 		"deploy": "bun run predev && wrangler deploy --minify",
 		"compile": "bun build --compile --minify --sourcemap --bytecode ./src/index.ts --outfile server",
 		"start": "bun run dist/index.js",
-		"types": "bun run predev && wrangler types"
+		"types": "bun run predev && wrangler types",
+		"auth:generate": "bunx @better-auth/cli@latest generate --config ./src/lib/auth.ts --output ../../packages/db/src/schema/auth.ts"
 	},
 	"dependencies": {
+		"@pstrack/db": "workspace:*",
 		"@sentry/cloudflare": "^10.38.0",
+		"better-auth": "^1.4.18",
 		"hono": "^4.11.7"
 	},
 	"devDependencies": {
