@@ -27,6 +27,7 @@
 		"start": "turbo run start",
 		"deploy": "turbo run deploy",
 		"deploy:server": "turbo -F @pstrack/server deploy",
+		"deploy:web": "turbo -F @pstrack/web deploy",
 		"compile": "turbo run compile",
 		"types": "turbo run types",
 		"db:push": "turbo -F @pstrack/db db:push",
@@ -35,7 +36,7 @@
 		"db:migrate": "turbo -F @pstrack/db db:migrate",
 		"secrets:list": "turbo run secrets:list",
 		"secrets:put": "turbo run secrets:put",
-		"secrets:bulk": "turbo run secrets:bulk"
+		"secrets:push": "turbo run secrets:push"
 	},
 	"dependencies": {
 		"dotenv": "catalog:",

@@ -27,7 +27,7 @@ pre-push:
 
     push-secrets:
       tags: ci secrets
-      run: bun turbo run secrets:bulk
+      run: bun turbo run secrets:push
 
     # typecheck-full:
     #   tags: ci types
