@@ -33,6 +33,7 @@
         "@cloudflare/workers-types": "catalog:",
         "@types/bun": "catalog:",
         "tsdown": "^0.20.1",
+        "wrangler": "catalog:",
       },
     },
     "apps/site": {
@@ -190,6 +191,7 @@
     "@types/node": "^25.1.0",
     "dotenv": "^17.2.2",
     "typescript": "5.9.2",
+    "wrangler": "^4.61.1",
     "zod": "^4.3.6",
   },
   "packages": {

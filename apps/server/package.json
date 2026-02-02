@@ -24,6 +24,7 @@
 	"devDependencies": {
 		"@cloudflare/workers-types": "catalog:",
 		"@types/bun": "catalog:",
-		"tsdown": "^0.20.1"
+		"tsdown": "^0.20.1",
+		"wrangler": "catalog:"
 	}
 }
