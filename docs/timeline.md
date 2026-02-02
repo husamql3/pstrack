@@ -21,7 +21,7 @@
 - [ ] Deploy client on [cloudflare](https://tanstack.com/start/latest/docs/framework/react/guide/hosting#cloudflare-workers--official-partner)
   - [ ] copy the env to the client as well
   - [ ] create scripts in the root
-- [ ] Implement Better-Auth setup
+- [x] Implement Better-Auth setup
 - [ ] Create database schema (users, groups, problems, etc.)
 - [ ] Build signup flow (email verification)
 - [ ] Build login flow (sessions)

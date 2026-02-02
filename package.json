@@ -18,6 +18,7 @@
 	"scripts": {
 		"build": "turbo run build",
 		"dev": "turbo run dev",
+		"dev:remote": "turbo run dev:remote",
 		"test": "turbo run test",
 		"lint": "turbo run lint",
 		"check": "oxlint && oxfmt --write",
@@ -47,6 +48,7 @@
 		"oxfmt": "^0.19.0",
 		"oxlint": "^1.42.0",
 		"prettier": "^3.8.1",
+		"prettier-plugin-tailwindcss": "^0.7.2",
 		"turbo": "^2.8.0"
 	},
 	"engines": {

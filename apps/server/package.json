@@ -1,7 +1,10 @@
 {
 	"name": "@pstrack/server",
+	"exports": {
+		"./auth": "./src/lib/auth.ts"
+	},
 	"scripts": {
-		"predev": "./scripts/copy-env.sh",
+		"predev": "../../scripts/copy-env.sh",
 		"dev": "wrangler dev",
 		"dev:remote": "wrangler dev --remote",
 		"build": "tsdown",
