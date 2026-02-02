@@ -1,3 +1,4 @@
+import { FRONTEND_URLS } from "@pstrack/shared/constants";
 import * as Sentry from "@sentry/cloudflare";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
@@ -19,20 +20,13 @@ export const createRouter = () => {
 	});
 };
 
-const CORS_ORIGINS = [
-	"http://localhost:3000",
-	"http://localhost:5173",
-	"http://127.0.0.1:3000",
-	"http://127.0.0.1:5173",
-];
-
 export const createApp = () => {
 	return createRouter()
 		.use("*", logger())
 		.use(
 			"*",
 			cors({
-				origin: (origin) => (origin && CORS_ORIGINS.includes(origin) ? origin : CORS_ORIGINS[0]),
+				origin: (origin) => (origin && FRONTEND_URLS.includes(origin) ? origin : FRONTEND_URLS[0]),
 				credentials: true,
 				allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
 				allowHeaders: ["Content-Type", "Authorization", "X-Requested-With"],

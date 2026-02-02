@@ -1,5 +1,6 @@
 import { db } from "@pstrack/db";
 import * as schema from "@pstrack/db";
+import { FRONTEND_URLS } from "@pstrack/shared/constants";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { admin } from "better-auth/plugins";
@@ -21,18 +22,18 @@ export const auth = betterAuth({
 		google: {
 			clientId: process.env.GOOGLE_CLIENT_ID as string,
 			clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-			redirectURI: `http://localhost:8787/api/v3/auth/callback/google`,
-			callbackURL: "http://localhost:3000/dashboard",
+			redirectURI: `${process.env.VITE_BACKEND_URL}/api/v3/auth/callback/google`,
+			callbackURL: `${process.env.VITE_FRONTEND_URL}/dashboard`,
 		},
 		github: {
 			clientId: process.env.GITHUB_CLIENT_ID as string,
 			clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
-			redirectURI: `http://localhost:8787/api/v3/auth/callback/github`,
-			callbackURL: "http://localhost:3000/dashboard",
+			redirectURI: `${process.env.VITE_BACKEND_URL}/api/v3/auth/callback/github`,
+			callbackURL: `${process.env.VITE_FRONTEND_URL}/dashboard`,
 		},
 	},
-	trustedOrigins: ["http://localhost:3000", "https://www.pstrack.app"], // todo: add in constants
-	baseURL: process.env.BETTER_AUTH_URL, // todo: add in constants
+	trustedOrigins: FRONTEND_URLS,
+	baseURL: process.env.VITE_BACKEND_URL,
 	secret: process.env.BETTER_AUTH_SECRET,
-	url: process.env.BETTER_AUTH_URL,
+	url: process.env.VITE_BACKEND_URL,
 });

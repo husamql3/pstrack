@@ -6,4 +6,5 @@ export default defineConfig({
 	outDir: "./dist",
 	clean: true,
 	noExternal: [/web/, /site/, /server/, /db/],
+	inlineOnly: ["@neondatabase/serverless", "drizzle-orm"],
 });

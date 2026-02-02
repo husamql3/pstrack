@@ -24,6 +24,7 @@
       "name": "@pstrack/server",
       "dependencies": {
         "@pstrack/db": "workspace:*",
+        "@pstrack/shared": "workspace:*",
         "@sentry/cloudflare": "^10.38.0",
         "better-auth": "^1.4.18",
         "hono": "^4.11.7",
