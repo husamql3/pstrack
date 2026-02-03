@@ -18,9 +18,9 @@
 
 ### Authentication & Database ([#204](https://github.com/husamql3/pstrack/issues/20))
 
-- [ ] Deploy client on [cloudflare](https://tanstack.com/start/latest/docs/framework/react/guide/hosting#cloudflare-workers--official-partner)
-  - [ ] copy the env to the client as well
-  - [ ] create scripts in the root
+- [x] Deploy client on [cloudflare](https://tanstack.com/start/latest/docs/framework/react/guide/hosting#cloudflare-workers--official-partner)
+  - [x] copy the env to the client as well
+  - [x] create scripts in the root
 - [x] Implement Better-Auth setup
 - [ ] Create database schema (users, groups, problems, etc.)
 - [ ] Build signup flow (email verification)

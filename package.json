@@ -36,7 +36,7 @@
 		"db:migrate": "turbo -F @pstrack/db db:migrate",
 		"secrets:list": "turbo run secrets:list",
 		"secrets:put": "turbo run secrets:put",
-		"secrets:push": "turbo run secrets:push"
+		"secrets:push": "turbo -F @pstrack/env secrets:push"
 	},
 	"dependencies": {
 		"dotenv": "catalog:",
