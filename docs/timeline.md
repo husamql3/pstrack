@@ -25,7 +25,6 @@
 - [x] Create database schema (users, groups, problems, etc.)
 - [x] Build signup flow (email verification)
 - [x] Build login flow (sessions)
-- [ ] Create user profile CRUD operations
 - [x] Setup Sentry error tracking
 - [ ] Configure Sentry for tanstack
 
@@ -53,6 +52,7 @@
 - [ ] Build admin approval system
 - [ ] Implement group switching
 - [ ] Create group settings page
+- [ ] Create user profile CRUD operations
 
 **Deliverable**: Users can create/join groups
 
