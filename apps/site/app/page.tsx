@@ -4,7 +4,10 @@ function Home() {
 	return (
 		<div className="h-full w-full flex items-center justify-center flex-col gap-4 px-4 py-12 bg-zinc-950">
 			<Pill className="z-50 text-[10px] md:text-xs bg-zinc-950/90 border border-zinc-800 text-zinc-50 backdrop-blur-sm shadow-lg">
-				<PillIndicator variant="warning" pulse />
+				<PillIndicator
+					variant="warning"
+					pulse
+				/>
 				Building Something Cool
 			</Pill>
 

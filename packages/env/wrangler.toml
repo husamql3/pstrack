@@ -1,3 +1,5 @@
 name = "pstrack"
 compatibility_date = "2025-01-29"
 compatibility_flags = ["nodejs_als", "nodejs_compat"]
+[env.production]
+name = "pstrack"

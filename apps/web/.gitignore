@@ -8,3 +8,7 @@ count.txt
 .nitro
 .tanstack
 .wrangler
+.output
+.vinxi
+todos.json
+.env*

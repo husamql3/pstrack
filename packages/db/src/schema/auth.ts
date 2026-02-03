@@ -1,5 +1,12 @@
+//! @deprecated use schema.ts instead
+//! we're keeping this for archival purposes, see docs/schema.md for the current schema
+
 import { relations } from "drizzle-orm";
-import { pgTable, text, timestamp, boolean, index } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, boolean, index, pgEnum } from "drizzle-orm/pg-core";
+
+export const UserRole = ["admin", "moderator", "user"] as const;
+export type UserRole = (typeof UserRole)[number];
+export const userRoleEnum = pgEnum("user_role", UserRole);
 
 export const user = pgTable("user", {
 	id: text("id").primaryKey(),
@@ -12,6 +19,10 @@ export const user = pgTable("user", {
 		.defaultNow()
 		.$onUpdate(() => /* @__PURE__ */ new Date())
 		.notNull(),
+	role: userRoleEnum("role").default("user"),
+	banned: boolean("banned").default(false),
+	banReason: text("ban_reason"),
+	banExpires: timestamp("ban_expires"),
 });
 
 export const session = pgTable(
@@ -29,6 +40,7 @@ export const session = pgTable(
 		userId: text("user_id")
 			.notNull()
 			.references(() => user.id, { onDelete: "cascade" }),
+		impersonatedBy: text("impersonated_by"),
 	},
 	(table) => [index("session_userId_idx").on(table.userId)],
 );

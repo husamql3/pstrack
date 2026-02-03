@@ -13,9 +13,12 @@
 		"db:push": "drizzle-kit push",
 		"db:generate": "drizzle-kit generate",
 		"db:studio": "drizzle-kit studio",
+		"db:drop": "drizzle-kit drop",
+		"db:reset": "bun run db:drop && bun run db:generate && bun run db:push",
 		"db:migrate": "drizzle-kit migrate"
 	},
 	"dependencies": {
+		"@neondatabase/serverless": "^1.0.2",
 		"@pstrack/env": "workspace:*",
 		"dotenv": "catalog:",
 		"drizzle-orm": "^0.45.1",

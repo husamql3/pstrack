@@ -16,18 +16,18 @@ pre-commit:
 
     # typecheck:
     #   tags: backend frontend
-    #   run: bun turbo run check-types --filter=[origin/main..HEAD]
+    #   run: bun turbo run check-types
 
 pre-push:
   parallel: true
   commands:
     build:
       tags: ci build
-      run: bun turbo run build --filter=[origin/main..HEAD]
+      run: bun turbo run build
 
     push-secrets:
       tags: ci secrets
-      run: bun turbo run secrets:bulk
+      run: bun turbo run secrets:push
 
     # typecheck-full:
     #   tags: ci types
@@ -39,7 +39,7 @@ pre-push:
 
     # TODO
     # test:
-    #   run: bun turbo run test --filter=[origin/main..HEAD]
+    #   run: bun turbo run test
 # TODO
 # commit-msg:
 #   commands:

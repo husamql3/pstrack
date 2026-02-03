@@ -53,7 +53,7 @@
 		"secrets:delete": {
 			"cache": false
 		},
-		"secrets:bulk": {
+		"secrets:push": {
 			"cache": false
 		},
 		"deploy": {

@@ -1,23 +1,39 @@
-import { fileURLToPath, URL } from "node:url";
+import { fileURLToPath, URL } from "url";
 
-import { devtools } from "@tanstack/devtools-vite";
-import { tanstackRouter } from "@tanstack/router-plugin/vite";
+import { cloudflare } from "@cloudflare/vite-plugin";
+import tailwindcss from "@tailwindcss/vite";
+import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
-// https://vitejs.dev/config/
-export default defineConfig({
+const config = defineConfig({
+	resolve: {
+		alias: [
+			{
+				find: "@",
+				replacement: fileURLToPath(new URL("./src", import.meta.url)),
+			},
+		],
+	},
 	plugins: [
-		devtools(),
-		tanstackRouter({
-			target: "react",
-			autoCodeSplitting: true,
+		cloudflare({
+			viteEnvironment: { name: "ssr" },
 		}),
+		tailwindcss(),
+		tanstackStart(),
 		viteReact(),
 	],
-	resolve: {
-		alias: {
-			"@": fileURLToPath(new URL("./src", import.meta.url)),
+	build: {
+		rollupOptions: {
+			onwarn(warning, warn) {
+				// Ignore warnings from hugeicons
+				if (warning.code === "INVALID_ANNOTATION" && warning.message.includes("@hugeicons/core-free-icons")) {
+					return;
+				}
+				warn(warning);
+			},
 		},
 	},
 });
+
+export default config;

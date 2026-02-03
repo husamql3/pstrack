@@ -12,11 +12,21 @@
 	"bracketSameLine": false,
 	"jsxBracketSameLine": false,
 	"jsxSingleQuote": false,
+	"overrides": [
+		{
+			"files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+			"options": {
+				"plugins": ["prettier-plugin-tailwindcss"]
+			}
+		}
+	],
+	"singleAttributePerLine": true,
 	"experimentalTailwindcss": {
-		"stylesheet": "./path/to/stylesheet.css",
+		"stylesheet": ["./apps/web/src/styles.css", "./apps/site/app/globals.css"],
 		"attributes": ["class", "className"],
 		"functions": ["clsx", "cn"],
-		"preserveWhitespace": true
+		"preserveWhitespace": true,
+		"htmlWhitespaceSensitivity": "strict"
 	},
 	"experimentalSortImports": {
 		"groups": [

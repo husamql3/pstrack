@@ -1,16 +1,8 @@
 # Development Timeline
 
-## Overview
-
-**Total Duration**: 12 weeks  
-**Team Size**: Assumed 1-2 developers  
-**Launch Target**: Beta release with core features
-
----
-
 ## Phase 1
 
-### Project Setup ([#200](https://github.com/husamql3/pstrack/issues/200))
+### Project Setup
 
 - [x] Initialize project
 - [x] Configure Turborepo monorepo structure
@@ -24,17 +16,18 @@
 - [x] Setup Wrangler for Cloudflare deployment
 - [x] Configure Sentry error tracking
 
-### Week 2: Authentication & Database
+### Authentication & Database ([#204](https://github.com/husamql3/pstrack/issues/20))
 
-- [ ] Implement Better-Auth setup
-- [ ] Create database schema (users, groups, problems, etc.)
-- [ ] Build signup flow (email verification)
-- [ ] Build login flow (sessions)
+- [x] Deploy client on [cloudflare](https://tanstack.com/start/latest/docs/framework/react/guide/hosting#cloudflare-workers--official-partner)
+  - [x] copy the env to the client as well
+  - [x] create scripts in the root
+- [x] Implement Better-Auth setup
+- [x] Create database schema (users, groups, problems, etc.)
+- [x] Build signup flow (email verification)
+- [x] Build login flow (sessions)
 - [ ] Create user profile CRUD operations
-- [ ] Setup Sentry error tracking
-- [ ] Configure PostHog analytics
-
-**Deliverable**: Users can signup, login, and manage profiles
+- [x] Setup Sentry error tracking
+- [ ] Configure Sentry for tanstack
 
 ---
 

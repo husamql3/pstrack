@@ -8,7 +8,11 @@ import { cn } from "@/lib/utils";
 export type PillProps = ComponentProps<typeof Badge> & {};
 
 export const Pill = ({ variant = "secondary", className, ...props }: PillProps) => (
-	<Badge className={cn("gap-2 rounded-full px-3 py-1.5 font-normal", className)} variant={variant} {...props} />
+	<Badge
+		className={cn("gap-2 rounded-full px-3 py-1.5 font-normal", className)}
+		variant={variant}
+		{...props}
+	/>
 );
 
 export type PillButtonProps = ComponentProps<typeof Button>;
@@ -28,7 +32,10 @@ export type PillStatusProps = {
 };
 
 export const PillStatus = ({ children, className, ...props }: PillStatusProps) => (
-	<div className={cn("flex items-center gap-2 border-r pr-2 font-medium", className)} {...props}>
+	<div
+		className={cn("flex items-center gap-2 border-r pr-2 font-medium", className)}
+		{...props}
+	>
 		{children}
 	</div>
 );
@@ -86,7 +93,11 @@ export type PillIconProps = {
 };
 
 export const PillIcon = ({ icon: Icon, className, ...props }: PillIconProps) => (
-	<Icon className={cn("size-3 text-muted-foreground", className)} size={12} {...props} />
+	<Icon
+		className={cn("size-3 text-muted-foreground", className)}
+		size={12}
+		{...props}
+	/>
 );
 
 export type PillAvatarGroupProps = {
