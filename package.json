@@ -30,6 +30,7 @@
 		"deploy:web": "turbo -F @pstrack/web deploy",
 		"compile": "turbo run compile",
 		"types": "turbo run types",
+		"copy-env": "bun scripts/copy-env.sh",
 		"db:push": "turbo -F @pstrack/db db:push",
 		"db:studio": "turbo -F @pstrack/db db:studio",
 		"db:generate": "turbo -F @pstrack/db db:generate",

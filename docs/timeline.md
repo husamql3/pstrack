@@ -22,12 +22,12 @@
   - [x] copy the env to the client as well
   - [x] create scripts in the root
 - [x] Implement Better-Auth setup
-- [ ] Create database schema (users, groups, problems, etc.)
-- [ ] Build signup flow (email verification)
-- [ ] Build login flow (sessions)
+- [x] Create database schema (users, groups, problems, etc.)
+- [x] Build signup flow (email verification)
+- [x] Build login flow (sessions)
 - [ ] Create user profile CRUD operations
-- [ ] Setup Sentry error tracking
-- [ ] Configure PostHog analytics
+- [x] Setup Sentry error tracking
+- [ ] Configure Sentry for tanstack
 
 ---
 

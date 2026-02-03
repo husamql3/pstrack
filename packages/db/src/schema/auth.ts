@@ -1,3 +1,6 @@
+//! @deprecated use schema.ts instead
+//! we're keeping this for archival purposes, see docs/schema.md for the current schema
+
 import { relations } from "drizzle-orm";
 import { pgTable, text, timestamp, boolean, index, pgEnum } from "drizzle-orm/pg-core";
 

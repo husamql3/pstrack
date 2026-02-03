@@ -4,7 +4,10 @@ import { z } from "zod";
 export const env = createEnv({
 	clientPrefix: "VITE_",
 	client: {
-		VITE_API_URL: z.url(),
+		VITE_BACKEND_URL: z.url(),
+		VITE_FRONTEND_URL: z.url(),
+		VITE_PUBLIC_POSTHOG_KEY: z.string(),
+		VITE_PUBLIC_POSTHOG_HOST: z.string(),
 	},
 	runtimeEnv: import.meta.env,
 	emptyStringAsUndefined: true,

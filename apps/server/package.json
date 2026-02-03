@@ -5,13 +5,13 @@
 	},
 	"scripts": {
 		"predev": "../../scripts/copy-env.sh",
-		"dev": "wrangler dev",
-		"dev:remote": "wrangler dev --remote",
+		"dev": "wrangler dev --env-file .env.development",
+		"dev:remote": "wrangler dev --remote --env-file .env.production",
 		"build": "tsdown",
-		"deploy": "bun run predev && wrangler deploy --minify",
+		"deploy": "bun run predev && wrangler deploy --minify --env-file .env.production",
 		"compile": "bun build --compile --minify --sourcemap --bytecode ./src/index.ts --outfile server",
 		"start": "bun run dist/index.js",
-		"types": "bun run predev && wrangler types",
+		"types": "bun run predev && wrangler types --env-file .env.production",
 		"auth:generate": "bunx @better-auth/cli@latest generate --config ./src/lib/auth.ts --output ../../packages/db/src/schema/auth.ts"
 	},
 	"dependencies": {

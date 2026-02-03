@@ -4,13 +4,13 @@
 	"type": "module",
 	"scripts": {
 		"predev": "../../scripts/copy-env.sh",
-		"dev": "vite --host --port 3000",
-		"dev:remote": "wrangler dev --remote --port 3000",
+		"dev": "vite --host --port 3000 --env-file .env.development",
+		"dev:remote": "wrangler dev --remote --port 3000 --env-file .env.production",
 		"build": "bun run predev && vite build && tsc",
 		"test": "vitest run",
 		"preview": "vite preview",
-		"types": "bun run predev && wrangler types",
-		"deploy": "bun run build && wrangler deploy"
+		"types": "bun run predev && wrangler types --env-file .env.production",
+		"deploy": "bun run build && wrangler deploy --env-file .env.production"
 	},
 	"dependencies": {
 		"@base-ui/react": "^1.1.0",
