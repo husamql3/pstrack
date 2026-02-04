@@ -13,3 +13,5 @@ count.txt
 todos.json
 .turbo
 wrangler.toml
+worker-configuration.d.ts
+.env*
