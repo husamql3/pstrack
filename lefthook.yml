@@ -13,27 +13,27 @@ pre-commit:
       run: bunx oxfmt --write {staged_files} && git add {staged_files}
 
     # typecheck:
-    #   run: bun turbo run check-types
+    #   run: bun run check-types
 
 pre-push:
   parallel: true
   commands:
     build:
-      run: bun turbo run build
+      run: bun run build
 
-    push-secrets:
-      run: bun turbo run secrets:push
+    # push-secrets:
+    #   run: bun run secrets:push
 
     # typecheck-full:
     #   tags: ci types
-    #   run: bun turbo run check-types
+    #   run: bun run check-types
 
     audit:
       run: bun audit --audit-level=high --prod
 
     # TODO
     # test:
-    #   run: bun turbo run test
+    #   run: bun run test
 # TODO
 # commit-msg:
 #   commands:
