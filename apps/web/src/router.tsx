@@ -6,6 +6,9 @@ import { routeTree } from "./routeTree.gen";
 // Create a new router instance
 export const getRouter = () => {
 	const router = createRouter({
+		ssr: {
+			nonce: "1234567890",
+		},
 		routeTree,
 		context: {
 			// user: null,
@@ -20,6 +23,6 @@ export const getRouter = () => {
 
 declare module "@tanstack/react-router" {
 	interface Register {
-		router: ReturnType<typeof createRouter>;
+		router: Awaited<ReturnType<typeof getRouter>>;
 	}
 }

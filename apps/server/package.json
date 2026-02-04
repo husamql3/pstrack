@@ -5,8 +5,8 @@
 	},
 	"scripts": {
 		"predev": "../../scripts/copy-env.sh",
-		"dev": "wrangler dev --env development --env-file .env.development",
-		"dev:remote": "wrangler dev --remote --env-file .env.production",
+		"dev": "wrangler dev --env-file .env.development --port 8787",
+		"dev:remote": "wrangler dev --remote --env-file .env.production --port 8787",
 		"build": "tsdown",
 		"deploy": "bun run predev && wrangler deploy --minify --env production --env-file .env.production",
 		"compile": "bun build --compile --minify --sourcemap --bytecode ./src/index.ts --outfile server",

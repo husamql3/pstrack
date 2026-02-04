@@ -44,12 +44,14 @@ export const user = pgTable(
 	"user",
 	{
 		id: text("id").primaryKey(),
-		username: varchar("username", { length: 50 }).notNull().unique(),
+		name: text("name").notNull(),
+		username: varchar("username", { length: 50 }).unique(),
 		email: text("email").notNull().unique(),
 		emailVerified: boolean("email_verified").default(false).notNull(),
+		image: text("image"),
 		role: userRoleEnum("role").default("user").notNull(),
 
-		leetcodeHandle: varchar("leetcode_handle", { length: 50 }).notNull(),
+		leetcodeHandle: varchar("leetcode_handle", { length: 50 }),
 		codeforcesHandle: varchar("codeforces_handle", { length: 50 }),
 
 		// Points & Streaks
@@ -67,6 +69,10 @@ export const user = pgTable(
 		isSuspended: boolean("is_suspended").default(false).notNull(),
 		suspendedUntil: timestamp("suspended_until"),
 
+		banned: boolean("banned").default(false),
+		banReason: text("ban_reason"),
+		banExpires: timestamp("ban_expires"),
+
 		createdAt: timestamp("created_at").defaultNow().notNull(),
 		updatedAt: timestamp("updated_at")
 			.defaultNow()
@@ -77,44 +83,6 @@ export const user = pgTable(
 		index("user_username_idx").on(table.username),
 		index("user_totalPoints_idx").on(table.totalPoints),
 		index("user_currentStreak_idx").on(table.currentStreak),
-	],
-);
-
-// ============================================================================
-// GROUP TABLE
-// ============================================================================
-
-export const group = pgTable(
-	"group",
-	{
-		id: text("id").primaryKey(),
-		name: varchar("name", { length: 100 }).notNull(),
-		description: text("description"),
-		type: groupTypeEnum("type").notNull(),
-		platform: groupPlatformEnum("platform").notNull().default("leetcode"),
-
-		// Settings
-		maxMembers: integer("max_members").default(30).notNull(),
-		currentMemberCount: integer("current_member_count").default(0).notNull(),
-		isActive: boolean("is_active").default(true).notNull(),
-
-		banned: boolean("banned").default(false),
-		banReason: text("ban_reason"),
-		banExpires: timestamp("ban_expires"),
-
-		createdById: text("created_by_id")
-			.notNull()
-			.references(() => user.id, { onDelete: "cascade" }),
-		createdAt: timestamp("created_at").defaultNow().notNull(),
-		updatedAt: timestamp("updated_at")
-			.defaultNow()
-			.$onUpdate(() => new Date())
-			.notNull(),
-	},
-	(table) => [
-		index("group_platform_idx").on(table.platform),
-		index("group_createdById_idx").on(table.createdById),
-		index("group_isActive_idx").on(table.isActive),
 	],
 );
 
@@ -176,6 +144,40 @@ export const verification = pgTable(
 			.notNull(),
 	},
 	(table) => [index("verification_identifier_idx").on(table.identifier)],
+);
+
+// ============================================================================
+// GROUP TABLE
+// ============================================================================
+
+export const group = pgTable(
+	"group",
+	{
+		id: text("id").primaryKey(),
+		name: varchar("name", { length: 100 }).notNull(),
+		description: text("description"),
+		type: groupTypeEnum("type").notNull(),
+		platform: groupPlatformEnum("platform").notNull().default("leetcode"),
+
+		// Settings
+		maxMembers: integer("max_members").default(30).notNull(),
+		currentMemberCount: integer("current_member_count").default(0).notNull(),
+		isActive: boolean("is_active").default(true).notNull(),
+
+		createdById: text("created_by_id")
+			.notNull()
+			.references(() => user.id, { onDelete: "cascade" }),
+		createdAt: timestamp("created_at").defaultNow().notNull(),
+		updatedAt: timestamp("updated_at")
+			.defaultNow()
+			.$onUpdate(() => new Date())
+			.notNull(),
+	},
+	(table) => [
+		index("group_platform_idx").on(table.platform),
+		index("group_createdById_idx").on(table.createdById),
+		index("group_isActive_idx").on(table.isActive),
+	],
 );
 
 // ============================================================================
