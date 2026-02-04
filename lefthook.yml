@@ -1,0 +1,41 @@
+#   Refer for explanation to following link:
+#   https://lefthook.dev/configuration/
+
+pre-commit:
+  parallel: true
+  commands:
+    oxlint:
+      glob: "**/*.{ts,tsx,js,jsx}"
+      run: bunx oxlint --fix {staged_files} && git add {staged_files}
+
+    oxfmt:
+      glob: "**/*.{ts,tsx,js,jsx,json,md}"
+      run: bunx oxfmt --write {staged_files} && git add {staged_files}
+
+    # typecheck:
+    #   run: bun turbo run check-types
+
+pre-push:
+  parallel: true
+  commands:
+    build:
+      run: bun turbo run build
+
+    push-secrets:
+      run: bun turbo run secrets:push
+
+    # typecheck-full:
+    #   tags: ci types
+    #   run: bun turbo run check-types
+
+    audit:
+      run: bun audit --audit-level=high --prod
+
+    # TODO
+    # test:
+    #   run: bun turbo run test
+# TODO
+# commit-msg:
+#   commands:
+#     conventional:
+#       run: bunx commitlint --edit {1} # @commitlint/cli
