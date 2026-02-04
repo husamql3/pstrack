@@ -3,26 +3,8 @@ import { HeadContent, Scripts, createRootRoute } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 
 import appCss from "../styles.css?url";
-// import { createServerFn } from "@tanstack/react-start";
-// import { auth } from "@/lib/auth";
-
-// const getSession = createServerFn({ method: "GET" }).handler(async () => {
-// 	const { data, error } = await auth.getSession();
-// 	if (error || !data?.session) {
-// 		return { session: null, user: null };
-// 	}
-// 	console.log("[__root.tsx] Session data:", data);
-// 	return {
-// 		session: data.session,
-// 		user: data.user
-// 	};
-// })
 
 export const Route = createRootRoute({
-	// beforeLoad: async () => {
-	// 	const sessionData = await getSession();
-	// 	return sessionData;
-	// },
 	head: () => ({
 		meta: [
 			{

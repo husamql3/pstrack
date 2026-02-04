@@ -1,39 +1,28 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { createServerFn } from "@tanstack/react-start";
+import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 
 import { Button } from "@/components/ui/button";
-import { auth } from "@/lib/auth";
-
-const getSession = createServerFn({ method: "GET" }).handler(async () => {
-	const { data, error } = await auth.getSession();
-
-	console.log("[SERVER] getSession called"); // This logs on the SERVER
-	console.log("[SERVER] data:", data);
-	console.log("[SERVER] error:", error);
-
-	if (error || !data?.session) {
-		return { session: null, user: null };
-	}
-
-	return {
-		session: data.session,
-		user: data.user,
-	};
-});
+import { getSession, signOut } from "@/lib/auth";
 
 export const Route = createFileRoute("/")({
-	component: App,
-	loader: async () => {
-		const sessionData = await getSession();
-		console.log("[LOADER] Session data received:", sessionData); // This might log on client too
-		return sessionData;
+	loader: () => getSession(),
+	pendingComponent: () => {
+		return (
+			<div className="flex items-center justify-center h-dvh">
+				<p className="text-white">Loading...</p>
+			</div>
+		);
 	},
+	component: App,
 });
 
 function App() {
-	const { user, session } = Route.useLoaderData();
-	console.log("[index.tsx] User:", user);
-	console.log("[index.tsx] Session:", session);
+	const router = useRouter();
+	const { session, user } = Route.useLoaderData();
+
+	const handleLogout = async () => {
+		await signOut();
+		router.navigate({ to: "/login" });
+	};
 
 	return (
 		<>
@@ -46,7 +35,7 @@ function App() {
 					<Button size="lg">Dashboard</Button>
 				</Link>
 
-				{user && <Button onClick={() => auth.signOut()}>Logout</Button>}
+				{session && <Button onClick={handleLogout}>Logout</Button>}
 
 				{user?.name && <span>Hello {user.name}</span>}
 			</div>
