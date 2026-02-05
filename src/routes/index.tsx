@@ -1,54 +1,63 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { createServerFn } from "@tanstack/react-start";
+import { createFileRoute, useRouter } from "@tanstack/react-router";
 
-import { env } from "@/env";
+import { authClient } from "@/auth/auth-client";
 
 // Server function to log env on server
-const getServerEnv = createServerFn().handler(async () => {
-	console.log("SERVER ENV:", env);
-	console.log("SERVER VITE_BACKEND_URL:", env.VITE_BACKEND_URL);
-	console.log("SERVER NODE_ENV:", await env.NODE_ENV);
-	console.log("SERVER DATABASE_URL:", await env.DATABASE_URL);
-	console.log("SERVER BETTER_AUTH_SECRET:", (await env.BETTER_AUTH_SECRET) ? "***SET***" : "NOT SET");
+// const getServerEnv = createServerFn().handler(async () => {
+// 	console.log("SERVER ENV:", env);
 
-	// Return sanitized env (don't expose secrets to client)
-	return {
-		NODE_ENV: env.NODE_ENV,
-		VITE_BACKEND_URL: env.VITE_BACKEND_URL,
-		VITE_FRONTEND_URL: env.VITE_FRONTEND_URL,
-		VITE_SUPABASE_URL: env.VITE_SUPABASE_URL,
-		BETTER_AUTH_URL: env.BETTER_AUTH_URL,
-		// Don't send secrets to client
-		hasDatabase: !!env.DATABASE_URL,
-		hasBetterAuthSecret: !!env.BETTER_AUTH_SECRET,
-		hasGoogleClientSecret: !!env.GOOGLE_CLIENT_SECRET,
-	};
-});
+// 	return {
+// 		NODE_ENV: env.NODE_ENV,
+// 		VITE_BACKEND_URL: env.VITE_BACKEND_URL,
+// 		VITE_FRONTEND_URL: env.VITE_FRONTEND_URL,
+// 		VITE_SUPABASE_URL: env.VITE_SUPABASE_URL,
+// 		BETTER_AUTH_URL: env.BETTER_AUTH_URL,
+// 		// Don't send secrets to client
+// 		hasDatabase: !!env.DATABASE_URL,
+// 		hasBetterAuthSecret: !!env.BETTER_AUTH_SECRET,
+// 		hasGoogleClientSecret: !!env.GOOGLE_CLIENT_SECRET,
+// 	};
+// });
 
 export const Route = createFileRoute("/")({
 	component: App,
 	loader: async () => {
-		const serverEnv = await getServerEnv();
-		return { serverEnv };
+		const session = await authClient.getSession();
+		console.log("LOADER SESSION:", session);
+		if (!session?.data) {
+			return { user: null, isAuthenticated: false };
+		}
+		console.log("LOADER SESSION:", session);
+		return { user: session.data.user, session: session.data, isAuthenticated: true };
 	},
+	notFoundComponent: () => <div>Not Found</div>,
+	errorComponent: () => <div>Error</div>,
+	pendingComponent: () => <div>Loading...</div>,
 });
 
 function App() {
-	const { serverEnv } = Route.useLoaderData();
+	const router = useRouter();
+	const { user, session, isAuthenticated } = Route.useLoaderData();
 
-	// Client-side logging
-	console.log("CLIENT BETTER_AUTH_SECRET ENV:", env.BETTER_AUTH_SECRET ? "***SET***" : "NOT SET");
-	console.log("CLIENT VITE_BACKEND_URL ENV:", env.VITE_BACKEND_URL);
+	const handleSignIn = async (provider: "google" | "github") => {
+		await authClient.signIn.social({ provider });
+		router.navigate({ to: "/dashboard" });
+	};
 
 	return (
 		<div className="App">
-			<h1>Environment Variables</h1>
-
-			<h2>Server-side (check terminal/logs)</h2>
-			<pre>{JSON.stringify(serverEnv, null, 2)}</pre>
-
-			<h2>Client-side (check browser console)</h2>
-			<pre>{JSON.stringify(env, null, 2)}</pre>
+			{isAuthenticated ? (
+				<div>
+					<h1>Welcome, {user?.name}</h1>
+					<p>Session: {JSON.stringify(session, null, 2)}</p>
+				</div>
+			) : (
+				<div>
+					<h1>Please login</h1>
+					<button onClick={() => handleSignIn("google")}>Login with Google</button>
+					<button onClick={() => handleSignIn("github")}>Login with Github</button>
+				</div>
+			)}
 		</div>
 	);
 }

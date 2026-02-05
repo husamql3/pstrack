@@ -3,7 +3,6 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
-		"predev": "bun run types",
 		"dev": "vite --host --port 3000 --mode development",
 		"dev:remote": "wrangler dev --remote --port 3000 --env-file .env.production",
 		"build": "vite build && tsc --noEmit",
@@ -36,6 +35,7 @@
 		"@tanstack/react-router-ssr-query": "^1.131.7",
 		"@tanstack/react-start": "^1.132.0",
 		"@tanstack/router-plugin": "^1.132.0",
+		"better-auth": "^1.4.18",
 		"dotenv": "^17.2.3",
 		"drizzle-orm": "^0.45.1",
 		"lucide-react": "^0.561.0",
@@ -44,6 +44,7 @@
 	},
 	"devDependencies": {
 		"@cloudflare/vite-plugin": "^1.23.0",
+		"@cloudflare/workers-types": "^4.20260205.0",
 		"@tanstack/devtools-vite": "^0.3.11",
 		"@testing-library/dom": "^10.4.0",
 		"@testing-library/react": "^16.2.0",
