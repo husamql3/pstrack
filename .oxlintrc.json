@@ -35,5 +35,5 @@
 		"builtin": true
 	},
 	"globals": {},
-	"ignorePatterns": []
+	"ignorePatterns": ["src/router.tsx"]
 }

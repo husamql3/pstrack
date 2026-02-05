@@ -1,6 +1,6 @@
 {
 	"$schema": "./node_modules/oxfmt/configuration_schema.json",
-	"ignorePatterns": [],
+	"ignorePatterns": ["src/routeTree.gen.ts"],
 	"printWidth": 120,
 	"useTabs": true,
 	"semi": true,
@@ -15,14 +15,13 @@
 	"overrides": [
 		{
 			"files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
-			"options": {
-				"plugins": ["prettier-plugin-tailwindcss"]
-			}
+			"excludeFiles": ["src/router.tsx"],
+			"options": {}
 		}
 	],
 	"singleAttributePerLine": true,
 	"experimentalTailwindcss": {
-		"stylesheet": ["./apps/web/src/styles.css", "./apps/site/app/globals.css"],
+		"stylesheet": ["./src/styles.css"],
 		"attributes": ["class", "className"],
 		"functions": ["clsx", "cn"],
 		"preserveWhitespace": true,
