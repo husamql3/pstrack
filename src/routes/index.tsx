@@ -7,9 +7,9 @@ import { env } from "@/env";
 const getServerEnv = createServerFn().handler(async () => {
 	console.log("SERVER ENV:", env);
 	console.log("SERVER VITE_BACKEND_URL:", env.VITE_BACKEND_URL);
-	console.log("SERVER NODE_ENV:", env.NODE_ENV);
-	console.log("SERVER DATABASE_URL:", env.DATABASE_URL);
-	console.log("SERVER BETTER_AUTH_SECRET:", env.BETTER_AUTH_SECRET ? "***SET***" : "NOT SET");
+	console.log("SERVER NODE_ENV:", await env.NODE_ENV);
+	console.log("SERVER DATABASE_URL:", await env.DATABASE_URL);
+	console.log("SERVER BETTER_AUTH_SECRET:", (await env.BETTER_AUTH_SECRET) ? "***SET***" : "NOT SET");
 
 	// Return sanitized env (don't expose secrets to client)
 	return {
@@ -37,8 +37,8 @@ function App() {
 	const { serverEnv } = Route.useLoaderData();
 
 	// Client-side logging
-	console.log("CLIENT ENV:", env);
-	console.log("CLIENT VITE_BACKEND_URL:", env.VITE_BACKEND_URL);
+	console.log("CLIENT BETTER_AUTH_SECRET ENV:", env.BETTER_AUTH_SECRET ? "***SET***" : "NOT SET");
+	console.log("CLIENT VITE_BACKEND_URL ENV:", env.VITE_BACKEND_URL);
 
 	return (
 		<div className="App">
