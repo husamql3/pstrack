@@ -23,7 +23,24 @@ type StringifyValues<EnvType extends Record<string, unknown>> = {
 	[Binding in keyof EnvType]: EnvType[Binding] extends string ? EnvType[Binding] : string;
 };
 declare namespace NodeJS {
-	interface ProcessEnv extends StringifyValues<Pick<Cloudflare.Env, "NODE_ENV" | "VITE_SUPABASE_URL" | "VITE_SUPABASE_KEY" | "UPSTASH_REDIS_URL" | "UPSTASH_REDIS_TOKEN" | "SENTRY_DSN" | "GOOGLE_CLIENT_ID" | "GOOGLE_CLIENT_SECRET" | "GITHUB_CLIENT_ID" | "GITHUB_CLIENT_SECRET" | "VITE_BASE_URL" | "DATABASE_URL" | "BETTER_AUTH_SECRET">> {}
+	interface ProcessEnv extends StringifyValues<
+		Pick<
+			Cloudflare.Env,
+			| "NODE_ENV"
+			| "VITE_SUPABASE_URL"
+			| "VITE_SUPABASE_KEY"
+			| "UPSTASH_REDIS_URL"
+			| "UPSTASH_REDIS_TOKEN"
+			| "SENTRY_DSN"
+			| "GOOGLE_CLIENT_ID"
+			| "GOOGLE_CLIENT_SECRET"
+			| "GITHUB_CLIENT_ID"
+			| "GITHUB_CLIENT_SECRET"
+			| "VITE_BASE_URL"
+			| "DATABASE_URL"
+			| "BETTER_AUTH_SECRET"
+		>
+	> {}
 }
 
 // Begin runtime types
