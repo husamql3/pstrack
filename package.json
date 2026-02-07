@@ -18,14 +18,10 @@
 		"db:studio": "bunx db-studio@latest --env-file .env.production",
 		"db:drop": "drizzle-kit drop",
 		"db:reset": "bun run db:drop && bun run db:generate && bun run db:push",
-		"secrets:list": "wrangler secret list",
-		"secrets:list:prod": "wrangler secret list --env production",
-		"secrets:put": "wrangler secret put",
-		"secrets:put:prod": "wrangler secret put --env production",
-		"secrets:delete": "wrangler secret delete",
-		"secrets:delete:prod": "wrangler secret delete --env production",
-		"secrets:bulk": "wrangler secret bulk .env.production",
-		"secrets:bulk:prod": "wrangler secret bulk .env.production --env production"
+		"secrets:list": "wrangler secret list --env production",
+		"secrets:put": "wrangler secret put --env production",
+		"secrets:delete": "wrangler secret delete --env production",
+		"secrets:bulk": "wrangler secret bulk .env.production --env production"
 	},
 	"dependencies": {
 		"@neondatabase/serverless": "^1.0.2",

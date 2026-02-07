@@ -1,10 +1,16 @@
 import { TanStackDevtools } from "@tanstack/react-devtools";
-import { HeadContent, Scripts, createRootRoute } from "@tanstack/react-router";
+import { HeadContent, Scripts, createRootRouteWithContext } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
+import { Session, User } from "better-auth";
 
 import appCss from "../styles.css?url";
 
-export const Route = createRootRoute({
+export type AppContext = {
+	user: User;
+	session: Session;
+};
+
+export const Route = createRootRouteWithContext<AppContext>()({
 	head: () => ({
 		meta: [
 			{
@@ -15,7 +21,7 @@ export const Route = createRootRoute({
 				content: "width=device-width, initial-scale=1",
 			},
 			{
-				title: "TanStack Start Starter",
+				title: "PStrack",
 			},
 		],
 		links: [
