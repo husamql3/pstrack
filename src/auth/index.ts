@@ -38,7 +38,7 @@ export const auth = betterAuth({
 			}),
 		},
 	},
-	trustedOrigins: [env.VITE_BASE_URL],
+	trustedOrigins: ["*"], //[env.VITE_BASE_URL],
 	baseURL: env.VITE_BASE_URL,
 	secret: env.BETTER_AUTH_SECRET,
 	url: env.VITE_BASE_URL,
