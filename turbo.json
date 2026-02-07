@@ -1,0 +1,30 @@
+{
+	"$schema": "https://turborepo.dev/schema.json",
+	"ui": "stream",
+	"tasks": {
+		"build": {
+			"dependsOn": ["^build"],
+			"inputs": ["$TURBO_DEFAULT$", ".env*"],
+			"outputs": ["dist/**", "!.cache/**"],
+			"cache": true,
+			"persistent": true
+		},
+		"dev": {
+			"cache": false,
+			"persistent": true
+		},
+		"db:push": {
+			"cache": false
+		},
+		"db:studio": {
+			"cache": false,
+			"persistent": true
+		},
+		"db:migrate": {
+			"cache": false
+		},
+		"db:generate": {
+			"cache": false
+		}
+	}
+}

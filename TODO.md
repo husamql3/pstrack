@@ -4,3 +4,4 @@
   - [ ] `better-auth/skills`
   - [ ] add prev skills
 - [ ] last login method
+- [x] logger pkg

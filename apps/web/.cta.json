@@ -1,0 +1,13 @@
+{
+	"projectName": "web",
+	"mode": "file-router",
+	"typescript": true,
+	"tailwind": false,
+	"packageManager": "bun",
+	"git": true,
+	"install": true,
+	"addOnOptions": {},
+	"version": 1,
+	"framework": "react-cra",
+	"chosenAddOns": ["start"]
+}
