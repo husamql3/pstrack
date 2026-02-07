@@ -1,39 +1,39 @@
 {
-  "$schema": "https://turborepo.dev/schema.json",
-  "ui": "stream",
-  "globalPassThroughEnv": [
-    "DATABASE_URL",
-    "NODE_ENV",
-    "UPSTASH_REDIS_REST_URL",
-    "UPSTASH_REDIS_REST_TOKEN",
-    "ADMIN_EMAIL",
-    "EMAIL_USER",
-    "EMAIL_PASSWORD",
-    "API_SECRET",
-    "RABBITMQ_URL",
-    "GA_MEASUREMENT_ID",
-    "UPLOADTHING_TOKEN",
-    "QSTASH_URL",
-    "QSTASH_TOKEN",
-    "QSTASH_CURRENT_SIGNING_KEY",
-    "QSTASH_NEXT_SIGNING_KEY",
-    "OPTIMIZE_API_KEY"
-  ],
-  "tasks": {
-    "build": {
-      "dependsOn": ["^build"],
-      "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": ["dist/**", "!.cache/**"],
-      "cache": true,
-      "persistent": true
-    },
-    "dev": {
-      "cache": false,
-      "persistent": true
-    },
-    "db:push": { "cache": false },
-    "db:studio": { "cache": false, "persistent": true },
-    "db:migrate": { "cache": false },
-    "db:generate": { "cache": false }
-  }
+	"$schema": "https://turborepo.dev/schema.json",
+	"ui": "stream",
+	"globalPassThroughEnv": [
+		"DATABASE_URL",
+		"NODE_ENV",
+		"UPSTASH_REDIS_REST_URL",
+		"UPSTASH_REDIS_REST_TOKEN",
+		"ADMIN_EMAIL",
+		"EMAIL_USER",
+		"EMAIL_PASSWORD",
+		"API_SECRET",
+		"RABBITMQ_URL",
+		"GA_MEASUREMENT_ID",
+		"UPLOADTHING_TOKEN",
+		"QSTASH_URL",
+		"QSTASH_TOKEN",
+		"QSTASH_CURRENT_SIGNING_KEY",
+		"QSTASH_NEXT_SIGNING_KEY",
+		"OPTIMIZE_API_KEY"
+	],
+	"tasks": {
+		"build": {
+			"dependsOn": ["^build"],
+			"inputs": ["$TURBO_DEFAULT$", ".env*"],
+			"outputs": ["dist/**", "!.cache/**"],
+			"cache": true,
+			"persistent": true
+		},
+		"dev": {
+			"cache": false,
+			"persistent": true
+		},
+		"db:push": { "cache": false },
+		"db:studio": { "cache": false, "persistent": true },
+		"db:migrate": { "cache": false },
+		"db:generate": { "cache": false }
+	}
 }
