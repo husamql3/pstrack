@@ -3,8 +3,8 @@
 	"type": "module",
 	"scripts": {
 		"dev": "tsx watch src/index.ts",
-		"build": "tsup src/index.ts --format esm --target node20 --clean --no-splitting",
-		"start": "node dist/index.js",
+		"build": "tsdown",
+		"start": "node dist/index.mjs",
 		"db:push": "drizzle-kit push",
 		"db:generate": "drizzle-kit generate",
 		"db:studio": "drizzle-kit studio",

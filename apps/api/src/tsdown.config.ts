@@ -5,4 +5,5 @@ export default defineConfig({
 	format: "esm",
 	outDir: "./dist",
 	clean: true,
+	inlineOnly: ["@hono/node-server"],
 });
