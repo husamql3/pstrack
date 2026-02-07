@@ -3,7 +3,7 @@
 	"type": "module",
 	"scripts": {
 		"dev": "tsx watch src/index.ts",
-		"build": "tsc",
+		"build": "tsup src/index.ts --format esm --target node20 --clean --no-splitting",
 		"start": "node dist/index.js",
 		"db:push": "drizzle-kit push",
 		"db:generate": "drizzle-kit generate",
@@ -28,6 +28,7 @@
 		"@types/bun": "catalog:",
 		"@types/node": "catalog:",
 		"drizzle-kit": "^0.31.8",
+		"tsdown": "^0.20.3",
 		"tsx": "^4.21.0",
 		"typescript": "catalog:"
 	}
