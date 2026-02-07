@@ -13,7 +13,6 @@
 		"db:migrate": "drizzle-kit migrate"
 	},
 	"dependencies": {
-		"@hono/node-server": "^1.19.9",
 		"@hono/zod-openapi": "^1.2.1",
 		"@hono/zod-validator": "^0.7.6",
 		"@neondatabase/serverless": "^1.0.2",
@@ -25,6 +24,7 @@
 		"zod": "^4.3.6"
 	},
 	"devDependencies": {
+		"@hono/node-server": "^1.19.9",
 		"@types/bun": "catalog:",
 		"@types/node": "catalog:",
 		"drizzle-kit": "^0.31.8",
