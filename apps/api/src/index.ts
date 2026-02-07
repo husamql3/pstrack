@@ -1,3 +1,5 @@
+import "hono";
+
 import { env } from "@/env";
 import { success } from "@/lib/response";
 import { authRouter } from "@/routes/auth.route";
