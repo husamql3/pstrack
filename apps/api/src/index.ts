@@ -42,3 +42,5 @@ process.on("SIGTERM", () => {
 		process.exit(0);
 	});
 });
+
+export default app;

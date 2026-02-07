@@ -15,7 +15,7 @@
 	"overrides": [
 		{
 			"files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
-			"excludeFiles": ["src/router.tsx"],
+			"excludeFiles": ["src/routeTree.gen.ts"],
 			"options": {}
 		}
 	],
