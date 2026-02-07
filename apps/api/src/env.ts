@@ -20,4 +20,5 @@ export const env = createEnv({
 	},
 	runtimeEnv: process.env,
 	emptyStringAsUndefined: true,
+	skipValidation: process.env.NODE_ENV === "development",
 });
