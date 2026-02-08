@@ -5,7 +5,8 @@ export default defineConfig({
 	format: "esm",
 	outDir: "./dist",
 	clean: true,
-	bundle: true,
+	unbundle: true,
 	platform: "node",
 	treeshake: true,
+	inlineOnly: false,
 });
