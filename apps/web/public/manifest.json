@@ -1,6 +1,6 @@
 {
-	"short_name": "pstrack",
-	"name": "pstrack",
+	"short_name": "TanStack App",
+	"name": "Create TanStack App Sample",
 	"icons": [
 		{
 			"src": "favicon.ico",

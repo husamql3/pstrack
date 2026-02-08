@@ -1,15 +1,16 @@
 import { serve } from "@hono/node-server";
+import { sentry } from "@hono/sentry";
 
 import { env } from "@/env";
 import { checkDatabaseConnection } from "@/lib/db-health";
 import { success } from "@/lib/response";
+import { getSentryConfig } from "@/lib/sentry";
 import { authRouter } from "@/routes/auth.route";
 import { createApp } from "@/utils/create-app";
 
 const app = createApp()
 	.get("/", async (c) => {
 		const dbHealth = await checkDatabaseConnection();
-
 		return success(
 			c,
 			{
@@ -22,6 +23,7 @@ const app = createApp()
 			200,
 		);
 	})
+	.use("*", sentry(getSentryConfig()))
 	.route("/api/auth", authRouter);
 
 const server = serve(

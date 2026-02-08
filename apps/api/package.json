@@ -13,6 +13,7 @@
 		"db:migrate": "drizzle-kit migrate"
 	},
 	"dependencies": {
+		"@hono/sentry": "^1.2.2",
 		"@hono/zod-openapi": "^1.2.1",
 		"@hono/zod-validator": "^0.7.6",
 		"@neondatabase/serverless": "^1.0.2",

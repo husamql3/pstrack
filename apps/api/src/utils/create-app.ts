@@ -19,7 +19,7 @@ export const createApp = () => {
 		.use(
 			"*",
 			cors({
-				origin: "*",
+				origin: "*", // TODO: restrict to only the allowed origins
 				credentials: true,
 				allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
 				allowHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
