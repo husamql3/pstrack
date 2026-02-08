@@ -2,8 +2,8 @@
 	"name": "api",
 	"type": "module",
 	"scripts": {
-		"dev": "tsx watch src/index.ts",
-		"build": "tsdown",
+		"dev": "NODE_ENV=development tsx watch src/index.ts",
+		"build": "NODE_ENV=production tsdown",
 		"start": "node dist/index.mjs",
 		"db:push": "drizzle-kit push",
 		"db:generate": "drizzle-kit generate",

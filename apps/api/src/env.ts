@@ -1,3 +1,4 @@
+import { existsSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -6,19 +7,20 @@ import dotenv from "dotenv";
 import { z } from "zod";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-dotenv.config({
-	path: path.resolve(__dirname, "../.env"),
-});
+const envPath = path.resolve(__dirname, "../.env");
+
+if (existsSync(envPath)) {
+	dotenv.config({ path: envPath });
+}
 
 export const env = createEnv({
 	server: {
 		NODE_ENV: z.enum(["development", "production"]).default("development"),
 		PORT: z.coerce.number().default(3000),
 		DATABASE_URL: z.url(),
-		BASE_URL: z.url().default("http://localhost:3000"),
+		BASE_URL: z.url(),
 		BETTER_AUTH_SECRET: z.string(),
 	},
 	runtimeEnv: process.env,
 	emptyStringAsUndefined: true,
-	skipValidation: process.env.NODE_ENV === "development",
 });
