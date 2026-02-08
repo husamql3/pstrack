@@ -1,17 +1,23 @@
 import { serve } from "@hono/node-server";
 
 import { env } from "@/env";
+import { checkDatabaseConnection } from "@/lib/db-health";
 import { success } from "@/lib/response";
 import { authRouter } from "@/routes/auth.route";
 import { createApp } from "@/utils/create-app";
 
 const app = createApp()
-	.get("/", (c) => {
+	.get("/", async (c) => {
+		const dbHealth = await checkDatabaseConnection();
+
 		return success(
 			c,
 			{
 				message: "pstrack API",
 				version: "3.0.0",
+				status: "ok",
+				db: dbHealth ? "ok" : "error",
+				environment: process.env.NODE_ENV,
 			},
 			200,
 		);

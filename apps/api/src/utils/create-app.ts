@@ -3,7 +3,7 @@ import { cors } from "hono/cors";
 import { HTTPException } from "hono/http-exception";
 
 import { env } from "@/env";
-import { error, success } from "@/lib/response";
+import { error } from "@/lib/response";
 import { logger } from "@/middlewares/logger";
 import type { AppType } from "@/types/app.type";
 
@@ -46,16 +46,6 @@ export const createApp = () => {
 		})
 		.notFound((c) => {
 			return error(c, "Resource not found", 404);
-		})
-		.get("/health", (c) => {
-			return success(
-				c,
-				{
-					status: "ok",
-					environment: process.env.NODE_ENV,
-				},
-				200,
-			);
 		});
 	// .get("/", (c) => {
 	// 	return success(
