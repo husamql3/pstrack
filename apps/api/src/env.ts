@@ -30,6 +30,14 @@ export const env = createEnv({
 
 		// Monitoring
 		SENTRY_DSN: z.string(),
+
+		// Upstash
+		UPSTASH_REDIS_URL: z.string(),
+		UPSTASH_REDIS_TOKEN: z.string(),
+
+		// Supabase
+		SUPABASE_URL: z.string(),
+		SUPABASE_KEY: z.string(),
 	},
 	runtimeEnv: process.env,
 	emptyStringAsUndefined: true,

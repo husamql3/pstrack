@@ -13,7 +13,6 @@
 - [x] Setup Supabase (Storage)
 - [x] Initialize Upstash Redis + Realtime
 - [x] Configure T3-env for environment variables
-- [x] Setup Wrangler for Cloudflare deployment
 - [x] Configure Sentry error tracking
 
 ### Authentication & Database ([#204](https://github.com/husamql3/pstrack/issues/20))

@@ -32,17 +32,6 @@ export const createApp = () => {
 
 			const isDevelopment = env.NODE_ENV === "development";
 			return error(c, isDevelopment ? e.message : "Internal Server Error", 500);
-
-			// Sentry.captureException(e, {
-			// 	tags: {
-			// 		endpoint: c.req.path,
-			// 		method: c.req.method,
-			// 	},
-			// 	extra: {
-			// 		headers: Object.fromEntries(c.req.raw.headers),
-			// 		url: c.req.url,
-			// 	},
-			// });
 		})
 		.notFound((c) => {
 			return error(c, "Resource not found", 404);
@@ -56,9 +45,6 @@ export const createApp = () => {
 	// 		},
 	// 		200,
 	// 	);
-	// })
-	// .get("/error", () => {
-	// 	throw new HTTPException(500, { message: "Internal Server Error" });
 	// })
 	// .post(
 	// 	"/test-validation",

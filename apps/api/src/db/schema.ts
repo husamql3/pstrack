@@ -1,37 +1,76 @@
 import { relations } from "drizzle-orm";
-import { pgTable, text, timestamp, boolean, index, pgEnum, integer, varchar, uniqueIndex } from "drizzle-orm/pg-core";
+import {
+	pgTable,
+	text,
+	timestamp,
+	boolean,
+	index,
+	pgEnum,
+	integer,
+	varchar,
+	uniqueIndex,
+	uuid,
+} from "drizzle-orm/pg-core";
 
 // ============================================================================
 // ENUMS
 // ============================================================================
 
+// User Role
 export const UserRole = ["admin", "user"] as const;
 export type UserRole = (typeof UserRole)[number];
 export const userRoleEnum = pgEnum("user_role", UserRole);
 
+// Group Type
 export const GroupType = ["public", "private"] as const;
 export type GroupType = (typeof GroupType)[number];
 export const groupTypeEnum = pgEnum("group_type", GroupType);
 
+// Group Member Role
 export const GroupMemberRole = ["admin", "member"] as const;
 export type GroupMemberRole = (typeof GroupMemberRole)[number];
 export const groupMemberRoleEnum = pgEnum("group_member_role", GroupMemberRole);
 
+// Problem Source
 export const ProblemSource = ["leetcode", "codeforces"] as const;
 export type ProblemSource = (typeof ProblemSource)[number];
 export const problemSourceEnum = pgEnum("problem_source", ProblemSource);
+
+// Problem Topic
+export const ProblemTopic = [
+	"arrays-hashing",
+	"two-pointers",
+	"sliding-window",
+	"stack",
+	"binary-search",
+	"linked-list",
+	"tree",
+	"priority-queue",
+	"backtracking",
+	"tries",
+	"graphs",
+	"1d-dp",
+	"2d-dp",
+] as const;
+export type ProblemTopic = (typeof ProblemTopic)[number];
+export const problemTopicEnum = pgEnum("problem_topic", ProblemTopic);
+
+// Group Platform
 export const GroupPlatform = ["leetcode", "codeforces"] as const;
 export type GroupPlatform = (typeof GroupPlatform)[number];
 export const groupPlatformEnum = pgEnum("group_platform", GroupPlatform);
 
+// Problem Difficulty
 export const ProblemDifficulty = ["easy", "medium", "hard"] as const;
 export type ProblemDifficulty = (typeof ProblemDifficulty)[number];
 export const problemDifficultyEnum = pgEnum("problem_difficulty", ProblemDifficulty);
 
+// Pause Status
 export const PauseStatus = ["approved", "rejected"] as const;
 export type PauseStatus = (typeof PauseStatus)[number];
 export const pauseStatusEnum = pgEnum("pause_status", PauseStatus);
 
+// Pause Category
 export const PauseCategory = ["vacation", "illness", "emergency", "personal", "other"] as const;
 export type PauseCategory = (typeof PauseCategory)[number];
 export const pauseCategoryEnum = pgEnum("pause_category", PauseCategory);
@@ -153,14 +192,15 @@ export const verification = pgTable(
 export const group = pgTable(
 	"group",
 	{
-		id: text("id").primaryKey(),
-		name: varchar("name", { length: 100 }).notNull(),
+		id: uuid("id").primaryKey().defaultRandom(),
+
+		name: varchar("name", { length: 100 }),
 		description: text("description"),
-		type: groupTypeEnum("type").notNull(),
+
+		type: groupTypeEnum("type").notNull().default("public"),
 		platform: groupPlatformEnum("platform").notNull().default("leetcode"),
 
-		// Settings
-		maxMembers: integer("max_members").default(30).notNull(),
+		maxMembers: integer("max_members").default(30),
 		currentMemberCount: integer("current_member_count").default(0).notNull(),
 		isActive: boolean("is_active").default(true).notNull(),
 
@@ -187,14 +227,14 @@ export const group = pgTable(
 export const groupMember = pgTable(
 	"group_member",
 	{
-		id: text("id").primaryKey(),
-		groupId: text("group_id")
+		id: uuid("id").primaryKey().defaultRandom(),
+		role: groupMemberRoleEnum("role").default("member").notNull(),
+		groupId: uuid("group_id")
 			.notNull()
 			.references(() => group.id, { onDelete: "cascade" }),
 		userId: text("user_id")
 			.notNull()
 			.references(() => user.id, { onDelete: "cascade" }),
-		role: groupMemberRoleEnum("role").default("member").notNull(),
 		joinedAt: timestamp("joined_at").defaultNow().notNull(),
 	},
 	(table) => [
@@ -211,13 +251,13 @@ export const groupMember = pgTable(
 export const problem = pgTable(
 	"problem",
 	{
-		id: text("id").primaryKey(),
-		title: varchar("title", { length: 200 }).notNull(),
-		slug: varchar("slug", { length: 200 }).notNull().unique(),
+		id: uuid("id").primaryKey().defaultRandom(),
+		title: varchar("title", { length: 20 }),
+		slug: varchar("slug", { length: 100 }).notNull().unique(),
 		difficulty: problemDifficultyEnum("difficulty"),
+		topics: problemTopicEnum("topics").array(),
 		source: problemSourceEnum("source").notNull(),
 		roadmapIndex: integer("roadmap_index"),
-
 		createdAt: timestamp("created_at").defaultNow().notNull(),
 	},
 	(table) => [index("problem_slug_idx").on(table.slug), index("problem_difficulty_idx").on(table.difficulty)],
@@ -230,11 +270,11 @@ export const problem = pgTable(
 export const dailyProblem = pgTable(
 	"daily_problem",
 	{
-		id: text("id").primaryKey(),
-		groupId: text("group_id")
+		id: uuid("id").primaryKey().defaultRandom(),
+		groupId: uuid("group_id")
 			.notNull()
 			.references(() => group.id, { onDelete: "cascade" }),
-		problemId: text("problem_id")
+		problemId: uuid("problem_id")
 			.notNull()
 			.references(() => problem.id, { onDelete: "cascade" }),
 		assignedDate: timestamp("assigned_date").notNull(), // date when problem was assigned
@@ -262,14 +302,14 @@ export const dailyProblem = pgTable(
 export const userSolve = pgTable(
 	"user_solve",
 	{
-		id: text("id").primaryKey(),
+		id: uuid("id").primaryKey().defaultRandom(),
 		userId: text("user_id")
 			.notNull()
 			.references(() => user.id, { onDelete: "cascade" }),
-		problemId: text("problem_id")
+		problemId: uuid("problem_id")
 			.notNull()
 			.references(() => problem.id, { onDelete: "cascade" }),
-		dailyProblemId: text("daily_problem_id")
+		dailyProblemId: uuid("daily_problem_id")
 			.notNull()
 			.references(() => dailyProblem.id, { onDelete: "cascade" }),
 
@@ -304,11 +344,11 @@ export const userSolve = pgTable(
 export const pauseRequest = pgTable(
 	"pause_request",
 	{
-		id: text("id").primaryKey(),
+		id: uuid("id").primaryKey().defaultRandom(),
 		userId: text("user_id")
 			.notNull()
 			.references(() => user.id, { onDelete: "cascade" }),
-		dailyProblemId: text("daily_problem_id")
+		dailyProblemId: uuid("daily_problem_id")
 			.notNull()
 			.references(() => dailyProblem.id, { onDelete: "cascade" }),
 
@@ -338,7 +378,7 @@ export const pauseRequest = pgTable(
 export const pointsHistory = pgTable(
 	"points_history",
 	{
-		id: text("id").primaryKey(),
+		id: uuid("id").primaryKey().defaultRandom(),
 		userId: text("user_id")
 			.notNull()
 			.references(() => user.id, { onDelete: "cascade" }),
