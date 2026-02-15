@@ -1,0 +1,360 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================================================
+// ENUMS
+// ============================================================================
+
+enum UserRole {
+  admin
+  user
+}
+
+enum GroupType {
+  public
+  private
+}
+
+enum ProblemSource {
+  leetcode
+  codeforces
+}
+
+enum ProblemTopic {
+  arrays_hashing @map("arrays-hashing")
+  two_pointers   @map("two-pointers")
+  sliding_window @map("sliding-window")
+  stack
+  binary_search  @map("binary-search")
+  linked_list    @map("linked-list")
+  tree
+  priority_queue @map("priority-queue")
+  backtracking
+  tries
+  graphs
+  one_d_dp       @map("1d-dp")
+  two_d_dp       @map("2d-dp")
+}
+
+enum GroupPlatform {
+  leetcode
+  codeforces
+}
+
+enum ProblemDifficulty {
+  easy
+  medium
+  hard
+}
+
+enum PauseStatus {
+  approved
+  rejected
+}
+
+enum PauseCategory {
+  vacation
+  illness
+  emergency
+  personal
+  other
+}
+
+// ============================================================================
+// USER TABLE
+// ============================================================================
+
+model User {
+  id                  String          @id
+  name                String
+  username            String?         @unique @db.VarChar(50)
+  email               String          @unique
+  emailVerified       Boolean         @default(false) @map("email_verified")
+  image               String?
+  role                UserRole        @default(user)
+  // Handles
+  leetcodeHandle      String?         @map("leetcode_handle") @db.VarChar(50)
+  codeforcesHandle    String?         @map("codeforces_handle") @db.VarChar(50)
+  // Points & Streaks
+  totalPoints         Int             @default(0) @map("total_points")
+  currentStreak       Int             @default(0) @map("current_streak")
+  longestStreak       Int             @default(0) @map("longest_streak")
+  lastSolveDate       DateTime?       @map("last_solve_date")
+  pausesUsedThisMonth Int             @default(0) @map("pauses_used_this_month")
+  lastPauseReset      DateTime        @default(now()) @map("last_pause_reset")
+  unexcusedMissCount  Int             @default(0) @map("unexcused_miss_count")
+  isSuspended         Boolean         @default(false) @map("is_suspended")
+  suspendedUntil      DateTime?       @map("suspended_until")
+  banned              Boolean?        @default(false)
+  banReason           String?         @map("ban_reason")
+  banExpires          DateTime?       @map("ban_expires")
+  createdAt           DateTime        @default(now()) @map("created_at")
+  updatedAt           DateTime        @updatedAt @map("updated_at")
+  sessions            Session[]
+  accounts            Account[]
+  groupMemberships    GroupMember[]
+  groupsCreated       Group[]
+  solves              UserSolve[]
+  pauseRequests       PauseRequest[]
+  pointsHistory       PointsHistory[]
+  dailyProblemsWon    DailyProblem[]
+
+  @@index([username], map: "user_username_idx")
+  @@index([totalPoints], map: "user_totalPoints_idx")
+  @@index([currentStreak], map: "user_currentStreak_idx")
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime @map("expires_at")
+  token     String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  ipAddress String?  @map("ip_address")
+  userAgent String?  @map("user_agent")
+
+  userId         String  @map("user_id")
+  impersonatedBy String? @map("impersonated_by")
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId], map: "session_userId_idx")
+  @@map("session")
+}
+
+model Account {
+  id         String @id
+  accountId  String @map("account_id")
+  providerId String @map("provider_id")
+  userId     String @map("user_id")
+
+  accessToken  String? @map("access_token")
+  refreshToken String? @map("refresh_token")
+  idToken      String? @map("id_token")
+  scope        String?
+  password     String?
+
+  accessTokenExpiresAt  DateTime? @map("access_token_expires_at")
+  refreshTokenExpiresAt DateTime? @map("refresh_token_expires_at")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId], map: "account_userId_idx")
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime @map("expires_at")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  @@index([identifier], map: "verification_identifier_idx")
+  @@map("verification")
+}
+
+// ============================================================================
+// GROUP TABLE
+// ============================================================================
+
+model Group {
+  id                 String         @id @default(uuid()) @db.Uuid
+  name               String?        @db.VarChar(100)
+  description        String?
+  type               GroupType      @default(public)
+  platform           GroupPlatform  @default(leetcode)
+  maxMembers         Int            @default(30) @map("max_members")
+  currentMemberCount Int            @default(0) @map("current_member_count")
+  isActive           Boolean        @default(true) @map("is_active")
+  createdById        String         @map("created_by_id")
+  createdAt          DateTime       @default(now()) @map("created_at")
+  updatedAt          DateTime       @updatedAt @map("updated_at")
+  creator            User           @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  members            GroupMember[]
+  dailyProblems      DailyProblem[]
+
+  @@index([createdById], map: "group_createdById_idx")
+  @@index([isActive], map: "group_isActive_idx")
+  @@map("group")
+}
+
+// ============================================================================
+// GROUP_MEMBER TABLE
+// ============================================================================
+
+model GroupMember {
+  id       String   @id @default(uuid()) @db.Uuid
+  groupId  String   @map("group_id") @db.Uuid
+  userId   String   @map("user_id")
+  joinedAt DateTime @default(now()) @map("joined_at")
+  group    Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, userId], map: "groupMember_unique_idx")
+  @@index([groupId], map: "groupMember_groupId_idx")
+  @@index([userId], map: "groupMember_userId_idx")
+  @@map("group_member")
+}
+
+// ============================================================================
+// PROBLEM TABLE
+// ============================================================================
+
+model Problem {
+  id           String             @id @default(uuid()) @db.Uuid
+  title        String?            @db.VarChar(20)
+  slug         String             @unique @db.VarChar(100)
+  difficulty   ProblemDifficulty?
+  topics       ProblemTopic
+  source       ProblemSource
+  roadmapIndex Int                @map("roadmap_index")
+  createdAt    DateTime           @default(now()) @map("created_at")
+
+  // Relations
+  dailyProblems DailyProblem[]
+  solves        UserSolve[]
+
+  @@index([slug], map: "problem_slug_idx")
+  @@index([difficulty], map: "problem_difficulty_idx")
+  @@map("problem")
+}
+
+// ============================================================================
+// DAILY_PROBLEM TABLE
+// ============================================================================
+
+model DailyProblem {
+  id           String   @id @default(uuid()) @db.Uuid
+  groupId      String   @map("group_id") @db.Uuid
+  problemId    String   @map("problem_id") @db.Uuid
+  assignedDate DateTime @map("assigned_date")
+  slot         Int // 1 or 2, we can have 2 problems per day
+
+  // Track first solver and time
+  firstSolverId  String?   @map("first_solver_id")
+  firstSolveTime DateTime? @map("first_solve_time")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relations
+  group         Group          @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  problem       Problem        @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  firstSolver   User?          @relation(fields: [firstSolverId], references: [id], onDelete: SetNull)
+  solves        UserSolve[]
+  pauseRequests PauseRequest[]
+
+  @@unique([groupId, assignedDate, slot], map: "dailyProblem_group_date_slot_idx")
+  @@index([groupId], map: "dailyProblem_groupId_idx")
+  @@index([assignedDate], map: "dailyProblem_assignedDate_idx")
+  @@map("daily_problem")
+}
+
+// ============================================================================
+// USER_SOLVE TABLE
+// ============================================================================
+
+model UserSolve {
+  id             String @id @default(uuid()) @db.Uuid
+  userId         String @map("user_id")
+  problemId      String @map("problem_id") @db.Uuid
+  dailyProblemId String @map("daily_problem_id") @db.Uuid
+
+  // Verification status
+  isVerified    Boolean   @default(false) @map("is_verified")
+  verifiedAt    DateTime? @map("verified_at")
+  submissionUrl String?   @map("submission_url")
+
+  // Points awarded
+  pointsEarned Int @default(0) @map("points_earned")
+
+  // Bonuses
+  isFirstInGroup    Boolean @default(false) @map("is_first_in_group")
+  isFirstOnPlatform Boolean @default(false) @map("is_first_on_platform")
+  wasEarlySolver    Boolean @default(false) @map("was_early_solver")
+
+  solvedAt DateTime @default(now()) @map("solved_at")
+
+  // Relations
+  user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  problem       Problem         @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  dailyProblem  DailyProblem    @relation(fields: [dailyProblemId], references: [id], onDelete: Cascade)
+  pointsHistory PointsHistory[]
+
+  @@unique([userId, dailyProblemId], map: "userSolve_unique_idx")
+  @@index([userId], map: "userSolve_userId_idx")
+  @@index([dailyProblemId], map: "userSolve_dailyProblemId_idx")
+  @@index([solvedAt], map: "userSolve_solvedAt_idx")
+  @@map("user_solve")
+}
+
+// ============================================================================
+// PAUSE_REQUEST TABLE
+// ============================================================================
+
+model PauseRequest {
+  id             String @id @default(uuid()) @db.Uuid
+  userId         String @map("user_id")
+  dailyProblemId String @map("daily_problem_id") @db.Uuid
+
+  // Request details
+  category PauseCategory
+  reason   String?       @db.VarChar(200)
+
+  // Status
+  status PauseStatus
+
+  // Auto-approval (first 2 pauses per month)
+  isAutoApproved Boolean @default(false) @map("is_auto_approved")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relations
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  dailyProblem DailyProblem @relation(fields: [dailyProblemId], references: [id], onDelete: Cascade)
+
+  @@index([userId], map: "pauseRequest_userId_idx")
+  @@index([dailyProblemId], map: "pauseRequest_dailyProblemId_idx")
+  @@index([status], map: "pauseRequest_status_idx")
+  @@map("pause_request")
+}
+
+// ============================================================================
+// POINTS_HISTORY TABLE
+// ============================================================================
+
+model PointsHistory {
+  id          String  @id @default(uuid()) @db.Uuid
+  userId      String  @map("user_id")
+  amount      Int // Can be negative
+  reason      String  @db.VarChar(200)
+  userSolveId String? @map("user_solve_id") @db.Uuid
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relations
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userSolve UserSolve? @relation(fields: [userSolveId], references: [id], onDelete: SetNull)
+
+  @@index([userId], map: "pointsHistory_userId_idx")
+  @@index([createdAt], map: "pointsHistory_createdAt_idx")
+  @@map("points_history")
+}

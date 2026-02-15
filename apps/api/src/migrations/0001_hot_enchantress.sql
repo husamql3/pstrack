@@ -1,0 +1,1 @@
+ALTER TABLE "problem" ALTER COLUMN "topics" SET NOT NULL;

@@ -1,10 +1,11 @@
+import { Prisma } from "generated/prisma/client";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { HTTPException } from "hono/http-exception";
 
 import { env } from "@/env";
 import { error } from "@/lib/response";
-import { logger } from "@/middlewares/logger";
+import { log, logger } from "@/middlewares/logger";
 import type { AppType } from "@/types/app.type";
 
 export const createRouter = () => {
@@ -26,8 +27,14 @@ export const createApp = () => {
 			}),
 		)
 		.onError(async (e, c) => {
+			log.error("Error in createApp", { error: e });
 			if (e instanceof HTTPException) {
 				return error(c, e.message, e.status);
+			}
+
+			if (e instanceof Prisma.PrismaClientKnownRequestError) {
+				log.error("Prisma client known request error", { error: e });
+				return error(c, e.message, 500);
 			}
 
 			const isDevelopment = env.NODE_ENV === "development";

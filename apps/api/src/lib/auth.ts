@@ -20,23 +20,23 @@ export const auth = betterAuth({
 		openAPI(),
 	],
 	socialProviders: {
-		// google: {
-		// 	clientId: env.GOOGLE_CLIENT_ID as string,
-		// 	clientSecret: env.GOOGLE_CLIENT_SECRET as string,
-		// 	redirectURI: `${env.VITE_BASE_URL}/api/auth/callback/google`,
-		// 	callbackURL: `${env.VITE_BASE_URL}/dashboard`,
-		// },
-		// github: {
-		// 	clientId: env.GITHUB_CLIENT_ID as string,
-		// 	clientSecret: env.GITHUB_CLIENT_SECRET as string,
-		// 	redirectURI: `${env.VITE_BASE_URL}/api/auth/callback/github`,
-		// 	callbackURL: `${env.VITE_BASE_URL}/dashboard`,
-		// 	mapProfileToUser: (profile) => ({
-		// 		username: profile.login ?? "",
-		// 	}),
-		// },
+		google: {
+			clientId: env.GOOGLE_CLIENT_ID,
+			clientSecret: env.GOOGLE_CLIENT_SECRET,
+			redirectURI: `${env.BASE_URL}/api/auth/callback/google`,
+			callbackURL: `${env.BASE_URL}/dashboard`,
+		},
+		github: {
+			clientId: env.GITHUB_CLIENT_ID,
+			clientSecret: env.GITHUB_CLIENT_SECRET,
+			redirectURI: `${env.BASE_URL}/api/auth/callback/github`,
+			callbackURL: `${env.BASE_URL}/dashboard`,
+			mapProfileToUser: (profile) => ({
+				username: profile.login ?? "",
+			}),
+		},
 	},
-	trustedOrigins: ["*"], // [env.VITE_BASE_URL],
+	trustedOrigins: ["*"], // [env.BASE_URL],
 	baseURL: env.BASE_URL,
 	secret: env.BETTER_AUTH_SECRET,
 	url: env.BASE_URL,

@@ -3,29 +3,28 @@ import { sentry } from "@hono/sentry";
 import { HTTPException } from "hono/http-exception";
 
 import { env } from "@/env";
-import { checkDatabaseConnection } from "@/lib/db-health";
 import { success } from "@/lib/response";
 import { getSentryConfig } from "@/lib/sentry";
 import { authRouter } from "@/routes";
+import { problemRouter } from "@/routes/problem.route";
 import { createApp } from "@/utils/create-app";
 
 export const app = createApp()
 	.get("/", async (c) => {
-		const dbHealth = await checkDatabaseConnection();
 		return success(
 			c,
 			{
 				message: "pstrack API",
 				version: "3.0.0",
 				status: "ok",
-				db: dbHealth ? "ok" : "error",
 				environment: process.env.NODE_ENV,
 			},
 			200,
 		);
 	})
-	.use("*", sentry(getSentryConfig()))
+	.use("*", env.NODE_ENV === "production" ? sentry(getSentryConfig()) : (_, next) => next())
 	.route("/api/auth", authRouter)
+	.route("/api/problem", problemRouter)
 	.get("/error", () => {
 		throw new HTTPException(500, { message: "Internal Server Error" });
 	});

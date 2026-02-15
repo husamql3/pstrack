@@ -11,9 +11,12 @@
 		"dev": "turbo run dev",
 		"build": "turbo run build",
 		"check": "oxlint && oxfmt --write",
+		"clean": "rm -rf **/.turbo **/.node_modules",
 		"db:push": "turbo -F api db:push",
 		"db:studio": "turbo -F api db:studio",
 		"db:generate": "turbo -F api db:generate",
+		"db:drop": "turbo -F api db:drop",
+		"db:reset": "turbo -F api db:reset",
 		"db:migrate": "turbo -F api db:migrate"
 	},
 	"devDependencies": {

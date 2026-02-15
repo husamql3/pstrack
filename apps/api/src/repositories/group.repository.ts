@@ -1,7 +1,7 @@
 import { eq, sql } from "drizzle-orm";
 
 import { db } from "@/db";
-import { group, groupMember, GroupMemberRole, group as groupSchema } from "@/db/schema";
+import { group, groupMember, group as groupSchema } from "@/db/schema";
 import { redis } from "@/lib/cache/client";
 import { CACHE_KEYS, CACHE_TTL } from "@/lib/cache/keys";
 import type { GroupInsert, GroupUpdate, Group } from "@/types/group.type";
@@ -77,12 +77,11 @@ export class GroupRepository {
 		return groups ?? [];
 	}
 
-	async joinGroup(userId: string, groupId: string, role: GroupMemberRole = "member"): Promise<void> {
+	async joinGroup(userId: string, groupId: string): Promise<void> {
 		await db.transaction(async (tx) => {
 			await tx.insert(groupMember).values({
 				userId,
 				groupId,
-				role,
 			});
 
 			await tx

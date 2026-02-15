@@ -1,6 +1,118 @@
 import type { MiddlewareHandler } from "hono";
 // import { getConnInfo } from "hono/cloudflare-workers";
 
+export const log = {
+	info: (message: string, data?: Record<string, unknown>) => {
+		const blue = "\x1b[36m"; // Cyan
+		const reset = "\x1b[0m";
+		const gray = "\x1b[90m";
+
+		const timestamp = new Date().toLocaleString("en-US", {
+			year: "numeric",
+			month: "short",
+			day: "numeric",
+			hour: "2-digit",
+			minute: "2-digit",
+			second: "2-digit",
+			fractionalSecondDigits: 3,
+			hour12: true,
+		});
+
+		console.log(
+			`${blue}[INFO]${reset} ${gray}[${timestamp}]${reset} ${message}`,
+			data ? JSON.stringify(data, null, 2) : "",
+		);
+	},
+
+	debug: (message: string, data?: Record<string, unknown>) => {
+		const magenta = "\x1b[35m";
+		const reset = "\x1b[0m";
+		const gray = "\x1b[90m";
+
+		const timestamp = new Date().toLocaleString("en-US", {
+			year: "numeric",
+			month: "short",
+			day: "numeric",
+			hour: "2-digit",
+			minute: "2-digit",
+			second: "2-digit",
+			fractionalSecondDigits: 3,
+			hour12: true,
+		});
+
+		console.log(
+			`${magenta}[DEBUG]${reset} ${gray}[${timestamp}]${reset} ${message}`,
+			data ? JSON.stringify(data, null, 2) : "",
+		);
+	},
+
+	error: (message: string, data?: Record<string, unknown>) => {
+		const red = "\x1b[31m";
+		const reset = "\x1b[0m";
+		const gray = "\x1b[90m";
+
+		const timestamp = new Date().toLocaleString("en-US", {
+			year: "numeric",
+			month: "short",
+			day: "numeric",
+			hour: "2-digit",
+			minute: "2-digit",
+			second: "2-digit",
+			fractionalSecondDigits: 3,
+			hour12: true,
+		});
+
+		console.error(
+			`${red}[ERROR]${reset} ${gray}[${timestamp}]${reset} ${message}`,
+			data ? JSON.stringify(data, null, 2) : "",
+		);
+	},
+
+	warn: (message: string, data?: Record<string, unknown>) => {
+		const yellow = "\x1b[33m";
+		const reset = "\x1b[0m";
+		const gray = "\x1b[90m";
+
+		const timestamp = new Date().toLocaleString("en-US", {
+			year: "numeric",
+			month: "short",
+			day: "numeric",
+			hour: "2-digit",
+			minute: "2-digit",
+			second: "2-digit",
+			fractionalSecondDigits: 3,
+			hour12: true,
+		});
+
+		console.warn(
+			`${yellow}[WARN]${reset} ${gray}[${timestamp}]${reset} ${message}`,
+			data ? JSON.stringify(data, null, 2) : "",
+		);
+	},
+
+	success: (message: string, data?: Record<string, unknown>) => {
+		const green = "\x1b[32m";
+		const reset = "\x1b[0m";
+		const gray = "\x1b[90m";
+
+		const timestamp = new Date().toLocaleString("en-US", {
+			year: "numeric",
+			month: "short",
+			day: "numeric",
+			hour: "2-digit",
+			minute: "2-digit",
+			second: "2-digit",
+			fractionalSecondDigits: 3,
+			hour12: true,
+		});
+
+		console.log(
+			`${green}[SUCCESS]${reset} ${gray}[${timestamp}]${reset} ${message}`,
+			data ? JSON.stringify(data, null, 2) : "",
+		);
+	},
+};
+
 export function logger(): MiddlewareHandler {
 	return async (c, next) => {
 		const start = Date.now();

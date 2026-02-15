@@ -38,6 +38,12 @@ export const env = createEnv({
 		// Supabase
 		SUPABASE_URL: z.string(),
 		SUPABASE_KEY: z.string(),
+
+		// OAuth
+		GOOGLE_CLIENT_ID: z.string(),
+		GOOGLE_CLIENT_SECRET: z.string(),
+		GITHUB_CLIENT_ID: z.string(),
+		GITHUB_CLIENT_SECRET: z.string(),
 	},
 	runtimeEnv: process.env,
 	emptyStringAsUndefined: true,

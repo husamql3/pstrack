@@ -1,8 +1,15 @@
-import { drizzle } from "drizzle-orm/neon-serverless";
+import "dotenv/config";
+// import { PrismaPg } from '@prisma/adapter-pg'
+// import { PrismaClient } from '../../generated/prisma/client'
+// import { env } from '@/env'
+// const adapter = new PrismaPg({ connectionString: env.DATABASE_URL })
+// export const db = new PrismaClient({ adapter })
 
-import * as schema from "@/db/schema";
+import { withAccelerate } from "@prisma/extension-accelerate";
+import { PrismaClient } from "generated/prisma/client";
+
 import { env } from "@/env";
 
-export const db = drizzle(env.DATABASE_URL, { schema });
-
-export type DBType = typeof db;
+export const db = new PrismaClient({
+	accelerateUrl: env.DATABASE_URL,
+}).$extends(withAccelerate());
