@@ -4,28 +4,30 @@
 
 ### Project Setup
 
-- [x] Initialize project
-- [x] Configure Turborepo monorepo structure
-- [x] Setup Lefthook git hooks (pre-commit, pre-push)
-- [x] Configure Oxlint for linting
-- [x] Setup Neon databse for `dev`
-- [x] Configure Drizzle ORM + migrations
-- [x] Setup Supabase (Storage)
-- [x] Initialize Upstash Redis + Realtime
-- [x] Configure T3-env for environment variables
-- [x] Configure Sentry error tracking
+- [ ] Initialize project
+- [ ] Configure Turborepo monorepo structure
+- [ ] Setup Lefthook git hooks (pre-commit, pre-push)
+- [ ] Configure Oxlint for linting
+- [ ] Setup PostgreSQL database
+- [ ] Configure Prisma ORM + migrations
+- [ ] Setup Supabase (Storage)
+- [ ] Initialize Redis (local via Docker Compose)
+- [ ] Initialize Upstash Realtime
+- [ ] Configure T3-env for environment variables
+- [ ] Setup Docker Compose for local development
+- [ ] Configure Sentry error tracking
 
-### Authentication & Database ([#204](https://github.com/husamql3/pstrack/issues/20))
+### Week 2: Authentication & Database
 
-- [x] Deploy client on [cloudflare](https://tanstack.com/start/latest/docs/framework/react/guide/hosting#cloudflare-workers--official-partner)
-  - [x] copy the env to the client as well
-  - [x] create scripts in the root
-- [x] Implement Better-Auth setup
-- [x] Create database schema (users, groups, problems, etc.)
-- [x] Build signup flow (email verification)
-- [x] Build login flow (sessions)
-- [x] Setup Sentry error tracking
-- [ ] Configure Sentry for tanstack
+- [ ] Implement Better-Auth setup
+- [ ] Create database schema (users, groups, problems, etc.)
+- [ ] Build signup flow (email verification)
+- [ ] Build login flow (sessions)
+- [ ] Create user profile CRUD operations
+- [ ] Setup Sentry error tracking
+- [ ] Configure PostHog analytics
+
+**Deliverable**: Users can signup, login, and manage profiles
 
 ---
 
@@ -51,7 +53,6 @@
 - [ ] Build admin approval system
 - [ ] Implement group switching
 - [ ] Create group settings page
-- [ ] Create user profile CRUD operations
 
 **Deliverable**: Users can create/join groups
 
@@ -96,7 +97,7 @@
 - [ ] Create solution submission UI
 - [ ] Implement syntax highlighting (Shiki)
 - [ ] Build solution voting system
-- [ ] Create line-by-line commenting (Monaco Editor)
+- [ ] Create line-by-line commenting (Diffs)
 
 **Deliverable**: Leaderboards and solutions working
 
@@ -157,16 +158,17 @@
 - [ ] Create onboarding flow/tutorial
 - [ ] Build landing page (marketing site)
 - [ ] Write documentation (user guide, API docs)
-- [ ] Configure Cloudflare Workers production deployment
-- [ ] Configure Cloudflare Pages production deployment
-- [ ] Setup CI/CD with GitHub Actions + Wrangler
+- [ ] Create Dockerfiles for web and api
+- [ ] Setup Docker Compose for production
+- [ ] Configure Dokploy for deployment
+- [ ] Setup CI/CD with GitHub Actions
 - [ ] Configure custom domain (pstrack.tech)
-- [ ] Setup Cloudflare DNS and SSL
+- [ ] Setup DNS and SSL certificates
 - [ ] Perform security audit
 - [ ] Configure Sentry source map uploads
 - [ ] Soft launch to beta testers (50-100 users)
 
-**Deliverable**: Beta launch ðŸš€
+**Deliverable**: Beta launch 🚀
 
 ---
 
@@ -210,7 +212,8 @@
 ### Technical Risks
 
 - **API rate limits**: Implement aggressive caching, batch requests
-- **Cloudflare Workers limits**: Monitor execution time (max 50ms CPU), optimize queries
+- **Docker resource limits**: Monitor container resource usage, implement auto-scaling if needed
+- **Database connection pooling**: Configure Prisma connection limits appropriately
 - **WebSocket connections**: Upstash Realtime handles auto-reconnection, test connection stability
 
 ### Product Risks
@@ -224,3 +227,4 @@
 - **Scope creep**: Lock features after Phase 4, move extras to backlog
 - **Bugs**: Allocate 20% buffer time for unexpected issues
 - **Integration delays**: Test external APIs (LeetCode/CF) early
+- **Deployment complexity**: Test Docker containers and Dokploy setup early in development

@@ -14,7 +14,6 @@
 
 - [**Features Specification**](./features.md) - Complete feature list and requirements
 - [**Tech Stack**](./stack.md) - Technologies, tools, and architecture
-- [**Architecture**](./architecture.md) - System design, data flows, and security
 - [**Timeline**](./timeline.md) - 12-week development roadmap
 
 ### 💰 Business
@@ -29,8 +28,8 @@ MIT License - see [LICENSE](../LICENSE)
 
 ## Support
 
-- **GitHub Issues**: [github.com/yourusername/pstrack/issues](https://github.com/yourusername/pstrack/issues)
-- **Email**: <support@pstrack.tech>
+- **GitHub Issues**: [github.com/husamql3/pstrack/issues](https://github.com/husamql3/pstrack/issues)
+- **Email**: <support@pstrack.app>
 - **Twitter**: [@husamql3](https://twitter.com/husamql3)
 
 ---
