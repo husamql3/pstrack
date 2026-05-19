@@ -1,230 +1,182 @@
-# Development Timeline
+# Timeline
 
-## Phase 1
+## Phase 1 — Project Setup & Tooling
 
-### Project Setup
+- [ ] Initialize TanStack Start project with Bun
+- [ ] Configure TypeScript (strict mode)
+- [ ] Set up Biome (linting + formatting, `biome.json` config)
+- [ ] Set up Lefthook (`pre-commit: biome check --write`, `pre-push: bun run typecheck`)
+- [ ] Configure T3-env for environment variable validation
+- [ ] Set up Knip for unused code detection
+- [ ] Mount Elysia inside TanStack Start server middleware
+- [ ] Wire up Eden Treaty client in `src/client/lib/eden.ts`
+- [ ] Configure @prisma/adapter-neon + @neondatabase/serverless in Prisma client setup
+- [ ] Set up Neon database, initialize Prisma schema, run first migration
+- [ ] Configure Sentry (client: `@sentry/react`, server: `@sentry/bun`)
+- [ ] Set up GitHub Actions `ci.yml` with `.bun` cache:
+  - [ ] Cache `~/.bun/install/cache`
+  - [ ] Jobs (parallel): typecheck, `biome ci`, knip, `vitest run`, build
+- [ ] Set up GitHub Actions `release.yml` (merge to main):
+  - [ ] Same quality + test + build jobs
+  - [ ] Sentry source map upload
 
-- [ ] Initialize project
-- [ ] Configure Turborepo monorepo structure
-- [ ] Setup Lefthook git hooks (pre-commit, pre-push)
-- [ ] Configure Oxlint for linting
-- [ ] Setup PostgreSQL database
-- [ ] Configure Prisma ORM + migrations
-- [ ] Setup Supabase (Storage)
-- [ ] Initialize Redis (local via Docker Compose)
-- [ ] Initialize Upstash Realtime
-- [ ] Configure T3-env for environment variables
-- [ ] Setup Docker Compose for local development
-- [ ] Configure Sentry error tracking
-
-### Week 2: Authentication & Database
-
-- [ ] Implement Better-Auth setup
-- [ ] Create database schema (users, groups, problems, etc.)
-- [ ] Build signup flow (email verification)
-- [ ] Build login flow (sessions)
-- [ ] Create user profile CRUD operations
-- [ ] Setup Sentry error tracking
-- [ ] Configure PostHog analytics
-
-**Deliverable**: Users can signup, login, and manage profiles
+**Deliverable:** Repo boots, Elysia handles `/api/ping`, Eden client calls it with full type safety
 
 ---
 
-## Phase 2: Core Features (Weeks 3-4)
+## Phase 2 — Auth
 
-### Week 3: Daily Problem System
+- [ ] Install and configure Better Auth
+- [ ] Add Polar plugin to Better Auth config
+- [ ] Wire Better Auth to `/api/auth/*` inside Elysia
+- [ ] Build sign up page (`/signup`)
+- [ ] Build login page (`/login`)
+- [ ] Build email verification flow (`/verify-email`)
+- [ ] Build forgot/reset password flow
+- [ ] Add auth guard to TanStack Router (redirect unauthenticated users)
+- [ ] Build onboarding page (`/onboarding`) — connect LeetCode/Codeforces handle
+- [ ] Set up Resend + first email template (`verify-email.tsx`)
+- [ ] Integrate hashvatar on user profile display
 
-- [ ] Build problem assignment logic
-- [ ] Integrate LeetCode GraphQL API
-- [ ] Integrate Codeforces API
-- [ ] Create submission verification job (Trigger.dev)
-- [ ] Build "mark as solved" UI
-- [ ] Implement points calculation
-- [ ] Create streak tracking logic
-
-**Deliverable**: Daily problems work end-to-end
-
-### Week 4: Groups & Permissions
-
-- [ ] Build group creation flow
-- [ ] Implement public/private group logic
-- [ ] Create invite link generation
-- [ ] Build admin approval system
-- [ ] Implement group switching
-- [ ] Create group settings page
-
-**Deliverable**: Users can create/join groups
+**Deliverable:** Users can sign up, verify email, log in, and connect their handles
 
 ---
 
-## Phase 3: Accountability (Weeks 5-6)
+## Phase 3 — Groups
 
-### Week 5: Pause & Suspension System
+- [ ] Build group creation form (`/groups/new`)
+- [ ] Build public group browse page (`/groups`)
+- [ ] `POST /api/groups` — create group endpoint
+- [ ] `GET /api/groups` — list public groups endpoint
+- [ ] `POST /api/groups/:id/join` — request to join (public) or instant join (private)
+- [ ] `GET /api/groups/:id` — group detail endpoint
+- [ ] Build group overview page (`/groups/$groupId`)
+- [ ] `GET /api/groups/:id/join-requests` — list pending requests
+- [ ] `PATCH /api/groups/:id/join-requests/:requestId` — approve / reject
+- [ ] Build join requests page (`/groups/$groupId/join-requests`)
+- [ ] `POST /api/groups/:id/invite` — generate invite link
+- [ ] `DELETE /api/groups/:id/invite` — revoke invite link
+- [ ] Build group settings page (`/groups/$groupId/settings`)
+- [ ] `GET /api/groups/:id/members` + build members page
+- [ ] `DELETE /api/groups/:id/members/:userId` — remove member
+- [ ] `POST /api/groups/:id/leave` — leave group
+- [ ] Set up Trigger.dev job: `expire-join-requests` (hourly cron, marks PENDING > 1 day as EXPIRED)
+- [ ] Email templates: `join-request.tsx`, `join-approved.tsx`, `join-rejected.tsx`, `join-expired.tsx`, `removed-from-group.tsx`
+- [ ] Enforce group limits (Free: 1 group / 30 members, Pro: 5 groups / 50 members)
 
-- [ ] Build pause request UI
-- [ ] Implement excuse form
-- [ ] Create admin approval queue
-- [ ] Build suspension automation (Trigger.dev)
-- [ ] Implement unexcused miss tracking
-- [ ] Create suspension appeal system
-- [ ] Build notification system (email via Resend)
-
-**Deliverable**: Accountability mechanisms functional
-
-### Week 6: Notifications
-
-- [ ] Build email templates (React Email)
-- [ ] Implement in-app notification panel
-- [ ] Setup Upstash Realtime for WebSocket notifications
-- [ ] Create React hooks for real-time updates
-- [ ] Implement notification bell with unread count
-- [ ] Create notification preferences UI
-- [ ] Build daily digest job (Trigger.dev)
-- [ ] Implement notification batching
-- [ ] Add presence indicators (who's online)
-
-**Deliverable**: Users receive timely notifications via email and real-time in-app updates
+**Deliverable:** Users can create groups, join/leave, admins can manage members and requests
 
 ---
 
-## Phase 4: Community (Weeks 7-8)
+## Phase 4 — Daily Problem System
 
-### Week 7: Leaderboards & Solutions
+- [ ] Seed NeetCode 250 problems via `POST /api/admin/problems/seed`
+- [ ] Set up Trigger.dev job: `assign-daily-problem` (midnight cron — creates `DailyProblem` row per active group)
+- [ ] `GET /api/problems/today` — return today's problem + user's current `UserSolve` status
+- [ ] `GET /api/problems/roadmap` — NeetCode 250 list with user solve history
+- [ ] Build dashboard page (`/dashboard`) — today's problem card, solve/pause buttons, streak display
+- [ ] Build roadmap page (`/problems`)
+- [ ] `POST /api/problems/today/solve` — create `UserSolve` (PENDING_VERIFICATION), fire Trigger.dev job
+- [ ] Set up Trigger.dev job: `verify-submission` — poll LC/CF API, update status, award points
+- [ ] `POST /api/problems/today/pause` — set status to PAUSED, decrement available pauses
+- [ ] Set up Trigger.dev job: `mark-missed` (end-of-day cron — sets unresolved UserSolves to MISSED, applies -3 points)
+- [ ] Set up Trigger.dev job: `reset-monthly-pauses` (1st of month cron)
+- [ ] Email templates: `daily-problem.tsx`, `solve-verified.tsx`, `verification-failed.tsx`
 
-- [ ] Build platform leaderboard (Redis sorted sets)
-- [ ] Build group leaderboard
-- [ ] Create solution submission UI
-- [ ] Implement syntax highlighting (Shiki)
-- [ ] Build solution voting system
-- [ ] Create line-by-line commenting (Diffs)
-
-**Deliverable**: Leaderboards and solutions working
-
-### Week 8: Resources & Feed
-
-- [ ] Build resource submission form
-- [ ] Create admin resource approval queue
-- [ ] Implement resource voting
-- [ ] Build activity feed (with pagination)
-- [ ] Create feed filtering
-- [ ] Implement Twitter bot for weekly leaderboard
-
-**Deliverable**: Community features live
+**Deliverable:** Daily problem loop works end-to-end — assign, solve, verify, pause, miss
 
 ---
 
-## Phase 5: Polish & Premium (Weeks 9-10)
+## Phase 5 — Points, Streaks & Gamification
 
-### Week 9: Admin Dashboard
+- [ ] Points calculation in `verify-submission` job (+10 solve, +5 first in group, streak multiplier)
+- [ ] All point changes logged to `PointsHistory`
+- [ ] `user.totalPoints` updated denormalized on every change
+- [ ] Streak increment / reset logic in `verify-submission` and `mark-missed` jobs
+- [ ] `user.longestStreak` updated when `currentStreak` exceeds it
+- [ ] Badge evaluation after each solve: streak badges (7/30/100), First Solver (10/50), Consistent (30)
+- [ ] `POST /api/users/me` returns pauses remaining this month
+- [ ] Email templates: `streak-milestone.tsx`, `badge-earned.tsx`
 
-- [ ] Build admin user management UI
-- [ ] Create group management tools
-- [ ] Implement content moderation queue
-- [ ] Build analytics dashboard (PostHog integration)
-- [ ] Create manual override tools
-- [ ] Implement ban/suspend actions
-
-**Deliverable**: Admin tools functional
-
-### Week 10: Premium Features
-
-- [ ] Implement Stripe integration
-- [ ] Build subscription management
-- [ ] Create premium-only features (extra pauses, analytics)
-- [ ] Build billing portal
-- [ ] Implement team tier features
-- [ ] Create upgrade prompts in UI
-
-**Deliverable**: Freemium model implemented
+**Deliverable:** Points, streaks, and badges fully functional
 
 ---
 
-## Phase 6: Testing & Launch (Weeks 11-12)
+## Phase 6 — Leaderboard
 
-### Week 11: Testing & Optimization
+- [ ] `GET /api/leaderboard/groups/:id` — group leaderboard with period filter
+- [ ] `GET /api/leaderboard/global` — global top 100 (Pro gate)
+- [ ] Build leaderboard page (`/leaderboard`) with Pro paywall UI
+- [ ] Build group leaderboard on `/groups/$groupId`
+- [ ] Period filter: week / month / all-time (query `PointsHistory` for windowed totals)
 
-- [ ] Write integration tests (Bun test)
-- [ ] Perform load testing (k6 or Artillery)
-- [ ] Optimize database queries (add indexes)
-- [ ] Implement Redis caching for hot paths
-- [ ] Fix critical bugs from testing
-- [ ] Setup monitoring dashboards (Sentry + PostHog)
-
-**Deliverable**: Platform stable under load
-
-### Week 12: Launch Preparation
-
-- [ ] Create onboarding flow/tutorial
-- [ ] Build landing page (marketing site)
-- [ ] Write documentation (user guide, API docs)
-- [ ] Create Dockerfiles for web and api
-- [ ] Setup Docker Compose for production
-- [ ] Configure Dokploy for deployment
-- [ ] Setup CI/CD with GitHub Actions
-- [ ] Configure custom domain (pstrack.tech)
-- [ ] Setup DNS and SSL certificates
-- [ ] Perform security audit
-- [ ] Configure Sentry source map uploads
-- [ ] Soft launch to beta testers (50-100 users)
-
-**Deliverable**: Beta launch 🚀
+**Deliverable:** Leaderboards live, global gated behind Pro
 
 ---
 
-## Post-Launch (Weeks 13+)
+## Phase 7 — Freemium (Polar)
 
-### Immediate Priorities
+- [ ] Create Polar product ($14, one-time)
+- [ ] Set up sale pricing ($9) and promo codes in Polar dashboard
+- [ ] Configure Better Auth Polar plugin (webhook handler, `isPro` sync)
+- [ ] Build billing settings page (`/settings/billing`) — Pro status, upgrade CTA
+- [ ] Add Pro gates in UI: group limits, global leaderboard, private group creation
+- [ ] Add Pro gates in API: enforce on relevant Elysia routes
 
-- [ ] Monitor error rates (Sentry)
-- [ ] Track user engagement (PostHog funnels)
-- [ ] Collect user feedback
-- [ ] Fix critical bugs
-- [ ] Optimize slow queries
-
-### Future Features (Backlog)
-
-- [ ] Mobile app (React Native)
-- [ ] Discord bot integration
-- [ ] Public API for developers
-- [ ] Custom problem sets (premium)
-- [ ] Video solution explanations
-- [ ] 1-on-1 pairing mode
-- [ ] Company partnerships (B2B)
+**Deliverable:** Users can purchase Pro, gates enforced on client and server
 
 ---
 
-## Key Milestones
+## Phase 8 — User Profiles & Settings
 
-| Week | Milestone          | Success Criteria                       |
-| ---- | ------------------ | -------------------------------------- |
-| 2    | Auth Working       | Users can signup/login                 |
-| 4    | Daily Problems     | Users can solve and get verified       |
-| 6    | Notifications      | Users receive emails and in-app alerts |
-| 8    | Community Features | Leaderboards and solutions live        |
-| 10   | Premium Tier       | Stripe integration complete            |
-| 12   | Beta Launch        | 50+ active users                       |
+- [ ] `GET /api/users/:username` — public profile endpoint
+- [ ] `PATCH /api/users/me` — update profile endpoint
+- [ ] `DELETE /api/users/me` — account deletion
+- [ ] Build public profile page (`/profile/$username`)
+- [ ] Build settings pages (`/settings/account`, `/settings/notifications`, `/settings/billing`)
+- [ ] Email templates: `password-changed.tsx`, `security-alert.tsx`, `account-deletion.tsx`
+
+**Deliverable:** Full profile and settings experience
 
 ---
 
-## Risk Mitigation
+## Phase 9 — Admin Dashboard
 
-### Technical Risks
+- [ ] Platform admin flag on `User` (set manually in DB)
+- [ ] `GET /api/admin/users` + `/admin/users` page
+- [ ] `PATCH /api/admin/users/:id` — adjust points, ban
+- [ ] `GET /api/admin/groups` + `DELETE /api/admin/groups/:id`
+- [ ] `GET /api/admin/stats` + `/admin` overview page
+- [ ] Admin route guard (redirect non-admins)
 
-- **API rate limits**: Implement aggressive caching, batch requests
-- **Docker resource limits**: Monitor container resource usage, implement auto-scaling if needed
-- **Database connection pooling**: Configure Prisma connection limits appropriately
-- **WebSocket connections**: Upstash Realtime handles auto-reconnection, test connection stability
+**Deliverable:** Platform admins can manage users, groups, and view stats
 
-### Product Risks
+---
 
-- **Low engagement**: A/B test onboarding, add more gamification
-- **Admin overhead**: Build better auto-moderation tools
-- **Payment failures**: Test Stripe webhooks thoroughly
+## Phase 10 — Polish & Launch
 
-### Timeline Risks
+- [ ] `react-error-boundary` on all routes with useful fallback UIs
+- [ ] Error boundaries on all pages
+- [ ] Loading skeletons on all data-fetching routes
+- [ ] Empty states (no group joined, no problems solved yet, etc.)
+- [ ] Mobile-responsive UI audit
+- [ ] Sentry source map upload in CI
+- [ ] Environment variables documented in `.env.example`
+- [ ] Vercel project configured (env vars, domain)
+- [ ] Soft launch to beta testers (50 users)
+- [ ] Monitor error rates in Sentry
 
-- **Scope creep**: Lock features after Phase 4, move extras to backlog
-- **Bugs**: Allocate 20% buffer time for unexpected issues
-- **Integration delays**: Test external APIs (LeetCode/CF) early
-- **Deployment complexity**: Test Docker containers and Dokploy setup early in development
+**Deliverable:** Beta launch
+
+---
+
+## Post-MVP Backlog
+
+- [ ] Solutions sharing (submit, view, upvote)
+- [ ] Activity feed (group-scoped, poll-based)
+- [ ] Resources hub (submit links, community upvotes)
+- [ ] In-app notification inbox (Upstash Realtime)
+- [ ] Redis leaderboard cache
+- [ ] PostHog analytics
+- [ ] Custom roadmaps (Pro admin perk)
+- [ ] Mobile app

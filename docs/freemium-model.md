@@ -1,29 +1,43 @@
-# Freemium Models
+# Freemium Model
 
-## Free Tier
+## Tiers
 
-- Join 1 public group
-- 2 pauses per month
-- Basic profile
-- View top 50 leaderboard
-- Standard notifications
+| | Free | Pro |
+|---|---|---|
+| Price | $0 | **$14 one-time** (sale: $9) |
+| Groups joined | 1 | Up to 5 |
+| Group capacity | 30 members | 50 members (Pro-created groups) |
+| Create private groups | No | Yes |
+| Pauses per month | 2 | 4 |
+| Global leaderboard | No | Yes |
+| Profile Pro badge | No | Yes |
 
-## Premium ($7/month)
+## Payment
 
-- Join up to 5 groups
-- Create private groups (limit 3)
-- 4 pauses per month + 1 streak freeze
-- Detailed analytics dashboard
-- Custom avatar uploads
-- Priority support
-- Ad-free experience
-- Early access to new features
+- Provider: **Polar**
+- Model: one-time purchase (lifetime Pro access)
+- Standard price: **$14**
+- Sale price: **$9**
+- Promo codes: supported natively in Polar dashboard
+- Integration: **Better Auth Polar plugin** — Pro status is tied directly to the auth session, no manual webhook handling required
 
-## Team Tier ($25/month)
+## How Pro Status Works
 
-- For group admins
-- Up to 50 members
-- Custom group branding
-- Bulk operations (approve all requests)
-- Weekly progress reports
-- API access
+1. User clicks "Upgrade to Pro" → redirected to Polar checkout
+2. On successful purchase, Polar fires webhook → Better Auth Polar plugin handles it
+3. `User.isPro` set to `true`
+4. Next session refresh picks up the updated Pro status automatically
+
+## Gating Logic
+
+| Gate | Check |
+|---|---|
+| Join more than 1 group | `user.isPro && groupMemberships.length < 5` |
+| Create private group | `user.isPro` |
+| Use 3rd/4th pause | `user.isPro && pausesUsedThisMonth < 4` |
+| View global leaderboard | `user.isPro` |
+
+## Post-MVP Additions
+
+- Custom roadmap for group (Pro admin perk)
+- Detailed personal analytics dashboard (Pro perk)
