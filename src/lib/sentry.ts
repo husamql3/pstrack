@@ -1,4 +1,5 @@
 import type * as SentryType from "@sentry/react"
+
 import { env } from "@/env"
 
 let isInitialized = false

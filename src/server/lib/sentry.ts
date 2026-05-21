@@ -1,5 +1,5 @@
-import * as Sentry from "@sentry/bun"
 import type { User } from "@sentry/bun"
+import * as Sentry from "@sentry/bun"
 
 import { env } from "@/env"
 
