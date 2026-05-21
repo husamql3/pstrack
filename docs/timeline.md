@@ -19,12 +19,12 @@ Stay consistent with LeetCode — solve one problem a day, earn points, and comp
 - [x] Configure `@prisma/adapter-neon` + `@neondatabase/serverless` in Prisma client setup
 - [x] Set up Neon database, initialize Prisma schema, run first migration
 - [x] Configure Sentry (client: `@sentry/react`, server: `@sentry/bun`)
-- [ ] Set up GitHub Actions `ci.yml` with `.bun` cache:
-  - [ ] Cache `~/.bun/install/cache`
-  - [ ] Jobs (parallel): typecheck, `biome ci`, knip, `vitest run`, build
-- [ ] Set up GitHub Actions `release.yml` (merge to main):
-  - [ ] Same quality + test + build jobs
-  - [ ] Sentry source map upload
+- [x] Set up GitHub Actions `ci.yml` with `.bun` cache:
+  - [x] Cache `~/.bun/install/cache`
+  - [x] Jobs (parallel): typecheck, `biome ci`, knip, `vitest run`, build
+- [x] Set up GitHub Actions `release.yml` (merge to main):
+  - [x] Same quality + test + build jobs
+  - [x] Sentry source map upload
 
 **Deliverable:** Repo boots, Elysia handles `/api/ping`, Eden client calls it with full type safety
 
