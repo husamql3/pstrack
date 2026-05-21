@@ -21,6 +21,7 @@
 		"allowJs": true,
 		"baseUrl": ".",
 		"paths": {
+			"@/generated/*": ["./generated/*"],
 			"@/*": ["./src/*"]
 		}
 	}

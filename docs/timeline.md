@@ -15,10 +15,10 @@ Stay consistent with LeetCode — solve one problem a day, earn points, and comp
 - [x] Configure T3-env for environment variable validation
 - [x] Set up Knip for unused code detection
 - [x] Mount Elysia inside TanStack Start server middleware
-- [ ] Wire up Eden Treaty client in `src/client/lib/eden.ts`
-- [ ] Configure `@prisma/adapter-neon` + `@neondatabase/serverless` in Prisma client setup
-- [ ] Set up Neon database, initialize Prisma schema, run first migration
-- [ ] Configure Sentry (client: `@sentry/react`, server: `@sentry/bun`)
+- [x] Wire up Eden Treaty client in `src/client/lib/eden.ts`
+- [x] Configure `@prisma/adapter-neon` + `@neondatabase/serverless` in Prisma client setup
+- [x] Set up Neon database, initialize Prisma schema, run first migration
+- [x] Configure Sentry (client: `@sentry/react`, server: `@sentry/bun`)
 - [ ] Set up GitHub Actions `ci.yml` with `.bun` cache:
   - [ ] Cache `~/.bun/install/cache`
   - [ ] Jobs (parallel): typecheck, `biome ci`, knip, `vitest run`, build

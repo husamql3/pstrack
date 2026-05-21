@@ -1,5 +1,13 @@
 import { Elysia } from "elysia"
 
-export const app = new Elysia({ prefix: "/api/v3" }).get("/ping", () => "pong")
+import { captureServerException, initServerSentry } from "@/server/lib/sentry"
+
+initServerSentry()
+
+export const app = new Elysia({ prefix: "/api/v3" })
+	.onError(({ error }) => {
+		captureServerException(error)
+	})
+	.get("/health", () => "ok")
 
 export type App = typeof app
