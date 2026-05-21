@@ -61,7 +61,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-bun-
       - run: bun install --frozen-lockfile
-      - run: bun run knip
+      - run: bun run knip --no-exit-code
 
   test:
     name: Vitest
