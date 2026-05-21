@@ -8,13 +8,13 @@ Stay consistent with LeetCode — solve one problem a day, earn points, and comp
 
 - [ ] Update logo & slogan
 - [ ] `npx skills add nutlope/hallmark`
-- [ ] Initialize TanStack Start project with Bun
-- [ ] Configure TypeScript (strict mode)
-- [ ] Set up Biome (linting + formatting, `biome.json` config)
-- [ ] Set up Lefthook (`pre-commit: biome check --write`, `pre-push: bun run typecheck`)
-- [ ] Configure T3-env for environment variable validation
-- [ ] Set up Knip for unused code detection
-- [ ] Mount Elysia inside TanStack Start server middleware
+- [x] Initialize TanStack Start project with Bun
+- [x] Configure TypeScript (strict mode)
+- [x] Set up Biome (linting + formatting, `biome.json` config)
+- [x] Set up Lefthook (`pre-commit: biome check --write`, `pre-push: bun run typecheck`)
+- [x] Configure T3-env for environment variable validation
+- [x] Set up Knip for unused code detection
+- [x] Mount Elysia inside TanStack Start server middleware
 - [ ] Wire up Eden Treaty client in `src/client/lib/eden.ts`
 - [ ] Configure `@prisma/adapter-neon` + `@neondatabase/serverless` in Prisma client setup
 - [ ] Set up Neon database, initialize Prisma schema, run first migration
