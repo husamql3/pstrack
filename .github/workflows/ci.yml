@@ -79,7 +79,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-bun-
       - run: bun install --frozen-lockfile
-      - run: bun test
+      - run: bun run test
 
   build:
     name: Build
