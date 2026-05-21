@@ -1,7 +1,13 @@
 # Timeline
 
+
+Show up. Solve. Repeat.
+Stay consistent with LeetCode — solve one problem a day, earn points, and compete with your group.
+
 ## Phase 1 — Project Setup & Tooling
 
+- [ ] Update logo & slogan
+- [ ] `npx skills add nutlope/hallmark`
 - [ ] Initialize TanStack Start project with Bun
 - [ ] Configure TypeScript (strict mode)
 - [ ] Set up Biome (linting + formatting, `biome.json` config)
@@ -10,7 +16,7 @@
 - [ ] Set up Knip for unused code detection
 - [ ] Mount Elysia inside TanStack Start server middleware
 - [ ] Wire up Eden Treaty client in `src/client/lib/eden.ts`
-- [ ] Configure @prisma/adapter-neon + @neondatabase/serverless in Prisma client setup
+- [ ] Configure `@prisma/adapter-neon` + `@neondatabase/serverless` in Prisma client setup
 - [ ] Set up Neon database, initialize Prisma schema, run first migration
 - [ ] Configure Sentry (client: `@sentry/react`, server: `@sentry/bun`)
 - [ ] Set up GitHub Actions `ci.yml` with `.bun` cache:

@@ -10,20 +10,21 @@ Database: **Neon (PostgreSQL)**
 - Cascade deletes on all membership and solve relations
 - `UserSolve.status` is the single source of truth for a day's outcome: `PENDING_VERIFICATION | SOLVED | PAUSED | MISSED | VERIFICATION_FAILED`
 - Better Auth manages `Session`, `Account`, `Verification` — do not add business logic to these tables
+- Streaks break on `MISSED`, not on `VERIFICATION_FAILED` — a failed verification gives a grace window
 
 ## Tables
 
 | Table | Purpose |
 |---|---|
-| `User` | Platform user, points, streak, Pro status |
+| `User` | Platform user — points, streak, Pro status, notification prefs |
 | `Group` | Group container (public or private) |
 | `GroupMember` | User ↔ Group membership + role |
-| `GroupJoinRequest` | Pending join requests with 1-day expiry |
-| `Problem` | NeetCode 250 problem definitions (evergreen) |
+| `GroupJoinRequest` | Pending join requests for public groups (expire after 1 day) |
+| `Problem` | NeetCode 250 problem definitions (evergreen, seeded by admin) |
 | `DailyProblem` | One problem assigned per group per day |
-| `UserSolve` | User's outcome for a daily problem |
+| `UserSolve` | User's outcome for a daily problem (one row per user per group per day) |
 | `PointsHistory` | Immutable audit log of all point changes |
-| `Badge` | Badge definitions |
+| `Badge` | Badge definitions (static, seeded) |
 | `UserBadge` | Badges earned by users |
 | `Session` | Better Auth |
 | `Account` | Better Auth |
@@ -45,18 +46,25 @@ model User {
   id                  String   @id
   username            String   @unique
   email               String   @unique
+  emailVerified       Boolean  @default(false)
   leetcodeHandle      String?
   codeforcesHandle    String?
-  totalPoints         Int      @default(0)
-  currentStreak       Int      @default(0)
-  longestStreak       Int      @default(0)
-  pausesUsedThisMonth Int      @default(0)
-  isPro               Boolean  @default(false)
   bio                 String?
   twitterHandle       String?
   linkedinHandle      String?
   websiteUrl          String?
   isPublic            Boolean  @default(true)
+  isPro               Boolean  @default(false)
+  isAdmin             Boolean  @default(false)
+  isBanned            Boolean  @default(false)
+  totalPoints         Int      @default(0)
+  currentStreak       Int      @default(0)
+  longestStreak       Int      @default(0)
+  pausesUsedThisMonth Int      @default(0)
+  // notification preferences
+  notifyDailyProblem  Boolean  @default(true)
+  notifyAchievements  Boolean  @default(true)
+  notifyGroupActivity Boolean  @default(true)
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
 
@@ -75,7 +83,6 @@ model User {
 model Group {
   id              String    @id @default(cuid())
   name            String
-  slug            String    @unique
   description     String?
   type            GroupType
   creatorId       String
@@ -86,8 +93,8 @@ model Group {
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
-  members      GroupMember[]
-  joinRequests GroupJoinRequest[]
+  members       GroupMember[]
+  joinRequests  GroupJoinRequest[]
   dailyProblems DailyProblem[]
 
   @@index([type, isActive])
@@ -124,6 +131,7 @@ model GroupJoinRequest {
   status    JoinRequestStatus @default(PENDING)
   expiresAt DateTime
   createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
 
   group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
   user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -140,13 +148,12 @@ enum JoinRequestStatus {
 }
 
 model Problem {
-  id           String        @id @default(cuid())
-  slug         String        @unique
+  id           String     @id @default(cuid())
+  slug         String     @unique
   title        String
   difficulty   Difficulty
   topics       String[]
-  source       ProblemSource
-  roadmapIndex Int           @unique
+  roadmapIndex Int        @unique
   leetcodeId   Int?
   codeforcesId String?
 
@@ -159,11 +166,6 @@ enum Difficulty {
   HARD
 }
 
-enum ProblemSource {
-  LEETCODE
-  CODEFORCES
-}
-
 model DailyProblem {
   id             String    @id @default(cuid())
   groupId        String
@@ -172,8 +174,8 @@ model DailyProblem {
   firstSolverId  String?
   firstSolveTime DateTime?
 
-  group   Group     @relation(fields: [groupId], references: [id])
-  problem Problem   @relation(fields: [problemId], references: [id])
+  group   Group       @relation(fields: [groupId], references: [id])
+  problem Problem     @relation(fields: [problemId], references: [id])
   solves  UserSolve[]
 
   @@unique([groupId, assignedDate])
@@ -189,9 +191,11 @@ model UserSolve {
   isFirstInGroup Boolean     @default(false)
   verifiedAt     DateTime?
   createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
 
-  user         User         @relation(fields: [userId], references: [id])
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   dailyProblem DailyProblem @relation(fields: [dailyProblemId], references: [id])
+  pointsHistory PointsHistory[]
 
   @@unique([userId, dailyProblemId])
   @@index([userId])
@@ -206,13 +210,16 @@ enum SolveStatus {
 }
 
 model PointsHistory {
-  id        String      @id @default(cuid())
-  userId    String
-  amount    Int
-  reason    PointReason
-  createdAt DateTime    @default(now())
+  id          String      @id @default(cuid())
+  userId      String
+  userSolveId String?
+  delta       Int
+  reason      PointReason
+  adminNote   String?
+  createdAt   DateTime    @default(now())
 
-  user User @relation(fields: [userId], references: [id])
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userSolve UserSolve? @relation(fields: [userSolveId], references: [id])
 
   @@index([userId, createdAt])
 }
@@ -222,6 +229,7 @@ enum PointReason {
   FIRST_IN_GROUP
   STREAK_MULTIPLIER_BONUS
   MISSED_DAY
+  ADMIN_ADJUSTMENT
 }
 
 model Badge {
@@ -239,7 +247,7 @@ model UserBadge {
   badgeId  String
   earnedAt DateTime @default(now())
 
-  user  User  @relation(fields: [userId], references: [id])
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
   badge Badge @relation(fields: [badgeId], references: [id])
 
   @@unique([userId, badgeId])
@@ -253,7 +261,8 @@ model Session {
   userId    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Account {
@@ -269,7 +278,8 @@ model Account {
   password              String?
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @updatedAt
-  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Verification {
@@ -289,25 +299,41 @@ model Verification {
 | One solve per user per daily problem | `@@unique([userId, dailyProblemId])` on `UserSolve` |
 | One active join request per user per group | `@@unique([groupId, userId])` on `GroupJoinRequest` |
 | One problem per group per day | `@@unique([groupId, assignedDate])` on `DailyProblem` |
-| `pausesUsedThisMonth` resets on 1st of month | Trigger.dev cron job |
-| Join requests expire after 1 day | `expiresAt` set on creation, hourly cron marks EXPIRED |
-| Free users: `maxMembers = 30`, Pro groups: `maxMembers = 50` | Set on group creation based on creator's `isPro` |
-| Streak breaks on `MISSED`, not on `VERIFICATION_FAILED` | Application logic in verify-submission job |
+| `pausesUsedThisMonth` resets on the 1st of each month | Trigger.dev `reset-monthly-pauses` cron |
+| Join requests expire after 1 day | `expiresAt` set on creation; hourly `expire-join-requests` cron marks EXPIRED |
+| Free groups: `maxMembers = 30` / Pro groups: `maxMembers = 50` | Set at group creation based on creator's `isPro` |
+| Streak breaks on `MISSED`, preserved on `VERIFICATION_FAILED` | Application logic in `verify-submission` and `mark-missed` jobs |
+| Platform admin access gated on `User.isAdmin` (set manually in DB) | Elysia middleware on `/api/admin/*` |
 
 ## Points Reference
 
-| Action | Amount | `PointReason` |
+| Action | Delta | `PointReason` |
 |---|---|---|
 | Solve daily problem | +10 | `DAILY_SOLVE` |
-| First in group | +5 | `FIRST_IN_GROUP` |
-| Miss (no pause used) | -3 | `MISSED_DAY` |
+| First in group to solve | +5 | `FIRST_IN_GROUP` |
 | Streak multiplier bonus (7d: +2, 30d: +5 per solve) | varies | `STREAK_MULTIPLIER_BONUS` |
+| Miss (no pause used) | -3 | `MISSED_DAY` |
+| Admin manual adjustment | varies | `ADMIN_ADJUSTMENT` |
+
+> Streak multipliers (1.2x at 7 days, 1.5x at 30 days) are applied to the base +10 solve points. The bonus delta is logged separately as `STREAK_MULTIPLIER_BONUS` so the base solve and the bonus are individually auditable.
+
+## Badge Keys (seeded)
+
+| Key | Condition |
+|---|---|
+| `STREAK_7` | Reach a 7-day streak |
+| `STREAK_30` | Reach a 30-day streak |
+| `STREAK_100` | Reach a 100-day streak |
+| `FIRST_SOLVER_10` | Be first in group 10 times |
+| `FIRST_SOLVER_50` | Be first in group 50 times |
+| `CONSISTENT_30` | 30 days solved with no misses |
 
 ## Post-MVP Tables
 
 When community features ship, add:
+
 - `Solution` — shared solutions for a daily problem
 - `Comment` — comments on solutions
 - `Vote` — upvotes on solutions
 - `Resource` — community-submitted links
-- `Notification` — in-app inbox entries
+- `Notification` — in-app inbox entries (requires Upstash Realtime)
