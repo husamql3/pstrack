@@ -2,9 +2,7 @@ import { createFileRoute, Outlet, redirect } from "@tanstack/react-router"
 
 export const Route = createFileRoute("/_authenticated")({
 	beforeLoad: ({ context, location }) => {
-		const { session } = context as {
-			session: { user: { username?: string | null; role?: string | null } } | null
-		}
+		const { session } = context
 
 		if (!session) {
 			throw redirect({

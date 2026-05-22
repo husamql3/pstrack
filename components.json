@@ -21,5 +21,7 @@
 	},
 	"menuColor": "default",
 	"menuAccent": "bold",
-	"registries": {}
+	"registries": {
+		"@efferd": "https://efferd.com/r/{style}/{name}.json"
+	}
 }

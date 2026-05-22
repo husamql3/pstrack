@@ -2,6 +2,7 @@ import { TanStackDevtools } from "@tanstack/react-devtools"
 import { createRootRouteWithContext, HeadContent, Scripts } from "@tanstack/react-router"
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools"
 import type { ReactNode } from "react"
+import { Toaster } from "sileo"
 
 import { authClient } from "@/lib/auth-client"
 import appCss from "../styles.css?url"
@@ -45,6 +46,7 @@ function RootDocument({ children }: { children: ReactNode }) {
 				<HeadContent />
 			</head>
 			<body suppressHydrationWarning>
+				<Toaster position="top-center" />
 				{children}
 				<TanStackDevtools
 					config={{

@@ -23,7 +23,7 @@ export const env = createEnv({
 
 		// auth
 		BETTER_AUTH_SECRET: z.string().min(32),
-		BETTER_AUTH_URL: z.url().default("http://localhost:3000"),
+		BETTER_AUTH_URL: z.url().default("https://pstrack.localhost"),
 		GOOGLE_CLIENT_ID: z.string().min(1),
 		GOOGLE_CLIENT_SECRET: z.string().min(1),
 		GITHUB_CLIENT_ID: z.string().min(1),
@@ -31,15 +31,15 @@ export const env = createEnv({
 
 		// email
 		RESEND_API_KEY: z.string().min(1),
-		EMAIL_FROM: z.string().default("PSTrack <onboarding@resend.dev>"),
+		EMAIL_FROM: z.string().default("PSTrack <info@pstrack.app>"),
 
 		// payments
 		POLAR_ACCESS_TOKEN: z.string().min(1),
 		POLAR_WEBHOOK_SECRET: z.string().min(1),
 	},
 	client: {
-		VITE_API_URL: z.url().default("http://localhost:3000/api/v3"),
-		VITE_BASE_URL: z.url().default("http://localhost:3000"),
+		VITE_API_URL: z.url().default("https://pstrack.localhost/api/v3"),
+		VITE_BASE_URL: z.url().default("https://pstrack.localhost"),
 		VITE_SENTRY_DSN: z.url().optional(),
 		VITE_SENTRY_TRACES_SAMPLE_RATE: z.coerce.number().min(0).max(1).default(0),
 		VITE_SENTRY_REPLAY_SESSION_SAMPLE_RATE: z.coerce.number().min(0).max(1).default(0),
