@@ -22,13 +22,23 @@ export const Route = createRootRouteWithContext<{}>()({
 				content: "width=device-width, initial-scale=1",
 			},
 			{
-				title: "PStrack",
+				title: "pstrack",
 			},
 		],
 		links: [
 			{
 				rel: "stylesheet",
 				href: appCss,
+			},
+			{
+				rel: "icon",
+				href: "/favicon-light.ico",
+				media: "(prefers-color-scheme: light)",
+			},
+			{
+				rel: "icon",
+				href: "/favicon-dark.ico",
+				media: "(prefers-color-scheme: dark)",
 			},
 		],
 	}),
@@ -45,7 +55,7 @@ function RootDocument({ children }: { children: ReactNode }) {
 			<head>
 				<HeadContent />
 			</head>
-			<body suppressHydrationWarning>
+			<body suppressHydrationWarning className="scheme-only-dark dark">
 				<Toaster position="top-center" />
 				{children}
 				<TanStackDevtools

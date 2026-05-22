@@ -84,7 +84,16 @@ export function AuthPage({ redirect }: AuthPageProps) {
 				)}
 			>
 				<div className="flex justify-center">
-					<span className="text-2xl font-bold tracking-tight">PSTrack</span>
+					<img
+						src="/logo-dark.png"
+						alt="pstrack"
+						className="h-5 select-none hidden dark:block"
+					/>
+					<img
+						src="/logo-light.png"
+						alt="pstrack"
+						className="h-5 select-none dark:hidden"
+					/>
 				</div>
 
 				{view === "form" ? (
@@ -113,7 +122,7 @@ export function AuthPage({ redirect }: AuthPageProps) {
 									{form.formState.errors.email.message}
 								</p>
 							)}
-							<Button className="w-full" size="sm" type="submit" disabled={isBusy}>
+							<Button className="w-full" type="submit" disabled={isBusy}>
 								{isSubmitting ? "Sending…" : "Continue With Email"}
 							</Button>
 						</form>

@@ -1,9 +1,14 @@
 {
-	"short_name": "TanStack App",
-	"name": "Create TanStack App Sample",
+	"short_name": "pstrack",
+	"name": "pstrack",
 	"icons": [
 		{
-			"src": "favicon.ico",
+			"src": "favicon-dark.ico",
+			"sizes": "64x64 32x32 24x24 16x16",
+			"type": "image/x-icon"
+		},
+		{
+			"src": "favicon-light.ico",
 			"sizes": "64x64 32x32 24x24 16x16",
 			"type": "image/x-icon"
 		},
