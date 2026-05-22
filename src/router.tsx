@@ -11,6 +11,12 @@ export function getRouter() {
 		scrollRestoration: true,
 		defaultPreload: "intent",
 		defaultPreloadStaleTime: 0,
+		context: {},
+
+		// todo: replace with custom components
+		defaultNotFoundComponent: () => <div>Not Found!</div>,
+		defaultPendingComponent: () => <div>Loading...</div>,
+		defaultErrorComponent: () => <div>Error!</div>,
 	})
 
 	return router

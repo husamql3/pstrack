@@ -4,7 +4,7 @@
 Show up. Solve. Repeat.
 Stay consistent with LeetCode — solve one problem a day, earn points, and compete with your group.
 
-## Phase 1 — Project Setup & Tooling
+## Phase 1 — Project Setup & Tooling · [#219](https://github.com/husamql3/pstrack/issues/219)
 
 - [ ] Update logo & slogan
 - [ ] `npx skills add nutlope/hallmark`
@@ -30,25 +30,23 @@ Stay consistent with LeetCode — solve one problem a day, earn points, and comp
 
 ---
 
-## Phase 2 — Auth
+## Phase 2 — Auth · [#220](https://github.com/husamql3/pstrack/issues/220)
 
-- [ ] Install and configure Better Auth
-- [ ] Add Polar plugin to Better Auth config
-- [ ] Wire Better Auth to `/api/auth/*` inside Elysia
+- [x] Install and configure Better Auth (Google, GitHub, magic link)
+- [x] Add Polar plugin to Better Auth config
+- [x] Wire Better Auth to `/api/auth/*` inside Elysia
+- [x] Set up Resend + email templates (`magic-link.tsx`, `welcome.tsx`)
 - [ ] Build sign up page (`/signup`)
 - [ ] Build login page (`/login`)
-- [ ] Build email verification flow (`/verify-email`)
-- [ ] Build forgot/reset password flow
-- [ ] Add auth guard to TanStack Router (redirect unauthenticated users)
-- [ ] Build onboarding page (`/onboarding`) — connect LeetCode/Codeforces handle
-- [ ] Set up Resend + first email template (`verify-email.tsx`)
+- [ ] Add auth guard to TanStack Router (`_authenticated/` layout, username gate → `/onboarding`)
+- [ ] Build onboarding page (`/onboarding`) — set username
 - [ ] Integrate hashvatar on user profile display
 
-**Deliverable:** Users can sign up, verify email, log in, and connect their handles
+**Deliverable:** Users can sign up, log in, and complete onboarding
 
 ---
 
-## Phase 3 — Groups
+## Phase 3 — Groups · [#221](https://github.com/husamql3/pstrack/issues/221)
 
 - [ ] Build group creation form (`/groups/new`)
 - [ ] Build public group browse page (`/groups`)
@@ -74,7 +72,7 @@ Stay consistent with LeetCode — solve one problem a day, earn points, and comp
 
 ---
 
-## Phase 4 — Daily Problem System
+## Phase 4 — Daily Problem System · [#222](https://github.com/husamql3/pstrack/issues/222)
 
 - [ ] Seed NeetCode 250 problems via `POST /api/admin/problems/seed`
 - [ ] Set up Trigger.dev job: `assign-daily-problem` (midnight cron — creates `DailyProblem` row per active group)
@@ -93,7 +91,7 @@ Stay consistent with LeetCode — solve one problem a day, earn points, and comp
 
 ---
 
-## Phase 5 — Points, Streaks & Gamification
+## Phase 5 — Points, Streaks & Gamification · [#223](https://github.com/husamql3/pstrack/issues/223)
 
 - [ ] Points calculation in `verify-submission` job (+10 solve, +5 first in group, streak multiplier)
 - [ ] All point changes logged to `PointsHistory`
@@ -108,7 +106,7 @@ Stay consistent with LeetCode — solve one problem a day, earn points, and comp
 
 ---
 
-## Phase 6 — Leaderboard
+## Phase 6 — Leaderboard · [#224](https://github.com/husamql3/pstrack/issues/224)
 
 - [ ] `GET /api/leaderboard/groups/:id` — group leaderboard with period filter
 - [ ] `GET /api/leaderboard/global` — global top 100 (Pro gate)
@@ -120,7 +118,7 @@ Stay consistent with LeetCode — solve one problem a day, earn points, and comp
 
 ---
 
-## Phase 7 — Freemium (Polar)
+## Phase 7 — Freemium (Polar) · [#225](https://github.com/husamql3/pstrack/issues/225)
 
 - [ ] Create Polar product ($14, one-time)
 - [ ] Set up sale pricing ($9) and promo codes in Polar dashboard
@@ -133,7 +131,7 @@ Stay consistent with LeetCode — solve one problem a day, earn points, and comp
 
 ---
 
-## Phase 8 — User Profiles & Settings
+## Phase 8 — User Profiles & Settings · [#226](https://github.com/husamql3/pstrack/issues/226)
 
 - [ ] `GET /api/users/:username` — public profile endpoint
 - [ ] `PATCH /api/users/me` — update profile endpoint
@@ -146,7 +144,7 @@ Stay consistent with LeetCode — solve one problem a day, earn points, and comp
 
 ---
 
-## Phase 9 — Admin Dashboard
+## Phase 9 — Admin Dashboard · [#227](https://github.com/husamql3/pstrack/issues/227)
 
 - [ ] Platform admin flag on `User` (set manually in DB)
 - [ ] `GET /api/admin/users` + `/admin/users` page
@@ -159,7 +157,7 @@ Stay consistent with LeetCode — solve one problem a day, earn points, and comp
 
 ---
 
-## Phase 10 — Polish & Launch
+## Phase 10 — Polish & Launch · [#228](https://github.com/husamql3/pstrack/issues/228)
 
 - [ ] `react-error-boundary` on all routes with useful fallback UIs
 - [ ] Error boundaries on all pages

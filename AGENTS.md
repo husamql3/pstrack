@@ -95,7 +95,7 @@ TanStack Start (Vercel)
 
 ## Email Notifications (Resend)
 
-Auth: welcome, verify-email, reset-password, password-changed, security-alert
+Auth: welcome, magic-link, security-alert
 Groups: join-request (to admin), join-approved/rejected/expired (to user), removed-from-group
 Daily: daily-problem digest, solve-verified, verification-failed
 Achievements: streak-milestone, badge-earned
@@ -103,14 +103,14 @@ Users can opt out per category from `/settings/notifications`.
 
 ## Routes Summary
 
-**Public:** `/`, `/login`, `/signup`, `/verify-email`, `/forgot-password`, `/reset-password`, `/profile/$username`
+**Public:** `/`, `/login`, `/signup`, `/profile/$username`
 **Authenticated:** `/onboarding`, `/dashboard`, `/problems`, `/leaderboard`, `/leaderboard/$groupId`, `/groups`, `/groups/new`, `/groups/$groupId` (+ /settings, /members, /join-requests), `/settings/*`
 **Admin:** `/admin`, `/admin/users`, `/admin/groups`, `/admin/problems`
 
 ## Build Phases (10 total)
 
 1. Project setup & tooling
-2. Auth (Better Auth, email verification, onboarding)
+2. Auth (Better Auth, Google/GitHub/magic-link, onboarding)
 3. Groups (create, join, manage, invite links)
 4. Daily problem system (assign, solve, verify, pause, miss)
 5. Points, streaks & badges

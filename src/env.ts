@@ -14,14 +14,32 @@ export const env = createEnv({
 
 		// database
 		DATABASE_URL: z.string().min(1),
+		DIRECT_URL: z.string().min(1),
 
 		// error tracking
 		SENTRY_DSN: z.url().optional(),
 		SENTRY_ENVIRONMENT: z.string().min(1).optional(),
 		SENTRY_TRACES_SAMPLE_RATE: z.coerce.number().min(0).max(1).default(0),
+
+		// auth
+		BETTER_AUTH_SECRET: z.string().min(32),
+		BETTER_AUTH_URL: z.url().default("http://localhost:3000"),
+		GOOGLE_CLIENT_ID: z.string().min(1),
+		GOOGLE_CLIENT_SECRET: z.string().min(1),
+		GITHUB_CLIENT_ID: z.string().min(1),
+		GITHUB_CLIENT_SECRET: z.string().min(1),
+
+		// email
+		RESEND_API_KEY: z.string().min(1),
+		EMAIL_FROM: z.string().default("PSTrack <onboarding@resend.dev>"),
+
+		// payments
+		POLAR_ACCESS_TOKEN: z.string().min(1),
+		POLAR_WEBHOOK_SECRET: z.string().min(1),
 	},
 	client: {
 		VITE_API_URL: z.url().default("http://localhost:3000/api/v3"),
+		VITE_BASE_URL: z.url().default("http://localhost:3000"),
 		VITE_SENTRY_DSN: z.url().optional(),
 		VITE_SENTRY_TRACES_SAMPLE_RATE: z.coerce.number().min(0).max(1).default(0),
 		VITE_SENTRY_REPLAY_SESSION_SAMPLE_RATE: z.coerce.number().min(0).max(1).default(0),

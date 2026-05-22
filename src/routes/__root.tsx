@@ -1,11 +1,16 @@
 import { TanStackDevtools } from "@tanstack/react-devtools"
-import { createRootRoute, HeadContent, Scripts } from "@tanstack/react-router"
+import { createRootRouteWithContext, HeadContent, Scripts } from "@tanstack/react-router"
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools"
 import type { ReactNode } from "react"
 
+import { authClient } from "@/lib/auth-client"
 import appCss from "../styles.css?url"
 
-export const Route = createRootRoute({
+export const Route = createRootRouteWithContext<{}>()({
+	beforeLoad: async () => {
+		const { data: session } = await authClient.getSession()
+		return { session }
+	},
 	head: () => ({
 		meta: [
 			{
@@ -26,12 +31,9 @@ export const Route = createRootRoute({
 			},
 		],
 	}),
-	notFoundComponent: () => (
-		<main className="container mx-auto p-4 pt-16">
-			<h1>404</h1>
-			<p>The requested page could not be found.</p>
-		</main>
-	),
+	notFoundComponent: () => <div>Not Found!</div>,
+	pendingComponent: () => <div>Loading...</div>,
+	errorComponent: () => <div>Error!</div>,
 	shellComponent: RootDocument,
 	ssr: false,
 })
