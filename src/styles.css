@@ -117,6 +117,16 @@
 	--sidebar-ring: oklch(0.553 0.013 58.071);
 }
 
+/* sileo: keep title text neutral, let only the badge/icon carry the state color */
+[data-sileo-title][data-state] {
+	--sileo-tone: initial;
+}
+
+/* sileo: fix washed-out description color */
+[data-sileo-description] {
+	color: oklch(0.553 0.013 58.071);
+}
+
 @layer base {
 	* {
 		@apply border-border outline-ring/50;

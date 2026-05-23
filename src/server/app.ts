@@ -7,11 +7,13 @@ import { health } from "@/server/modules/health"
 
 initServerSentry()
 
-const api = new Elysia({ prefix: "/api/v3" }).use(health).use(docs)
+const api = new Elysia({ prefix: "/api/v3" })
+	.use(health)
+	.use(docs)
+	.onError(({ error }) => captureServerException(error))
 
 export const app = new Elysia()
-	.onError(({ error }) => captureServerException(error))
-	.mount("/api/auth", auth.handler)
+	.all("/api/auth/*", ({ request }) => auth.handler(request))
 	.use(api)
 
 export type App = typeof api

@@ -19,12 +19,8 @@ const emailSchema = z.object({
 
 type EmailForm = z.infer<typeof emailSchema>
 
-interface AuthPageProps {
-	redirect?: string
-}
-
-export function AuthPage({ redirect }: AuthPageProps) {
-	const [view, setView] = useState<"form" | "sent">("form")
+export function AuthPage({ redirect }: { redirect?: string }) {
+	const [sent, setSent] = useState(false)
 	const [oauthLoading, setOauthLoading] = useState<"google" | "github" | null>(null)
 	const callbackURL = redirect ?? "/dashboard"
 
@@ -56,7 +52,7 @@ export function AuthPage({ redirect }: AuthPageProps) {
 					}),
 				}
 			)
-			setView("sent")
+			setSent(true)
 		} catch {
 			// sileo already displayed the error toast
 		}
@@ -96,88 +92,67 @@ export function AuthPage({ redirect }: AuthPageProps) {
 					/>
 				</div>
 
-				{view === "form" ? (
-					<div className="fade-in slide-in-from-bottom-4 w-full animate-in space-y-4 duration-500">
-						<div className="flex flex-col space-y-1">
-							<h1 className="font-bold text-2xl tracking-wide">Join Now!</h1>
-							<p className="text-base text-muted-foreground">
-								Login or create your account.
-							</p>
-						</div>
-
-						<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
-							<InputGroup>
-								<InputGroupInput
-									{...form.register("email")}
-									placeholder="your.email@example.com"
-									type="email"
-									disabled={isBusy}
-								/>
-								<InputGroupAddon align="inline-start">
-									<IconAt />
-								</InputGroupAddon>
-							</InputGroup>
-							{form.formState.errors.email && (
-								<p className="text-destructive text-sm">
-									{form.formState.errors.email.message}
-								</p>
-							)}
-							<Button className="w-full" type="submit" disabled={isBusy}>
-								{isSubmitting ? "Sending…" : "Continue With Email"}
-							</Button>
-						</form>
-
-						<AuthDivider>OR CONTINUE WITH</AuthDivider>
-
-						<div className="space-y-2">
-							<Button
-								className="w-full"
-								type="button"
-								variant="outline"
-								disabled={isBusy}
-								onClick={() => handleOAuth("google")}
-							>
-								<GoogleIcon data-icon="inline-start" />
-								{oauthLoading === "google" ? "Redirecting…" : "Google"}
-							</Button>
-							<Button
-								className="w-full"
-								type="button"
-								variant="outline"
-								disabled={isBusy}
-								onClick={() => handleOAuth("github")}
-							>
-								<GithubIcon data-icon="inline-start" />
-								{oauthLoading === "github" ? "Redirecting…" : "GitHub"}
-							</Button>
-						</div>
+				<div className="fade-in slide-in-from-bottom-4 w-full animate-in space-y-4 duration-500">
+					<div className="flex flex-col space-y-1">
+						<h1 className="font-bold text-2xl tracking-wide">Join Now!</h1>
+						<p className="text-base text-muted-foreground">
+							Login or create your account.
+						</p>
 					</div>
-				) : (
-					<div className="fade-in slide-in-from-bottom-4 w-full animate-in space-y-4 duration-500">
-						<div className="flex flex-col space-y-2">
-							<h1 className="font-bold text-2xl tracking-wide">Check your email</h1>
-							<p className="text-base text-muted-foreground">
-								We sent a magic link to{" "}
-								<span className="font-medium text-foreground">
-									{form.getValues("email")}
-								</span>
-								.
+
+					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
+						<InputGroup>
+							<InputGroupInput
+								{...form.register("email")}
+								placeholder="your.email@example.com"
+								type="email"
+								autoComplete="off"
+								disabled={isBusy}
+							/>
+							<InputGroupAddon align="inline-start">
+								<IconAt />
+							</InputGroupAddon>
+						</InputGroup>
+						{form.formState.errors.email && (
+							<p className="text-destructive text-sm">
+								{form.formState.errors.email.message}
 							</p>
-							<p className="text-sm text-muted-foreground">
-								Click the link in your email to sign in.
+						)}
+						<Button className="w-full" type="submit" disabled={isBusy}>
+							{isSubmitting ? "Sending…" : "Continue With Email"}
+						</Button>
+						{sent && (
+							<p className="text-center text-primary-foreground text-sm">
+								Check your inbox for a magic link.
 							</p>
-						</div>
+						)}
+					</form>
+
+					<AuthDivider>OR CONTINUE WITH</AuthDivider>
+
+					<div className="space-y-2">
 						<Button
-							variant="outline"
 							className="w-full"
-							size="sm"
 							type="button"
-							onClick={() => setView("form")}
+							variant="outline"
+							disabled={isBusy}
+							onClick={() => handleOAuth("google")}
 						>
-							Use a different email
+							<GoogleIcon data-icon="inline-start" />
+							{oauthLoading === "google" ? "Redirecting…" : "Google"}
+						</Button>
+						<Button
+							className="w-full"
+							type="button"
+							variant="outline"
+							disabled={isBusy}
+							onClick={() => handleOAuth("github")}
+						>
+							<GithubIcon data-icon="inline-start" />
+							{oauthLoading === "github" ? "Redirecting…" : "GitHub"}
 						</Button>
 					</div>
-				)}
+				</div>
 
 				<p className="text-center text-muted-foreground text-sm">
 					Show up. Solve. Repeat.
