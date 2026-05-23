@@ -36,8 +36,8 @@ Stay consistent with LeetCode — solve one problem a day, earn points, and comp
 - [x] Add Polar plugin to Better Auth config
 - [x] Wire Better Auth to `/api/auth/*` inside Elysia
 - [x] Set up Resend + email templates (`magic-link.tsx`, `welcome.tsx`)
-- [ ] Build login page (`/login`)
-- [ ] Add auth guard to TanStack Router (`_authenticated/` layout, username gate → `/onboarding`)
+- [x] Build login page (`/login`)
+- [x] Add auth guard to TanStack Router (`_authenticated/` layout, username gate → `/onboarding`)
 - [ ] Build onboarding page (`/onboarding`) — set username
 - [ ] Integrate hashvatar on user profile display
 
