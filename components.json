@@ -12,6 +12,8 @@
 	},
 	"iconLibrary": "tabler",
 	"rtl": false,
+	"menuColor": "default",
+	"menuAccent": "bold",
 	"aliases": {
 		"components": "@/components",
 		"utils": "@/lib/utils",
@@ -19,9 +21,8 @@
 		"lib": "@/lib",
 		"hooks": "@/hooks"
 	},
-	"menuColor": "default",
-	"menuAccent": "bold",
 	"registries": {
-		"@efferd": "https://efferd.com/r/{style}/{name}.json"
+		"@efferd": "https://efferd.com/r/{style}/{name}.json",
+		"@reui": "https://reui.io/r/{style}/{name}.json"
 	}
 }

@@ -1,15 +1,17 @@
+import { IconCode, IconHome, IconTrophy, IconUsers } from "@tabler/icons-react"
 import { Link, useRouterState } from "@tanstack/react-router"
-import { LogOut, Shield } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 
-import { signOut, useSession } from "@/lib/auth-client"
-import { Logo } from "./logo"
+import { Badge } from "@/components/ui/badge"
+import { useSession } from "@/lib/auth-client"
+import { ThemeSwitcher } from "./theme-switcher"
+import { UserMenu } from "./user-menu"
 
 const NAV_LINKS = [
-	{ to: "/dashboard", label: "Dashboard" },
-	{ to: "/problems", label: "Problems" },
-	// { to: "/groups", label: "Groups" },
-	// { to: "/leaderboard", label: "Leaderboard" },
+	{ to: "/dashboard", label: "Dashboard", icon: IconHome },
+	{ to: "/problems", label: "Problems", icon: IconCode },
+	{ to: "/groups", label: "Groups", icon: IconUsers },
+	{ to: "/leaderboard", label: "Leaderboard", icon: IconTrophy },
 ] as const
 
 export function AppHeader() {
@@ -48,16 +50,17 @@ export function AppHeader() {
 	}, [])
 
 	return (
-		<header className="border-border/50 sticky top-0 z-50 border-b bg-black/80 backdrop-blur-sm">
-			<div className="mx-auto flex h-10 max-w-6xl items-center gap-8 px-4">
-				<Link to="/dashboard">
-					<Logo className="h-4 w-auto text-white" />
+		<header className="border-border/50 sticky top-0 z-50 border-b bg-background backdrop-blur-sm">
+			<div className="mx-auto flex h-14 items-center gap-8 px-4">
+				<Link to="/" className="flex items-center gap-2">
+					PStrack
+					<Badge variant="outline">v4.0.0</Badge>
 				</Link>
 
 				<nav className="relative flex items-center">
 					{/* Hover highlight */}
 					<div
-						className="absolute h-[25px] rounded-[6px] bg-white/10 transition-all duration-300 ease-out"
+						className="absolute h-[30px] rounded-[6px] bg-white/10 transition-all duration-300 ease-out"
 						style={{
 							...hoverStyle,
 							opacity: hoveredIndex !== null ? 1 : 0,
@@ -67,14 +70,14 @@ export function AppHeader() {
 					{/* Active underline */}
 					{activeIndex >= 0 && (
 						<div
-							className="absolute bottom-[-10px] h-px bg-white transition-all duration-300 ease-out"
+							className="absolute bottom-[-14px] h-[2px] bg-primary transition-all duration-300 ease-out rounded-full"
 							style={activeStyle}
 						/>
 					)}
 
 					{/* Nav items */}
 					<div className="relative flex items-center gap-1">
-						{NAV_LINKS.map(({ to, label }, index) => (
+						{NAV_LINKS.map(({ to, label, icon: Icon }, index) => (
 							<div
 								key={to}
 								ref={(el) => {
@@ -86,12 +89,13 @@ export function AppHeader() {
 								<Link
 									to={to}
 									className={[
-										"flex h-[30px] items-center px-3 text-sm transition-colors duration-300",
+										"flex h-[30px] items-center gap-2 px-3 text-sm transition-colors duration-300",
 										index === activeIndex
-											? "text-white"
-											: "text-white/50 hover:text-white",
+											? "text-foreground"
+											: "text-muted-foreground hover:text-foreground",
 									].join(" ")}
 								>
+									<Icon className="size-4" />
 									{label}
 								</Link>
 							</div>
@@ -99,25 +103,9 @@ export function AppHeader() {
 					</div>
 				</nav>
 
-				<div className="ml-auto flex items-center gap-3">
-					{/* {session?.user.role === "admin" && (
-						<Link
-							to="/admin"
-							className="text-white/50 hover:text-white transition-colors"
-							title="Admin"
-						>
-							<Shield className="size-4" />
-						</Link>
-					)} */}
-
-					<button
-						type="button"
-						onClick={() => signOut()}
-						className="text-white/50 hover:text-white transition-colors"
-						title="Sign out"
-					>
-						<LogOut className="size-4" />
-					</button>
+				<div className="ml-auto flex items-center gap-2">
+					<ThemeSwitcher />
+					<UserMenu />
 				</div>
 			</div>
 		</header>

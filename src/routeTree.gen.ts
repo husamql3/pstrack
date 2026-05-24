@@ -13,9 +13,12 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiSplatRouteImport } from './routes/api.$'
+import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/_onboarding'
 import { Route as AuthenticatedAppRouteImport } from './routes/_authenticated/_app'
+import { Route as AuthenticatedOnboardingOnboardingRouteImport } from './routes/_authenticated/_onboarding/onboarding'
 import { Route as AuthenticatedAppProblemsRouteImport } from './routes/_authenticated/_app/problems'
-import { Route as AuthenticatedAppOnboardingRouteImport } from './routes/_authenticated/_app/onboarding'
+import { Route as AuthenticatedAppLeaderboardRouteImport } from './routes/_authenticated/_app/leaderboard'
+import { Route as AuthenticatedAppGroupsRouteImport } from './routes/_authenticated/_app/groups'
 import { Route as AuthenticatedAppDashboardRouteImport } from './routes/_authenticated/_app/dashboard'
 
 const LoginRoute = LoginRouteImport.update({
@@ -37,22 +40,37 @@ const ApiSplatRoute = ApiSplatRouteImport.update({
   path: '/api/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedOnboardingRoute = AuthenticatedOnboardingRouteImport.update({
+  id: '/_onboarding',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedAppRoute = AuthenticatedAppRouteImport.update({
   id: '/_app',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedOnboardingOnboardingRoute =
+  AuthenticatedOnboardingOnboardingRouteImport.update({
+    id: '/onboarding',
+    path: '/onboarding',
+    getParentRoute: () => AuthenticatedOnboardingRoute,
+  } as any)
 const AuthenticatedAppProblemsRoute =
   AuthenticatedAppProblemsRouteImport.update({
     id: '/problems',
     path: '/problems',
     getParentRoute: () => AuthenticatedAppRoute,
   } as any)
-const AuthenticatedAppOnboardingRoute =
-  AuthenticatedAppOnboardingRouteImport.update({
-    id: '/onboarding',
-    path: '/onboarding',
+const AuthenticatedAppLeaderboardRoute =
+  AuthenticatedAppLeaderboardRouteImport.update({
+    id: '/leaderboard',
+    path: '/leaderboard',
     getParentRoute: () => AuthenticatedAppRoute,
   } as any)
+const AuthenticatedAppGroupsRoute = AuthenticatedAppGroupsRouteImport.update({
+  id: '/groups',
+  path: '/groups',
+  getParentRoute: () => AuthenticatedAppRoute,
+} as any)
 const AuthenticatedAppDashboardRoute =
   AuthenticatedAppDashboardRouteImport.update({
     id: '/dashboard',
@@ -65,16 +83,20 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/api/$': typeof ApiSplatRoute
   '/dashboard': typeof AuthenticatedAppDashboardRoute
-  '/onboarding': typeof AuthenticatedAppOnboardingRoute
+  '/groups': typeof AuthenticatedAppGroupsRoute
+  '/leaderboard': typeof AuthenticatedAppLeaderboardRoute
   '/problems': typeof AuthenticatedAppProblemsRoute
+  '/onboarding': typeof AuthenticatedOnboardingOnboardingRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/api/$': typeof ApiSplatRoute
   '/dashboard': typeof AuthenticatedAppDashboardRoute
-  '/onboarding': typeof AuthenticatedAppOnboardingRoute
+  '/groups': typeof AuthenticatedAppGroupsRoute
+  '/leaderboard': typeof AuthenticatedAppLeaderboardRoute
   '/problems': typeof AuthenticatedAppProblemsRoute
+  '/onboarding': typeof AuthenticatedOnboardingOnboardingRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -82,10 +104,13 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/login': typeof LoginRoute
   '/_authenticated/_app': typeof AuthenticatedAppRouteWithChildren
+  '/_authenticated/_onboarding': typeof AuthenticatedOnboardingRouteWithChildren
   '/api/$': typeof ApiSplatRoute
   '/_authenticated/_app/dashboard': typeof AuthenticatedAppDashboardRoute
-  '/_authenticated/_app/onboarding': typeof AuthenticatedAppOnboardingRoute
+  '/_authenticated/_app/groups': typeof AuthenticatedAppGroupsRoute
+  '/_authenticated/_app/leaderboard': typeof AuthenticatedAppLeaderboardRoute
   '/_authenticated/_app/problems': typeof AuthenticatedAppProblemsRoute
+  '/_authenticated/_onboarding/onboarding': typeof AuthenticatedOnboardingOnboardingRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -94,20 +119,33 @@ export interface FileRouteTypes {
     | '/login'
     | '/api/$'
     | '/dashboard'
-    | '/onboarding'
+    | '/groups'
+    | '/leaderboard'
     | '/problems'
+    | '/onboarding'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/api/$' | '/dashboard' | '/onboarding' | '/problems'
+  to:
+    | '/'
+    | '/login'
+    | '/api/$'
+    | '/dashboard'
+    | '/groups'
+    | '/leaderboard'
+    | '/problems'
+    | '/onboarding'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/login'
     | '/_authenticated/_app'
+    | '/_authenticated/_onboarding'
     | '/api/$'
     | '/_authenticated/_app/dashboard'
-    | '/_authenticated/_app/onboarding'
+    | '/_authenticated/_app/groups'
+    | '/_authenticated/_app/leaderboard'
     | '/_authenticated/_app/problems'
+    | '/_authenticated/_onboarding/onboarding'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -147,12 +185,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/_onboarding': {
+      id: '/_authenticated/_onboarding'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedOnboardingRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/_app': {
       id: '/_authenticated/_app'
       path: ''
       fullPath: '/'
       preLoaderRoute: typeof AuthenticatedAppRouteImport
       parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/_onboarding/onboarding': {
+      id: '/_authenticated/_onboarding/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof AuthenticatedOnboardingOnboardingRouteImport
+      parentRoute: typeof AuthenticatedOnboardingRoute
     }
     '/_authenticated/_app/problems': {
       id: '/_authenticated/_app/problems'
@@ -161,11 +213,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppProblemsRouteImport
       parentRoute: typeof AuthenticatedAppRoute
     }
-    '/_authenticated/_app/onboarding': {
-      id: '/_authenticated/_app/onboarding'
-      path: '/onboarding'
-      fullPath: '/onboarding'
-      preLoaderRoute: typeof AuthenticatedAppOnboardingRouteImport
+    '/_authenticated/_app/leaderboard': {
+      id: '/_authenticated/_app/leaderboard'
+      path: '/leaderboard'
+      fullPath: '/leaderboard'
+      preLoaderRoute: typeof AuthenticatedAppLeaderboardRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/_app/groups': {
+      id: '/_authenticated/_app/groups'
+      path: '/groups'
+      fullPath: '/groups'
+      preLoaderRoute: typeof AuthenticatedAppGroupsRouteImport
       parentRoute: typeof AuthenticatedAppRoute
     }
     '/_authenticated/_app/dashboard': {
@@ -180,25 +239,44 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedAppRouteChildren {
   AuthenticatedAppDashboardRoute: typeof AuthenticatedAppDashboardRoute
-  AuthenticatedAppOnboardingRoute: typeof AuthenticatedAppOnboardingRoute
+  AuthenticatedAppGroupsRoute: typeof AuthenticatedAppGroupsRoute
+  AuthenticatedAppLeaderboardRoute: typeof AuthenticatedAppLeaderboardRoute
   AuthenticatedAppProblemsRoute: typeof AuthenticatedAppProblemsRoute
 }
 
 const AuthenticatedAppRouteChildren: AuthenticatedAppRouteChildren = {
   AuthenticatedAppDashboardRoute: AuthenticatedAppDashboardRoute,
-  AuthenticatedAppOnboardingRoute: AuthenticatedAppOnboardingRoute,
+  AuthenticatedAppGroupsRoute: AuthenticatedAppGroupsRoute,
+  AuthenticatedAppLeaderboardRoute: AuthenticatedAppLeaderboardRoute,
   AuthenticatedAppProblemsRoute: AuthenticatedAppProblemsRoute,
 }
 
 const AuthenticatedAppRouteWithChildren =
   AuthenticatedAppRoute._addFileChildren(AuthenticatedAppRouteChildren)
 
+interface AuthenticatedOnboardingRouteChildren {
+  AuthenticatedOnboardingOnboardingRoute: typeof AuthenticatedOnboardingOnboardingRoute
+}
+
+const AuthenticatedOnboardingRouteChildren: AuthenticatedOnboardingRouteChildren =
+  {
+    AuthenticatedOnboardingOnboardingRoute:
+      AuthenticatedOnboardingOnboardingRoute,
+  }
+
+const AuthenticatedOnboardingRouteWithChildren =
+  AuthenticatedOnboardingRoute._addFileChildren(
+    AuthenticatedOnboardingRouteChildren,
+  )
+
 interface AuthenticatedRouteChildren {
   AuthenticatedAppRoute: typeof AuthenticatedAppRouteWithChildren
+  AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRouteWithChildren
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAppRoute: AuthenticatedAppRouteWithChildren,
+  AuthenticatedOnboardingRoute: AuthenticatedOnboardingRouteWithChildren,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(

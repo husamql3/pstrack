@@ -20,8 +20,10 @@ model User {
   banned        Boolean?  @default(false)
   banReason     String?
   banExpires    DateTime?
-  username      String?   @unique
-  sessions      Session[]
+  username         String?   @unique
+  leetcodeHandle   String?
+  codeforcesHandle String?
+  sessions         Session[]
   accounts      Account[]
 
   @@map("user")

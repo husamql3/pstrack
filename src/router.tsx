@@ -1,18 +1,21 @@
 import { createRouter as createTanStackRouter } from "@tanstack/react-router"
+import type { QueryClient } from "@tanstack/react-query"
 
-import { initClientSentry } from "./lib/sentry"
-import { routeTree } from "./routeTree.gen"
+import { initClientSentry } from "@/lib/sentry"
+import { routeTree } from "@/routeTree.gen"
+import { getQueryClient } from "@/lib/query-client"
+
+initClientSentry()
 
 export function getRouter() {
-	initClientSentry()
-
 	const router = createTanStackRouter({
 		routeTree,
 		scrollRestoration: true,
 		defaultPreload: "intent",
 		defaultPreloadStaleTime: 0,
-		context: {},
-
+		context: {
+			queryClient: getQueryClient(),
+		},
 		// todo: replace with custom components
 		defaultNotFoundComponent: () => <div>Not Found!</div>,
 		defaultPendingComponent: () => <div>Loading...</div>,

@@ -14,6 +14,7 @@ export const auth = betterAuth({
 	database: prismaAdapter(db, { provider: "postgresql" }),
 	secret: env.BETTER_AUTH_SECRET,
 	baseURL: env.BETTER_AUTH_URL,
+	basePath: "/api/v4/auth",
 	socialProviders: {
 		google: {
 			clientId: env.GOOGLE_CLIENT_ID,
@@ -37,6 +38,14 @@ export const auth = betterAuth({
 				required: false,
 				unique: true,
 			},
+			leetcodeHandle: {
+				type: "string",
+				required: false,
+			},
+			codeforcesHandle: {
+				type: "string",
+				required: false,
+			},
 		},
 	},
 	// todo add group no
@@ -58,11 +67,16 @@ export const auth = betterAuth({
 	plugins: [
 		magicLink({
 			sendMagicLink: async ({ email, url }) => {
+				// Rewrite the verify URL to /api/magic-link — a plain HTML endpoint that
+				// uses JS to redirect to the actual verify path. Email pre-fetchers (e.g.
+				// Gmail) don't execute JS so the one-time token isn't consumed early.
+				const redirectUrl = new URL(url)
+				redirectUrl.pathname = "/api/v4/magic-link"
 				await resend.emails.send({
 					from: env.EMAIL_FROM,
 					to: email,
 					subject: "Sign in to PSTrack",
-					react: MagicLinkEmail({ url }),
+					react: MagicLinkEmail({ url: redirectUrl.toString() }),
 				})
 			},
 		}),
@@ -71,9 +85,16 @@ export const auth = betterAuth({
 			client: polarClient,
 			createCustomerOnSignUp: true,
 			use: [
-				checkout({ successUrl: "/dashboard" }),
-				portal(),
-				webhooks({ secret: env.POLAR_WEBHOOK_SECRET }),
+				checkout({
+					products: [
+						{
+							productId: "8337e00d-2cc6-4c8e-80c3-7e9f60d08075",
+							slug: "wlog",
+						},
+					],
+					successUrl: env.POLAR_SUCCESS_URL,
+					authenticatedUsersOnly: true,
+				}),
 			],
 		}),
 	],

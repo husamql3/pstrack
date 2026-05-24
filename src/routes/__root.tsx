@@ -6,8 +6,10 @@ import { Toaster } from "sileo"
 
 import { authClient } from "@/lib/auth-client"
 import appCss from "../styles.css?url"
+import { getQueryClient } from "@/lib/query-client"
+import { QueryClientProvider, type QueryClient } from "@tanstack/react-query"
 
-export const Route = createRootRouteWithContext<{}>()({
+export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
 	beforeLoad: async () => {
 		const { data: session } = await authClient.getSession()
 		return { session }
@@ -50,14 +52,22 @@ export const Route = createRootRouteWithContext<{}>()({
 })
 
 function RootDocument({ children }: { children: ReactNode }) {
+	const queryClient = getQueryClient()
+
 	return (
 		<html lang="en">
 			<head>
 				<HeadContent />
+				{/* Runs before paint to prevent theme flash */}
+				<script
+					dangerouslySetInnerHTML={{
+						__html: `(function(){var t=localStorage.getItem('theme');var d=document.documentElement;if(t==='dark'||(t!=='light'&&window.matchMedia('(prefers-color-scheme: dark)').matches)){d.classList.add('dark')}})()`,
+					}}
+				/>
 			</head>
-			<body suppressHydrationWarning className="scheme-only-dark dark">
+			<body suppressHydrationWarning>
 				<Toaster position="top-center" />
-				{children}
+				<QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
 				<TanStackDevtools
 					config={{
 						position: "bottom-right",

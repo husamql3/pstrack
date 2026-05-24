@@ -35,10 +35,12 @@ export const env = createEnv({
 
 		// payments
 		POLAR_ACCESS_TOKEN: z.string().min(1),
-		POLAR_WEBHOOK_SECRET: z.string().min(1),
+		POLAR_SUCCESS_URL: z
+			.url()
+			.default("https://pstrack.localhost/success?checkout_id={CHECKOUT_ID}"),
 	},
 	client: {
-		VITE_API_URL: z.url().default("https://pstrack.localhost/api/v3"),
+		VITE_API_URL: z.url().default("https://pstrack.localhost"),
 		VITE_BASE_URL: z.url().default("https://pstrack.localhost"),
 		VITE_SENTRY_DSN: z.url().optional(),
 		VITE_SENTRY_TRACES_SAMPLE_RATE: z.coerce.number().min(0).max(1).default(0),
