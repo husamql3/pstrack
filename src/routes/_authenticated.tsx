@@ -9,8 +9,18 @@ export const Route = createFileRoute("/_authenticated")({
 				search: { redirect: location.pathname },
 			})
 		}
-		if (!session.user.username && location.pathname !== "/onboarding") {
+		if (
+			(!session.user.username || !session.user.leetcodeHandle) &&
+			location.pathname !== "/onboarding"
+		) {
 			throw redirect({ to: "/onboarding" })
+		}
+		if (
+			session.user.username &&
+			session.user.leetcodeHandle &&
+			location.pathname === "/onboarding"
+		) {
+			throw redirect({ to: "/dashboard" })
 		}
 	},
 	component: () => <Outlet />,

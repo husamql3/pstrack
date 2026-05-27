@@ -20,6 +20,12 @@ import { Route as AuthenticatedAppProblemsRouteImport } from './routes/_authenti
 import { Route as AuthenticatedAppLeaderboardRouteImport } from './routes/_authenticated/_app/leaderboard'
 import { Route as AuthenticatedAppGroupsRouteImport } from './routes/_authenticated/_app/groups'
 import { Route as AuthenticatedAppDashboardRouteImport } from './routes/_authenticated/_app/dashboard'
+import { Route as AuthenticatedAppGroupsGroupIdRouteImport } from './routes/_authenticated/_app/groups_/$groupId'
+import { Route as AuthenticatedAppGroupsGroupIdIndexRouteImport } from './routes/_authenticated/_app/groups_/$groupId/index'
+import { Route as AuthenticatedAppGroupsJoinInviteCodeRouteImport } from './routes/_authenticated/_app/groups_/join.$inviteCode'
+import { Route as AuthenticatedAppGroupsGroupIdSettingsRouteImport } from './routes/_authenticated/_app/groups_/$groupId/settings'
+import { Route as AuthenticatedAppGroupsGroupIdMembersRouteImport } from './routes/_authenticated/_app/groups_/$groupId/members'
+import { Route as AuthenticatedAppGroupsGroupIdJoinRequestsRouteImport } from './routes/_authenticated/_app/groups_/$groupId/join-requests'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -77,6 +83,42 @@ const AuthenticatedAppDashboardRoute =
     path: '/dashboard',
     getParentRoute: () => AuthenticatedAppRoute,
   } as any)
+const AuthenticatedAppGroupsGroupIdRoute =
+  AuthenticatedAppGroupsGroupIdRouteImport.update({
+    id: '/groups_/$groupId',
+    path: '/groups/$groupId',
+    getParentRoute: () => AuthenticatedAppRoute,
+  } as any)
+const AuthenticatedAppGroupsGroupIdIndexRoute =
+  AuthenticatedAppGroupsGroupIdIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedAppGroupsGroupIdRoute,
+  } as any)
+const AuthenticatedAppGroupsJoinInviteCodeRoute =
+  AuthenticatedAppGroupsJoinInviteCodeRouteImport.update({
+    id: '/groups_/join/$inviteCode',
+    path: '/groups/join/$inviteCode',
+    getParentRoute: () => AuthenticatedAppRoute,
+  } as any)
+const AuthenticatedAppGroupsGroupIdSettingsRoute =
+  AuthenticatedAppGroupsGroupIdSettingsRouteImport.update({
+    id: '/settings',
+    path: '/settings',
+    getParentRoute: () => AuthenticatedAppGroupsGroupIdRoute,
+  } as any)
+const AuthenticatedAppGroupsGroupIdMembersRoute =
+  AuthenticatedAppGroupsGroupIdMembersRouteImport.update({
+    id: '/members',
+    path: '/members',
+    getParentRoute: () => AuthenticatedAppGroupsGroupIdRoute,
+  } as any)
+const AuthenticatedAppGroupsGroupIdJoinRequestsRoute =
+  AuthenticatedAppGroupsGroupIdJoinRequestsRouteImport.update({
+    id: '/join-requests',
+    path: '/join-requests',
+    getParentRoute: () => AuthenticatedAppGroupsGroupIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -87,6 +129,12 @@ export interface FileRoutesByFullPath {
   '/leaderboard': typeof AuthenticatedAppLeaderboardRoute
   '/problems': typeof AuthenticatedAppProblemsRoute
   '/onboarding': typeof AuthenticatedOnboardingOnboardingRoute
+  '/groups/$groupId': typeof AuthenticatedAppGroupsGroupIdRouteWithChildren
+  '/groups/$groupId/join-requests': typeof AuthenticatedAppGroupsGroupIdJoinRequestsRoute
+  '/groups/$groupId/members': typeof AuthenticatedAppGroupsGroupIdMembersRoute
+  '/groups/$groupId/settings': typeof AuthenticatedAppGroupsGroupIdSettingsRoute
+  '/groups/join/$inviteCode': typeof AuthenticatedAppGroupsJoinInviteCodeRoute
+  '/groups/$groupId/': typeof AuthenticatedAppGroupsGroupIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -97,6 +145,11 @@ export interface FileRoutesByTo {
   '/leaderboard': typeof AuthenticatedAppLeaderboardRoute
   '/problems': typeof AuthenticatedAppProblemsRoute
   '/onboarding': typeof AuthenticatedOnboardingOnboardingRoute
+  '/groups/$groupId/join-requests': typeof AuthenticatedAppGroupsGroupIdJoinRequestsRoute
+  '/groups/$groupId/members': typeof AuthenticatedAppGroupsGroupIdMembersRoute
+  '/groups/$groupId/settings': typeof AuthenticatedAppGroupsGroupIdSettingsRoute
+  '/groups/join/$inviteCode': typeof AuthenticatedAppGroupsJoinInviteCodeRoute
+  '/groups/$groupId': typeof AuthenticatedAppGroupsGroupIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -111,6 +164,12 @@ export interface FileRoutesById {
   '/_authenticated/_app/leaderboard': typeof AuthenticatedAppLeaderboardRoute
   '/_authenticated/_app/problems': typeof AuthenticatedAppProblemsRoute
   '/_authenticated/_onboarding/onboarding': typeof AuthenticatedOnboardingOnboardingRoute
+  '/_authenticated/_app/groups_/$groupId': typeof AuthenticatedAppGroupsGroupIdRouteWithChildren
+  '/_authenticated/_app/groups_/$groupId/join-requests': typeof AuthenticatedAppGroupsGroupIdJoinRequestsRoute
+  '/_authenticated/_app/groups_/$groupId/members': typeof AuthenticatedAppGroupsGroupIdMembersRoute
+  '/_authenticated/_app/groups_/$groupId/settings': typeof AuthenticatedAppGroupsGroupIdSettingsRoute
+  '/_authenticated/_app/groups_/join/$inviteCode': typeof AuthenticatedAppGroupsJoinInviteCodeRoute
+  '/_authenticated/_app/groups_/$groupId/': typeof AuthenticatedAppGroupsGroupIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -123,6 +182,12 @@ export interface FileRouteTypes {
     | '/leaderboard'
     | '/problems'
     | '/onboarding'
+    | '/groups/$groupId'
+    | '/groups/$groupId/join-requests'
+    | '/groups/$groupId/members'
+    | '/groups/$groupId/settings'
+    | '/groups/join/$inviteCode'
+    | '/groups/$groupId/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -133,6 +198,11 @@ export interface FileRouteTypes {
     | '/leaderboard'
     | '/problems'
     | '/onboarding'
+    | '/groups/$groupId/join-requests'
+    | '/groups/$groupId/members'
+    | '/groups/$groupId/settings'
+    | '/groups/join/$inviteCode'
+    | '/groups/$groupId'
   id:
     | '__root__'
     | '/'
@@ -146,6 +216,12 @@ export interface FileRouteTypes {
     | '/_authenticated/_app/leaderboard'
     | '/_authenticated/_app/problems'
     | '/_authenticated/_onboarding/onboarding'
+    | '/_authenticated/_app/groups_/$groupId'
+    | '/_authenticated/_app/groups_/$groupId/join-requests'
+    | '/_authenticated/_app/groups_/$groupId/members'
+    | '/_authenticated/_app/groups_/$groupId/settings'
+    | '/_authenticated/_app/groups_/join/$inviteCode'
+    | '/_authenticated/_app/groups_/$groupId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -234,14 +310,82 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppDashboardRouteImport
       parentRoute: typeof AuthenticatedAppRoute
     }
+    '/_authenticated/_app/groups_/$groupId': {
+      id: '/_authenticated/_app/groups_/$groupId'
+      path: '/groups/$groupId'
+      fullPath: '/groups/$groupId'
+      preLoaderRoute: typeof AuthenticatedAppGroupsGroupIdRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/_app/groups_/$groupId/': {
+      id: '/_authenticated/_app/groups_/$groupId/'
+      path: '/'
+      fullPath: '/groups/$groupId/'
+      preLoaderRoute: typeof AuthenticatedAppGroupsGroupIdIndexRouteImport
+      parentRoute: typeof AuthenticatedAppGroupsGroupIdRoute
+    }
+    '/_authenticated/_app/groups_/join/$inviteCode': {
+      id: '/_authenticated/_app/groups_/join/$inviteCode'
+      path: '/groups/join/$inviteCode'
+      fullPath: '/groups/join/$inviteCode'
+      preLoaderRoute: typeof AuthenticatedAppGroupsJoinInviteCodeRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/_app/groups_/$groupId/settings': {
+      id: '/_authenticated/_app/groups_/$groupId/settings'
+      path: '/settings'
+      fullPath: '/groups/$groupId/settings'
+      preLoaderRoute: typeof AuthenticatedAppGroupsGroupIdSettingsRouteImport
+      parentRoute: typeof AuthenticatedAppGroupsGroupIdRoute
+    }
+    '/_authenticated/_app/groups_/$groupId/members': {
+      id: '/_authenticated/_app/groups_/$groupId/members'
+      path: '/members'
+      fullPath: '/groups/$groupId/members'
+      preLoaderRoute: typeof AuthenticatedAppGroupsGroupIdMembersRouteImport
+      parentRoute: typeof AuthenticatedAppGroupsGroupIdRoute
+    }
+    '/_authenticated/_app/groups_/$groupId/join-requests': {
+      id: '/_authenticated/_app/groups_/$groupId/join-requests'
+      path: '/join-requests'
+      fullPath: '/groups/$groupId/join-requests'
+      preLoaderRoute: typeof AuthenticatedAppGroupsGroupIdJoinRequestsRouteImport
+      parentRoute: typeof AuthenticatedAppGroupsGroupIdRoute
+    }
   }
 }
+
+interface AuthenticatedAppGroupsGroupIdRouteChildren {
+  AuthenticatedAppGroupsGroupIdJoinRequestsRoute: typeof AuthenticatedAppGroupsGroupIdJoinRequestsRoute
+  AuthenticatedAppGroupsGroupIdMembersRoute: typeof AuthenticatedAppGroupsGroupIdMembersRoute
+  AuthenticatedAppGroupsGroupIdSettingsRoute: typeof AuthenticatedAppGroupsGroupIdSettingsRoute
+  AuthenticatedAppGroupsGroupIdIndexRoute: typeof AuthenticatedAppGroupsGroupIdIndexRoute
+}
+
+const AuthenticatedAppGroupsGroupIdRouteChildren: AuthenticatedAppGroupsGroupIdRouteChildren =
+  {
+    AuthenticatedAppGroupsGroupIdJoinRequestsRoute:
+      AuthenticatedAppGroupsGroupIdJoinRequestsRoute,
+    AuthenticatedAppGroupsGroupIdMembersRoute:
+      AuthenticatedAppGroupsGroupIdMembersRoute,
+    AuthenticatedAppGroupsGroupIdSettingsRoute:
+      AuthenticatedAppGroupsGroupIdSettingsRoute,
+    AuthenticatedAppGroupsGroupIdIndexRoute:
+      AuthenticatedAppGroupsGroupIdIndexRoute,
+  }
+
+const AuthenticatedAppGroupsGroupIdRouteWithChildren =
+  AuthenticatedAppGroupsGroupIdRoute._addFileChildren(
+    AuthenticatedAppGroupsGroupIdRouteChildren,
+  )
 
 interface AuthenticatedAppRouteChildren {
   AuthenticatedAppDashboardRoute: typeof AuthenticatedAppDashboardRoute
   AuthenticatedAppGroupsRoute: typeof AuthenticatedAppGroupsRoute
   AuthenticatedAppLeaderboardRoute: typeof AuthenticatedAppLeaderboardRoute
   AuthenticatedAppProblemsRoute: typeof AuthenticatedAppProblemsRoute
+  AuthenticatedAppGroupsGroupIdRoute: typeof AuthenticatedAppGroupsGroupIdRouteWithChildren
+  AuthenticatedAppGroupsJoinInviteCodeRoute: typeof AuthenticatedAppGroupsJoinInviteCodeRoute
 }
 
 const AuthenticatedAppRouteChildren: AuthenticatedAppRouteChildren = {
@@ -249,6 +393,10 @@ const AuthenticatedAppRouteChildren: AuthenticatedAppRouteChildren = {
   AuthenticatedAppGroupsRoute: AuthenticatedAppGroupsRoute,
   AuthenticatedAppLeaderboardRoute: AuthenticatedAppLeaderboardRoute,
   AuthenticatedAppProblemsRoute: AuthenticatedAppProblemsRoute,
+  AuthenticatedAppGroupsGroupIdRoute:
+    AuthenticatedAppGroupsGroupIdRouteWithChildren,
+  AuthenticatedAppGroupsJoinInviteCodeRoute:
+    AuthenticatedAppGroupsJoinInviteCodeRoute,
 }
 
 const AuthenticatedAppRouteWithChildren =

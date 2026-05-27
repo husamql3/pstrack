@@ -1,15 +1,15 @@
-import type { ReactNode } from "react"
 import {
-	IconLayoutDashboard,
-	IconPointer,
 	IconChartFunnel,
-	IconRepeat,
-	IconGitBranch,
-	IconUsersGroup,
 	IconChartPie,
-	IconUser,
+	IconGitBranch,
+	IconLayoutDashboard,
 	IconPlug,
+	IconPointer,
+	IconRepeat,
+	IconUser,
+	IconUsersGroup,
 } from "@tabler/icons-react"
+import type { ReactNode } from "react"
 
 export type SidebarNavItem = {
 	title: string

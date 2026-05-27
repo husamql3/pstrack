@@ -1,11 +1,12 @@
 "use client"
 
+import { IconSearch } from "@tabler/icons-react"
 import { useRef } from "react"
-import { useKeypress } from "@/hooks/use-keypress"
+
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group"
 import { Kbd, KbdGroup } from "@/components/ui/kbd"
 import { useSidebar } from "@/components/ui/sidebar"
-import { IconSearch } from "@tabler/icons-react"
+import { useKeypress } from "@/hooks/use-keypress"
 
 export function AppSearch() {
 	const groupRef = useRef<HTMLDivElement>(null)

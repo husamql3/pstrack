@@ -22,6 +22,7 @@
 		"baseUrl": ".",
 		"paths": {
 			"@/generated/*": ["./generated/*"],
+			"@/data/*": ["./prisma/data/*"],
 			"@/*": ["./src/*"]
 		}
 	}

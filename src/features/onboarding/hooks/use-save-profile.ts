@@ -1,7 +1,6 @@
 import { useMutation } from "@tanstack/react-query"
 
 import { authClient } from "@/lib/auth-client"
-
 import type { ProfileUpdateInput } from "@/server/users/users.type"
 
 export const useSaveProfile = () =>

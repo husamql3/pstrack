@@ -3,7 +3,6 @@ import { Link, useRouterState } from "@tanstack/react-router"
 import { useEffect, useRef, useState } from "react"
 
 import { Badge } from "@/components/ui/badge"
-import { useSession } from "@/lib/auth-client"
 import { ThemeSwitcher } from "./theme-switcher"
 import { UserMenu } from "./user-menu"
 
@@ -15,7 +14,6 @@ const NAV_LINKS = [
 ] as const
 
 export function AppHeader() {
-	const { data: session } = useSession()
 	const routerState = useRouterState()
 	const pathname = routerState.location.pathname
 

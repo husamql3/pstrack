@@ -1,7 +1,6 @@
 import { Link } from "@tanstack/react-router"
 
 import { Badge } from "@/components/ui/badge"
-
 import type { Step } from "../types"
 
 export const OnboardingHeader = ({ step }: { step: Step }) => {

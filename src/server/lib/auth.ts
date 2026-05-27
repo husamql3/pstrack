@@ -1,9 +1,8 @@
-import { checkout, polar, portal, webhooks } from "@polar-sh/better-auth"
+import { checkout, polar } from "@polar-sh/better-auth"
 import { betterAuth } from "better-auth"
 import { prismaAdapter } from "better-auth/adapters/prisma"
 import { admin, magicLink } from "better-auth/plugins"
 
-import MagicLinkEmail from "@/emails/magic-link"
 import WelcomeEmail from "@/emails/welcome"
 import { env } from "@/env"
 import { db } from "@/server/lib/db"
@@ -66,18 +65,19 @@ export const auth = betterAuth({
 	},
 	plugins: [
 		magicLink({
-			sendMagicLink: async ({ email, url }) => {
+			sendMagicLink: async ({ url }) => {
 				// Rewrite the verify URL to /api/magic-link — a plain HTML endpoint that
 				// uses JS to redirect to the actual verify path. Email pre-fetchers (e.g.
 				// Gmail) don't execute JS so the one-time token isn't consumed early.
 				const redirectUrl = new URL(url)
 				redirectUrl.pathname = "/api/v4/magic-link"
-				await resend.emails.send({
-					from: env.EMAIL_FROM,
-					to: email,
-					subject: "Sign in to PSTrack",
-					react: MagicLinkEmail({ url: redirectUrl.toString() }),
-				})
+				console.log("redirectUrl", redirectUrl.toString())
+				// await resend.emails.send({
+				// 	from: env.EMAIL_FROM,
+				// 	to: email,
+				// 	subject: "Sign in to PSTrack",
+				// 	react: MagicLinkEmail({ url: redirectUrl.toString() }),
+				// })
 			},
 		}),
 		admin(),
@@ -88,8 +88,8 @@ export const auth = betterAuth({
 				checkout({
 					products: [
 						{
-							productId: "8337e00d-2cc6-4c8e-80c3-7e9f60d08075",
-							slug: "wlog",
+							productId: "8b656c17-a416-4ef8-865a-a45a02ea7735",
+							slug: "pstrack",
 						},
 					],
 					successUrl: env.POLAR_SUCCESS_URL,

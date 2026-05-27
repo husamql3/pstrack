@@ -1,7 +1,7 @@
 "use client"
-import { cn } from "@/lib/utils"
-import { useIsMobile } from "@/hooks/use-mobile"
 import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar"
+import { useIsMobile } from "@/hooks/use-mobile"
+import { cn } from "@/lib/utils"
 
 type Place = "sidebar" | "navbar"
 

@@ -47,25 +47,25 @@ Stay consistent with LeetCode — solve one problem a day, earn points, and comp
 
 ## Phase 3 — Groups · [#221](https://github.com/husamql3/pstrack/issues/221)
 
-- [ ] Build group creation form (`/groups/new`)
-- [ ] Build public group browse page (`/groups`)
-- [ ] `POST /api/groups` — create group endpoint
-- [ ] `GET /api/groups` — list public groups endpoint
-- [ ] `POST /api/groups/:id/join` — request to join (public) or instant join (private)
-- [ ] `GET /api/groups/:id` — group detail endpoint
-- [ ] Build group overview page (`/groups/$groupId`)
-- [ ] `GET /api/groups/:id/join-requests` — list pending requests
-- [ ] `PATCH /api/groups/:id/join-requests/:requestId` — approve / reject
-- [ ] Build join requests page (`/groups/$groupId/join-requests`)
-- [ ] `POST /api/groups/:id/invite` — generate invite link
-- [ ] `DELETE /api/groups/:id/invite` — revoke invite link
-- [ ] Build group settings page (`/groups/$groupId/settings`)
-- [ ] `GET /api/groups/:id/members` + build members page
-- [ ] `DELETE /api/groups/:id/members/:userId` — remove member
-- [ ] `POST /api/groups/:id/leave` — leave group
+- [x] Build group creation form (`/groups/new`)
+- [x] Build public group browse page (`/groups`)
+- [x] `POST /api/groups` — create group endpoint
+- [x] `GET /api/groups` — list public groups endpoint
+- [x] `POST /api/groups/:id/join` — request to join (public) or instant join (private)
+- [x] `GET /api/groups/:id` — group detail endpoint
+- [x] Build group overview page (`/groups/$groupId`)
+- [x] `GET /api/groups/:id/join-requests` — list pending requests
+- [x] `PATCH /api/groups/:id/join-requests/:requestId` — approve / reject
+- [x] Build join requests page (`/groups/$groupId/join-requests`)
+- [x] `POST /api/groups/:id/invite` — generate invite link
+- [x] `DELETE /api/groups/:id/invite` — revoke invite link
+- [x] Build group settings page (`/groups/$groupId/settings`)
+- [x] `GET /api/groups/:id/members` + build members page
+- [x] `DELETE /api/groups/:id/members/:userId` — remove member
+- [x] `POST /api/groups/:id/leave` — leave group
 - [ ] Set up Trigger.dev job: `expire-join-requests` (hourly cron, marks PENDING > 1 day as EXPIRED)
-- [ ] Email templates: `join-request.tsx`, `join-approved.tsx`, `join-rejected.tsx`, `join-expired.tsx`, `removed-from-group.tsx`
-- [ ] Enforce group limits (Free: 1 group / 30 members, Pro: 5 groups / 50 members)
+- [x] Email templates: `join-request.tsx`, `join-approved.tsx`, `join-rejected.tsx`, `join-expired.tsx`, `removed-from-group.tsx`
+- [x] Enforce group limits (Free: 1 group / 30 members, Pro: 5 groups / 50 members)
 
 **Deliverable:** Users can create groups, join/leave, admins can manage members and requests
 

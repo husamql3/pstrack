@@ -1,7 +1,6 @@
 import { useCallback, useState } from "react"
 
 import { useSession } from "@/lib/auth-client"
-
 import type { ProfileState, Step } from "../types"
 import { deriveInitialUsername } from "../utils"
 import { GroupStep } from "./group-step"

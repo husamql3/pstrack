@@ -196,11 +196,88 @@ Response shape types are defined **once** in `src/server/[resource]/[resource].t
 
 ```ts
 // src/server/users/users.type.ts
-const userSelect = { id: true, username: true, points: true } as const
+const userSelect = { id: true, username: true, points: true } satisfies Prisma.UserSelect
 export type UserResponse = Prisma.UserGetPayload<{ select: typeof userSelect }>
 
 // src/features/dashboard/hooks/use-user.ts
 import type { UserResponse } from "@/server/users/users.type"
+```
+
+Use `satisfies Prisma.XSelect` (not `as const`) for select objects — it validates the shape against Prisma's generated type while preserving the inferred literal types.
+
+When a payload type is referenced more than once inside a type file, alias it locally to avoid repetition:
+
+```ts
+type DailyProblemRow = Prisma.DailyProblemGetPayload<{ select: typeof dailyProblemSelect }>
+// then use DailyProblemRow["solves"][number] instead of the full generic twice
+```
+
+Add explicit `Promise<ReturnType>` annotations to DAO methods whose return type is a discriminated union — this enables TypeScript contextual typing so state discriminants like `state: "NO_GROUP"` are narrowed automatically without `as const`.
+
+Derive enum key types from Prisma instead of writing string unions by hand:
+
+```ts
+// ✅
+import { Roadmap } from "@/generated/prisma/enums"
+export type RoadmapKey = Roadmap   // "NC250" | "NC150" | "BLIND75"
+
+// ❌ never
+export type RoadmapKey = "NC250" | "NC150" | "BLIND75"
+```
+
+### Prisma Enums
+
+**Import from `@/generated/prisma/enums`, never from `@/generated/prisma/client`** for any value import. The `client` file uses Node.js APIs (`node:url`, `node:path`) and will crash in the browser. `import type { Prisma }` from `client` is safe — type-only imports are erased at compile time.
+
+```ts
+// ✅
+import { SolveStatus, Roadmap, Difficulty } from "@/generated/prisma/enums"
+import type { Prisma } from "@/generated/prisma/client"
+
+// ❌ never (pulls Node.js runtime into browser bundle)
+import { SolveStatus } from "@/generated/prisma/client"
+```
+
+**Use enum values in comparisons, never string literals:**
+
+```ts
+// ✅
+if (solve.status === SolveStatus.SOLVED) { ... }
+
+// ❌
+if (solve.status === "SOLVED") { ... }
+```
+
+**No `as` keyword** — use alternatives instead:
+
+| Instead of | Use |
+|-----------|-----|
+| `roadmap as RoadmapKey` | Remove the cast — Prisma types `group.roadmap` as `Roadmap` already |
+| `["NC250"] as const` inline | `const ROADMAP_KEYS: RoadmapKey[] = [Roadmap.NC250, ...]` |
+| `v as RoadmapKey` in event handlers | `ROADMAP_KEYS.find(r => r === v)` returns `RoadmapKey \| undefined` |
+| `"READY" as const` in return | Add explicit `Promise<ReturnType>` — contextual typing handles it |
+| `obj as const` on select objects | `satisfies Prisma.XSelect` |
+
+**Zod schemas** — use the object form, never a duplicated string array:
+
+```ts
+// ✅
+z.enum(Roadmap)                                    // roadmap param
+z.union([z.literal("all"), z.enum(Difficulty)])    // filter with "all" sentinel
+
+// ❌
+z.enum(["NC250", "NC150", "BLIND75"])
+```
+
+**TypeBox/Elysia models** — same principle:
+
+```ts
+// ✅
+import { Roadmap } from "@/generated/prisma/enums"
+t.Optional(t.Enum(Roadmap))
+
+// ❌
+t.Union([t.Literal("NC250"), t.Literal("NC150"), t.Literal("BLIND75")])
 ```
 
 ### Feature Structure
@@ -209,11 +286,45 @@ Features live in `src/features/[feature]/`:
 
 ```
 src/features/[feature]/
-  components/       ← one file per component, PascalCase filename
+  components/       ← one file per component, PascalCase filename; each does ONE job
   hooks/            ← feature-specific hooks
-  constants.ts      ← ALL_CAPS exports
-  types.ts          ← UI-only types (not shared with server)
-  utils.ts          ← pure functions
+  constants.ts      ← ALL_CAPS exports (labels, keys, tone maps, filter arrays)
+  types.ts          ← UI-only types (not shared with server, e.g. DifficultyFilter)
+  utils.ts          ← pure functions (e.g. groupByTopic)
+```
+
+**Atomic components** — every component renders exactly one concern. Split when a component handles display AND data fetching, or renders two unrelated UI regions. Examples of atomic splits for a problems page:
+
+| Component | Single responsibility |
+|-----------|----------------------|
+| `ProgressDisplay` | Solved/total counter + bar |
+| `RoadmapTabs` | Tab switcher for roadmap keys |
+| `FilterRow` | Search input + difficulty + status filters |
+| `ProblemRow` | One problem list item |
+| `TopicGroup` | One accordion section |
+| `ProblemList` | Skeleton / empty / accordion orchestration |
+
+The **route file** is the orchestrator: reads search params, owns `useMemo` derived state, wires `useCallback` handlers, and composes components. No rendering logic lives there.
+
+**Handlers passed to child components must be `useCallback`-wrapped** to prevent the child's `useEffect` from re-firing on every parent render:
+
+```ts
+const handleRoadmapChange = useCallback(
+  (roadmap: RoadmapKey) => navigate({ search: (prev) => ({ ...prev, roadmap }) }),
+  [navigate]
+)
+```
+
+For callbacks inside child components that close over a prop callback (e.g. `onQueryChange`), use a ref to avoid stale closure without adding the callback to effect deps:
+
+```ts
+const onQueryChangeRef = useRef(onQueryChange)
+useEffect(() => { onQueryChangeRef.current = onQueryChange })
+
+useEffect(() => {
+  if (!didMount.current) { didMount.current = true; return }
+  onQueryChangeRef.current(debouncedQ)
+}, [debouncedQ]) // ← intentionally omits onQueryChange
 ```
 
 ### React Hooks

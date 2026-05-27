@@ -1,7 +1,13 @@
 "use client"
 
-import { cn } from "@/lib/utils"
+import { IconSettings } from "@tabler/icons-react"
+
+import { AppSearch } from "@/components/app-search"
+import { navGroups } from "@/components/app-shared"
+import { CustomTrigger } from "@/components/custom-trigger"
+import { LatestChange } from "@/components/latest-change"
 import { LogoIcon } from "@/components/logo"
+import { ThemeSwitcher } from "@/components/theme-switcher"
 import { Button } from "@/components/ui/button"
 import {
 	Sidebar,
@@ -15,21 +21,16 @@ import {
 	SidebarMenuItem,
 	SidebarRail,
 } from "@/components/ui/sidebar"
-import { AppSearch } from "@/components/app-search"
-import { navGroups } from "@/components/app-shared"
-import { CustomTrigger } from "@/components/custom-trigger"
-import { LatestChange } from "@/components/latest-change"
-import { ThemeSwitcher } from "@/components/theme-switcher"
-import { IconSettings } from "@tabler/icons-react"
+import { cn } from "@/lib/utils"
 
 export function AppSidebar() {
 	return (
 		<Sidebar
 			className={cn(
 				"*:data-[slot=sidebar-inner]:bg-background",
-				"transition-[left,right,top,width] group-data-[collapsible=offExamples]:top-[calc(var(--app-header-height)*0.5)]"
+				"transition-[left,right,top,width] group-data-[collapsible=offcanvas]:top-[calc(var(--app-header-height)*0.5)]"
 			)}
-			collapsible="offExamples"
+			collapsible="offcanvas"
 			variant="sidebar"
 		>
 			<SidebarHeader className="h-(--app-header-height,3rem) flex-row items-center justify-between">

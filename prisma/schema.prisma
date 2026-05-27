@@ -9,24 +9,206 @@ datasource db {
 }
 
 model User {
-  id            String    @id
-  name          String
-  email         String    @unique
-  emailVerified Boolean   @default(false)
-  image         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  role          String?
-  banned        Boolean?  @default(false)
-  banReason     String?
-  banExpires    DateTime?
-  username         String?   @unique
-  leetcodeHandle   String?
-  codeforcesHandle String?
-  sessions         Session[]
-  accounts      Account[]
+  id                  String             @id
+  name                String
+  email               String             @unique
+  emailVerified       Boolean            @default(false)
+  image               String?
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+  role                String?
+  banned              Boolean?           @default(false)
+  banReason           String?
+  banExpires          DateTime?
+  username            String?            @unique
+  leetcodeHandle      String?
+  codeforcesHandle    String?
+  bio                 String?
+  twitterHandle       String?
+  linkedinHandle      String?
+  websiteUrl          String?
+  isPublic            Boolean            @default(true)
+  isPro               Boolean            @default(false)
+  totalPoints         Int                @default(0)
+  currentStreak       Int                @default(0)
+  longestStreak       Int                @default(0)
+  pausesUsedThisMonth Int                @default(0)
+  notifyDailyProblem  Boolean            @default(true)
+  notifyAchievements  Boolean            @default(true)
+  notifyGroupActivity Boolean            @default(true)
+  groupMemberships    GroupMember[]
+  joinRequests        GroupJoinRequest[]
+  solves              UserSolve[]
+  pointsHistory       PointsHistory[]
+  firstSolves         DailyProblem[]     @relation("DailyProblemFirstSolver")
+  sessions            Session[]
+  accounts            Account[]
 
+  @@index([totalPoints])
+  @@index([currentStreak])
   @@map("user")
+}
+
+model Group {
+  id              String    @id @default(cuid())
+  name            String
+  description     String?
+  type            GroupType @default(PUBLIC)
+  roadmap         Roadmap   @default(NC250)
+  creatorId       String
+  maxMembers      Int       @default(30)
+  inviteCode      String?   @unique
+  inviteExpiresAt DateTime?
+  isActive        Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  members       GroupMember[]
+  joinRequests  GroupJoinRequest[]
+  dailyProblems DailyProblem[]
+
+  @@index([type, isActive])
+}
+
+enum GroupType {
+  PUBLIC
+  PRIVATE
+}
+
+enum Roadmap {
+  NC250
+  NC150
+  BLIND75
+}
+
+model GroupMember {
+  id       String     @id @default(cuid())
+  groupId  String
+  userId   String
+  role     MemberRole @default(MEMBER)
+  joinedAt DateTime   @default(now())
+
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, userId])
+  @@index([userId])
+}
+
+enum MemberRole {
+  ADMIN
+  MEMBER
+}
+
+model GroupJoinRequest {
+  id        String            @id @default(cuid())
+  groupId   String
+  userId    String
+  status    JoinRequestStatus @default(PENDING)
+  expiresAt DateTime
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, userId])
+  @@index([status, expiresAt])
+}
+
+enum JoinRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  EXPIRED
+}
+
+model Problem {
+  id           String     @id @default(cuid())
+  slug         String     @unique
+  title        String
+  difficulty   Difficulty
+  topics       String[]
+  roadmapIndex Int        @unique
+  leetcodeId   Int?
+  neetcode250  Boolean    @default(false)
+  neetcode150  Boolean    @default(false)
+  blind75      Boolean    @default(false)
+
+  dailyProblems DailyProblem[]
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+model DailyProblem {
+  id             String    @id @default(cuid())
+  groupId        String
+  problemId      String
+  assignedDate   DateTime  @db.Date
+  firstSolverId  String?
+  firstSolveTime DateTime?
+
+  group       Group       @relation(fields: [groupId], references: [id])
+  problem     Problem     @relation(fields: [problemId], references: [id])
+  firstSolver User?       @relation("DailyProblemFirstSolver", fields: [firstSolverId], references: [id])
+  solves      UserSolve[]
+
+  @@unique([groupId, assignedDate])
+  @@index([assignedDate])
+}
+
+model UserSolve {
+  id             String      @id @default(cuid())
+  userId         String
+  dailyProblemId String
+  status         SolveStatus @default(PENDING_VERIFICATION)
+  pointsEarned   Int         @default(0)
+  isFirstInGroup Boolean     @default(false)
+  verifiedAt     DateTime?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  dailyProblem  DailyProblem    @relation(fields: [dailyProblemId], references: [id])
+  pointsHistory PointsHistory[]
+
+  @@unique([userId, dailyProblemId])
+  @@index([userId])
+}
+
+enum SolveStatus {
+  PENDING_VERIFICATION
+  SOLVED
+  PAUSED
+  MISSED
+  VERIFICATION_FAILED
+}
+
+model PointsHistory {
+  id          String      @id @default(cuid())
+  userId      String
+  userSolveId String?
+  delta       Int
+  reason      PointReason
+  adminNote   String?
+  createdAt   DateTime    @default(now())
+
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userSolve UserSolve? @relation(fields: [userSolveId], references: [id])
+
+  @@index([userId, createdAt])
+}
+
+enum PointReason {
+  DAILY_SOLVE
+  FIRST_IN_GROUP
+  STREAK_MULTIPLIER_BONUS
+  MISSED_DAY
+  ADMIN_ADJUSTMENT
 }
 
 model Session {

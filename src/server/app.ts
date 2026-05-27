@@ -1,9 +1,11 @@
 import { Elysia } from "elysia"
 
+import { groupsController } from "@/server/groups/groups.controller"
 import { auth } from "@/server/lib/auth"
 import { captureServerException, initServerSentry } from "@/server/lib/sentry"
 import { docs } from "@/server/modules/docs"
 import { health } from "@/server/modules/health"
+import { problemsController } from "@/server/problems/problems.controller"
 import { usersController } from "@/server/users/users.controller"
 import { requestLogger } from "./lib/request-logger"
 
@@ -13,10 +15,12 @@ const api = new Elysia({ prefix: "/api/v4" })
 	.use(health)
 	.use(docs)
 	.use(usersController)
+	.use(groupsController)
+	.use(problemsController)
 	.onError(({ error }) => captureServerException(error))
-	.use(requestLogger)
 
 export const app = new Elysia()
+	.use(requestLogger)
 	.all("/api/v4/auth/*", ({ request }) => auth.handler(request))
 	.get("/api/v4/magic-link", ({ request }) => {
 		const { searchParams } = new URL(request.url)

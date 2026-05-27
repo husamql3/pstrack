@@ -1,0 +1,219 @@
+import {
+	IconCalendar,
+	IconCircleCheck,
+	IconClock,
+	IconPlayerPause,
+} from "@tabler/icons-react"
+import { Link } from "@tanstack/react-router"
+import { sileo } from "sileo"
+
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Skeleton } from "@/components/ui/skeleton"
+import { cn } from "@/lib/utils"
+import {
+	useMarkTodaySolved,
+	usePauseToday,
+	useTodayProblem,
+} from "../hooks/use-today-problem"
+
+const difficultyTone = {
+	EASY: "text-emerald-600 bg-emerald-500/10",
+	MEDIUM: "text-amber-600 bg-amber-500/10",
+	HARD: "text-red-600 bg-red-500/10",
+} as const
+
+const statusCopy = {
+	PENDING_VERIFICATION: "Pending verification",
+	SOLVED: "Solved",
+	PAUSED: "Paused",
+	MISSED: "Missed",
+	VERIFICATION_FAILED: "Verification failed",
+} as const
+
+const errorDescription = (err: unknown) =>
+	err instanceof Error ? err.message : "Please try again."
+
+export const DashboardPage = () => {
+	const todayQuery = useTodayProblem()
+	const solveMutation = useMarkTodaySolved()
+	const pauseMutation = usePauseToday()
+
+	if (todayQuery.isLoading) {
+		return (
+			<div className="flex flex-col gap-6">
+				<Skeleton className="h-8 w-56" />
+				<Skeleton className="h-64 w-full" />
+			</div>
+		)
+	}
+
+	if (todayQuery.isError || !todayQuery.data) {
+		return (
+			<div className="border-border bg-background rounded-lg border p-6">
+				<p className="text-sm font-medium">Could not load your dashboard.</p>
+				<p className="text-muted-foreground mt-1 text-sm">Refresh and try again.</p>
+			</div>
+		)
+	}
+
+	const today = todayQuery.data
+
+	if (today.state === "NO_GROUP") {
+		return (
+			<div className="flex flex-col gap-6">
+				<DashboardHeader />
+				<section className="border-border bg-background rounded-lg border p-6">
+					<p className="text-sm font-medium">You're not in a group yet.</p>
+					<p className="text-muted-foreground mt-1 max-w-xl text-sm">
+						You won't receive daily problems until you join or create a group.
+					</p>
+					<Button asChild className="mt-5">
+						<Link to="/groups">Browse groups</Link>
+					</Button>
+				</section>
+			</div>
+		)
+	}
+
+	if (today.state === "NO_PROBLEMS") {
+		return (
+			<div className="flex flex-col gap-6">
+				<DashboardHeader />
+				<section className="border-border bg-background rounded-lg border p-6">
+					<p className="text-sm font-medium">No problems have been seeded yet.</p>
+					<p className="text-muted-foreground mt-1 text-sm">
+						An admin needs to seed the roadmap before daily assignments can begin.
+					</p>
+				</section>
+			</div>
+		)
+	}
+
+	const problem = today.dailyProblem.problem
+	const solveStatus = today.solve?.status
+	const isLocked =
+		solveMutation.isPending ||
+		pauseMutation.isPending ||
+		solveStatus === "SOLVED" ||
+		solveStatus === "PAUSED" ||
+		solveStatus === "PENDING_VERIFICATION"
+
+	const markSolved = async () => {
+		await sileo.promise(solveMutation.mutateAsync(), {
+			loading: { title: "Submitting for verification..." },
+			success: { title: "Marked as pending verification" },
+			error: (err: unknown) => ({
+				title: "Could not submit",
+				description: errorDescription(err),
+			}),
+		})
+	}
+
+	const pauseToday = async () => {
+		await sileo.promise(pauseMutation.mutateAsync(), {
+			loading: { title: "Pausing today..." },
+			success: { title: "Today is paused" },
+			error: (err: unknown) => ({
+				title: "Could not pause",
+				description: errorDescription(err),
+			}),
+		})
+	}
+
+	return (
+		<div className="flex flex-col gap-6">
+			<DashboardHeader />
+			<section className="border-border bg-background rounded-lg border p-5 md:p-6">
+				<div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
+					<div className="min-w-0">
+						<div className="flex flex-wrap items-center gap-2">
+							<Badge variant="outline">{today.group.name}</Badge>
+							<Badge
+								className={cn("border-transparent", difficultyTone[problem.difficulty])}
+								variant="outline"
+							>
+								{problem.difficulty}
+							</Badge>
+							{solveStatus && (
+								<Badge variant={solveStatus === "PAUSED" ? "secondary" : "outline"}>
+									{statusCopy[solveStatus]}
+								</Badge>
+							)}
+						</div>
+						<h2 className="mt-4 text-2xl font-semibold tracking-tight">
+							{problem.title}
+						</h2>
+						<p className="text-muted-foreground mt-2 flex items-center gap-2 text-sm">
+							<IconCalendar className="size-4" />
+							Problem #{problem.roadmapIndex} from the roadmap
+						</p>
+						<div className="mt-4 flex flex-wrap gap-2">
+							{problem.topics.map((topic) => (
+								<Badge key={topic} variant="secondary">
+									{topic}
+								</Badge>
+							))}
+						</div>
+					</div>
+
+					<div className="flex shrink-0 flex-col gap-2 md:w-52">
+						<Button asChild variant="outline">
+							<a
+								href={`https://leetcode.com/problems/${problem.slug}/`}
+								rel="noreferrer"
+								target="_blank"
+							>
+								Open LeetCode
+							</a>
+						</Button>
+						<Button disabled={isLocked} onClick={markSolved}>
+							<IconCircleCheck />
+							Mark as Solved
+						</Button>
+						<Button
+							disabled={isLocked || today.pausesRemaining <= 0}
+							onClick={pauseToday}
+							variant="outline"
+						>
+							<IconPlayerPause />
+							Pause Today
+						</Button>
+						<p className="text-muted-foreground text-xs">
+							{today.pausesRemaining} pauses remaining this month
+						</p>
+					</div>
+				</div>
+			</section>
+
+			<section className="grid gap-3 md:grid-cols-3">
+				<MetricCard label="Current streak" value="0 days" />
+				<MetricCard
+					label="Today's status"
+					value={solveStatus ? statusCopy[solveStatus] : "Open"}
+				/>
+				<MetricCard
+					label="Verification"
+					value={solveStatus === "PENDING_VERIFICATION" ? "Queued" : "Idle"}
+				/>
+			</section>
+		</div>
+	)
+}
+
+const DashboardHeader = () => (
+	<div>
+		<p className="text-muted-foreground flex items-center gap-2 text-sm">
+			<IconClock className="size-4" />
+			Show up. Solve. Repeat.
+		</p>
+		<h1 className="mt-1 text-3xl font-semibold tracking-tight">Dashboard</h1>
+	</div>
+)
+
+const MetricCard = ({ label, value }: { label: string; value: string }) => (
+	<div className="border-border bg-background rounded-lg border p-4">
+		<p className="text-muted-foreground text-xs">{label}</p>
+		<p className="mt-1 text-sm font-medium">{value}</p>
+	</div>
+)

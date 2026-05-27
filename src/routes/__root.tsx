@@ -1,13 +1,13 @@
 import { TanStackDevtools } from "@tanstack/react-devtools"
+import { type QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { createRootRouteWithContext, HeadContent, Scripts } from "@tanstack/react-router"
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools"
 import type { ReactNode } from "react"
 import { Toaster } from "sileo"
 
 import { authClient } from "@/lib/auth-client"
-import appCss from "../styles.css?url"
 import { getQueryClient } from "@/lib/query-client"
-import { QueryClientProvider, type QueryClient } from "@tanstack/react-query"
+import appCss from "../styles.css?url"
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
 	beforeLoad: async () => {
@@ -55,7 +55,7 @@ function RootDocument({ children }: { children: ReactNode }) {
 	const queryClient = getQueryClient()
 
 	return (
-		<html lang="en">
+		<html lang="en" suppressHydrationWarning>
 			<head>
 				<HeadContent />
 				{/* Runs before paint to prevent theme flash */}

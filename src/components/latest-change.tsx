@@ -1,9 +1,10 @@
 "use client"
 
-import { cn } from "@/lib/utils"
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
 import { IconX } from "@tabler/icons-react"
+import { useState } from "react"
+
+import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
 
 const latestChange = {
 	title: "Real-time funnels",

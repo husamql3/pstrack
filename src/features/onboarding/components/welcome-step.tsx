@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button"
-
 import { FEATURE_CARDS } from "../constants"
 
 export const WelcomeStep = ({ onContinue }: { onContinue: () => void }) => {

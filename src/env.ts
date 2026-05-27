@@ -35,9 +35,7 @@ export const env = createEnv({
 
 		// payments
 		POLAR_ACCESS_TOKEN: z.string().min(1),
-		POLAR_SUCCESS_URL: z
-			.url()
-			.default("https://pstrack.localhost/success?checkout_id={CHECKOUT_ID}"),
+		POLAR_SUCCESS_URL: z.url(),
 	},
 	client: {
 		VITE_API_URL: z.url().default("https://pstrack.localhost"),

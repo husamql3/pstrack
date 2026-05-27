@@ -1,9 +1,8 @@
 import { createRouter as createTanStackRouter } from "@tanstack/react-router"
-import type { QueryClient } from "@tanstack/react-query"
 
+import { getQueryClient } from "@/lib/query-client"
 import { initClientSentry } from "@/lib/sentry"
 import { routeTree } from "@/routeTree.gen"
-import { getQueryClient } from "@/lib/query-client"
 
 initClientSentry()
 

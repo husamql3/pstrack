@@ -10,7 +10,7 @@ function AppLayout() {
 	return (
 		<div className="min-h-screen">
 			<AppHeader />
-			<main className="mx-auto max-w-6xl px-4 py-8">
+			<main className="mx-auto w-full p-8">
 				<Outlet />
 			</main>
 		</div>
