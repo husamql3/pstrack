@@ -1,5 +1,5 @@
-import { Roadmap, SolveStatus } from "@/generated/prisma/enums"
 import type { Prisma } from "@/generated/prisma/client"
+import { Roadmap, SolveStatus } from "@/generated/prisma/enums"
 
 export type RoadmapKey = Roadmap
 
@@ -27,7 +27,7 @@ const dailyProblemSelect = {
 	group: {
 		select: {
 			id: true,
-			name: true,
+			slug: true,
 			roadmap: true,
 		},
 	},
@@ -68,7 +68,7 @@ export type TodayProblemResponse =
 	| {
 			state: "READY"
 			group: Prisma.GroupGetPayload<{
-				select: { id: true; name: true; roadmap: true }
+				select: { id: true; slug: true; roadmap: true }
 			}>
 			groupRoadmap: Roadmap
 			dailyProblem: Omit<DailyProblemRow, "solves">

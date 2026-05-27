@@ -1,10 +1,7 @@
 import Elysia, { t } from "elysia"
 
 export const groupsModel = new Elysia({ name: "model/groups" }).model({
-	"groups.create": t.Object({
-		name: t.String({ minLength: 3, maxLength: 80 }),
-		description: t.Optional(t.String({ maxLength: 240 })),
-	}),
+	"groups.create": t.Object({}),
 	"groups.joinParams": t.Object({
 		id: t.String({ minLength: 1 }),
 	}),
@@ -19,10 +16,7 @@ export const groupsModel = new Elysia({ name: "model/groups" }).model({
 		id: t.String({ minLength: 1 }),
 		requestId: t.String({ minLength: 1 }),
 	}),
-	"groups.updateSettings": t.Object({
-		name: t.Optional(t.String({ minLength: 3, maxLength: 80 })),
-		description: t.Optional(t.Nullable(t.String({ maxLength: 240 }))),
-	}),
+	"groups.updateSettings": t.Object({}),
 	"groups.joinRequestAction": t.Object({
 		action: t.Union([t.Literal("APPROVED"), t.Literal("REJECTED")]),
 	}),

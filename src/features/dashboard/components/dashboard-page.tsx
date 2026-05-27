@@ -128,7 +128,7 @@ export const DashboardPage = () => {
 				<div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
 					<div className="min-w-0">
 						<div className="flex flex-wrap items-center gap-2">
-							<Badge variant="outline">{today.group.name}</Badge>
+							<Badge variant="outline">@{today.group.slug}</Badge>
 							<Badge
 								className={cn("border-transparent", difficultyTone[problem.difficulty])}
 								variant="outline"

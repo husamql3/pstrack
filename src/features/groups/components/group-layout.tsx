@@ -46,7 +46,7 @@ export const GroupLayout = () => {
 					All groups
 				</Link>
 				<div className="mt-3 flex flex-wrap items-center gap-3">
-					<h1 className="font-semibold text-3xl tracking-tight">{group.name}</h1>
+					<h1 className="font-semibold text-3xl tracking-tight">@{group.slug}</h1>
 					<Badge variant="outline">
 						{group._count.members}/{group.maxMembers}
 					</Badge>
@@ -64,9 +64,6 @@ export const GroupLayout = () => {
 						)}
 					</Badge>
 				</div>
-				{group.description && (
-					<p className="mt-2 text-muted-foreground text-sm">{group.description}</p>
-				)}
 			</div>
 
 			<nav className="flex gap-1">

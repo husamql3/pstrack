@@ -1,10 +1,9 @@
-import { SolveStatus } from "@/generated/prisma/enums"
-
 import {
 	AccordionContent,
 	AccordionItem,
 	AccordionTrigger,
 } from "@/components/ui/accordion"
+import { SolveStatus } from "@/generated/prisma/enums"
 import type { RoadmapProblemResponse } from "@/server/problems/problems.type"
 import { ProblemRow } from "./problem-row"
 

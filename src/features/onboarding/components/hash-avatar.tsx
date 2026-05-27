@@ -1,12 +1,16 @@
 import { renderHashvatar } from "hashvatar"
 import { useEffect, useRef } from "react"
 
+import { cn } from "@/lib/utils"
+
 export const HashAvatar = ({
 	username,
 	size = 80,
+	shape = "circle",
 }: {
 	username: string
 	size?: number
+	shape?: "circle" | "square"
 }) => {
 	const canvasRef = useRef<HTMLCanvasElement>(null)
 
@@ -23,11 +27,22 @@ export const HashAvatar = ({
 	}, [username, size])
 
 	if (!username) {
-		return <div className="rounded-full bg-muted" style={{ width: size, height: size }} />
+		return (
+			<div
+				className={cn("bg-muted", shape === "circle" ? "rounded-full" : "rounded-xl")}
+				style={{ width: size, height: size }}
+			/>
+		)
 	}
 
 	return (
-		<div className="overflow-hidden rounded-full" style={{ width: size, height: size }}>
+		<div
+			className={cn(
+				"overflow-hidden",
+				shape === "circle" ? "rounded-full" : "rounded-xl"
+			)}
+			style={{ width: size, height: size }}
+		>
 			<canvas ref={canvasRef} width={size} height={size} />
 		</div>
 	)

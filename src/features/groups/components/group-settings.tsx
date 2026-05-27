@@ -1,30 +1,17 @@
-import { zodResolver } from "@hookform/resolvers/zod"
-import {
-	IconCheck,
-	IconClipboard,
-	IconLink,
-	IconLinkOff,
-	IconLoader2,
-} from "@tabler/icons-react"
+import { IconCheck, IconClipboard, IconLink, IconLinkOff } from "@tabler/icons-react"
 import { useNavigate, useParams } from "@tanstack/react-router"
 import { useState } from "react"
-import { useForm } from "react-hook-form"
 import { sileo } from "sileo"
 
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { Skeleton } from "@/components/ui/skeleton"
-import { Textarea } from "@/components/ui/textarea"
 import { env } from "@/env"
-import { type UpdateGroupFormInput, updateGroupSchema } from "@/server/groups/groups.type"
 import {
 	useGenerateInvite,
 	useGroup,
 	useLeaveGroup,
 	useRevokeInvite,
-	useUpdateGroup,
 } from "../hooks/use-group"
 
 const errorDescription = (err: unknown) =>
@@ -61,8 +48,6 @@ export const GroupSettings = () => {
 
 	return (
 		<div className="flex max-w-lg flex-col gap-8">
-			<UpdateGroupForm groupId={groupId} />
-			<Separator />
 			<InviteLinkSection
 				groupId={groupId}
 				inviteCode={group.inviteCode}
@@ -71,62 +56,6 @@ export const GroupSettings = () => {
 			<Separator />
 			<DangerZone groupId={groupId} onLeft={() => navigate({ to: "/groups" })} />
 		</div>
-	)
-}
-
-const UpdateGroupForm = ({ groupId }: { groupId: string }) => {
-	const groupQuery = useGroup(groupId)
-	const updateGroup = useUpdateGroup(groupId)
-	const group = groupQuery.data!
-
-	const form = useForm<UpdateGroupFormInput>({
-		resolver: zodResolver(updateGroupSchema),
-		defaultValues: { name: group.name, description: group.description ?? "" },
-	})
-
-	const onSubmit = form.handleSubmit(async (input) => {
-		await sileo.promise(updateGroup.mutateAsync(input), {
-			loading: { title: "Saving..." },
-			success: { title: "Settings saved" },
-			error: (err: unknown) => ({
-				title: "Could not save settings",
-				description: errorDescription(err),
-			}),
-		})
-	})
-
-	return (
-		<section>
-			<h2 className="font-semibold">Group details</h2>
-			<form className="mt-4 flex flex-col gap-4" onSubmit={onSubmit}>
-				<div className="flex flex-col gap-1.5">
-					<Label htmlFor="name">Name</Label>
-					<Input id="name" disabled={updateGroup.isPending} {...form.register("name")} />
-					{form.formState.errors.name && (
-						<p className="text-destructive text-xs">
-							{form.formState.errors.name.message}
-						</p>
-					)}
-				</div>
-				<div className="flex flex-col gap-1.5">
-					<Label htmlFor="description">Description</Label>
-					<Textarea
-						id="description"
-						disabled={updateGroup.isPending}
-						placeholder="Describe your group…"
-						{...form.register("description")}
-					/>
-				</div>
-				<div>
-					<Button disabled={updateGroup.isPending} type="submit">
-						{updateGroup.isPending && (
-							<IconLoader2 className="mr-2 size-4 animate-spin" />
-						)}
-						Save changes
-					</Button>
-				</div>
-			</form>
-		</section>
 	)
 }
 

@@ -1,11 +1,11 @@
-import { SolveStatus } from "@/generated/prisma/enums"
 import type { Prisma } from "@/generated/prisma/client"
+import { SolveStatus } from "@/generated/prisma/enums"
 import { db } from "@/server/lib/db"
 import { NEETCODE_250_PROBLEMS } from "./problems.seed"
 import {
-	problemSelect,
 	type MarkSolvedResult,
 	type PauseTodayResult,
+	problemSelect,
 	type RoadmapKey,
 	type RoadmapProblemResponse,
 	type TodayProblemResponse,
@@ -66,7 +66,7 @@ const ensureDailyProblem = async (
 			id: true,
 			assignedDate: true,
 			firstSolveTime: true,
-			group: { select: { id: true, name: true, roadmap: true } },
+			group: { select: { id: true, slug: true, roadmap: true } },
 			problem: { select: problemSelect },
 			solves: {
 				select: {
@@ -90,7 +90,7 @@ const findPrimaryGroup = (userId: string) =>
 			group: {
 				select: {
 					id: true,
-					name: true,
+					slug: true,
 					roadmap: true,
 				},
 			},

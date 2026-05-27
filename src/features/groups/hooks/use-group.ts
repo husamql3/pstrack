@@ -6,7 +6,6 @@ import type {
 	GroupDetailResponse,
 	GroupMemberResponse,
 	JoinRequestResponse,
-	UpdateGroupFormInput,
 } from "@/server/groups/groups.type"
 
 export const groupDetailQueryKey = (groupId: string) => ["groups", groupId] as const
@@ -102,22 +101,6 @@ export const useLeaveGroup = (groupId: string) => {
 			return data
 		},
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ["groups"] })
-		},
-	})
-}
-
-export const useUpdateGroup = (groupId: string) => {
-	const queryClient = useQueryClient()
-
-	return useMutation({
-		mutationFn: async (input: UpdateGroupFormInput) => {
-			const { data, error } = await api.v4.groups({ id: groupId }).patch(input)
-			if (error) throw new Error("Could not update group")
-			return data
-		},
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: groupDetailQueryKey(groupId) })
 			queryClient.invalidateQueries({ queryKey: ["groups"] })
 		},
 	})

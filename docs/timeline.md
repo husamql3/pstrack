@@ -38,8 +38,8 @@ Stay consistent with LeetCode — solve one problem a day, earn points, and comp
 - [x] Set up Resend + email templates (`magic-link.tsx`, `welcome.tsx`)
 - [x] Build login page (`/login`)
 - [x] Add auth guard to TanStack Router (`_authenticated/` layout, username gate → `/onboarding`)
-- [ ] Build onboarding page (`/onboarding`) — set username
-- [ ] Integrate hashvatar on user profile display
+- [x] Build onboarding page (`/onboarding`) — set username
+- [x] Integrate hashvatar on user profile display
 
 **Deliverable:** Users can sign up, log in, and complete onboarding
 
@@ -73,15 +73,15 @@ Stay consistent with LeetCode — solve one problem a day, earn points, and comp
 
 ## Phase 4 — Daily Problem System · [#222](https://github.com/husamql3/pstrack/issues/222)
 
-- [ ] Seed NeetCode 250 problems via `POST /api/admin/problems/seed`
+- [x] Seed NeetCode 250 problems via `POST /api/admin/problems/seed`
 - [ ] Set up Trigger.dev job: `assign-daily-problem` (midnight cron — creates `DailyProblem` row per active group)
-- [ ] `GET /api/problems/today` — return today's problem + user's current `UserSolve` status
-- [ ] `GET /api/problems/roadmap` — NeetCode 250 list with user solve history
-- [ ] Build dashboard page (`/dashboard`) — today's problem card, solve/pause buttons, streak display
-- [ ] Build roadmap page (`/problems`)
+- [x] `GET /api/problems/today` — return today's problem + user's current `UserSolve` status
+- [x] `GET /api/problems/roadmap` — NeetCode 250 list with user solve history
+- [x] Build dashboard page (`/dashboard`) — today's problem card, solve/pause buttons, streak display
+- [x] Build roadmap page (`/problems`)
 - [ ] `POST /api/problems/today/solve` — create `UserSolve` (PENDING_VERIFICATION), fire Trigger.dev job
 - [ ] Set up Trigger.dev job: `verify-submission` — poll LC/CF API, update status, award points
-- [ ] `POST /api/problems/today/pause` — set status to PAUSED, decrement available pauses
+- [x] `POST /api/problems/today/pause` — set status to PAUSED, decrement available pauses
 - [ ] Set up Trigger.dev job: `mark-missed` (end-of-day cron — sets unresolved UserSolves to MISSED, applies -3 points)
 - [ ] Set up Trigger.dev job: `reset-monthly-pauses` (1st of month cron)
 - [ ] Email templates: `daily-problem.tsx`, `solve-verified.tsx`, `verification-failed.tsx`
@@ -145,7 +145,7 @@ Stay consistent with LeetCode — solve one problem a day, earn points, and comp
 
 ## Phase 9 — Admin Dashboard · [#227](https://github.com/husamql3/pstrack/issues/227)
 
-- [ ] Platform admin flag on `User` (set manually in DB)
+- [x] Platform admin flag on `User` (set manually in DB)
 - [ ] `GET /api/admin/users` + `/admin/users` page
 - [ ] `PATCH /api/admin/users/:id` — adjust points, ban
 - [ ] `GET /api/admin/groups` + `DELETE /api/admin/groups/:id`
@@ -163,7 +163,7 @@ Stay consistent with LeetCode — solve one problem a day, earn points, and comp
 - [ ] Loading skeletons on all data-fetching routes
 - [ ] Empty states (no group joined, no problems solved yet, etc.)
 - [ ] Mobile-responsive UI audit
-- [ ] Sentry source map upload in CI
+- [x] Sentry source map upload in CI
 - [ ] Environment variables documented in `.env.example`
 - [ ] Vercel project configured (env vars, domain)
 - [ ] Soft launch to beta testers (50 users)

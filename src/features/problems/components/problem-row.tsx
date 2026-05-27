@@ -1,8 +1,8 @@
-import { SolveStatus } from "@/generated/prisma/enums"
 import { IconExternalLink } from "@tabler/icons-react"
 
 import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
+import { SolveStatus } from "@/generated/prisma/enums"
 import { cn } from "@/lib/utils"
 import type { RoadmapProblemResponse } from "@/server/problems/problems.type"
 import { DIFFICULTY_LABELS, DIFFICULTY_TONE } from "../constants"

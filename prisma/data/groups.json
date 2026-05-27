@@ -1,0 +1,65 @@
+[
+	{
+		"slug": "swift-falcon",
+		"type": "PUBLIC",
+		"roadmap": "NC250",
+		"maxMembers": 30,
+		"memberCount": 20
+	},
+	{
+		"slug": "dark-ember",
+		"type": "PRIVATE",
+		"roadmap": "NC250",
+		"maxMembers": 30,
+		"memberCount": 8
+	},
+	{
+		"slug": "early-bird",
+		"type": "PUBLIC",
+		"roadmap": "NC250",
+		"maxMembers": 50,
+		"memberCount": 25
+	},
+	{
+		"slug": "bold-venture",
+		"type": "PUBLIC",
+		"roadmap": "BLIND75",
+		"maxMembers": 30,
+		"memberCount": 12
+	},
+	{
+		"slug": "iron-forge",
+		"type": "PUBLIC",
+		"roadmap": "NC250",
+		"maxMembers": 30,
+		"memberCount": 15
+	},
+	{
+		"slug": "shadow-ridge",
+		"type": "PRIVATE",
+		"roadmap": "NC250",
+		"maxMembers": 50,
+		"memberCount": 6
+	},
+	{
+		"slug": "keen-focus",
+		"type": "PUBLIC",
+		"roadmap": "NC150",
+		"maxMembers": 30,
+		"memberCount": 18
+	},
+	{
+		"slug": "clear-coast",
+		"type": "PUBLIC",
+		"roadmap": "NC250",
+		"maxMembers": 30,
+		"memberCount": 10
+	},
+	{
+		"slug": "deep-forest",
+		"type": "PRIVATE",
+		"roadmap": "NC250",
+		"maxMembers": 30,
+		"memberCount": 5
+	}
+]

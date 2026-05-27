@@ -2,10 +2,11 @@ import { z } from "zod"
 
 import type { Prisma } from "@/generated/prisma/client"
 
+// ─── List ─────────────────────────────────────────────────────────────────────
+
 export const groupListSelect = {
 	id: true,
-	name: true,
-	description: true,
+	slug: true,
 	type: true,
 	maxMembers: true,
 	createdAt: true,
@@ -14,25 +15,21 @@ export const groupListSelect = {
 			members: true,
 		},
 	},
-} as const
+} satisfies Prisma.GroupSelect
 
-export type GroupListResponse = Prisma.GroupGetPayload<{
-	select: typeof groupListSelect
-}> & {
+type GroupListBase = Prisma.GroupGetPayload<{ select: typeof groupListSelect }>
+
+export type GroupListResponse = GroupListBase & {
 	membershipStatus: "JOINED" | "REQUESTED" | "NONE"
+	memberPreview: { username: string | null }[]
+	activeToday: number
 }
 
-export const createGroupSchema = z.object({
-	name: z.string({ error: "Name is required" }).min(3, "Name is required"),
-	description: z.string().max(240).optional(),
-})
-
-export type CreateGroupFormInput = z.infer<typeof createGroupSchema>
+// ─── Detail ───────────────────────────────────────────────────────────────────
 
 export const groupDetailSelect = {
 	id: true,
-	name: true,
-	description: true,
+	slug: true,
 	type: true,
 	maxMembers: true,
 	inviteCode: true,
@@ -40,7 +37,7 @@ export const groupDetailSelect = {
 	creatorId: true,
 	createdAt: true,
 	_count: { select: { members: true } },
-} as const
+} satisfies Prisma.GroupSelect
 
 export type GroupDetailResponse = Prisma.GroupGetPayload<{
 	select: typeof groupDetailSelect
@@ -48,6 +45,8 @@ export type GroupDetailResponse = Prisma.GroupGetPayload<{
 	membershipStatus: "JOINED" | "REQUESTED" | "NONE"
 	userRole: "ADMIN" | "MEMBER" | null
 }
+
+// ─── Members ──────────────────────────────────────────────────────────────────
 
 export const groupMemberSelect = {
 	id: true,
@@ -62,11 +61,13 @@ export const groupMemberSelect = {
 			currentStreak: true,
 		},
 	},
-} as const
+} satisfies Prisma.GroupMemberSelect
 
 export type GroupMemberResponse = Prisma.GroupMemberGetPayload<{
 	select: typeof groupMemberSelect
 }>
+
+// ─── Join requests ────────────────────────────────────────────────────────────
 
 export const joinRequestSelect = {
 	id: true,
@@ -76,21 +77,17 @@ export const joinRequestSelect = {
 	user: {
 		select: { id: true, username: true, name: true },
 	},
-} as const
+} satisfies Prisma.GroupJoinRequestSelect
 
 export type JoinRequestResponse = Prisma.GroupJoinRequestGetPayload<{
 	select: typeof joinRequestSelect
 }>
 
-export const updateGroupSchema = z.object({
-	name: z
-		.string({ error: "Name is required" })
-		.min(3, "Name must be at least 3 characters")
-		.optional(),
-	description: z.string().max(240).optional().nullable(),
-})
+// ─── Forms ────────────────────────────────────────────────────────────────────
 
-export type UpdateGroupFormInput = z.infer<typeof updateGroupSchema>
+export const createGroupSchema = z.object({})
+
+export type CreateGroupFormInput = z.infer<typeof createGroupSchema>
 
 export const generateInviteSchema = z.object({
 	expiresIn: z.enum(["7d", "30d", "90d", "never"]),

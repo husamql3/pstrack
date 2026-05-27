@@ -51,8 +51,7 @@ model User {
 
 model Group {
   id              String    @id @default(cuid())
-  name            String
-  description     String?
+  slug            String    @unique
   type            GroupType @default(PUBLIC)
   roadmap         Roadmap   @default(NC250)
   creatorId       String

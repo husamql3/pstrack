@@ -1,9 +1,9 @@
-import { Difficulty } from "@/generated/prisma/enums"
 import { IconCheck, IconSearch } from "@tabler/icons-react"
 import { useCallback, useEffect, useRef, useState } from "react"
 
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Difficulty } from "@/generated/prisma/enums"
 import { useDebounce } from "@/hooks/use-debounce"
 import { DIFFICULTY_FILTER_KEYS, STATUS_FILTER_KEYS } from "../constants"
 import type { DifficultyFilter, StatusFilter } from "../types"

@@ -27,15 +27,15 @@ export const groupsController = new Elysia({ prefix: "/groups" })
 	)
 	.get("/", async ({ request }) => {
 		const user = await getSessionUser(request)
-		return groupsDao.listPublic(user?.id)
+		return groupsDao.listAll(user?.id)
 	})
 	.post(
 		"/",
-		async ({ body, request }) => {
+		async ({ request }) => {
 			const { user, response } = await requireSessionUser(request)
 			if (!user) return response
 
-			const result = await groupsDao.createPublic(user.id, body)
+			const result = await groupsDao.createPublic(user.id)
 			if (result.error === "GROUP_LIMIT") {
 				return status(403, { error: "You have reached your group limit." })
 			}
@@ -56,11 +56,11 @@ export const groupsController = new Elysia({ prefix: "/groups" })
 	)
 	.patch(
 		"/:id",
-		async ({ params, body, request }) => {
+		async ({ params, request }) => {
 			const { user, response } = await requireSessionUser(request)
 			if (!user) return response
 
-			const result = await groupsDao.updateSettings(user.id, params.id, body)
+			const result = await groupsDao.updateSettings(user.id, params.id)
 			if (result.error === "FORBIDDEN") {
 				return status(403, { error: "You must be an admin to update this group." })
 			}

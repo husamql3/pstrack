@@ -1,6 +1,9 @@
+import slugsPool from "@/data/slugs.json"
+import { SolveStatus } from "@/generated/prisma/enums"
 import { db } from "@/server/lib/db"
 import {
 	type GroupDetailResponse,
+	type GroupListResponse,
 	type GroupMemberResponse,
 	groupDetailSelect,
 	groupListSelect,
@@ -9,50 +12,96 @@ import {
 	joinRequestSelect,
 } from "./groups.type"
 
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
 const joinLimitFor = (user: { isPro: boolean }) => (user.isPro ? 5 : 1)
 const capacityFor = (user: { isPro: boolean }) => (user.isPro ? 50 : 30)
 
+async function pickSlug(): Promise<string> {
+	const used = await db.group.findMany({
+		where: { slug: { in: slugsPool as string[] } },
+		select: { slug: true },
+	})
+	const usedSet = new Set(used.map((g) => g.slug))
+	const available = (slugsPool as string[]).filter((s) => !usedSet.has(s))
+	if (available.length === 0) throw new Error("Slug pool exhausted — add more slugs.")
+	return available[Math.floor(Math.random() * available.length)]
+}
+
+// ─── DAO ──────────────────────────────────────────────────────────────────────
+
 export const groupsDao = {
-	listPublic: async (userId?: string) => {
-		const groups = await db.group.findMany({
-			where: { type: "PUBLIC", isActive: true },
+	listAll: async (userId?: string): Promise<GroupListResponse[]> => {
+		const today = new Date()
+		today.setHours(0, 0, 0, 0)
+
+		const rows = await db.group.findMany({
+			where: { isActive: true },
 			orderBy: [{ members: { _count: "desc" } }, { createdAt: "asc" }],
-			select: groupListSelect,
+			select: {
+				...groupListSelect,
+				members: {
+					orderBy: [{ role: "asc" }, { joinedAt: "desc" }],
+					take: 4,
+					select: { user: { select: { username: true } } },
+				},
+				dailyProblems: {
+					where: { assignedDate: today },
+					take: 1,
+					select: {
+						_count: {
+							select: {
+								solves: {
+									where: {
+										status: {
+											in: [SolveStatus.SOLVED, SolveStatus.PENDING_VERIFICATION],
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
 		})
 
-		if (!userId) {
-			return groups.map((group) => ({ ...group, membershipStatus: "NONE" as const }))
-		}
+		const groups: GroupListResponse[] = rows.map(
+			({ members, dailyProblems, ...rest }) => ({
+				...rest,
+				memberPreview: members.map((m) => ({ username: m.user.username })),
+				activeToday: dailyProblems[0]?._count.solves ?? 0,
+				membershipStatus: "NONE" as const,
+			})
+		)
 
+		if (!userId) return groups
+
+		const ids = groups.map((g) => g.id)
 		const [memberships, requests] = await Promise.all([
 			db.groupMember.findMany({
-				where: { userId, groupId: { in: groups.map((group) => group.id) } },
+				where: { userId, groupId: { in: ids } },
 				select: { groupId: true },
 			}),
 			db.groupJoinRequest.findMany({
-				where: {
-					userId,
-					groupId: { in: groups.map((group) => group.id) },
-					status: "PENDING",
-				},
+				where: { userId, groupId: { in: ids }, status: "PENDING" },
 				select: { groupId: true },
 			}),
 		])
 
-		const joinedGroupIds = new Set(memberships.map((membership) => membership.groupId))
-		const requestedGroupIds = new Set(requests.map((request) => request.groupId))
+		const joinedIds = new Set(memberships.map((m) => m.groupId))
+		const requestedIds = new Set(requests.map((r) => r.groupId))
 
-		return groups.map((group) => ({
-			...group,
-			membershipStatus: joinedGroupIds.has(group.id)
+		return groups.map((g) => ({
+			...g,
+			membershipStatus: joinedIds.has(g.id)
 				? ("JOINED" as const)
-				: requestedGroupIds.has(group.id)
+				: requestedIds.has(g.id)
 					? ("REQUESTED" as const)
 					: ("NONE" as const),
 		}))
 	},
 
-	createPublic: async (userId: string, input: { name: string; description?: string }) => {
+	createPublic: async (userId: string) => {
 		const user = await db.user.findUniqueOrThrow({
 			where: { id: userId },
 			select: { isPro: true },
@@ -62,11 +111,12 @@ export const groupsDao = {
 			return { error: "GROUP_LIMIT" as const, group: null }
 		}
 
+		const slug = await pickSlug()
+
 		const group = await db.$transaction(async (tx) => {
 			const created = await tx.group.create({
 				data: {
-					name: input.name,
-					description: input.description,
+					slug,
 					type: "PUBLIC",
 					creatorId: userId,
 					maxMembers: capacityFor(user),
@@ -81,7 +131,12 @@ export const groupsDao = {
 
 		return {
 			error: null,
-			group: { ...group, membershipStatus: "JOINED" as const },
+			group: {
+				...group,
+				membershipStatus: "JOINED" as const,
+				memberPreview: [],
+				activeToday: 0,
+			},
 		}
 	},
 
@@ -407,11 +462,7 @@ export const groupsDao = {
 		return { error: null, status: "JOINED" as const, groupId: group.id }
 	},
 
-	updateSettings: async (
-		adminId: string,
-		groupId: string,
-		input: { name?: string; description?: string | null }
-	) => {
+	updateSettings: async (adminId: string, groupId: string) => {
 		const membership = await db.groupMember.findUnique({
 			where: { groupId_userId: { groupId, userId: adminId } },
 			select: { role: true },
@@ -420,12 +471,8 @@ export const groupsDao = {
 			return { error: "FORBIDDEN" as const, group: null }
 		}
 
-		const group = await db.group.update({
+		const group = await db.group.findUniqueOrThrow({
 			where: { id: groupId },
-			data: {
-				...(input.name !== undefined && { name: input.name }),
-				...(input.description !== undefined && { description: input.description }),
-			},
 			select: groupDetailSelect,
 		})
 
