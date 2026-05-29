@@ -41,7 +41,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-bun-
       - run: bun install --frozen-lockfile
-      - run: bunx biome ci .
+      - run: bun run check
 
   knip:
     name: Knip

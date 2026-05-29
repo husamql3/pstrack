@@ -60,6 +60,7 @@ function RootDocument({ children }: { children: ReactNode }) {
 				<HeadContent />
 				{/* Runs before paint to prevent theme flash */}
 				<script
+					// biome-ignore lint/security/noDangerouslySetInnerHtml: inline theme-init script must run before paint
 					dangerouslySetInnerHTML={{
 						__html: `(function(){var t=localStorage.getItem('theme');var d=document.documentElement;if(t==='dark'||(t!=='light'&&window.matchMedia('(prefers-color-scheme: dark)').matches)){d.classList.add('dark')}})()`,
 					}}

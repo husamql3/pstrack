@@ -38,7 +38,7 @@ const MemberAvatar = ({ username }: { username: string | null }) => {
 	return (
 		<div
 			data-slot="avatar"
-			className="relative flex size-6 shrink-0 overflow-hidden rounded-full select-none after:absolute after:inset-0 after:rounded-full after:border after:border-border after:mix-blend-darken dark:after:mix-blend-lighten"
+			className="relative flex size-6 shrink-0 select-none overflow-hidden rounded-full after:absolute after:inset-0 after:rounded-full after:border after:border-border after:mix-blend-darken dark:after:mix-blend-lighten"
 		>
 			<canvas ref={canvasRef} width={24} height={24} className="size-full" />
 		</div>
@@ -87,7 +87,7 @@ const MembershipBadge = ({
 }) => {
 	if (membershipStatus === "JOINED") {
 		return (
-			<span className="inline-flex shrink-0 items-center gap-1 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2 py-0.5 text-xs font-medium text-emerald-600 dark:border-emerald-500/30 dark:bg-emerald-950/40 dark:text-emerald-400">
+			<span className="inline-flex shrink-0 items-center gap-1 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2 py-0.5 font-medium text-emerald-600 text-xs dark:border-emerald-500/30 dark:bg-emerald-950/40 dark:text-emerald-400">
 				<IconCheck className="size-2.5" />
 				Joined
 			</span>
@@ -95,21 +95,21 @@ const MembershipBadge = ({
 	}
 	if (membershipStatus === "REQUESTED") {
 		return (
-			<span className="inline-flex shrink-0 items-center rounded-full border border-border bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">
+			<span className="inline-flex shrink-0 items-center rounded-full border border-border bg-muted px-2 py-0.5 font-medium text-muted-foreground text-xs">
 				Requested
 			</span>
 		)
 	}
 	if (type === GroupType.PRIVATE) {
 		return (
-			<span className="inline-flex shrink-0 items-center gap-1 rounded-full border border-amber-500/40 bg-amber-500/10 px-2 py-0.5 text-xs font-medium text-amber-600 dark:border-amber-500/30 dark:bg-amber-950/40 dark:text-amber-400">
+			<span className="inline-flex shrink-0 items-center gap-1 rounded-full border border-amber-500/40 bg-amber-500/10 px-2 py-0.5 font-medium text-amber-600 text-xs dark:border-amber-500/30 dark:bg-amber-950/40 dark:text-amber-400">
 				<IconLock className="size-2.5" />
 				Private
 			</span>
 		)
 	}
 	return (
-		<span className="inline-flex shrink-0 items-center rounded-full border border-border px-2 py-0.5 text-xs font-medium text-muted-foreground">
+		<span className="inline-flex shrink-0 items-center rounded-full border border-border px-2 py-0.5 font-medium text-muted-foreground text-xs">
 			Public
 		</span>
 	)
@@ -193,7 +193,7 @@ export const GroupCard = ({
 					to="/groups/$groupId"
 					params={{ groupId: group.id }}
 					aria-label={`View @${group.slug}`}
-					className="absolute inset-0 rounded-xl focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+					className="absolute inset-0 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
 				/>
 			)}
 
@@ -236,7 +236,7 @@ export const GroupCard = ({
 				</div>
 
 				{group.activeToday > 0 && (
-					<span className="flex items-center gap-1 text-xs font-medium text-emerald-500">
+					<span className="flex items-center gap-1 font-medium text-emerald-500 text-xs">
 						<span className="size-1.5 rounded-full bg-emerald-500" />
 						{group.activeToday} active today
 					</span>

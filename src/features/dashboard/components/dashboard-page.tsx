@@ -50,9 +50,9 @@ export const DashboardPage = () => {
 
 	if (todayQuery.isError || !todayQuery.data) {
 		return (
-			<div className="border-border bg-background rounded-lg border p-6">
-				<p className="text-sm font-medium">Could not load your dashboard.</p>
-				<p className="text-muted-foreground mt-1 text-sm">Refresh and try again.</p>
+			<div className="rounded-lg border border-border bg-background p-6">
+				<p className="font-medium text-sm">Could not load your dashboard.</p>
+				<p className="mt-1 text-muted-foreground text-sm">Refresh and try again.</p>
 			</div>
 		)
 	}
@@ -63,9 +63,9 @@ export const DashboardPage = () => {
 		return (
 			<div className="flex flex-col gap-6">
 				<DashboardHeader />
-				<section className="border-border bg-background rounded-lg border p-6">
-					<p className="text-sm font-medium">You're not in a group yet.</p>
-					<p className="text-muted-foreground mt-1 max-w-xl text-sm">
+				<section className="rounded-lg border border-border bg-background p-6">
+					<p className="font-medium text-sm">You're not in a group yet.</p>
+					<p className="mt-1 max-w-xl text-muted-foreground text-sm">
 						You won't receive daily problems until you join or create a group.
 					</p>
 					<Button asChild className="mt-5">
@@ -80,9 +80,9 @@ export const DashboardPage = () => {
 		return (
 			<div className="flex flex-col gap-6">
 				<DashboardHeader />
-				<section className="border-border bg-background rounded-lg border p-6">
-					<p className="text-sm font-medium">No problems have been seeded yet.</p>
-					<p className="text-muted-foreground mt-1 text-sm">
+				<section className="rounded-lg border border-border bg-background p-6">
+					<p className="font-medium text-sm">No problems have been seeded yet.</p>
+					<p className="mt-1 text-muted-foreground text-sm">
 						An admin needs to seed the roadmap before daily assignments can begin.
 					</p>
 				</section>
@@ -124,7 +124,7 @@ export const DashboardPage = () => {
 	return (
 		<div className="flex flex-col gap-6">
 			<DashboardHeader />
-			<section className="border-border bg-background rounded-lg border p-5 md:p-6">
+			<section className="rounded-lg border border-border bg-background p-5 md:p-6">
 				<div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
 					<div className="min-w-0">
 						<div className="flex flex-wrap items-center gap-2">
@@ -141,10 +141,10 @@ export const DashboardPage = () => {
 								</Badge>
 							)}
 						</div>
-						<h2 className="mt-4 text-2xl font-semibold tracking-tight">
+						<h2 className="mt-4 font-semibold text-2xl tracking-tight">
 							{problem.title}
 						</h2>
-						<p className="text-muted-foreground mt-2 flex items-center gap-2 text-sm">
+						<p className="mt-2 flex items-center gap-2 text-muted-foreground text-sm">
 							<IconCalendar className="size-4" />
 							Problem #{problem.roadmapIndex} from the roadmap
 						</p>
@@ -199,17 +199,17 @@ export const DashboardPage = () => {
 
 const DashboardHeader = () => (
 	<div>
-		<p className="text-muted-foreground flex items-center gap-2 text-sm">
+		<p className="flex items-center gap-2 text-muted-foreground text-sm">
 			<IconClock className="size-4" />
 			Show up. Solve. Repeat.
 		</p>
-		<h1 className="mt-1 text-3xl font-semibold tracking-tight">Dashboard</h1>
+		<h1 className="mt-1 font-semibold text-3xl tracking-tight">Dashboard</h1>
 	</div>
 )
 
 const MetricCard = ({ label, value }: { label: string; value: string }) => (
-	<div className="border-border bg-background rounded-lg border p-4">
+	<div className="rounded-lg border border-border bg-background p-4">
 		<p className="text-muted-foreground text-xs">{label}</p>
-		<p className="mt-1 text-sm font-medium">{value}</p>
+		<p className="mt-1 font-medium text-sm">{value}</p>
 	</div>
 )

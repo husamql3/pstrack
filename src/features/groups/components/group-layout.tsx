@@ -48,7 +48,7 @@ export const GroupLayout = () => {
 		<div className="flex h-full flex-col gap-4">
 			<div className="shrink-0">
 				<Link
-					className="flex items-center gap-1.5 w-fit text-muted-foreground text-sm transition-colors hover:text-foreground"
+					className="flex w-fit items-center gap-1.5 text-muted-foreground text-sm transition-colors hover:text-foreground"
 					to="/groups"
 				>
 					<IconArrowLeft className="size-4" />

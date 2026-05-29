@@ -1,5 +1,5 @@
 import type { Prisma } from "@/generated/prisma/client"
-import { Roadmap, SolveStatus } from "@/generated/prisma/enums"
+import type { Roadmap, SolveStatus } from "@/generated/prisma/enums"
 
 export type RoadmapKey = Roadmap
 

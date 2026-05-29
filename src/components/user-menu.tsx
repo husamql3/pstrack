@@ -45,9 +45,9 @@ export function UserMenu() {
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
-				<Button variant="outline" className="w-40 ml-auto" size="lg">
+				<Button variant="outline" className="ml-auto w-40" size="lg">
 					<HashAvatar username={user?.username ?? initials} size={16} />
-					<span className="text-sm font-medium">{displayName}</span>
+					<span className="font-medium text-sm">{displayName}</span>
 					<IconSelector className="ml-auto opacity-60" aria-hidden="true" />
 				</Button>
 			</DropdownMenuTrigger>
@@ -55,7 +55,7 @@ export function UserMenu() {
 				<div className="flex items-center gap-3 px-1 pt-1.5 pb-2.5">
 					<HashAvatar username={user?.username ?? initials} size={32} />
 					<div className="flex flex-col">
-						<span className="text-foreground text-sm font-medium">
+						<span className="font-medium text-foreground text-sm">
 							{user?.name ?? "…"}
 						</span>
 						<span className="text-muted-foreground text-xs">{user?.email ?? "…"}</span>

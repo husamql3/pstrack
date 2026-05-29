@@ -23,7 +23,7 @@ export function LatestChange() {
 	return (
 		<div
 			className={cn(
-				"rounded-xl group/latest-change z-20 size-full justify-center border bg-background"
+				"group/latest-change z-20 size-full justify-center rounded-xl border bg-background"
 			)}
 		>
 			<div className="relative flex size-full flex-col gap-1.5 overflow-hidden px-3 pt-4 pb-1">

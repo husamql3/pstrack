@@ -13,3 +13,4 @@ count.txt
 __unconfig*
 todos.json
 generated/
+.vercel

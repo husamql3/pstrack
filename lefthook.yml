@@ -2,7 +2,7 @@ pre-commit:
   commands:
     format:
       glob: "*.{js,jsx,ts,tsx,json,jsonc,css}"
-      run: bunx biome format --write .
+      run: bun run check
       stage_fixed: true
 
 pre-push:

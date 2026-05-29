@@ -20,17 +20,17 @@ export const TopicGroup = ({
 
 	return (
 		<AccordionItem
-			className="data-open:bg-transparent not-last:mb-2 not-last:border-b-0 border-0"
+			className="not-last:mb-2 border-0 not-last:border-b-0 data-open:bg-transparent"
 			value={topic}
 		>
-			<AccordionTrigger className="hover:no-underline! items-center border-b border-b-border gap-3 px-4 py-3 sm:gap-6">
+			<AccordionTrigger className="hover:no-underline! items-center gap-3 border-b border-b-border px-4 py-3 sm:gap-6">
 				<div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-4 gap-y-2">
-					<span className="truncate text-sm font-semibold">{topic}</span>
+					<span className="truncate font-semibold text-sm">{topic}</span>
 					<div className="flex items-center gap-2">
-						<span className="text-muted-foreground whitespace-nowrap text-xs tabular-nums">
+						<span className="whitespace-nowrap text-muted-foreground text-xs tabular-nums">
 							{solved}/{total}
 						</span>
-						<div className="bg-muted hidden h-1.5 min-w-16 shrink-0 overflow-hidden rounded-full sm:block sm:w-26">
+						<div className="hidden h-1.5 min-w-16 shrink-0 overflow-hidden rounded-full bg-muted sm:block sm:w-26">
 							<div
 								className="h-full rounded-full bg-emerald-500 transition-[width]"
 								style={{ width: `${ratio * 100}%` }}
@@ -40,7 +40,7 @@ export const TopicGroup = ({
 				</div>
 			</AccordionTrigger>
 			<AccordionContent className="pb-0">
-				<ul className="divide-border divide-y">
+				<ul className="divide-y divide-border">
 					{problems.map((p) => (
 						<ProblemRow key={p.roadmapIndex} problem={p} />
 					))}

@@ -233,13 +233,13 @@ const HeaderRow = ({
 	totalWidth: number
 }) => (
 	<div
-		className="sticky top-0 z-20 flex border-b border-border bg-background"
+		className="sticky top-0 z-20 flex border-border border-b bg-background"
 		style={{ height: HEADER_HEIGHT_PX, width: totalWidth }}
 	>
 		{META_COLS.map((col) => (
 			<div
 				key={col.key}
-				className="sticky z-30 flex shrink-0 items-end border-r border-border bg-background px-3 pb-2 font-medium text-muted-foreground text-xs uppercase tracking-wide"
+				className="sticky z-30 flex shrink-0 items-end border-border border-r bg-background px-3 pb-2 font-medium text-muted-foreground text-xs uppercase tracking-wide"
 				style={{ width: col.width, left: META_LEFT[col.key] }}
 			>
 				{col.label}
@@ -248,7 +248,7 @@ const HeaderRow = ({
 		{members.map((m) => (
 			<div
 				key={m.userId}
-				className="shrink-0 border-r border-border"
+				className="shrink-0 border-border border-r"
 				style={{ width: MEMBER_COL_WIDTH_PX }}
 			>
 				<GroupProblemsHeaderCell member={m} isCurrentUser={m.userId === currentUserId} />
@@ -279,12 +279,12 @@ const DataRow = ({
 	return (
 		<div
 			className={cn(
-				"flex h-full border-b border-border",
+				"flex h-full border-border border-b",
 				isTodayRow && "bg-emerald-500/[0.04]"
 			)}
 		>
 			<div
-				className="sticky z-10 flex shrink-0 flex-col justify-center border-r border-border bg-background px-3"
+				className="sticky z-10 flex shrink-0 flex-col justify-center border-border border-r bg-background px-3"
 				style={{ width: META_COLS[0].width, left: META_LEFT.date }}
 			>
 				<span
@@ -298,13 +298,13 @@ const DataRow = ({
 				<span className="text-muted-foreground text-xs">{dateCell.secondary}</span>
 			</div>
 			<div
-				className="sticky z-10 flex shrink-0 items-center border-r border-border bg-background px-3 text-muted-foreground text-sm tabular-nums"
+				className="sticky z-10 flex shrink-0 items-center border-border border-r bg-background px-3 text-muted-foreground text-sm tabular-nums"
 				style={{ width: META_COLS[1].width, left: META_LEFT.num }}
 			>
 				{row.problemRoadmapIndex}
 			</div>
 			<div
-				className="sticky z-10 flex shrink-0 items-center border-r border-border bg-background px-3"
+				className="sticky z-10 flex shrink-0 items-center border-border border-r bg-background px-3"
 				style={{ width: META_COLS[2].width, left: META_LEFT.title }}
 			>
 				<a
@@ -319,7 +319,7 @@ const DataRow = ({
 				</a>
 			</div>
 			<div
-				className="sticky z-10 flex shrink-0 items-center border-r border-border bg-background px-3"
+				className="sticky z-10 flex shrink-0 items-center border-border border-r bg-background px-3"
 				style={{ width: META_COLS[3].width, left: META_LEFT.topic }}
 			>
 				<Badge
@@ -330,7 +330,7 @@ const DataRow = ({
 				</Badge>
 			</div>
 			<div
-				className="sticky z-10 flex shrink-0 items-center border-r border-border bg-background px-3"
+				className="sticky z-10 flex shrink-0 items-center border-border border-r bg-background px-3"
 				style={{ width: META_COLS[4].width, left: META_LEFT.difficulty }}
 			>
 				<Badge variant="outline" className={DIFFICULTY_TONE[row.problemDifficulty]}>
@@ -345,7 +345,7 @@ const DataRow = ({
 				return (
 					<div
 						key={m.userId}
-						className="shrink-0 border-r border-border"
+						className="shrink-0 border-border border-r"
 						style={{ width: MEMBER_COL_WIDTH_PX }}
 					>
 						<GroupProblemsCell

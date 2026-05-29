@@ -11,7 +11,7 @@ export function groupByTopic(list: RoadmapProblemResponse[]) {
 			groups.set(topic, [])
 			categoryOrder.push(topic)
 		}
-		groups.get(topic)!.push(p)
+		groups.get(topic)?.push(p)
 	}
 
 	return categoryOrder.map((topic) => ({ topic, problems: groups.get(topic) ?? [] }))

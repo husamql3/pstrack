@@ -1,8 +1,8 @@
 import { IconStarFilled } from "@tabler/icons-react"
 
+import { HashAvatar } from "@/features/onboarding/components/hash-avatar"
 import { cn } from "@/lib/utils"
 import type { GroupProblemsMember } from "@/server/groups/groups.type"
-import { HashAvatar } from "@/features/onboarding/components/hash-avatar"
 
 export const GroupProblemsHeaderCell = ({
 	member,
@@ -17,7 +17,7 @@ export const GroupProblemsHeaderCell = ({
 			className={cn(
 				"relative flex h-full w-full flex-col items-center gap-2 py-2",
 				member.isPro && "bg-amber-400/10",
-				isCurrentUser && "ring-2 ring-inset ring-primary/60"
+				isCurrentUser && "ring-2 ring-primary/60 ring-inset"
 			)}
 		>
 			<div className="relative">
@@ -29,7 +29,7 @@ export const GroupProblemsHeaderCell = ({
 				)}
 			</div>
 			<div
-				className="grow text-center font-medium text-[11px] tracking-wide uppercase"
+				className="grow text-center font-medium text-[11px] uppercase tracking-wide"
 				style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}
 				title={label}
 			>

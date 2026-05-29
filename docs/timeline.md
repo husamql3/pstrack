@@ -66,6 +66,9 @@ Stay consistent with LeetCode — solve one problem a day, earn points, and comp
 - [ ] Set up Trigger.dev job: `expire-join-requests` (hourly cron, marks PENDING > 1 day as EXPIRED)
 - [x] Email templates: `join-request.tsx`, `join-approved.tsx`, `join-rejected.tsx`, `join-expired.tsx`, `removed-from-group.tsx`
 - [x] Enforce group limits (Free: 1 group / 30 members, Pro: 5 groups / 50 members)
+- [x] Join via invite link (`POST /api/groups/join-by-invite` + `/groups/join/$inviteCode` route)
+- [x] Group problems table (`GET /api/groups/:id/problems` + `group-problems-table` UI)
+- [x] Group slugs (URL by slug, unique constraint, slug-based filters)
 
 **Deliverable:** Users can create groups, join/leave, admins can manage members and requests
 
@@ -79,7 +82,7 @@ Stay consistent with LeetCode — solve one problem a day, earn points, and comp
 - [x] `GET /api/problems/roadmap` — NeetCode 250 list with user solve history
 - [x] Build dashboard page (`/dashboard`) — today's problem card, solve/pause buttons, streak display
 - [x] Build roadmap page (`/problems`)
-- [ ] `POST /api/problems/today/solve` — create `UserSolve` (PENDING_VERIFICATION), fire Trigger.dev job
+- [x] `POST /api/problems/today/solve` — create `UserSolve` (PENDING_VERIFICATION) (Trigger.dev hook pending)
 - [ ] Set up Trigger.dev job: `verify-submission` — poll LC/CF API, update status, award points
 - [x] `POST /api/problems/today/pause` — set status to PAUSED, decrement available pauses
 - [ ] Set up Trigger.dev job: `mark-missed` (end-of-day cron — sets unresolved UserSolves to MISSED, applies -3 points)
@@ -119,10 +122,10 @@ Stay consistent with LeetCode — solve one problem a day, earn points, and comp
 
 ## Phase 7 — Freemium (Polar) · [#225](https://github.com/husamql3/pstrack/issues/225)
 
-- [ ] Create Polar product ($14, one-time)
+- [x] Create Polar product ($14, one-time)
 - [ ] Set up sale pricing ($9) and promo codes in Polar dashboard
-- [ ] Configure Better Auth Polar plugin (webhook handler, `isPro` sync)
-- [ ] Build billing settings page (`/settings/billing`) — Pro status, upgrade CTA
+- [x] Configure Better Auth Polar plugin (webhook handler, `isPro` sync)
+- [ ] Build billing settings page (`/settings/billing`) — Pro status, upgrade CTA (stub exists)
 - [ ] Add Pro gates in UI: group limits, global leaderboard, private group creation
 - [ ] Add Pro gates in API: enforce on relevant Elysia routes
 
@@ -145,7 +148,7 @@ Stay consistent with LeetCode — solve one problem a day, earn points, and comp
 
 ## Phase 9 — Admin Dashboard · [#227](https://github.com/husamql3/pstrack/issues/227)
 
-- [x] Platform admin flag on `User` (set manually in DB)
+- [x] Platform admin flag on `User` (Better Auth `role` column, enforced on `/admin/*` routes)
 - [ ] `GET /api/admin/users` + `/admin/users` page
 - [ ] `PATCH /api/admin/users/:id` — adjust points, ban
 - [ ] `GET /api/admin/groups` + `DELETE /api/admin/groups/:id`
