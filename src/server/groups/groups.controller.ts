@@ -4,7 +4,7 @@ import { getSessionUser, requireSessionUser } from "@/server/lib/session"
 import { groupsDao } from "./groups.dao"
 import { groupsModel } from "./groups.model"
 
-export const groupsController = new Elysia({ prefix: "/groups" })
+export const groupsController = new Elysia({ prefix: "/groups", tags: ["Groups"] })
 	.use(groupsModel)
 	.post(
 		"/join-by-invite",
@@ -193,6 +193,25 @@ export const groupsController = new Elysia({ prefix: "/groups" })
 			return { inviteCode: result.inviteCode }
 		},
 		{ params: "groups.groupIdParams", body: "groups.generateInvite" }
+	)
+	.get(
+		"/:id/problems",
+		async ({ params, query, request }) => {
+			const user = await getSessionUser(request)
+			const cursor = query.cursor ? new Date(query.cursor) : undefined
+			const result = await groupsDao.getProblemsTable(
+				user?.id,
+				params.id,
+				query.range,
+				cursor
+			)
+			if (result.error === "NOT_FOUND") return status(404, { error: "Group not found." })
+			if (result.error === "FORBIDDEN") {
+				return status(403, { error: "Members only." })
+			}
+			return result.data
+		},
+		{ params: "groups.groupIdParams", query: "groups.problemsTableQuery" }
 	)
 	.delete(
 		"/:id/invite",

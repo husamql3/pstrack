@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 import { api } from "@/lib/api"
+import { ProFeatureError } from "@/lib/errors"
 import type { CreateGroupFormInput, GroupListResponse } from "@/server/groups/groups.type"
 
 const groupsQueryKey = ["groups"] as const
@@ -22,7 +23,10 @@ export const useCreateGroup = () => {
 	return useMutation({
 		mutationFn: async (input: CreateGroupFormInput) => {
 			const { data, error } = await api.v4.groups.post(input)
-			if (error) throw new Error("Could not create group")
+			if (error) {
+				if (error.status === 403) throw new ProFeatureError("multiple-groups")
+				throw new Error("Could not create group")
+			}
 			return data
 		},
 		onSuccess: () => {
@@ -37,7 +41,10 @@ export const useRequestJoinGroup = () => {
 	return useMutation({
 		mutationFn: async (groupId: string) => {
 			const { data, error } = await api.v4.groups({ id: groupId }).join.post()
-			if (error) throw new Error("Could not request to join group")
+			if (error) {
+				if (error.status === 403) throw new ProFeatureError("multiple-groups")
+				throw new Error("Could not request to join group")
+			}
 			return data
 		},
 		onSuccess: () => {

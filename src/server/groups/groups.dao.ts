@@ -2,9 +2,12 @@ import slugsPool from "@/data/slugs.json"
 import { SolveStatus } from "@/generated/prisma/enums"
 import { db } from "@/server/lib/db"
 import {
+	GROUP_PROBLEMS_PAGE_SIZE,
 	type GroupDetailResponse,
 	type GroupListResponse,
 	type GroupMemberResponse,
+	type GroupProblemsRange,
+	type GroupProblemsResponse,
 	groupDetailSelect,
 	groupListSelect,
 	groupMemberSelect,
@@ -16,6 +19,19 @@ import {
 
 const joinLimitFor = (user: { isPro: boolean }) => (user.isPro ? 5 : 1)
 const capacityFor = (user: { isPro: boolean }) => (user.isPro ? 50 : 30)
+
+const DAY_MS = 86_400_000
+
+const startOfTodayUtc = () => {
+	const now = new Date()
+	return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()))
+}
+
+const rangeStartUtc = (range: GroupProblemsRange, today: Date): Date | null => {
+	if (range === "all") return null
+	const days = range === "7d" ? 6 : 29
+	return new Date(today.getTime() - days * DAY_MS)
+}
 
 async function pickSlug(): Promise<string> {
 	const used = await db.group.findMany({
@@ -49,6 +65,9 @@ export const groupsDao = {
 					where: { assignedDate: today },
 					take: 1,
 					select: {
+						problem: {
+							select: { topic: true },
+						},
 						_count: {
 							select: {
 								solves: {
@@ -70,6 +89,7 @@ export const groupsDao = {
 				...rest,
 				memberPreview: members.map((m) => ({ username: m.user.username })),
 				activeToday: dailyProblems[0]?._count.solves ?? 0,
+				currentProblem: dailyProblems[0]?.problem ?? null,
 				membershipStatus: "NONE" as const,
 			})
 		)
@@ -164,8 +184,11 @@ export const groupsDao = {
 			return { error: "FULL" as const, status: null }
 		}
 
-		const memberships = await db.groupMember.count({ where: { userId } })
-		if (memberships >= joinLimitFor(user)) {
+		const [memberships, pendingRequests] = await Promise.all([
+			db.groupMember.count({ where: { userId } }),
+			db.groupJoinRequest.count({ where: { userId, status: "PENDING" } }),
+		])
+		if (memberships + pendingRequests >= joinLimitFor(user)) {
 			return { error: "GROUP_LIMIT" as const, status: null }
 		}
 
@@ -460,6 +483,167 @@ export const groupsDao = {
 		})
 
 		return { error: null, status: "JOINED" as const, groupId: group.id }
+	},
+
+	getProblemsTable: async (
+		viewerId: string | undefined,
+		groupId: string,
+		range: GroupProblemsRange,
+		cursor: Date | undefined
+	): Promise<
+		| { error: null; data: GroupProblemsResponse }
+		| { error: "NOT_FOUND" | "FORBIDDEN"; data: null }
+	> => {
+		const group = await db.group.findUnique({
+			where: { id: groupId, isActive: true },
+			select: { id: true, type: true },
+		})
+		if (!group) return { error: "NOT_FOUND", data: null }
+
+		if (group.type === "PRIVATE") {
+			if (!viewerId) return { error: "FORBIDDEN", data: null }
+			const membership = await db.groupMember.findUnique({
+				where: { groupId_userId: { groupId, userId: viewerId } },
+				select: { id: true },
+			})
+			if (!membership) return { error: "FORBIDDEN", data: null }
+		}
+
+		const today = startOfTodayUtc()
+		const rangeStart = rangeStartUtc(range, today)
+
+		const memberships = await db.groupMember.findMany({
+			where: { groupId },
+			orderBy: { joinedAt: "asc" },
+			select: {
+				joinedAt: true,
+				user: {
+					select: { id: true, username: true, name: true, isPro: true },
+				},
+			},
+		})
+		const memberIds = memberships.map((m) => m.user.id)
+
+		const rowDateFilter: { gte?: Date; lte: Date; lt?: Date } = { lte: today }
+		if (rangeStart) rowDateFilter.gte = rangeStart
+		if (cursor) rowDateFilter.lt = cursor
+
+		const dailyProblems = await db.dailyProblem.findMany({
+			where: { groupId, assignedDate: rowDateFilter },
+			orderBy: { assignedDate: "desc" },
+			take: range === "all" ? GROUP_PROBLEMS_PAGE_SIZE : undefined,
+			select: {
+				id: true,
+				assignedDate: true,
+				problem: {
+					select: {
+						id: true,
+						slug: true,
+						title: true,
+						leetcodeId: true,
+						difficulty: true,
+						topic: true,
+						roadmapIndex: true,
+					},
+				},
+				solves: {
+					where: { userId: { in: memberIds } },
+					select: {
+						userId: true,
+						status: true,
+						pointsEarned: true,
+						isFirstInGroup: true,
+						verifiedAt: true,
+					},
+				},
+			},
+		})
+
+		const countDateFilter: { gte?: Date; lte: Date } = { lte: today }
+		if (rangeStart) countDateFilter.gte = rangeStart
+
+		const allDailyProblemsInWindow = await db.dailyProblem.findMany({
+			where: { groupId, assignedDate: countDateFilter },
+			orderBy: { assignedDate: "asc" },
+			select: {
+				assignedDate: true,
+				solves: {
+					where: { userId: { in: memberIds }, status: SolveStatus.SOLVED },
+					select: { userId: true },
+				},
+			},
+		})
+
+		const solvedByUser = new Map<string, number>()
+		const assignedByUser = new Map<string, number>()
+		for (const m of memberships) {
+			solvedByUser.set(m.user.id, 0)
+			assignedByUser.set(m.user.id, 0)
+		}
+
+		const joinedAtByUser = new Map(memberships.map((m) => [m.user.id, m.joinedAt]))
+		const effectiveStartFor = (userId: string) => {
+			const joinedAt = joinedAtByUser.get(userId)
+			if (!joinedAt) return null
+			if (!rangeStart) return joinedAt
+			return joinedAt.getTime() > rangeStart.getTime() ? joinedAt : rangeStart
+		}
+
+		for (const dp of allDailyProblemsInWindow) {
+			for (const m of memberships) {
+				const start = effectiveStartFor(m.user.id)
+				if (start && dp.assignedDate >= start) {
+					assignedByUser.set(m.user.id, (assignedByUser.get(m.user.id) ?? 0) + 1)
+				}
+			}
+			for (const s of dp.solves) {
+				const start = effectiveStartFor(s.userId)
+				if (start && dp.assignedDate >= start) {
+					solvedByUser.set(s.userId, (solvedByUser.get(s.userId) ?? 0) + 1)
+				}
+			}
+		}
+
+		const members = memberships.map((m) => ({
+			userId: m.user.id,
+			username: m.user.username,
+			name: m.user.name,
+			joinedAt: m.joinedAt,
+			isPro: m.user.isPro,
+			solvedInRange: solvedByUser.get(m.user.id) ?? 0,
+			totalAssignedInRange: assignedByUser.get(m.user.id) ?? 0,
+		}))
+
+		const rows = dailyProblems.map((dp) => {
+			const solvesByUserId: GroupProblemsResponse["rows"][number]["solvesByUserId"] = {}
+			for (const s of dp.solves) {
+				solvesByUserId[s.userId] = {
+					status: s.status,
+					pointsEarned: s.pointsEarned,
+					isFirstInGroup: s.isFirstInGroup,
+					verifiedAt: s.verifiedAt,
+				}
+			}
+			return {
+				dailyProblemId: dp.id,
+				assignedDate: dp.assignedDate,
+				problemId: dp.problem.id,
+				problemSlug: dp.problem.slug,
+				problemTitle: dp.problem.title,
+				problemLeetcodeId: dp.problem.leetcodeId,
+				problemDifficulty: dp.problem.difficulty,
+				problemTopic: dp.problem.topic,
+				problemRoadmapIndex: dp.problem.roadmapIndex,
+				solvesByUserId,
+			}
+		})
+
+		const nextCursor =
+			range === "all" && rows.length === GROUP_PROBLEMS_PAGE_SIZE
+				? rows[rows.length - 1].assignedDate.toISOString()
+				: null
+
+		return { error: null, data: { members, rows, nextCursor } }
 	},
 
 	updateSettings: async (adminId: string, groupId: string) => {

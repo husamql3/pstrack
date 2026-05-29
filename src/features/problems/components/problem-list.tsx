@@ -18,7 +18,8 @@ export const ProblemList = ({
 		return (
 			<div className="space-y-2">
 				{Array.from({ length: 6 }).map((_, i) => (
-					<div key={i} className="bg-muted h-12 animate-pulse rounded-lg" />
+					// biome-ignore lint/suspicious/noArrayIndexKey: static skeleton items have no stable id
+					<div key={i} className="h-12 animate-pulse rounded-lg bg-muted" />
 				))}
 			</div>
 		)
@@ -26,7 +27,7 @@ export const ProblemList = ({
 
 	if (grouped.length === 0) {
 		return (
-			<div className="text-muted-foreground rounded-lg p-8 text-center text-sm">
+			<div className="rounded-lg p-8 text-center text-muted-foreground text-sm">
 				No problems match your filters.
 			</div>
 		)

@@ -1,6 +1,7 @@
 import { z } from "zod"
 
 import type { Prisma } from "@/generated/prisma/client"
+import type { Difficulty, SolveStatus } from "@/generated/prisma/enums"
 
 // ─── List ─────────────────────────────────────────────────────────────────────
 
@@ -8,6 +9,7 @@ export const groupListSelect = {
 	id: true,
 	slug: true,
 	type: true,
+	roadmap: true,
 	maxMembers: true,
 	createdAt: true,
 	_count: {
@@ -23,6 +25,7 @@ export type GroupListResponse = GroupListBase & {
 	membershipStatus: "JOINED" | "REQUESTED" | "NONE"
 	memberPreview: { username: string | null }[]
 	activeToday: number
+	currentProblem: { topic: string } | null
 }
 
 // ─── Detail ───────────────────────────────────────────────────────────────────
@@ -94,3 +97,45 @@ export const generateInviteSchema = z.object({
 })
 
 export type GenerateInviteInput = z.infer<typeof generateInviteSchema>
+
+// ─── Problems table ───────────────────────────────────────────────────────────
+
+export type GroupProblemsRange = "7d" | "30d" | "all"
+
+export const GROUP_PROBLEMS_PAGE_SIZE = 30
+
+export type GroupProblemsCellSolve = {
+	status: SolveStatus
+	pointsEarned: number
+	isFirstInGroup: boolean
+	verifiedAt: Date | null
+}
+
+export type GroupProblemsRow = {
+	dailyProblemId: string
+	assignedDate: Date
+	problemId: string
+	problemSlug: string
+	problemTitle: string
+	problemLeetcodeId: number | null
+	problemDifficulty: Difficulty
+	problemTopic: string
+	problemRoadmapIndex: number
+	solvesByUserId: Record<string, GroupProblemsCellSolve>
+}
+
+export type GroupProblemsMember = {
+	userId: string
+	username: string | null
+	name: string
+	joinedAt: Date
+	isPro: boolean
+	solvedInRange: number
+	totalAssignedInRange: number
+}
+
+export type GroupProblemsResponse = {
+	members: GroupProblemsMember[]
+	rows: GroupProblemsRow[]
+	nextCursor: string | null
+}

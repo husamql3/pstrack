@@ -16,14 +16,14 @@ export const GroupStep = ({ onBack }: { onBack: () => void }) => {
 		<main className="flex flex-1 flex-col items-center justify-center px-4 py-16">
 			<div className="flex w-full max-w-sm flex-col gap-8">
 				<div className="text-center">
-					<h2 className="text-2xl font-bold tracking-tight">Join a group</h2>
-					<p className="text-muted-foreground mt-1 text-sm">
+					<h2 className="font-bold text-2xl tracking-tight">Join a group</h2>
+					<p className="mt-1 text-muted-foreground text-sm">
 						Groups keep you accountable. You can always join one later.
 					</p>
 				</div>
 
-				<div className="border-border/50 bg-card flex flex-col items-center gap-3 rounded-xl border p-10 text-center">
-					<IconUsers className="text-muted-foreground size-8" />
+				<div className="flex flex-col items-center gap-3 rounded-xl border border-border/50 bg-card p-10 text-center">
+					<IconUsers className="size-8 text-muted-foreground" />
 					<p className="text-muted-foreground text-sm">No groups available yet.</p>
 					<p className="text-muted-foreground text-xs">
 						You can create or join a group from the Groups page after onboarding.

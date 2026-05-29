@@ -119,8 +119,8 @@ export const ProfileStep = ({
 		<main className="flex flex-1 flex-col items-center justify-center px-4 py-16">
 			<div className="flex w-full max-w-sm flex-col gap-8">
 				<div className="text-center">
-					<h2 className="text-2xl font-bold tracking-tight">Set up your profile</h2>
-					<p className="text-muted-foreground mt-1 text-sm">
+					<h2 className="font-bold text-2xl tracking-tight">Set up your profile</h2>
+					<p className="mt-1 text-muted-foreground text-sm">
 						This is how other members will see you.
 					</p>
 				</div>
@@ -151,7 +151,7 @@ export const ProfileStep = ({
 								placeholder="yourhandle"
 								className="pr-8"
 							/>
-							<span className="absolute right-2.5 top-1/2 -translate-y-1/2">
+							<span className="absolute top-1/2 right-2.5 -translate-y-1/2">
 								<StatusIcon status={profile.usernameStatus} />
 							</span>
 						</div>
@@ -174,7 +174,7 @@ export const ProfileStep = ({
 								placeholder="your-lc-username"
 								className="pr-8"
 							/>
-							<span className="absolute right-2.5 top-1/2 -translate-y-1/2">
+							<span className="absolute top-1/2 right-2.5 -translate-y-1/2">
 								<StatusIcon status={profile.leetcodeStatus} />
 							</span>
 						</div>
@@ -186,7 +186,7 @@ export const ProfileStep = ({
 					<div className="flex flex-col gap-1.5">
 						<Label htmlFor="codeforces">
 							Codeforces handle{" "}
-							<span className="text-muted-foreground font-normal">(optional)</span>
+							<span className="font-normal text-muted-foreground">(optional)</span>
 						</Label>
 						<div className="relative">
 							<Input
@@ -200,7 +200,7 @@ export const ProfileStep = ({
 								placeholder="your-cf-handle"
 								className="pr-8"
 							/>
-							<span className="absolute right-2.5 top-1/2 -translate-y-1/2">
+							<span className="absolute top-1/2 right-2.5 -translate-y-1/2">
 								<StatusIcon status={profile.codeforcesStatus} />
 							</span>
 						</div>

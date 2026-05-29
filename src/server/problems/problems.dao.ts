@@ -117,14 +117,13 @@ export const problemsDao = {
 		for (let i = 0; i < NEETCODE_250_PROBLEMS.length; i += BATCH) {
 			const batch = NEETCODE_250_PROBLEMS.slice(i, i + BATCH)
 			const results = await db.$transaction(
-				batch.map((problem) => {
-					const data = { ...problem, topics: [...problem.topics] }
-					return db.problem.upsert({
+				batch.map((problem) =>
+					db.problem.upsert({
 						where: { slug: problem.slug },
-						create: data,
-						update: data,
+						create: problem,
+						update: problem,
 					})
-				})
+				)
 			)
 			seeded += results.length
 		}

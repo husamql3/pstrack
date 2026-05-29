@@ -1,5 +1,5 @@
 import type { Prisma } from "@/generated/prisma/client"
-import { Roadmap, SolveStatus } from "@/generated/prisma/enums"
+import type { Roadmap, SolveStatus } from "@/generated/prisma/enums"
 
 export type RoadmapKey = Roadmap
 
@@ -8,7 +8,7 @@ export const problemSelect = {
 	slug: true,
 	title: true,
 	difficulty: true,
-	topics: true,
+	topic: true,
 	roadmapIndex: true,
 	leetcodeId: true,
 	neetcode250: true,

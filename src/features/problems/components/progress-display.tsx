@@ -13,9 +13,9 @@ export const ProgressDisplay = ({
 				<span className="text-emerald-400">{solved}</span>
 				<span className="text-muted-foreground">/{total}</span>
 			</p>
-			<p className="text-muted-foreground mt-1 text-xs">{percent}% complete</p>
+			<p className="mt-1 text-muted-foreground text-xs">{percent}% complete</p>
 		</div>
-		<div className="bg-muted h-1.5 w-26 min-w-16 shrink-0 overflow-hidden rounded-full">
+		<div className="h-1.5 w-26 min-w-16 shrink-0 overflow-hidden rounded-full bg-muted">
 			<div
 				className="h-full rounded-full bg-emerald-500 transition-[width]"
 				style={{ width: `${percent}%` }}

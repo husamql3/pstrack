@@ -45,10 +45,10 @@ export function AppHeader() {
 				setActiveStyle({ left: `${el.offsetLeft}px`, width: `${el.offsetWidth}px` })
 			}
 		})
-	}, [])
+	}, [activeIndex])
 
 	return (
-		<header className="border-border/50 sticky top-0 z-50 border-b bg-background backdrop-blur-sm">
+		<header className="sticky top-0 border-border/50 border-b bg-background backdrop-blur-sm">
 			<div className="mx-auto flex h-14 items-center gap-8 px-4">
 				<Link to="/" className="flex items-center gap-2">
 					PStrack
@@ -68,7 +68,7 @@ export function AppHeader() {
 					{/* Active underline */}
 					{activeIndex >= 0 && (
 						<div
-							className="absolute bottom-[-14px] h-[2px] bg-primary transition-all duration-300 ease-out rounded-full"
+							className="absolute bottom-[-14px] h-[2px] rounded-full bg-primary transition-all duration-300 ease-out"
 							style={activeStyle}
 						/>
 					)}
@@ -76,6 +76,7 @@ export function AppHeader() {
 					{/* Nav items */}
 					<div className="relative flex items-center gap-1">
 						{NAV_LINKS.map(({ to, label, icon: Icon }, index) => (
+							// biome-ignore lint/a11y/noStaticElementInteractions: hover tracking for tab indicator animation
 							<div
 								key={to}
 								ref={(el) => {

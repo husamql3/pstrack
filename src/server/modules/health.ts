@@ -18,4 +18,4 @@ async function healthHandler() {
 	}
 }
 
-export const health = new Elysia().get("/health", healthHandler)
+export const health = new Elysia({ tags: ["Health"] }).get("/health", healthHandler)

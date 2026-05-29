@@ -4,2738 +4,2738 @@
 		"slug": "concatenation-of-array",
 		"title": "Concatenation of Array",
 		"difficulty": "EASY",
-		"topics": ["Arrays & Hashing"],
 		"leetcodeId": 1929,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Arrays & Hashing"
 	},
 	{
 		"roadmapIndex": 2,
 		"slug": "contains-duplicate",
 		"title": "Contains Duplicate",
 		"difficulty": "EASY",
-		"topics": ["Arrays & Hashing"],
 		"leetcodeId": 217,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Arrays & Hashing"
 	},
 	{
 		"roadmapIndex": 3,
 		"slug": "valid-anagram",
 		"title": "Valid Anagram",
 		"difficulty": "EASY",
-		"topics": ["Arrays & Hashing"],
 		"leetcodeId": 242,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Arrays & Hashing"
 	},
 	{
 		"roadmapIndex": 4,
 		"slug": "two-sum",
 		"title": "Two Sum",
 		"difficulty": "EASY",
-		"topics": ["Arrays & Hashing"],
 		"leetcodeId": 1,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Arrays & Hashing"
 	},
 	{
 		"roadmapIndex": 5,
 		"slug": "longest-common-prefix",
 		"title": "Longest Common Prefix",
 		"difficulty": "EASY",
-		"topics": ["Arrays & Hashing"],
 		"leetcodeId": 14,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Arrays & Hashing"
 	},
 	{
 		"roadmapIndex": 6,
 		"slug": "group-anagrams",
 		"title": "Group Anagrams",
 		"difficulty": "MEDIUM",
-		"topics": ["Arrays & Hashing"],
 		"leetcodeId": 49,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Arrays & Hashing"
 	},
 	{
 		"roadmapIndex": 7,
 		"slug": "remove-element",
 		"title": "Remove Element",
 		"difficulty": "EASY",
-		"topics": ["Arrays & Hashing"],
 		"leetcodeId": 27,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Arrays & Hashing"
 	},
 	{
 		"roadmapIndex": 8,
 		"slug": "majority-element",
 		"title": "Majority Element",
 		"difficulty": "EASY",
-		"topics": ["Arrays & Hashing"],
 		"leetcodeId": 169,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Arrays & Hashing"
 	},
 	{
 		"roadmapIndex": 9,
 		"slug": "design-hashset",
 		"title": "Design HashSet",
 		"difficulty": "EASY",
-		"topics": ["Arrays & Hashing"],
 		"leetcodeId": 705,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Arrays & Hashing"
 	},
 	{
 		"roadmapIndex": 10,
 		"slug": "design-hashmap",
 		"title": "Design HashMap",
 		"difficulty": "EASY",
-		"topics": ["Arrays & Hashing"],
 		"leetcodeId": 706,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Arrays & Hashing"
 	},
 	{
 		"roadmapIndex": 11,
 		"slug": "sort-an-array",
 		"title": "Sort an Array",
 		"difficulty": "MEDIUM",
-		"topics": ["Arrays & Hashing"],
 		"leetcodeId": 912,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Arrays & Hashing"
 	},
 	{
 		"roadmapIndex": 12,
 		"slug": "sort-colors",
 		"title": "Sort Colors",
 		"difficulty": "MEDIUM",
-		"topics": ["Arrays & Hashing"],
 		"leetcodeId": 75,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Arrays & Hashing"
 	},
 	{
 		"roadmapIndex": 13,
 		"slug": "top-k-frequent-elements",
 		"title": "Top K Frequent Elements",
 		"difficulty": "MEDIUM",
-		"topics": ["Arrays & Hashing"],
 		"leetcodeId": 347,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Arrays & Hashing"
 	},
 	{
 		"roadmapIndex": 14,
 		"slug": "range-sum-query-2d-immutable",
 		"title": "Range Sum Query 2D - Immutable",
 		"difficulty": "MEDIUM",
-		"topics": ["Arrays & Hashing"],
 		"leetcodeId": 304,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Arrays & Hashing"
 	},
 	{
 		"roadmapIndex": 15,
 		"slug": "product-of-array-except-self",
 		"title": "Product of Array Except Self",
 		"difficulty": "MEDIUM",
-		"topics": ["Arrays & Hashing"],
 		"leetcodeId": 238,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Arrays & Hashing"
 	},
 	{
 		"roadmapIndex": 16,
 		"slug": "valid-sudoku",
 		"title": "Valid Sudoku",
 		"difficulty": "MEDIUM",
-		"topics": ["Arrays & Hashing"],
 		"leetcodeId": 36,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Arrays & Hashing"
 	},
 	{
 		"roadmapIndex": 17,
 		"slug": "longest-consecutive-sequence",
 		"title": "Longest Consecutive Sequence",
 		"difficulty": "MEDIUM",
-		"topics": ["Arrays & Hashing"],
 		"leetcodeId": 128,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Arrays & Hashing"
 	},
 	{
 		"roadmapIndex": 18,
 		"slug": "best-time-to-buy-and-sell-stock-ii",
 		"title": "Best Time to Buy And Sell Stock II",
 		"difficulty": "MEDIUM",
-		"topics": ["Arrays & Hashing"],
 		"leetcodeId": 122,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Arrays & Hashing"
 	},
 	{
 		"roadmapIndex": 19,
 		"slug": "majority-element-ii",
 		"title": "Majority Element II",
 		"difficulty": "MEDIUM",
-		"topics": ["Arrays & Hashing"],
 		"leetcodeId": 229,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Arrays & Hashing"
 	},
 	{
 		"roadmapIndex": 20,
 		"slug": "subarray-sum-equals-k",
 		"title": "Subarray Sum Equals K",
 		"difficulty": "MEDIUM",
-		"topics": ["Arrays & Hashing"],
 		"leetcodeId": 560,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Arrays & Hashing"
 	},
 	{
 		"roadmapIndex": 21,
 		"slug": "first-missing-positive",
 		"title": "First Missing Positive",
 		"difficulty": "HARD",
-		"topics": ["Arrays & Hashing"],
 		"leetcodeId": 41,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Arrays & Hashing"
 	},
 	{
 		"roadmapIndex": 22,
 		"slug": "reverse-string",
 		"title": "Reverse String",
 		"difficulty": "EASY",
-		"topics": ["Two Pointers"],
 		"leetcodeId": 344,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Two Pointers"
 	},
 	{
 		"roadmapIndex": 23,
 		"slug": "valid-palindrome",
 		"title": "Valid Palindrome",
 		"difficulty": "EASY",
-		"topics": ["Two Pointers"],
 		"leetcodeId": 125,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Two Pointers"
 	},
 	{
 		"roadmapIndex": 24,
 		"slug": "valid-palindrome-ii",
 		"title": "Valid Palindrome II",
 		"difficulty": "EASY",
-		"topics": ["Two Pointers"],
 		"leetcodeId": 680,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Two Pointers"
 	},
 	{
 		"roadmapIndex": 25,
 		"slug": "merge-strings-alternately",
 		"title": "Merge Strings Alternately",
 		"difficulty": "EASY",
-		"topics": ["Two Pointers"],
 		"leetcodeId": 1768,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Two Pointers"
 	},
 	{
 		"roadmapIndex": 26,
 		"slug": "merge-sorted-array",
 		"title": "Merge Sorted Array",
 		"difficulty": "EASY",
-		"topics": ["Two Pointers"],
 		"leetcodeId": 88,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Two Pointers"
 	},
 	{
 		"roadmapIndex": 27,
 		"slug": "remove-duplicates-from-sorted-array",
 		"title": "Remove Duplicates From Sorted Array",
 		"difficulty": "EASY",
-		"topics": ["Two Pointers"],
 		"leetcodeId": 26,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Two Pointers"
 	},
 	{
 		"roadmapIndex": 28,
 		"slug": "two-sum-ii-input-array-is-sorted",
 		"title": "Two Sum II - Input Array Is Sorted",
 		"difficulty": "MEDIUM",
-		"topics": ["Two Pointers"],
 		"leetcodeId": 167,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Two Pointers"
 	},
 	{
 		"roadmapIndex": 29,
 		"slug": "3sum",
 		"title": "3Sum",
 		"difficulty": "MEDIUM",
-		"topics": ["Two Pointers"],
 		"leetcodeId": 15,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Two Pointers"
 	},
 	{
 		"roadmapIndex": 30,
 		"slug": "4sum",
 		"title": "4Sum",
 		"difficulty": "MEDIUM",
-		"topics": ["Two Pointers"],
 		"leetcodeId": 18,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Two Pointers"
 	},
 	{
 		"roadmapIndex": 31,
 		"slug": "rotate-array",
 		"title": "Rotate Array",
 		"difficulty": "MEDIUM",
-		"topics": ["Two Pointers"],
 		"leetcodeId": 189,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Two Pointers"
 	},
 	{
 		"roadmapIndex": 32,
 		"slug": "container-with-most-water",
 		"title": "Container With Most Water",
 		"difficulty": "MEDIUM",
-		"topics": ["Two Pointers"],
 		"leetcodeId": 11,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Two Pointers"
 	},
 	{
 		"roadmapIndex": 33,
 		"slug": "boats-to-save-people",
 		"title": "Boats to Save People",
 		"difficulty": "MEDIUM",
-		"topics": ["Two Pointers"],
 		"leetcodeId": 881,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Two Pointers"
 	},
 	{
 		"roadmapIndex": 34,
 		"slug": "trapping-rain-water",
 		"title": "Trapping Rain Water",
 		"difficulty": "HARD",
-		"topics": ["Two Pointers"],
 		"leetcodeId": 42,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Two Pointers"
 	},
 	{
 		"roadmapIndex": 35,
 		"slug": "contains-duplicate-ii",
 		"title": "Contains Duplicate II",
 		"difficulty": "EASY",
-		"topics": ["Sliding Window"],
 		"leetcodeId": 219,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Sliding Window"
 	},
 	{
 		"roadmapIndex": 36,
 		"slug": "best-time-to-buy-and-sell-stock",
 		"title": "Best Time to Buy And Sell Stock",
 		"difficulty": "EASY",
-		"topics": ["Sliding Window"],
 		"leetcodeId": 121,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Sliding Window"
 	},
 	{
 		"roadmapIndex": 37,
 		"slug": "longest-substring-without-repeating-characters",
 		"title": "Longest Substring Without Repeating Characters",
 		"difficulty": "MEDIUM",
-		"topics": ["Sliding Window"],
 		"leetcodeId": 3,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Sliding Window"
 	},
 	{
 		"roadmapIndex": 38,
 		"slug": "longest-repeating-character-replacement",
 		"title": "Longest Repeating Character Replacement",
 		"difficulty": "MEDIUM",
-		"topics": ["Sliding Window"],
 		"leetcodeId": 424,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Sliding Window"
 	},
 	{
 		"roadmapIndex": 39,
 		"slug": "permutation-in-string",
 		"title": "Permutation In String",
 		"difficulty": "MEDIUM",
-		"topics": ["Sliding Window"],
 		"leetcodeId": 567,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Sliding Window"
 	},
 	{
 		"roadmapIndex": 40,
 		"slug": "minimum-size-subarray-sum",
 		"title": "Minimum Size Subarray Sum",
 		"difficulty": "MEDIUM",
-		"topics": ["Sliding Window"],
 		"leetcodeId": 209,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Sliding Window"
 	},
 	{
 		"roadmapIndex": 41,
 		"slug": "find-k-closest-elements",
 		"title": "Find K Closest Elements",
 		"difficulty": "MEDIUM",
-		"topics": ["Sliding Window"],
 		"leetcodeId": 658,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Sliding Window"
 	},
 	{
 		"roadmapIndex": 42,
 		"slug": "minimum-window-substring",
 		"title": "Minimum Window Substring",
 		"difficulty": "HARD",
-		"topics": ["Sliding Window"],
 		"leetcodeId": 76,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Sliding Window"
 	},
 	{
 		"roadmapIndex": 43,
 		"slug": "sliding-window-maximum",
 		"title": "Sliding Window Maximum",
 		"difficulty": "HARD",
-		"topics": ["Sliding Window"],
 		"leetcodeId": 239,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Sliding Window"
 	},
 	{
 		"roadmapIndex": 44,
 		"slug": "baseball-game",
 		"title": "Baseball Game",
 		"difficulty": "EASY",
-		"topics": ["Stack"],
 		"leetcodeId": 682,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Stack"
 	},
 	{
 		"roadmapIndex": 45,
 		"slug": "valid-parentheses",
 		"title": "Valid Parentheses",
 		"difficulty": "EASY",
-		"topics": ["Stack"],
 		"leetcodeId": 20,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Stack"
 	},
 	{
 		"roadmapIndex": 46,
 		"slug": "implement-stack-using-queues",
 		"title": "Implement Stack Using Queues",
 		"difficulty": "EASY",
-		"topics": ["Stack"],
 		"leetcodeId": 225,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Stack"
 	},
 	{
 		"roadmapIndex": 47,
 		"slug": "implement-queue-using-stacks",
 		"title": "Implement Queue using Stacks",
 		"difficulty": "EASY",
-		"topics": ["Stack"],
 		"leetcodeId": 232,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Stack"
 	},
 	{
 		"roadmapIndex": 48,
 		"slug": "min-stack",
 		"title": "Min Stack",
 		"difficulty": "MEDIUM",
-		"topics": ["Stack"],
 		"leetcodeId": 155,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Stack"
 	},
 	{
 		"roadmapIndex": 49,
 		"slug": "evaluate-reverse-polish-notation",
 		"title": "Evaluate Reverse Polish Notation",
 		"difficulty": "MEDIUM",
-		"topics": ["Stack"],
 		"leetcodeId": 150,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Stack"
 	},
 	{
 		"roadmapIndex": 50,
 		"slug": "generate-parentheses",
 		"title": "Generate Parentheses",
 		"difficulty": "MEDIUM",
-		"topics": ["Stack"],
 		"leetcodeId": 22,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Stack"
 	},
 	{
 		"roadmapIndex": 51,
 		"slug": "asteroid-collision",
 		"title": "Asteroid Collision",
 		"difficulty": "MEDIUM",
-		"topics": ["Stack"],
 		"leetcodeId": 735,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Stack"
 	},
 	{
 		"roadmapIndex": 52,
 		"slug": "daily-temperatures",
 		"title": "Daily Temperatures",
 		"difficulty": "MEDIUM",
-		"topics": ["Stack"],
 		"leetcodeId": 739,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Stack"
 	},
 	{
 		"roadmapIndex": 53,
 		"slug": "online-stock-span",
 		"title": "Online Stock Span",
 		"difficulty": "MEDIUM",
-		"topics": ["Stack"],
 		"leetcodeId": 901,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Stack"
 	},
 	{
 		"roadmapIndex": 54,
 		"slug": "car-fleet",
 		"title": "Car Fleet",
 		"difficulty": "MEDIUM",
-		"topics": ["Stack"],
 		"leetcodeId": 853,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Stack"
 	},
 	{
 		"roadmapIndex": 55,
 		"slug": "simplify-path",
 		"title": "Simplify Path",
 		"difficulty": "MEDIUM",
-		"topics": ["Stack"],
 		"leetcodeId": 71,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Stack"
 	},
 	{
 		"roadmapIndex": 56,
 		"slug": "decode-string",
 		"title": "Decode String",
 		"difficulty": "MEDIUM",
-		"topics": ["Stack"],
 		"leetcodeId": 394,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Stack"
 	},
 	{
 		"roadmapIndex": 57,
 		"slug": "maximum-frequency-stack",
 		"title": "Maximum Frequency Stack",
 		"difficulty": "HARD",
-		"topics": ["Stack"],
 		"leetcodeId": 895,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Stack"
 	},
 	{
 		"roadmapIndex": 58,
 		"slug": "largest-rectangle-in-histogram",
 		"title": "Largest Rectangle In Histogram",
 		"difficulty": "HARD",
-		"topics": ["Stack"],
 		"leetcodeId": 84,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Stack"
 	},
 	{
 		"roadmapIndex": 59,
 		"slug": "binary-search",
 		"title": "Binary Search",
 		"difficulty": "EASY",
-		"topics": ["Binary Search"],
 		"leetcodeId": 704,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Binary Search"
 	},
 	{
 		"roadmapIndex": 60,
 		"slug": "search-insert-position",
 		"title": "Search Insert Position",
 		"difficulty": "EASY",
-		"topics": ["Binary Search"],
 		"leetcodeId": 35,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Binary Search"
 	},
 	{
 		"roadmapIndex": 61,
 		"slug": "guess-number-higher-or-lower",
 		"title": "Guess Number Higher Or Lower",
 		"difficulty": "EASY",
-		"topics": ["Binary Search"],
 		"leetcodeId": 374,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Binary Search"
 	},
 	{
 		"roadmapIndex": 62,
 		"slug": "sqrtx",
 		"title": "Sqrt(x)",
 		"difficulty": "EASY",
-		"topics": ["Binary Search"],
 		"leetcodeId": 69,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Binary Search"
 	},
 	{
 		"roadmapIndex": 63,
 		"slug": "search-a-2d-matrix",
 		"title": "Search a 2D Matrix",
 		"difficulty": "MEDIUM",
-		"topics": ["Binary Search"],
 		"leetcodeId": 74,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Binary Search"
 	},
 	{
 		"roadmapIndex": 64,
 		"slug": "koko-eating-bananas",
 		"title": "Koko Eating Bananas",
 		"difficulty": "MEDIUM",
-		"topics": ["Binary Search"],
 		"leetcodeId": 875,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Binary Search"
 	},
 	{
 		"roadmapIndex": 65,
 		"slug": "capacity-to-ship-packages-within-d-days",
 		"title": "Capacity to Ship Packages Within D Days",
 		"difficulty": "MEDIUM",
-		"topics": ["Binary Search"],
 		"leetcodeId": 1011,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Binary Search"
 	},
 	{
 		"roadmapIndex": 66,
 		"slug": "find-minimum-in-rotated-sorted-array",
 		"title": "Find Minimum In Rotated Sorted Array",
 		"difficulty": "MEDIUM",
-		"topics": ["Binary Search"],
 		"leetcodeId": 153,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Binary Search"
 	},
 	{
 		"roadmapIndex": 67,
 		"slug": "search-in-rotated-sorted-array",
 		"title": "Search In Rotated Sorted Array",
 		"difficulty": "MEDIUM",
-		"topics": ["Binary Search"],
 		"leetcodeId": 33,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Binary Search"
 	},
 	{
 		"roadmapIndex": 68,
 		"slug": "search-in-rotated-sorted-array-ii",
 		"title": "Search In Rotated Sorted Array II",
 		"difficulty": "MEDIUM",
-		"topics": ["Binary Search"],
 		"leetcodeId": 81,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Binary Search"
 	},
 	{
 		"roadmapIndex": 69,
 		"slug": "time-based-key-value-store",
 		"title": "Time Based Key Value Store",
 		"difficulty": "MEDIUM",
-		"topics": ["Binary Search"],
 		"leetcodeId": 981,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Binary Search"
 	},
 	{
 		"roadmapIndex": 70,
 		"slug": "split-array-largest-sum",
 		"title": "Split Array Largest Sum",
 		"difficulty": "HARD",
-		"topics": ["Binary Search"],
 		"leetcodeId": 410,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Binary Search"
 	},
 	{
 		"roadmapIndex": 71,
 		"slug": "median-of-two-sorted-arrays",
 		"title": "Median of Two Sorted Arrays",
 		"difficulty": "HARD",
-		"topics": ["Binary Search"],
 		"leetcodeId": 4,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Binary Search"
 	},
 	{
 		"roadmapIndex": 72,
 		"slug": "reverse-linked-list",
 		"title": "Reverse Linked List",
 		"difficulty": "EASY",
-		"topics": ["Linked List"],
 		"leetcodeId": 206,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Linked List"
 	},
 	{
 		"roadmapIndex": 73,
 		"slug": "merge-two-sorted-lists",
 		"title": "Merge Two Sorted Lists",
 		"difficulty": "EASY",
-		"topics": ["Linked List"],
 		"leetcodeId": 21,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Linked List"
 	},
 	{
 		"roadmapIndex": 74,
 		"slug": "linked-list-cycle",
 		"title": "Linked List Cycle",
 		"difficulty": "EASY",
-		"topics": ["Linked List"],
 		"leetcodeId": 141,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Linked List"
 	},
 	{
 		"roadmapIndex": 75,
 		"slug": "reorder-list",
 		"title": "Reorder List",
 		"difficulty": "MEDIUM",
-		"topics": ["Linked List"],
 		"leetcodeId": 143,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Linked List"
 	},
 	{
 		"roadmapIndex": 76,
 		"slug": "remove-nth-node-from-end-of-list",
 		"title": "Remove Nth Node From End of List",
 		"difficulty": "MEDIUM",
-		"topics": ["Linked List"],
 		"leetcodeId": 19,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Linked List"
 	},
 	{
 		"roadmapIndex": 77,
 		"slug": "copy-list-with-random-pointer",
 		"title": "Copy List With Random Pointer",
 		"difficulty": "MEDIUM",
-		"topics": ["Linked List"],
 		"leetcodeId": 138,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Linked List"
 	},
 	{
 		"roadmapIndex": 78,
 		"slug": "add-two-numbers",
 		"title": "Add Two Numbers",
 		"difficulty": "MEDIUM",
-		"topics": ["Linked List"],
 		"leetcodeId": 2,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Linked List"
 	},
 	{
 		"roadmapIndex": 79,
 		"slug": "find-the-duplicate-number",
 		"title": "Find The Duplicate Number",
 		"difficulty": "MEDIUM",
-		"topics": ["Linked List"],
 		"leetcodeId": 287,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Linked List"
 	},
 	{
 		"roadmapIndex": 80,
 		"slug": "reverse-linked-list-ii",
 		"title": "Reverse Linked List II",
 		"difficulty": "MEDIUM",
-		"topics": ["Linked List"],
 		"leetcodeId": 92,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Linked List"
 	},
 	{
 		"roadmapIndex": 81,
 		"slug": "design-circular-queue",
 		"title": "Design Circular Queue",
 		"difficulty": "MEDIUM",
-		"topics": ["Linked List"],
 		"leetcodeId": 622,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Linked List"
 	},
 	{
 		"roadmapIndex": 82,
 		"slug": "lru-cache",
 		"title": "LRU Cache",
 		"difficulty": "MEDIUM",
-		"topics": ["Linked List"],
 		"leetcodeId": 146,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Linked List"
 	},
 	{
 		"roadmapIndex": 83,
 		"slug": "lfu-cache",
 		"title": "LFU Cache",
 		"difficulty": "HARD",
-		"topics": ["Linked List"],
 		"leetcodeId": 460,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Linked List"
 	},
 	{
 		"roadmapIndex": 84,
 		"slug": "merge-k-sorted-lists",
 		"title": "Merge K Sorted Lists",
 		"difficulty": "HARD",
-		"topics": ["Linked List"],
 		"leetcodeId": 23,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Linked List"
 	},
 	{
 		"roadmapIndex": 85,
 		"slug": "reverse-nodes-in-k-group",
 		"title": "Reverse Nodes In K Group",
 		"difficulty": "HARD",
-		"topics": ["Linked List"],
 		"leetcodeId": 25,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Linked List"
 	},
 	{
 		"roadmapIndex": 86,
 		"slug": "binary-tree-inorder-traversal",
 		"title": "Binary Tree Inorder Traversal",
 		"difficulty": "EASY",
-		"topics": ["Trees"],
 		"leetcodeId": 94,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Trees"
 	},
 	{
 		"roadmapIndex": 87,
 		"slug": "binary-tree-preorder-traversal",
 		"title": "Binary Tree Preorder Traversal",
 		"difficulty": "EASY",
-		"topics": ["Trees"],
 		"leetcodeId": 144,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Trees"
 	},
 	{
 		"roadmapIndex": 88,
 		"slug": "binary-tree-postorder-traversal",
 		"title": "Binary Tree Postorder Traversal",
 		"difficulty": "EASY",
-		"topics": ["Trees"],
 		"leetcodeId": 145,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Trees"
 	},
 	{
 		"roadmapIndex": 89,
 		"slug": "invert-binary-tree",
 		"title": "Invert Binary Tree",
 		"difficulty": "EASY",
-		"topics": ["Trees"],
 		"leetcodeId": 226,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Trees"
 	},
 	{
 		"roadmapIndex": 90,
 		"slug": "maximum-depth-of-binary-tree",
 		"title": "Maximum Depth of Binary Tree",
 		"difficulty": "EASY",
-		"topics": ["Trees"],
 		"leetcodeId": 104,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Trees"
 	},
 	{
 		"roadmapIndex": 91,
 		"slug": "diameter-of-binary-tree",
 		"title": "Diameter of Binary Tree",
 		"difficulty": "EASY",
-		"topics": ["Trees"],
 		"leetcodeId": 543,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Trees"
 	},
 	{
 		"roadmapIndex": 92,
 		"slug": "balanced-binary-tree",
 		"title": "Balanced Binary Tree",
 		"difficulty": "EASY",
-		"topics": ["Trees"],
 		"leetcodeId": 110,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Trees"
 	},
 	{
 		"roadmapIndex": 93,
 		"slug": "same-tree",
 		"title": "Same Tree",
 		"difficulty": "EASY",
-		"topics": ["Trees"],
 		"leetcodeId": 100,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Trees"
 	},
 	{
 		"roadmapIndex": 94,
 		"slug": "subtree-of-another-tree",
 		"title": "Subtree of Another Tree",
 		"difficulty": "EASY",
-		"topics": ["Trees"],
 		"leetcodeId": 572,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Trees"
 	},
 	{
 		"roadmapIndex": 95,
 		"slug": "lowest-common-ancestor-of-a-binary-search-tree",
 		"title": "Lowest Common Ancestor of a Binary Search Tree",
 		"difficulty": "MEDIUM",
-		"topics": ["Trees"],
 		"leetcodeId": 235,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Trees"
 	},
 	{
 		"roadmapIndex": 96,
 		"slug": "insert-into-a-binary-search-tree",
 		"title": "Insert into a Binary Search Tree",
 		"difficulty": "MEDIUM",
-		"topics": ["Trees"],
 		"leetcodeId": 701,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Trees"
 	},
 	{
 		"roadmapIndex": 97,
 		"slug": "delete-node-in-a-bst",
 		"title": "Delete Node in a BST",
 		"difficulty": "MEDIUM",
-		"topics": ["Trees"],
 		"leetcodeId": 450,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Trees"
 	},
 	{
 		"roadmapIndex": 98,
 		"slug": "binary-tree-level-order-traversal",
 		"title": "Binary Tree Level Order Traversal",
 		"difficulty": "MEDIUM",
-		"topics": ["Trees"],
 		"leetcodeId": 102,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Trees"
 	},
 	{
 		"roadmapIndex": 99,
 		"slug": "binary-tree-right-side-view",
 		"title": "Binary Tree Right Side View",
 		"difficulty": "MEDIUM",
-		"topics": ["Trees"],
 		"leetcodeId": 199,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Trees"
 	},
 	{
 		"roadmapIndex": 100,
 		"slug": "construct-quad-tree",
 		"title": "Construct Quad Tree",
 		"difficulty": "MEDIUM",
-		"topics": ["Trees"],
 		"leetcodeId": 427,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Trees"
 	},
 	{
 		"roadmapIndex": 101,
 		"slug": "count-good-nodes-in-binary-tree",
 		"title": "Count Good Nodes In Binary Tree",
 		"difficulty": "MEDIUM",
-		"topics": ["Trees"],
 		"leetcodeId": 1448,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Trees"
 	},
 	{
 		"roadmapIndex": 102,
 		"slug": "validate-binary-search-tree",
 		"title": "Validate Binary Search Tree",
 		"difficulty": "MEDIUM",
-		"topics": ["Trees"],
 		"leetcodeId": 98,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Trees"
 	},
 	{
 		"roadmapIndex": 103,
 		"slug": "kth-smallest-element-in-a-bst",
 		"title": "Kth Smallest Element In a BST",
 		"difficulty": "MEDIUM",
-		"topics": ["Trees"],
 		"leetcodeId": 230,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Trees"
 	},
 	{
 		"roadmapIndex": 104,
 		"slug": "construct-binary-tree-from-preorder-and-inorder-traversal",
 		"title": "Construct Binary Tree From Preorder And Inorder Traversal",
 		"difficulty": "MEDIUM",
-		"topics": ["Trees"],
 		"leetcodeId": 105,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Trees"
 	},
 	{
 		"roadmapIndex": 105,
 		"slug": "house-robber-iii",
 		"title": "House Robber III",
 		"difficulty": "MEDIUM",
-		"topics": ["Trees"],
 		"leetcodeId": 337,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Trees"
 	},
 	{
 		"roadmapIndex": 106,
 		"slug": "delete-leaves-with-a-given-value",
 		"title": "Delete Leaves With a Given Value",
 		"difficulty": "MEDIUM",
-		"topics": ["Trees"],
 		"leetcodeId": 1325,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Trees"
 	},
 	{
 		"roadmapIndex": 107,
 		"slug": "binary-tree-maximum-path-sum",
 		"title": "Binary Tree Maximum Path Sum",
 		"difficulty": "HARD",
-		"topics": ["Trees"],
 		"leetcodeId": 124,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Trees"
 	},
 	{
 		"roadmapIndex": 108,
 		"slug": "serialize-and-deserialize-binary-tree",
 		"title": "Serialize And Deserialize Binary Tree",
 		"difficulty": "HARD",
-		"topics": ["Trees"],
 		"leetcodeId": 297,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Trees"
 	},
 	{
 		"roadmapIndex": 109,
 		"slug": "implement-trie-prefix-tree",
 		"title": "Implement Trie Prefix Tree",
 		"difficulty": "MEDIUM",
-		"topics": ["Tries"],
 		"leetcodeId": 208,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Tries"
 	},
 	{
 		"roadmapIndex": 110,
 		"slug": "design-add-and-search-words-data-structure",
 		"title": "Design Add And Search Words Data Structure",
 		"difficulty": "MEDIUM",
-		"topics": ["Tries"],
 		"leetcodeId": 211,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Tries"
 	},
 	{
 		"roadmapIndex": 111,
 		"slug": "extra-characters-in-a-string",
 		"title": "Extra Characters in a String",
 		"difficulty": "MEDIUM",
-		"topics": ["Tries"],
 		"leetcodeId": 2707,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Tries"
 	},
 	{
 		"roadmapIndex": 112,
 		"slug": "word-search-ii",
 		"title": "Word Search II",
 		"difficulty": "HARD",
-		"topics": ["Tries"],
 		"leetcodeId": 212,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Tries"
 	},
 	{
 		"roadmapIndex": 113,
 		"slug": "kth-largest-element-in-a-stream",
 		"title": "Kth Largest Element In a Stream",
 		"difficulty": "EASY",
-		"topics": ["Heap / Priority Queue"],
 		"leetcodeId": 703,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Heap / Priority Queue"
 	},
 	{
 		"roadmapIndex": 114,
 		"slug": "last-stone-weight",
 		"title": "Last Stone Weight",
 		"difficulty": "EASY",
-		"topics": ["Heap / Priority Queue"],
 		"leetcodeId": 1046,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Heap / Priority Queue"
 	},
 	{
 		"roadmapIndex": 115,
 		"slug": "k-closest-points-to-origin",
 		"title": "K Closest Points to Origin",
 		"difficulty": "MEDIUM",
-		"topics": ["Heap / Priority Queue"],
 		"leetcodeId": 973,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Heap / Priority Queue"
 	},
 	{
 		"roadmapIndex": 116,
 		"slug": "kth-largest-element-in-an-array",
 		"title": "Kth Largest Element In An Array",
 		"difficulty": "MEDIUM",
-		"topics": ["Heap / Priority Queue"],
 		"leetcodeId": 215,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Heap / Priority Queue"
 	},
 	{
 		"roadmapIndex": 117,
 		"slug": "task-scheduler",
 		"title": "Task Scheduler",
 		"difficulty": "MEDIUM",
-		"topics": ["Heap / Priority Queue"],
 		"leetcodeId": 621,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Heap / Priority Queue"
 	},
 	{
 		"roadmapIndex": 118,
 		"slug": "design-twitter",
 		"title": "Design Twitter",
 		"difficulty": "MEDIUM",
-		"topics": ["Heap / Priority Queue"],
 		"leetcodeId": 355,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Heap / Priority Queue"
 	},
 	{
 		"roadmapIndex": 119,
 		"slug": "single-threaded-cpu",
 		"title": "Single Threaded CPU",
 		"difficulty": "MEDIUM",
-		"topics": ["Heap / Priority Queue"],
 		"leetcodeId": 1834,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Heap / Priority Queue"
 	},
 	{
 		"roadmapIndex": 120,
 		"slug": "reorganize-string",
 		"title": "Reorganize String",
 		"difficulty": "MEDIUM",
-		"topics": ["Heap / Priority Queue"],
 		"leetcodeId": 767,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Heap / Priority Queue"
 	},
 	{
 		"roadmapIndex": 121,
 		"slug": "longest-happy-string",
 		"title": "Longest Happy String",
 		"difficulty": "MEDIUM",
-		"topics": ["Heap / Priority Queue"],
 		"leetcodeId": 1405,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Heap / Priority Queue"
 	},
 	{
 		"roadmapIndex": 122,
 		"slug": "car-pooling",
 		"title": "Car Pooling",
 		"difficulty": "MEDIUM",
-		"topics": ["Heap / Priority Queue"],
 		"leetcodeId": 1094,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Heap / Priority Queue"
 	},
 	{
 		"roadmapIndex": 123,
 		"slug": "find-median-from-data-stream",
 		"title": "Find Median From Data Stream",
 		"difficulty": "HARD",
-		"topics": ["Heap / Priority Queue"],
 		"leetcodeId": 295,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Heap / Priority Queue"
 	},
 	{
 		"roadmapIndex": 124,
 		"slug": "ipo",
 		"title": "IPO",
 		"difficulty": "HARD",
-		"topics": ["Heap / Priority Queue"],
 		"leetcodeId": 502,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Heap / Priority Queue"
 	},
 	{
 		"roadmapIndex": 125,
 		"slug": "sum-of-all-subset-xor-totals",
 		"title": "Sum of All Subsets XOR Total",
 		"difficulty": "EASY",
-		"topics": ["Backtracking"],
 		"leetcodeId": 1863,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Backtracking"
 	},
 	{
 		"roadmapIndex": 126,
 		"slug": "subsets",
 		"title": "Subsets",
 		"difficulty": "MEDIUM",
-		"topics": ["Backtracking"],
 		"leetcodeId": 78,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Backtracking"
 	},
 	{
 		"roadmapIndex": 127,
 		"slug": "combination-sum",
 		"title": "Combination Sum",
 		"difficulty": "MEDIUM",
-		"topics": ["Backtracking"],
 		"leetcodeId": 39,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Backtracking"
 	},
 	{
 		"roadmapIndex": 128,
 		"slug": "combination-sum-ii",
 		"title": "Combination Sum II",
 		"difficulty": "MEDIUM",
-		"topics": ["Backtracking"],
 		"leetcodeId": 40,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Backtracking"
 	},
 	{
 		"roadmapIndex": 129,
 		"slug": "combinations",
 		"title": "Combinations",
 		"difficulty": "MEDIUM",
-		"topics": ["Backtracking"],
 		"leetcodeId": 77,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Backtracking"
 	},
 	{
 		"roadmapIndex": 130,
 		"slug": "permutations",
 		"title": "Permutations",
 		"difficulty": "MEDIUM",
-		"topics": ["Backtracking"],
 		"leetcodeId": 46,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Backtracking"
 	},
 	{
 		"roadmapIndex": 131,
 		"slug": "subsets-ii",
 		"title": "Subsets II",
 		"difficulty": "MEDIUM",
-		"topics": ["Backtracking"],
 		"leetcodeId": 90,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Backtracking"
 	},
 	{
 		"roadmapIndex": 132,
 		"slug": "permutations-ii",
 		"title": "Permutations II",
 		"difficulty": "MEDIUM",
-		"topics": ["Backtracking"],
 		"leetcodeId": 47,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Backtracking"
 	},
 	{
 		"roadmapIndex": 133,
 		"slug": "word-search",
 		"title": "Word Search",
 		"difficulty": "MEDIUM",
-		"topics": ["Backtracking"],
 		"leetcodeId": 79,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Backtracking"
 	},
 	{
 		"roadmapIndex": 134,
 		"slug": "palindrome-partitioning",
 		"title": "Palindrome Partitioning",
 		"difficulty": "MEDIUM",
-		"topics": ["Backtracking"],
 		"leetcodeId": 131,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Backtracking"
 	},
 	{
 		"roadmapIndex": 135,
 		"slug": "letter-combinations-of-a-phone-number",
 		"title": "Letter Combinations of a Phone Number",
 		"difficulty": "MEDIUM",
-		"topics": ["Backtracking"],
 		"leetcodeId": 17,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Backtracking"
 	},
 	{
 		"roadmapIndex": 136,
 		"slug": "matchsticks-to-square",
 		"title": "Matchsticks to Square",
 		"difficulty": "MEDIUM",
-		"topics": ["Backtracking"],
 		"leetcodeId": 473,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Backtracking"
 	},
 	{
 		"roadmapIndex": 137,
 		"slug": "partition-to-k-equal-sum-subsets",
 		"title": "Partition to K Equal Sum Subsets",
 		"difficulty": "MEDIUM",
-		"topics": ["Backtracking"],
 		"leetcodeId": 698,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Backtracking"
 	},
 	{
 		"roadmapIndex": 138,
 		"slug": "n-queens",
 		"title": "N-Queens",
 		"difficulty": "HARD",
-		"topics": ["Backtracking"],
 		"leetcodeId": 51,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Backtracking"
 	},
 	{
 		"roadmapIndex": 139,
 		"slug": "n-queens-ii",
 		"title": "N-Queens II",
 		"difficulty": "HARD",
-		"topics": ["Backtracking"],
 		"leetcodeId": 52,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Backtracking"
 	},
 	{
 		"roadmapIndex": 140,
 		"slug": "word-break-ii",
 		"title": "Word Break II",
 		"difficulty": "HARD",
-		"topics": ["Backtracking"],
 		"leetcodeId": 140,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Backtracking"
 	},
 	{
 		"roadmapIndex": 141,
 		"slug": "island-perimeter",
 		"title": "Island Perimeter",
 		"difficulty": "EASY",
-		"topics": ["Graphs"],
 		"leetcodeId": 463,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Graphs"
 	},
 	{
 		"roadmapIndex": 142,
 		"slug": "verifying-an-alien-dictionary",
 		"title": "Verifying An Alien Dictionary",
 		"difficulty": "EASY",
-		"topics": ["Graphs"],
 		"leetcodeId": 953,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Graphs"
 	},
 	{
 		"roadmapIndex": 143,
 		"slug": "find-the-town-judge",
 		"title": "Find the Town Judge",
 		"difficulty": "EASY",
-		"topics": ["Graphs"],
 		"leetcodeId": 997,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Graphs"
 	},
 	{
 		"roadmapIndex": 144,
 		"slug": "number-of-islands",
 		"title": "Number of Islands",
 		"difficulty": "MEDIUM",
-		"topics": ["Graphs"],
 		"leetcodeId": 200,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Graphs"
 	},
 	{
 		"roadmapIndex": 145,
 		"slug": "max-area-of-island",
 		"title": "Max Area of Island",
 		"difficulty": "MEDIUM",
-		"topics": ["Graphs"],
 		"leetcodeId": 695,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Graphs"
 	},
 	{
 		"roadmapIndex": 146,
 		"slug": "clone-graph",
 		"title": "Clone Graph",
 		"difficulty": "MEDIUM",
-		"topics": ["Graphs"],
 		"leetcodeId": 133,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Graphs"
 	},
 	{
 		"roadmapIndex": 147,
 		"slug": "rotting-oranges",
 		"title": "Rotting Oranges",
 		"difficulty": "MEDIUM",
-		"topics": ["Graphs"],
 		"leetcodeId": 994,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Graphs"
 	},
 	{
 		"roadmapIndex": 148,
 		"slug": "pacific-atlantic-water-flow",
 		"title": "Pacific Atlantic Water Flow",
 		"difficulty": "MEDIUM",
-		"topics": ["Graphs"],
 		"leetcodeId": 417,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Graphs"
 	},
 	{
 		"roadmapIndex": 149,
 		"slug": "surrounded-regions",
 		"title": "Surrounded Regions",
 		"difficulty": "MEDIUM",
-		"topics": ["Graphs"],
 		"leetcodeId": 130,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Graphs"
 	},
 	{
 		"roadmapIndex": 150,
 		"slug": "open-the-lock",
 		"title": "Open The Lock",
 		"difficulty": "MEDIUM",
-		"topics": ["Graphs"],
 		"leetcodeId": 752,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Graphs"
 	},
 	{
 		"roadmapIndex": 151,
 		"slug": "course-schedule",
 		"title": "Course Schedule",
 		"difficulty": "MEDIUM",
-		"topics": ["Graphs"],
 		"leetcodeId": 207,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Graphs"
 	},
 	{
 		"roadmapIndex": 152,
 		"slug": "course-schedule-ii",
 		"title": "Course Schedule II",
 		"difficulty": "MEDIUM",
-		"topics": ["Graphs"],
 		"leetcodeId": 210,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Graphs"
 	},
 	{
 		"roadmapIndex": 153,
 		"slug": "course-schedule-iv",
 		"title": "Course Schedule IV",
 		"difficulty": "MEDIUM",
-		"topics": ["Graphs"],
 		"leetcodeId": 1462,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Graphs"
 	},
 	{
 		"roadmapIndex": 154,
 		"slug": "redundant-connection",
 		"title": "Redundant Connection",
 		"difficulty": "MEDIUM",
-		"topics": ["Graphs"],
 		"leetcodeId": 684,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Graphs"
 	},
 	{
 		"roadmapIndex": 155,
 		"slug": "accounts-merge",
 		"title": "Accounts Merge",
 		"difficulty": "MEDIUM",
-		"topics": ["Graphs"],
 		"leetcodeId": 721,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Graphs"
 	},
 	{
 		"roadmapIndex": 156,
 		"slug": "evaluate-division",
 		"title": "Evaluate Division",
 		"difficulty": "MEDIUM",
-		"topics": ["Graphs"],
 		"leetcodeId": 399,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Graphs"
 	},
 	{
 		"roadmapIndex": 157,
 		"slug": "minimum-height-trees",
 		"title": "Minimum Height Trees",
 		"difficulty": "MEDIUM",
-		"topics": ["Graphs"],
 		"leetcodeId": 310,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Graphs"
 	},
 	{
 		"roadmapIndex": 158,
 		"slug": "word-ladder",
 		"title": "Word Ladder",
 		"difficulty": "HARD",
-		"topics": ["Graphs"],
 		"leetcodeId": 127,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Graphs"
 	},
 	{
 		"roadmapIndex": 159,
 		"slug": "path-with-minimum-effort",
 		"title": "Path With Minimum Effort",
 		"difficulty": "MEDIUM",
-		"topics": ["Advanced Graphs"],
 		"leetcodeId": 1631,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Advanced Graphs"
 	},
 	{
 		"roadmapIndex": 160,
 		"slug": "network-delay-time",
 		"title": "Network Delay Time",
 		"difficulty": "MEDIUM",
-		"topics": ["Advanced Graphs"],
 		"leetcodeId": 743,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Advanced Graphs"
 	},
 	{
 		"roadmapIndex": 161,
 		"slug": "reconstruct-itinerary",
 		"title": "Reconstruct Itinerary",
 		"difficulty": "HARD",
-		"topics": ["Advanced Graphs"],
 		"leetcodeId": 332,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Advanced Graphs"
 	},
 	{
 		"roadmapIndex": 162,
 		"slug": "min-cost-to-connect-all-points",
 		"title": "Min Cost to Connect All Points",
 		"difficulty": "MEDIUM",
-		"topics": ["Advanced Graphs"],
 		"leetcodeId": 1584,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Advanced Graphs"
 	},
 	{
 		"roadmapIndex": 163,
 		"slug": "swim-in-rising-water",
 		"title": "Swim In Rising Water",
 		"difficulty": "HARD",
-		"topics": ["Advanced Graphs"],
 		"leetcodeId": 778,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Advanced Graphs"
 	},
 	{
 		"roadmapIndex": 164,
 		"slug": "cheapest-flights-within-k-stops",
 		"title": "Cheapest Flights Within K Stops",
 		"difficulty": "MEDIUM",
-		"topics": ["Advanced Graphs"],
 		"leetcodeId": 787,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Advanced Graphs"
 	},
 	{
 		"roadmapIndex": 165,
 		"slug": "find-critical-and-pseudo-critical-edges-in-minimum-spanning-tree",
 		"title": "Find Critical and Pseudo Critical Edges in Minimum Spanning Tree",
 		"difficulty": "HARD",
-		"topics": ["Advanced Graphs"],
 		"leetcodeId": 1489,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Advanced Graphs"
 	},
 	{
 		"roadmapIndex": 166,
 		"slug": "build-a-matrix-with-conditions",
 		"title": "Build a Matrix With Conditions",
 		"difficulty": "HARD",
-		"topics": ["Advanced Graphs"],
 		"leetcodeId": 2392,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Advanced Graphs"
 	},
 	{
 		"roadmapIndex": 167,
 		"slug": "greatest-common-divisor-traversal",
 		"title": "Greatest Common Divisor Traversal",
 		"difficulty": "HARD",
-		"topics": ["Advanced Graphs"],
 		"leetcodeId": 2709,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Advanced Graphs"
 	},
 	{
 		"roadmapIndex": 168,
 		"slug": "climbing-stairs",
 		"title": "Climbing Stairs",
 		"difficulty": "EASY",
-		"topics": ["1-D Dynamic Programming"],
 		"leetcodeId": 70,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "1-D Dynamic Programming"
 	},
 	{
 		"roadmapIndex": 169,
 		"slug": "min-cost-climbing-stairs",
 		"title": "Min Cost Climbing Stairs",
 		"difficulty": "EASY",
-		"topics": ["1-D Dynamic Programming"],
 		"leetcodeId": 746,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "1-D Dynamic Programming"
 	},
 	{
 		"roadmapIndex": 170,
 		"slug": "n-th-tribonacci-number",
 		"title": "N-th Tribonacci Number",
 		"difficulty": "EASY",
-		"topics": ["1-D Dynamic Programming"],
 		"leetcodeId": 1137,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "1-D Dynamic Programming"
 	},
 	{
 		"roadmapIndex": 171,
 		"slug": "house-robber",
 		"title": "House Robber",
 		"difficulty": "MEDIUM",
-		"topics": ["1-D Dynamic Programming"],
 		"leetcodeId": 198,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "1-D Dynamic Programming"
 	},
 	{
 		"roadmapIndex": 172,
 		"slug": "house-robber-ii",
 		"title": "House Robber II",
 		"difficulty": "MEDIUM",
-		"topics": ["1-D Dynamic Programming"],
 		"leetcodeId": 213,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "1-D Dynamic Programming"
 	},
 	{
 		"roadmapIndex": 173,
 		"slug": "longest-palindromic-substring",
 		"title": "Longest Palindromic Substring",
 		"difficulty": "MEDIUM",
-		"topics": ["1-D Dynamic Programming"],
 		"leetcodeId": 5,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "1-D Dynamic Programming"
 	},
 	{
 		"roadmapIndex": 174,
 		"slug": "palindromic-substrings",
 		"title": "Palindromic Substrings",
 		"difficulty": "MEDIUM",
-		"topics": ["1-D Dynamic Programming"],
 		"leetcodeId": 647,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "1-D Dynamic Programming"
 	},
 	{
 		"roadmapIndex": 175,
 		"slug": "decode-ways",
 		"title": "Decode Ways",
 		"difficulty": "MEDIUM",
-		"topics": ["1-D Dynamic Programming"],
 		"leetcodeId": 91,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "1-D Dynamic Programming"
 	},
 	{
 		"roadmapIndex": 176,
 		"slug": "coin-change",
 		"title": "Coin Change",
 		"difficulty": "MEDIUM",
-		"topics": ["1-D Dynamic Programming"],
 		"leetcodeId": 322,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "1-D Dynamic Programming"
 	},
 	{
 		"roadmapIndex": 177,
 		"slug": "maximum-product-subarray",
 		"title": "Maximum Product Subarray",
 		"difficulty": "MEDIUM",
-		"topics": ["1-D Dynamic Programming"],
 		"leetcodeId": 152,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "1-D Dynamic Programming"
 	},
 	{
 		"roadmapIndex": 178,
 		"slug": "word-break",
 		"title": "Word Break",
 		"difficulty": "MEDIUM",
-		"topics": ["1-D Dynamic Programming"],
 		"leetcodeId": 139,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "1-D Dynamic Programming"
 	},
 	{
 		"roadmapIndex": 179,
 		"slug": "longest-increasing-subsequence",
 		"title": "Longest Increasing Subsequence",
 		"difficulty": "MEDIUM",
-		"topics": ["1-D Dynamic Programming"],
 		"leetcodeId": 300,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "1-D Dynamic Programming"
 	},
 	{
 		"roadmapIndex": 180,
 		"slug": "partition-equal-subset-sum",
 		"title": "Partition Equal Subset Sum",
 		"difficulty": "MEDIUM",
-		"topics": ["1-D Dynamic Programming"],
 		"leetcodeId": 416,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "1-D Dynamic Programming"
 	},
 	{
 		"roadmapIndex": 181,
 		"slug": "combination-sum-iv",
 		"title": "Combination Sum IV",
 		"difficulty": "MEDIUM",
-		"topics": ["1-D Dynamic Programming"],
 		"leetcodeId": 377,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "1-D Dynamic Programming"
 	},
 	{
 		"roadmapIndex": 182,
 		"slug": "perfect-squares",
 		"title": "Perfect Squares",
 		"difficulty": "MEDIUM",
-		"topics": ["1-D Dynamic Programming"],
 		"leetcodeId": 279,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "1-D Dynamic Programming"
 	},
 	{
 		"roadmapIndex": 183,
 		"slug": "integer-break",
 		"title": "Integer Break",
 		"difficulty": "MEDIUM",
-		"topics": ["1-D Dynamic Programming"],
 		"leetcodeId": 343,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "1-D Dynamic Programming"
 	},
 	{
 		"roadmapIndex": 184,
 		"slug": "stone-game-iii",
 		"title": "Stone Game III",
 		"difficulty": "HARD",
-		"topics": ["1-D Dynamic Programming"],
 		"leetcodeId": 1406,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "1-D Dynamic Programming"
 	},
 	{
 		"roadmapIndex": 185,
 		"slug": "unique-paths",
 		"title": "Unique Paths",
 		"difficulty": "MEDIUM",
-		"topics": ["2-D Dynamic Programming"],
 		"leetcodeId": 62,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "2-D Dynamic Programming"
 	},
 	{
 		"roadmapIndex": 186,
 		"slug": "unique-paths-ii",
 		"title": "Unique Paths II",
 		"difficulty": "MEDIUM",
-		"topics": ["2-D Dynamic Programming"],
 		"leetcodeId": 63,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "2-D Dynamic Programming"
 	},
 	{
 		"roadmapIndex": 187,
 		"slug": "minimum-path-sum",
 		"title": "Minimum Path Sum",
 		"difficulty": "MEDIUM",
-		"topics": ["2-D Dynamic Programming"],
 		"leetcodeId": 64,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "2-D Dynamic Programming"
 	},
 	{
 		"roadmapIndex": 188,
 		"slug": "longest-common-subsequence",
 		"title": "Longest Common Subsequence",
 		"difficulty": "MEDIUM",
-		"topics": ["2-D Dynamic Programming"],
 		"leetcodeId": 1143,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "2-D Dynamic Programming"
 	},
 	{
 		"roadmapIndex": 189,
 		"slug": "last-stone-weight-ii",
 		"title": "Last Stone Weight II",
 		"difficulty": "MEDIUM",
-		"topics": ["2-D Dynamic Programming"],
 		"leetcodeId": 1049,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "2-D Dynamic Programming"
 	},
 	{
 		"roadmapIndex": 190,
 		"slug": "best-time-to-buy-and-sell-stock-with-cooldown",
 		"title": "Best Time to Buy And Sell Stock With Cooldown",
 		"difficulty": "MEDIUM",
-		"topics": ["2-D Dynamic Programming"],
 		"leetcodeId": 309,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "2-D Dynamic Programming"
 	},
 	{
 		"roadmapIndex": 191,
 		"slug": "coin-change-2",
 		"title": "Coin Change II",
 		"difficulty": "MEDIUM",
-		"topics": ["2-D Dynamic Programming"],
 		"leetcodeId": 518,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "2-D Dynamic Programming"
 	},
 	{
 		"roadmapIndex": 192,
 		"slug": "target-sum",
 		"title": "Target Sum",
 		"difficulty": "MEDIUM",
-		"topics": ["2-D Dynamic Programming"],
 		"leetcodeId": 494,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "2-D Dynamic Programming"
 	},
 	{
 		"roadmapIndex": 193,
 		"slug": "interleaving-string",
 		"title": "Interleaving String",
 		"difficulty": "MEDIUM",
-		"topics": ["2-D Dynamic Programming"],
 		"leetcodeId": 97,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "2-D Dynamic Programming"
 	},
 	{
 		"roadmapIndex": 194,
 		"slug": "stone-game",
 		"title": "Stone Game",
 		"difficulty": "MEDIUM",
-		"topics": ["2-D Dynamic Programming"],
 		"leetcodeId": 877,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "2-D Dynamic Programming"
 	},
 	{
 		"roadmapIndex": 195,
 		"slug": "stone-game-ii",
 		"title": "Stone Game II",
 		"difficulty": "MEDIUM",
-		"topics": ["2-D Dynamic Programming"],
 		"leetcodeId": 1140,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "2-D Dynamic Programming"
 	},
 	{
 		"roadmapIndex": 196,
 		"slug": "longest-increasing-path-in-a-matrix",
 		"title": "Longest Increasing Path In a Matrix",
 		"difficulty": "HARD",
-		"topics": ["2-D Dynamic Programming"],
 		"leetcodeId": 329,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "2-D Dynamic Programming"
 	},
 	{
 		"roadmapIndex": 197,
 		"slug": "distinct-subsequences",
 		"title": "Distinct Subsequences",
 		"difficulty": "HARD",
-		"topics": ["2-D Dynamic Programming"],
 		"leetcodeId": 115,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "2-D Dynamic Programming"
 	},
 	{
 		"roadmapIndex": 198,
 		"slug": "edit-distance",
 		"title": "Edit Distance",
 		"difficulty": "MEDIUM",
-		"topics": ["2-D Dynamic Programming"],
 		"leetcodeId": 72,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "2-D Dynamic Programming"
 	},
 	{
 		"roadmapIndex": 199,
 		"slug": "burst-balloons",
 		"title": "Burst Balloons",
 		"difficulty": "HARD",
-		"topics": ["2-D Dynamic Programming"],
 		"leetcodeId": 312,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "2-D Dynamic Programming"
 	},
 	{
 		"roadmapIndex": 200,
 		"slug": "regular-expression-matching",
 		"title": "Regular Expression Matching",
 		"difficulty": "HARD",
-		"topics": ["2-D Dynamic Programming"],
 		"leetcodeId": 10,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "2-D Dynamic Programming"
 	},
 	{
 		"roadmapIndex": 201,
 		"slug": "lemonade-change",
 		"title": "Lemonade Change",
 		"difficulty": "EASY",
-		"topics": ["Greedy"],
 		"leetcodeId": 860,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Greedy"
 	},
 	{
 		"roadmapIndex": 202,
 		"slug": "maximum-subarray",
 		"title": "Maximum Subarray",
 		"difficulty": "MEDIUM",
-		"topics": ["Greedy"],
 		"leetcodeId": 53,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Greedy"
 	},
 	{
 		"roadmapIndex": 203,
 		"slug": "maximum-sum-circular-subarray",
 		"title": "Maximum Sum Circular Subarray",
 		"difficulty": "MEDIUM",
-		"topics": ["Greedy"],
 		"leetcodeId": 918,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Greedy"
 	},
 	{
 		"roadmapIndex": 204,
 		"slug": "longest-turbulent-subarray",
 		"title": "Longest Turbulent Subarray",
 		"difficulty": "MEDIUM",
-		"topics": ["Greedy"],
 		"leetcodeId": 978,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Greedy"
 	},
 	{
 		"roadmapIndex": 205,
 		"slug": "jump-game",
 		"title": "Jump Game",
 		"difficulty": "MEDIUM",
-		"topics": ["Greedy"],
 		"leetcodeId": 55,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Greedy"
 	},
 	{
 		"roadmapIndex": 206,
 		"slug": "jump-game-ii",
 		"title": "Jump Game II",
 		"difficulty": "MEDIUM",
-		"topics": ["Greedy"],
 		"leetcodeId": 45,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Greedy"
 	},
 	{
 		"roadmapIndex": 207,
 		"slug": "jump-game-vii",
 		"title": "Jump Game VII",
 		"difficulty": "MEDIUM",
-		"topics": ["Greedy"],
 		"leetcodeId": 1871,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Greedy"
 	},
 	{
 		"roadmapIndex": 208,
 		"slug": "gas-station",
 		"title": "Gas Station",
 		"difficulty": "MEDIUM",
-		"topics": ["Greedy"],
 		"leetcodeId": 134,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Greedy"
 	},
 	{
 		"roadmapIndex": 209,
 		"slug": "hand-of-straights",
 		"title": "Hand of Straights",
 		"difficulty": "MEDIUM",
-		"topics": ["Greedy"],
 		"leetcodeId": 1296,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Greedy"
 	},
 	{
 		"roadmapIndex": 210,
 		"slug": "dota2-senate",
 		"title": "Dota2 Senate",
 		"difficulty": "MEDIUM",
-		"topics": ["Greedy"],
 		"leetcodeId": 649,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Greedy"
 	},
 	{
 		"roadmapIndex": 211,
 		"slug": "merge-triplets-to-form-target-triplet",
 		"title": "Merge Triplets to Form Target Triplet",
 		"difficulty": "MEDIUM",
-		"topics": ["Greedy"],
 		"leetcodeId": 1899,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Greedy"
 	},
 	{
 		"roadmapIndex": 212,
 		"slug": "partition-labels",
 		"title": "Partition Labels",
 		"difficulty": "MEDIUM",
-		"topics": ["Greedy"],
 		"leetcodeId": 763,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Greedy"
 	},
 	{
 		"roadmapIndex": 213,
 		"slug": "valid-parenthesis-string",
 		"title": "Valid Parenthesis String",
 		"difficulty": "MEDIUM",
-		"topics": ["Greedy"],
 		"leetcodeId": 678,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Greedy"
 	},
 	{
 		"roadmapIndex": 214,
 		"slug": "candy",
 		"title": "Candy",
 		"difficulty": "HARD",
-		"topics": ["Greedy"],
 		"leetcodeId": 135,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Greedy"
 	},
 	{
 		"roadmapIndex": 215,
 		"slug": "insert-interval",
 		"title": "Insert Interval",
 		"difficulty": "MEDIUM",
-		"topics": ["Intervals"],
 		"leetcodeId": 57,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Intervals"
 	},
 	{
 		"roadmapIndex": 216,
 		"slug": "merge-intervals",
 		"title": "Merge Intervals",
 		"difficulty": "MEDIUM",
-		"topics": ["Intervals"],
 		"leetcodeId": 56,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Intervals"
 	},
 	{
 		"roadmapIndex": 217,
 		"slug": "non-overlapping-intervals",
 		"title": "Non Overlapping Intervals",
 		"difficulty": "MEDIUM",
-		"topics": ["Intervals"],
 		"leetcodeId": 435,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Intervals"
 	},
 	{
 		"roadmapIndex": 218,
 		"slug": "meeting-rooms-iii",
 		"title": "Meeting Rooms III",
 		"difficulty": "HARD",
-		"topics": ["Intervals"],
 		"leetcodeId": 2402,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Intervals"
 	},
 	{
 		"roadmapIndex": 219,
 		"slug": "minimum-interval-to-include-each-query",
 		"title": "Minimum Interval to Include Each Query",
 		"difficulty": "HARD",
-		"topics": ["Intervals"],
 		"leetcodeId": 1851,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Intervals"
 	},
 	{
 		"roadmapIndex": 220,
 		"slug": "excel-sheet-column-title",
 		"title": "Excel Sheet Column Title",
 		"difficulty": "EASY",
-		"topics": ["Math & Geometry"],
 		"leetcodeId": 168,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Math & Geometry"
 	},
 	{
 		"roadmapIndex": 221,
 		"slug": "greatest-common-divisor-of-strings",
 		"title": "Greatest Common Divisor of Strings",
 		"difficulty": "EASY",
-		"topics": ["Math & Geometry"],
 		"leetcodeId": 1071,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Math & Geometry"
 	},
 	{
 		"roadmapIndex": 222,
 		"slug": "insert-greatest-common-divisors-in-linked-list",
 		"title": "Insert Greatest Common Divisors in Linked List",
 		"difficulty": "MEDIUM",
-		"topics": ["Math & Geometry"],
 		"leetcodeId": 2807,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Math & Geometry"
 	},
 	{
 		"roadmapIndex": 223,
 		"slug": "transpose-matrix",
 		"title": "Transpose Matrix",
 		"difficulty": "EASY",
-		"topics": ["Math & Geometry"],
 		"leetcodeId": 867,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Math & Geometry"
 	},
 	{
 		"roadmapIndex": 224,
 		"slug": "rotate-image",
 		"title": "Rotate Image",
 		"difficulty": "MEDIUM",
-		"topics": ["Math & Geometry"],
 		"leetcodeId": 48,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Math & Geometry"
 	},
 	{
 		"roadmapIndex": 225,
 		"slug": "spiral-matrix",
 		"title": "Spiral Matrix",
 		"difficulty": "MEDIUM",
-		"topics": ["Math & Geometry"],
 		"leetcodeId": 54,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Math & Geometry"
 	},
 	{
 		"roadmapIndex": 226,
 		"slug": "set-matrix-zeroes",
 		"title": "Set Matrix Zeroes",
 		"difficulty": "MEDIUM",
-		"topics": ["Math & Geometry"],
 		"leetcodeId": 73,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Math & Geometry"
 	},
 	{
 		"roadmapIndex": 227,
 		"slug": "happy-number",
 		"title": "Happy Number",
 		"difficulty": "EASY",
-		"topics": ["Math & Geometry"],
 		"leetcodeId": 202,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Math & Geometry"
 	},
 	{
 		"roadmapIndex": 228,
 		"slug": "plus-one",
 		"title": "Plus One",
 		"difficulty": "EASY",
-		"topics": ["Math & Geometry"],
 		"leetcodeId": 66,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Math & Geometry"
 	},
 	{
 		"roadmapIndex": 229,
 		"slug": "roman-to-integer",
 		"title": "Roman to Integer",
 		"difficulty": "EASY",
-		"topics": ["Math & Geometry"],
 		"leetcodeId": 13,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Math & Geometry"
 	},
 	{
 		"roadmapIndex": 230,
 		"slug": "powx-n",
 		"title": "Pow(x, n)",
 		"difficulty": "MEDIUM",
-		"topics": ["Math & Geometry"],
 		"leetcodeId": 50,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Math & Geometry"
 	},
 	{
 		"roadmapIndex": 231,
 		"slug": "multiply-strings",
 		"title": "Multiply Strings",
 		"difficulty": "MEDIUM",
-		"topics": ["Math & Geometry"],
 		"leetcodeId": 43,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Math & Geometry"
 	},
 	{
 		"roadmapIndex": 232,
 		"slug": "detect-squares",
 		"title": "Detect Squares",
 		"difficulty": "MEDIUM",
-		"topics": ["Math & Geometry"],
 		"leetcodeId": 2013,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Math & Geometry"
 	},
 	{
 		"roadmapIndex": 233,
 		"slug": "single-number",
 		"title": "Single Number",
 		"difficulty": "EASY",
-		"topics": ["Bit Manipulation"],
 		"leetcodeId": 136,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Bit Manipulation"
 	},
 	{
 		"roadmapIndex": 234,
 		"slug": "number-of-1-bits",
 		"title": "Number of 1 Bits",
 		"difficulty": "EASY",
-		"topics": ["Bit Manipulation"],
 		"leetcodeId": 191,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Bit Manipulation"
 	},
 	{
 		"roadmapIndex": 235,
 		"slug": "counting-bits",
 		"title": "Counting Bits",
 		"difficulty": "EASY",
-		"topics": ["Bit Manipulation"],
 		"leetcodeId": 338,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Bit Manipulation"
 	},
 	{
 		"roadmapIndex": 236,
 		"slug": "add-binary",
 		"title": "Add Binary",
 		"difficulty": "EASY",
-		"topics": ["Bit Manipulation"],
 		"leetcodeId": 67,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Bit Manipulation"
 	},
 	{
 		"roadmapIndex": 237,
 		"slug": "reverse-bits",
 		"title": "Reverse Bits",
 		"difficulty": "EASY",
-		"topics": ["Bit Manipulation"],
 		"leetcodeId": 190,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Bit Manipulation"
 	},
 	{
 		"roadmapIndex": 238,
 		"slug": "missing-number",
 		"title": "Missing Number",
 		"difficulty": "EASY",
-		"topics": ["Bit Manipulation"],
 		"leetcodeId": 268,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Bit Manipulation"
 	},
 	{
 		"roadmapIndex": 239,
 		"slug": "sum-of-two-integers",
 		"title": "Sum of Two Integers",
 		"difficulty": "MEDIUM",
-		"topics": ["Bit Manipulation"],
 		"leetcodeId": 371,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Bit Manipulation"
 	},
 	{
 		"roadmapIndex": 240,
 		"slug": "reverse-integer",
 		"title": "Reverse Integer",
 		"difficulty": "MEDIUM",
-		"topics": ["Bit Manipulation"],
 		"leetcodeId": 7,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Bit Manipulation"
 	},
 	{
 		"roadmapIndex": 241,
 		"slug": "bitwise-and-of-numbers-range",
 		"title": "Bitwise AND of Numbers Range",
 		"difficulty": "MEDIUM",
-		"topics": ["Bit Manipulation"],
 		"leetcodeId": 201,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Bit Manipulation"
 	},
 	{
 		"roadmapIndex": 242,
 		"slug": "minimum-array-end",
 		"title": "Minimum Array End",
 		"difficulty": "MEDIUM",
-		"topics": ["Bit Manipulation"],
 		"leetcodeId": 3133,
 		"neetcode250": true,
 		"neetcode150": false,
-		"blind75": false
+		"blind75": false,
+		"topic": "Bit Manipulation"
 	},
 	{
 		"roadmapIndex": 243,
 		"slug": "encode-and-decode-strings",
 		"title": "Encode and Decode Strings",
 		"difficulty": "MEDIUM",
-		"topics": ["Arrays & Hashing"],
 		"leetcodeId": 271,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Arrays & Hashing"
 	},
 	{
 		"roadmapIndex": 244,
 		"slug": "walls-and-gates",
 		"title": "Walls and Gates",
 		"difficulty": "MEDIUM",
-		"topics": ["Graphs"],
 		"leetcodeId": 286,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Graphs"
 	},
 	{
 		"roadmapIndex": 245,
 		"slug": "graph-valid-tree",
 		"title": "Graph Valid Tree",
 		"difficulty": "MEDIUM",
-		"topics": ["Graphs"],
 		"leetcodeId": 261,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Graphs"
 	},
 	{
 		"roadmapIndex": 246,
 		"slug": "number-of-connected-components-in-an-undirected-graph",
 		"title": "Number of Connected Components in an Undirected Graph",
 		"difficulty": "MEDIUM",
-		"topics": ["Graphs"],
 		"leetcodeId": 323,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": true
+		"blind75": true,
+		"topic": "Graphs"
 	},
 	{
 		"roadmapIndex": 247,
 		"slug": "alien-dictionary",
 		"title": "Alien Dictionary",
 		"difficulty": "HARD",
-		"topics": ["Advanced Graphs"],
 		"leetcodeId": 269,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Advanced Graphs"
 	},
 	{
 		"roadmapIndex": 248,
 		"slug": "meeting-rooms",
 		"title": "Meeting Rooms",
 		"difficulty": "EASY",
-		"topics": ["Intervals"],
 		"leetcodeId": 252,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Intervals"
 	},
 	{
 		"roadmapIndex": 249,
 		"slug": "meeting-rooms-ii",
 		"title": "Meeting Rooms II",
 		"difficulty": "MEDIUM",
-		"topics": ["Intervals"],
 		"leetcodeId": 253,
 		"neetcode250": true,
 		"neetcode150": true,
-		"blind75": false
+		"blind75": false,
+		"topic": "Intervals"
 	}
 ]

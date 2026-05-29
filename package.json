@@ -21,10 +21,12 @@
 		"db:seed": "bun run prisma/seed.ts",
 		"db:seed-problems": "bun run prisma/seed-problems.ts",
 		"db:seed-groups": "bun run prisma/seed-groups.ts",
+		"db:seed-daily-problems": "bun run prisma/seed-daily-problems.ts",
 		"db:studio": "bunx db-studio@latest --env .env",
 		"prisma:generate": "prisma generate",
 		"test": "vitest run",
-		"format": "biome check --write --linter-enabled=false .",
+		"format": "biome check --write .",
+		"check": "bun run biome check .",
 		"knip": "knip",
 		"typecheck": "prisma generate && tsc --noEmit"
 	},
@@ -55,6 +57,8 @@
 		"@tanstack/react-router-devtools": "^1.166.9",
 		"@tanstack/react-router-ssr-query": "^1.166.9",
 		"@tanstack/react-start": "^1.166.15",
+		"@tanstack/react-table": "^8.21.3",
+		"@tanstack/react-virtual": "^3.13.26",
 		"@tanstack/router-plugin": "^1.166.13",
 		"better-auth": "^1.6.11",
 		"class-variance-authority": "^0.7.1",
@@ -99,5 +103,9 @@
 		"vite": "^7.3.1",
 		"vitest": "^3.2.4",
 		"web-vitals": "^5.1.0"
+	},
+	"engines": {
+		"node": ">=22.0.0",
+		"bun": ">=1.2.2"
 	}
 }

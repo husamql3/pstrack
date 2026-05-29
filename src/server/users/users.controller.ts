@@ -6,7 +6,7 @@ import { usersModel } from "./users.model"
 const LEETCODE_GRAPHQL = "https://leetcode.com/graphql"
 const CODEFORCES_API = "https://codeforces.com/api/user.info"
 
-export const usersController = new Elysia({ prefix: "/users" })
+export const usersController = new Elysia({ prefix: "/users", tags: ["Users"] })
 	.use(usersModel)
 	.post(
 		"/check-username",

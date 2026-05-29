@@ -83,7 +83,7 @@ export function AuthPage({ redirect }: { redirect?: string }) {
 					<img
 						src="/logo-dark.png"
 						alt="pstrack"
-						className="h-5 select-none hidden dark:block"
+						className="hidden h-5 select-none dark:block"
 					/>
 					<img
 						src="/logo-light.png"

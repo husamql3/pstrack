@@ -80,7 +80,7 @@ export function AppSidebar() {
 						size="icon-sm"
 						variant="ghost"
 					>
-						<a aria-label="Settings" href="#">
+						<a aria-label="Settings" href="/settings">
 							<IconSettings />
 						</a>
 					</Button>

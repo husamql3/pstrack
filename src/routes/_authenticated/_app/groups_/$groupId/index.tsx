@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router"
 
-import { GroupOverview } from "@/features/groups/components/group-overview"
+import { GroupProblemsTable } from "@/features/groups/components/group-problems-table"
 
 export const Route = createFileRoute("/_authenticated/_app/groups_/$groupId/")({
-	component: GroupOverview,
+	component: GroupProblemsTable,
 })

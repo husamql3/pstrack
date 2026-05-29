@@ -13,7 +13,7 @@ export const ProblemRow = ({ problem }: { problem: RoadmapProblemResponse }) => 
 
 	return (
 		<li>
-			<div className="hover:bg-muted/40 flex flex-wrap items-center gap-3 px-4 py-2.5 sm:flex-nowrap sm:gap-4">
+			<div className="flex flex-wrap items-center gap-3 px-4 py-2.5 hover:bg-muted/40 sm:flex-nowrap sm:gap-4">
 				<Checkbox
 					aria-label={
 						isSolved ? `Solved: ${problem.title}` : `Not solved: ${problem.title}`
@@ -26,10 +26,10 @@ export const ProblemRow = ({ problem }: { problem: RoadmapProblemResponse }) => 
 					)}
 					disabled
 				/>
-				<span className="text-muted-foreground w-19 shrink-0 tabular-nums text-xs tracking-tight sm:text-sm">
+				<span className="w-19 shrink-0 text-muted-foreground text-xs tabular-nums tracking-tight sm:text-sm">
 					{idLabel}
 				</span>
-				<span className="max-w-none min-w-32 flex-1 truncate text-sm font-medium sm:min-w-0">
+				<span className="min-w-32 max-w-none flex-1 truncate font-medium text-sm sm:min-w-0">
 					{problem.title}
 				</span>
 				<div className="flex shrink-0 items-center gap-2 sm:ml-auto">
@@ -37,7 +37,7 @@ export const ProblemRow = ({ problem }: { problem: RoadmapProblemResponse }) => 
 						{DIFFICULTY_LABELS[problem.difficulty]}
 					</Badge>
 					<a
-						className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1 text-xs font-medium underline-offset-4 hover:underline"
+						className="inline-flex items-center gap-1 font-medium text-muted-foreground text-xs underline-offset-4 hover:text-foreground hover:underline"
 						href={`https://leetcode.com/problems/${problem.slug}/`}
 						rel="noreferrer"
 						target="_blank"

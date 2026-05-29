@@ -20,6 +20,7 @@ import { Route as AuthenticatedAppProblemsRouteImport } from './routes/_authenti
 import { Route as AuthenticatedAppLeaderboardRouteImport } from './routes/_authenticated/_app/leaderboard'
 import { Route as AuthenticatedAppGroupsRouteImport } from './routes/_authenticated/_app/groups'
 import { Route as AuthenticatedAppDashboardRouteImport } from './routes/_authenticated/_app/dashboard'
+import { Route as AuthenticatedAppSettingsBillingRouteImport } from './routes/_authenticated/_app/settings_/billing'
 import { Route as AuthenticatedAppGroupsGroupIdRouteImport } from './routes/_authenticated/_app/groups_/$groupId'
 import { Route as AuthenticatedAppGroupsGroupIdIndexRouteImport } from './routes/_authenticated/_app/groups_/$groupId/index'
 import { Route as AuthenticatedAppGroupsJoinInviteCodeRouteImport } from './routes/_authenticated/_app/groups_/join.$inviteCode'
@@ -83,6 +84,12 @@ const AuthenticatedAppDashboardRoute =
     path: '/dashboard',
     getParentRoute: () => AuthenticatedAppRoute,
   } as any)
+const AuthenticatedAppSettingsBillingRoute =
+  AuthenticatedAppSettingsBillingRouteImport.update({
+    id: '/settings_/billing',
+    path: '/settings/billing',
+    getParentRoute: () => AuthenticatedAppRoute,
+  } as any)
 const AuthenticatedAppGroupsGroupIdRoute =
   AuthenticatedAppGroupsGroupIdRouteImport.update({
     id: '/groups_/$groupId',
@@ -130,6 +137,7 @@ export interface FileRoutesByFullPath {
   '/problems': typeof AuthenticatedAppProblemsRoute
   '/onboarding': typeof AuthenticatedOnboardingOnboardingRoute
   '/groups/$groupId': typeof AuthenticatedAppGroupsGroupIdRouteWithChildren
+  '/settings/billing': typeof AuthenticatedAppSettingsBillingRoute
   '/groups/$groupId/join-requests': typeof AuthenticatedAppGroupsGroupIdJoinRequestsRoute
   '/groups/$groupId/members': typeof AuthenticatedAppGroupsGroupIdMembersRoute
   '/groups/$groupId/settings': typeof AuthenticatedAppGroupsGroupIdSettingsRoute
@@ -145,6 +153,7 @@ export interface FileRoutesByTo {
   '/leaderboard': typeof AuthenticatedAppLeaderboardRoute
   '/problems': typeof AuthenticatedAppProblemsRoute
   '/onboarding': typeof AuthenticatedOnboardingOnboardingRoute
+  '/settings/billing': typeof AuthenticatedAppSettingsBillingRoute
   '/groups/$groupId/join-requests': typeof AuthenticatedAppGroupsGroupIdJoinRequestsRoute
   '/groups/$groupId/members': typeof AuthenticatedAppGroupsGroupIdMembersRoute
   '/groups/$groupId/settings': typeof AuthenticatedAppGroupsGroupIdSettingsRoute
@@ -165,6 +174,7 @@ export interface FileRoutesById {
   '/_authenticated/_app/problems': typeof AuthenticatedAppProblemsRoute
   '/_authenticated/_onboarding/onboarding': typeof AuthenticatedOnboardingOnboardingRoute
   '/_authenticated/_app/groups_/$groupId': typeof AuthenticatedAppGroupsGroupIdRouteWithChildren
+  '/_authenticated/_app/settings_/billing': typeof AuthenticatedAppSettingsBillingRoute
   '/_authenticated/_app/groups_/$groupId/join-requests': typeof AuthenticatedAppGroupsGroupIdJoinRequestsRoute
   '/_authenticated/_app/groups_/$groupId/members': typeof AuthenticatedAppGroupsGroupIdMembersRoute
   '/_authenticated/_app/groups_/$groupId/settings': typeof AuthenticatedAppGroupsGroupIdSettingsRoute
@@ -183,6 +193,7 @@ export interface FileRouteTypes {
     | '/problems'
     | '/onboarding'
     | '/groups/$groupId'
+    | '/settings/billing'
     | '/groups/$groupId/join-requests'
     | '/groups/$groupId/members'
     | '/groups/$groupId/settings'
@@ -198,6 +209,7 @@ export interface FileRouteTypes {
     | '/leaderboard'
     | '/problems'
     | '/onboarding'
+    | '/settings/billing'
     | '/groups/$groupId/join-requests'
     | '/groups/$groupId/members'
     | '/groups/$groupId/settings'
@@ -217,6 +229,7 @@ export interface FileRouteTypes {
     | '/_authenticated/_app/problems'
     | '/_authenticated/_onboarding/onboarding'
     | '/_authenticated/_app/groups_/$groupId'
+    | '/_authenticated/_app/settings_/billing'
     | '/_authenticated/_app/groups_/$groupId/join-requests'
     | '/_authenticated/_app/groups_/$groupId/members'
     | '/_authenticated/_app/groups_/$groupId/settings'
@@ -310,6 +323,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppDashboardRouteImport
       parentRoute: typeof AuthenticatedAppRoute
     }
+    '/_authenticated/_app/settings_/billing': {
+      id: '/_authenticated/_app/settings_/billing'
+      path: '/settings/billing'
+      fullPath: '/settings/billing'
+      preLoaderRoute: typeof AuthenticatedAppSettingsBillingRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
     '/_authenticated/_app/groups_/$groupId': {
       id: '/_authenticated/_app/groups_/$groupId'
       path: '/groups/$groupId'
@@ -385,6 +405,7 @@ interface AuthenticatedAppRouteChildren {
   AuthenticatedAppLeaderboardRoute: typeof AuthenticatedAppLeaderboardRoute
   AuthenticatedAppProblemsRoute: typeof AuthenticatedAppProblemsRoute
   AuthenticatedAppGroupsGroupIdRoute: typeof AuthenticatedAppGroupsGroupIdRouteWithChildren
+  AuthenticatedAppSettingsBillingRoute: typeof AuthenticatedAppSettingsBillingRoute
   AuthenticatedAppGroupsJoinInviteCodeRoute: typeof AuthenticatedAppGroupsJoinInviteCodeRoute
 }
 
@@ -395,6 +416,7 @@ const AuthenticatedAppRouteChildren: AuthenticatedAppRouteChildren = {
   AuthenticatedAppProblemsRoute: AuthenticatedAppProblemsRoute,
   AuthenticatedAppGroupsGroupIdRoute:
     AuthenticatedAppGroupsGroupIdRouteWithChildren,
+  AuthenticatedAppSettingsBillingRoute: AuthenticatedAppSettingsBillingRoute,
   AuthenticatedAppGroupsJoinInviteCodeRoute:
     AuthenticatedAppGroupsJoinInviteCodeRoute,
 }
