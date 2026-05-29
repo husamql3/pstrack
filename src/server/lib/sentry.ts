@@ -10,6 +10,14 @@ export function initServerSentry() {
 		return
 	}
 
+	// Prevent crash if running in Node.js (e.g. Vite dev server)
+	if (typeof Bun === "undefined") {
+		console.warn(
+			"Sentry: @sentry/bun initialized in non-Bun environment. Skipping server-side Sentry initialization."
+		)
+		return
+	}
+
 	isInitialized = true
 
 	Sentry.init({

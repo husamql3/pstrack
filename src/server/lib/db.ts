@@ -12,7 +12,7 @@ function createPrismaClient() {
 	const neonConfig: PoolConfig = { connectionString: env.DATABASE_URL }
 	const adapter = new PrismaNeon(neonConfig)
 
-	return new PrismaClient({ adapter })
+	return new PrismaClient({ adapter, log: ["error"] })
 }
 
 export const db = globalForPrisma.prisma ?? createPrismaClient()

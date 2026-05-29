@@ -1,48 +1,23 @@
 import { Elysia, status } from "elysia"
 
-import { db } from "@/server/lib/db"
-import { requireSessionUser } from "@/server/lib/session"
+import { isAuthenticated, isPlatformAdmin } from "@/server/lib/session"
 import { problemsDao } from "./problems.dao"
 import { problemsModel } from "./problems.model"
 
-const requirePlatformAdmin = async (request: Request) => {
-	const { user, response } = await requireSessionUser(request)
-	if (!user) return { user: null, response }
-
-	const dbUser = await db.user.findUnique({
-		where: { id: user.id },
-		select: { role: true },
-	})
-
-	if (dbUser?.role !== "admin") {
-		return { user: null, response: status(403, { error: "Admin access required" }) }
-	}
-
-	return { user, response: null }
-}
-
 export const problemsController = new Elysia({ tags: ["Problems"] })
 	.use(problemsModel)
-	.get("/problems/today", async ({ request }) => {
-		const { user, response } = await requireSessionUser(request)
-		if (!user) return response
-
+	.use(isAuthenticated)
+	.get("/problems/today", async ({ user }) => {
 		return problemsDao.getTodayForUser(user.id)
 	})
 	.get(
 		"/problems/roadmap",
-		async ({ request, query }) => {
-			const { user, response } = await requireSessionUser(request)
-			if (!user) return response
-
+		async ({ user, query }) => {
 			return problemsDao.getRoadmapForUser(user.id, query.roadmap ?? "NC250")
 		},
 		{ query: "problems.roadmapQuery" }
 	)
-	.post("/problems/today/solve", async ({ request }) => {
-		const { user, response } = await requireSessionUser(request)
-		if (!user) return response
-
+	.post("/problems/today/solve", async ({ user }) => {
 		const result = await problemsDao.markTodaySolved(user.id)
 		if (result.error === "NO_GROUP") return status(409, { error: "Join a group first." })
 		if (result.error === "NO_PROBLEMS") {
@@ -53,10 +28,7 @@ export const problemsController = new Elysia({ tags: ["Problems"] })
 
 		return result.today
 	})
-	.post("/problems/today/pause", async ({ request }) => {
-		const { user, response } = await requireSessionUser(request)
-		if (!user) return response
-
+	.post("/problems/today/pause", async ({ user }) => {
 		const result = await problemsDao.pauseToday(user.id)
 		if (result.error === "NO_GROUP") return status(409, { error: "Join a group first." })
 		if (result.error === "NO_PROBLEMS") {
@@ -71,13 +43,12 @@ export const problemsController = new Elysia({ tags: ["Problems"] })
 
 		return result.today
 	})
-	.post(
-		"/admin/problems/seed",
-		async ({ request }) => {
-			const { user, response } = await requirePlatformAdmin(request)
-			if (!user) return response
-
-			return problemsDao.seedStarterProblems()
-		},
-		{ detail: { tags: ["Admin"] } }
+	.group("/admin", (app) =>
+		app.use(isPlatformAdmin).post(
+			"/problems/seed",
+			async () => {
+				return problemsDao.seedStarterProblems()
+			},
+			{ detail: { tags: ["Admin"] } }
+		)
 	)
