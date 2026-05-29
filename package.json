@@ -9,7 +9,7 @@
 		"dev:email": "bunx react-email dev --dir src/emails --port 3001",
 		"build": "prisma generate && vite build",
 		"preview": "vite preview",
-		"prepare": "lefthook install",
+		"prepare": "test -d .git && lefthook install || true",
 		"postinstall": "prisma generate",
 		"db:generate": "prisma generate",
 		"db:format": "prisma format",
@@ -28,7 +28,8 @@
 		"format": "biome check --write .",
 		"check": "bun run biome check .",
 		"knip": "knip",
-		"typecheck": "prisma generate && tsc --noEmit"
+		"typecheck": "prisma generate && tsc --noEmit",
+		"env:sync": "bun run scripts/sync-env.ts"
 	},
 	"portless": {
 		"name": "pstrack",
@@ -60,6 +61,7 @@
 		"@tanstack/react-table": "^8.21.3",
 		"@tanstack/react-virtual": "^3.13.26",
 		"@tanstack/router-plugin": "^1.166.13",
+		"@trigger.dev/sdk": "4.4.6",
 		"better-auth": "^1.6.11",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
@@ -89,6 +91,7 @@
 		"@tanstack/eslint-plugin-query": "^5.100.14",
 		"@testing-library/dom": "^10.4.1",
 		"@testing-library/react": "^16.3.2",
+		"@trigger.dev/build": "4.4.6",
 		"@types/node": "^22.19.15",
 		"@types/react": "^19.2.14",
 		"@types/react-dom": "^19.2.3",

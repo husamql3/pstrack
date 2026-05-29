@@ -164,7 +164,7 @@ model UserSolve {
   id             String      @id @default(cuid())
   userId         String
   dailyProblemId String
-  status         SolveStatus @default(PENDING_VERIFICATION)
+  status         SolveStatus @default(MISSED)
   pointsEarned   Int         @default(0)
   isFirstInGroup Boolean     @default(false)
   verifiedAt     DateTime?
@@ -180,11 +180,9 @@ model UserSolve {
 }
 
 enum SolveStatus {
-  PENDING_VERIFICATION
   SOLVED
   PAUSED
   MISSED
-  VERIFICATION_FAILED
 }
 
 model PointsHistory {

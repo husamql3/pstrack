@@ -122,7 +122,7 @@ export function AuthPage({ redirect }: { redirect?: string }) {
 							{isSubmitting ? "Sending…" : "Continue With Email"}
 						</Button>
 						{sent && (
-							<p className="text-center text-primary-foreground text-sm">
+							<p className="text-center text-primary text-sm">
 								Check your inbox for a magic link.
 							</p>
 						)}

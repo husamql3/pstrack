@@ -1,9 +1,9 @@
 {
-	"projectName": "start-app",
+	"projectName": "pstrack",
 	"mode": "file-router",
 	"typescript": true,
 	"tailwind": true,
-	"packageManager": "pnpm",
+	"packageManager": "bun",
 	"addOnOptions": {},
 	"git": true,
 	"version": 1,

@@ -34,14 +34,12 @@ const mulberry32 = (seed: number) => {
 const pickStatus = (rand: () => number, isToday: boolean): SolveStatus | null => {
 	const r = rand()
 	if (isToday) {
-		if (r < 0.55) return null
-		if (r < 0.8) return SolveStatus.PENDING_VERIFICATION
+		if (r < 0.6) return null
 		return SolveStatus.SOLVED
 	}
 	if (r < 0.62) return SolveStatus.SOLVED
 	if (r < 0.74) return SolveStatus.MISSED
-	if (r < 0.82) return SolveStatus.PAUSED
-	if (r < 0.88) return SolveStatus.VERIFICATION_FAILED
+	if (r < 0.88) return SolveStatus.PAUSED
 	return null
 }
 

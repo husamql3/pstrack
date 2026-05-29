@@ -31,7 +31,7 @@ export const env = createEnv({
 
 		// email
 		RESEND_API_KEY: z.string().min(1),
-		EMAIL_FROM: z.string().default("PSTrack <info@pstrack.app>"),
+		EMAIL_FROM: z.string().default("PStrack <info@pstrack.app>"),
 
 		// payments
 		POLAR_ACCESS_TOKEN: z.string().min(1),
@@ -48,5 +48,5 @@ export const env = createEnv({
 	clientPrefix: "VITE_",
 	// Load environment variables from .env file if we are on the client
 	runtimeEnv: typeof window === "undefined" ? process.env : import.meta.env,
-	skipValidation: import.meta.env.PROD,
+	skipValidation: import.meta.env?.PROD,
 })

@@ -3,6 +3,7 @@ import { betterAuth } from "better-auth"
 import { prismaAdapter } from "better-auth/adapters/prisma"
 import { admin, magicLink } from "better-auth/plugins"
 
+import MagicLinkEmail from "@/emails/magic-link"
 import WelcomeEmail from "@/emails/welcome"
 import { env } from "@/env"
 import { db } from "@/server/lib/db"
@@ -65,19 +66,19 @@ export const auth = betterAuth({
 	},
 	plugins: [
 		magicLink({
-			sendMagicLink: async ({ url }) => {
+			sendMagicLink: async ({ email, url }) => {
 				// Rewrite the verify URL to /api/magic-link — a plain HTML endpoint that
 				// uses JS to redirect to the actual verify path. Email pre-fetchers (e.g.
 				// Gmail) don't execute JS so the one-time token isn't consumed early.
 				const redirectUrl = new URL(url)
 				redirectUrl.pathname = "/api/v4/magic-link"
-				console.log("redirectUrl", redirectUrl.toString())
-				// await resend.emails.send({
-				// 	from: env.EMAIL_FROM,
-				// 	to: email,
-				// 	subject: "Sign in to PSTrack",
-				// 	react: MagicLinkEmail({ url: redirectUrl.toString() }),
-				// })
+				console.info("redirectUrl", redirectUrl.toString())
+				await resend.emails.send({
+					from: env.EMAIL_FROM,
+					to: email,
+					subject: "Sign in to PSTrack",
+					react: MagicLinkEmail({ url: redirectUrl.toString() }),
+				})
 			},
 		}),
 		admin(),

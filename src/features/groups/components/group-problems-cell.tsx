@@ -1,13 +1,7 @@
-import {
-	IconAlertTriangle,
-	IconCheck,
-	IconCrownFilled,
-	IconHourglass,
-	IconPlayerPause,
-	IconX,
-} from "@tabler/icons-react"
+import { IconCheck, IconCrownFilled, IconPlayerPause, IconX } from "@tabler/icons-react"
 import { sileo } from "sileo"
 
+import { Checkbox } from "@/components/ui/checkbox"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { SolveStatus } from "@/generated/prisma/enums"
 import { cn } from "@/lib/utils"
@@ -15,10 +9,8 @@ import type { GroupProblemsCellSolve } from "@/server/groups/groups.type"
 
 const statusCopy: Record<SolveStatus, string> = {
 	SOLVED: "Solved",
-	PENDING_VERIFICATION: "Pending verification",
 	PAUSED: "Paused",
 	MISSED: "Missed",
-	VERIFICATION_FAILED: "Verification failed",
 }
 
 const errorDescription = (err: unknown) =>
@@ -39,14 +31,10 @@ const StatusIcon = ({ status }: { status: SolveStatus }) => {
 	switch (status) {
 		case SolveStatus.SOLVED:
 			return <IconCheck className="size-4 text-emerald-500" />
-		case SolveStatus.PENDING_VERIFICATION:
-			return <IconHourglass className="size-4 animate-pulse text-amber-500" />
 		case SolveStatus.PAUSED:
 			return <IconPlayerPause className="size-4 text-muted-foreground" />
 		case SolveStatus.MISSED:
 			return <IconX className="size-4 text-red-400/70" />
-		case SolveStatus.VERIFICATION_FAILED:
-			return <IconAlertTriangle className="size-4 text-amber-600" />
 	}
 }
 
@@ -62,19 +50,15 @@ export const GroupProblemsCell = ({
 }: Props) => {
 	const status = solve?.status ?? null
 	const isInteractive =
-		isTodayRow &&
-		isOwnColumn &&
-		!isPreJoin &&
-		(status === null || status === SolveStatus.VERIFICATION_FAILED) &&
-		!isSolvePending
+		isTodayRow && isOwnColumn && !isPreJoin && status === null && !isSolvePending
 
 	const handleClick = async () => {
 		if (!isInteractive) return
 		await sileo.promise(onSolve(), {
-			loading: { title: "Submitting for verification..." },
-			success: { title: "Marked as pending verification" },
+			loading: { title: "Validating on LeetCode..." },
+			success: { title: "Solved! +10 pts" },
 			error: (err: unknown) => ({
-				title: "Could not submit",
+				title: "Could not verify",
 				description: errorDescription(err),
 			}),
 		})
@@ -98,15 +82,10 @@ export const GroupProblemsCell = ({
 		<div className={baseClasses}>
 			{status === null ? (
 				isInteractive ? (
-					<button
-						type="button"
-						onClick={handleClick}
+					<Checkbox
+						checked={false}
 						disabled={isSolvePending}
-						className={cn(
-							"size-4 rounded-[3px] border border-muted-foreground/40 transition-colors",
-							"hover:border-primary hover:bg-primary/10",
-							"disabled:cursor-not-allowed disabled:opacity-50"
-						)}
+						onCheckedChange={handleClick}
 						aria-label="Mark today as solved"
 					/>
 				) : null

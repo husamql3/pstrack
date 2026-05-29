@@ -43,13 +43,17 @@ export const problemsController = new Elysia({ tags: ["Problems"] })
 		const { user, response } = await requireSessionUser(request)
 		if (!user) return response
 
-		const result = await problemsDao.markTodaySolved(user.id)
+		const result = await problemsDao.verifyAndMarkSolved(user.id)
 		if (result.error === "NO_GROUP") return status(409, { error: "Join a group first." })
-		if (result.error === "NO_PROBLEMS") {
+		if (result.error === "NO_PROBLEMS")
 			return status(409, { error: "Seed problems before solving." })
-		}
 		if (result.error === "PAUSED")
 			return status(409, { error: "Today is already paused." })
+		if (result.error === "NOT_VERIFIED") {
+			return status(409, {
+				error: "No accepted submission found on LeetCode for today's problem.",
+			})
+		}
 
 		return result.today
 	})

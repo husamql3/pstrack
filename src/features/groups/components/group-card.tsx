@@ -87,31 +87,37 @@ const MembershipBadge = ({
 }) => {
 	if (membershipStatus === "JOINED") {
 		return (
-			<span className="inline-flex shrink-0 items-center gap-1 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2 py-0.5 font-medium text-emerald-600 text-xs dark:border-emerald-500/30 dark:bg-emerald-950/40 dark:text-emerald-400">
-				<IconCheck className="size-2.5" />
+			<Badge
+				variant="outline"
+				className="border-emerald-500/40 bg-emerald-500/10 text-emerald-600 dark:border-emerald-500/30 dark:bg-emerald-950/40 dark:text-emerald-400"
+			>
+				<IconCheck />
 				Joined
-			</span>
+			</Badge>
 		)
 	}
 	if (membershipStatus === "REQUESTED") {
 		return (
-			<span className="inline-flex shrink-0 items-center rounded-full border border-border bg-muted px-2 py-0.5 font-medium text-muted-foreground text-xs">
+			<Badge variant="outline" className="bg-muted text-muted-foreground">
 				Requested
-			</span>
+			</Badge>
 		)
 	}
 	if (type === GroupType.PRIVATE) {
 		return (
-			<span className="inline-flex shrink-0 items-center gap-1 rounded-full border border-amber-500/40 bg-amber-500/10 px-2 py-0.5 font-medium text-amber-600 text-xs dark:border-amber-500/30 dark:bg-amber-950/40 dark:text-amber-400">
-				<IconLock className="size-2.5" />
+			<Badge
+				variant="outline"
+				className="border-amber-500/40 bg-amber-500/10 text-amber-600 dark:border-amber-500/30 dark:bg-amber-950/40 dark:text-amber-400"
+			>
+				<IconLock />
 				Private
-			</span>
+			</Badge>
 		)
 	}
 	return (
-		<span className="inline-flex shrink-0 items-center rounded-full border border-border px-2 py-0.5 font-medium text-muted-foreground text-xs">
+		<Badge variant="outline" className="text-muted-foreground">
 			Public
-		</span>
+		</Badge>
 	)
 }
 
@@ -184,7 +190,10 @@ export const GroupCard = ({
 		// wrapper to paint above it and own its own click target.
 		<div
 			className={cn(
-				"relative flex flex-col gap-3 rounded-xl border border-border bg-popover p-4 transition-colors",
+				"relative flex flex-col gap-3 rounded-xl border bg-popover p-4 transition-colors",
+				group.membershipStatus === "JOINED"
+					? "border-emerald-500/40 dark:border-emerald-500/30"
+					: "border-border",
 				isLinked && "hover:border-foreground/20"
 			)}
 		>

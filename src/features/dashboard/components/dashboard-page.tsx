@@ -24,11 +24,9 @@ const difficultyTone = {
 } as const
 
 const statusCopy = {
-	PENDING_VERIFICATION: "Pending verification",
 	SOLVED: "Solved",
 	PAUSED: "Paused",
 	MISSED: "Missed",
-	VERIFICATION_FAILED: "Verification failed",
 } as const
 
 const errorDescription = (err: unknown) =>
@@ -96,15 +94,14 @@ export const DashboardPage = () => {
 		solveMutation.isPending ||
 		pauseMutation.isPending ||
 		solveStatus === "SOLVED" ||
-		solveStatus === "PAUSED" ||
-		solveStatus === "PENDING_VERIFICATION"
+		solveStatus === "PAUSED"
 
 	const markSolved = async () => {
 		await sileo.promise(solveMutation.mutateAsync(), {
-			loading: { title: "Submitting for verification..." },
-			success: { title: "Marked as pending verification" },
+			loading: { title: "Validating on LeetCode..." },
+			success: { title: "Solved! +10 pts" },
 			error: (err: unknown) => ({
-				title: "Could not submit",
+				title: "Could not verify",
 				description: errorDescription(err),
 			}),
 		})
@@ -182,15 +179,11 @@ export const DashboardPage = () => {
 				</div>
 			</section>
 
-			<section className="grid gap-3 md:grid-cols-3">
+			<section className="grid gap-3 md:grid-cols-2">
 				<MetricCard label="Current streak" value="0 days" />
 				<MetricCard
 					label="Today's status"
 					value={solveStatus ? statusCopy[solveStatus] : "Open"}
-				/>
-				<MetricCard
-					label="Verification"
-					value={solveStatus === "PENDING_VERIFICATION" ? "Queued" : "Idle"}
 				/>
 			</section>
 		</div>

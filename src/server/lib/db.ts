@@ -4,7 +4,7 @@ import { PrismaNeon } from "@prisma/adapter-neon"
 import { env } from "@/env"
 import { PrismaClient } from "@/generated/prisma/client"
 
-const globalForPrisma = globalThis as unknown as {
+const globalForPrisma = globalThis as {
 	prisma?: PrismaClient
 }
 

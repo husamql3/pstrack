@@ -6,7 +6,6 @@ import {
 } from "@tanstack/react-query"
 import { useMemo } from "react"
 
-import { SolveStatus } from "@/generated/prisma/enums"
 import { api } from "@/lib/api"
 import type {
 	GroupProblemsMember,
@@ -14,8 +13,6 @@ import type {
 	GroupProblemsResponse,
 	GroupProblemsRow,
 } from "@/server/groups/groups.type"
-
-const POLL_INTERVAL_MS = 10_000
 
 export const groupProblemsQueryKey = (groupId: string, range: GroupProblemsRange) =>
 	["groups", groupId, "problems", range] as const
@@ -31,16 +28,6 @@ const fetchPage = async (
 	if (error) throw new Error("Failed to load group problems")
 	return data as GroupProblemsResponse
 }
-
-const hasPendingFixed = (data: GroupProblemsResponse | undefined) =>
-	!!data?.rows.some((r) =>
-		Object.values(r.solvesByUserId).some(
-			(s) => s.status === SolveStatus.PENDING_VERIFICATION
-		)
-	)
-
-const hasPendingPaged = (pages: GroupProblemsResponse[] | undefined) =>
-	!!pages?.some(hasPendingFixed)
 
 type UnifiedGroupProblems = {
 	members: GroupProblemsMember[]
@@ -61,7 +48,6 @@ export const useGroupProblems = (
 		queryFn: () => fetchPage(groupId, range),
 		enabled: range !== "all",
 		staleTime: 1000 * 30,
-		refetchInterval: (q) => (hasPendingFixed(q.state.data) ? POLL_INTERVAL_MS : false),
 	})
 
 	const infinite = useInfiniteQuery<
@@ -77,8 +63,6 @@ export const useGroupProblems = (
 		getNextPageParam: (last) => last.nextCursor ?? undefined,
 		enabled: range === "all",
 		staleTime: 1000 * 30,
-		refetchInterval: (q) =>
-			hasPendingPaged(q.state.data?.pages) ? POLL_INTERVAL_MS : false,
 	})
 
 	return useMemo(() => {
@@ -120,7 +104,7 @@ export const useMarkTodaySolvedFromTable = (
 	return useMutation({
 		mutationFn: async () => {
 			const { data, error } = await api.v4.problems.today.solve.post()
-			if (error) throw new Error("Could not submit for verification")
+			if (error) throw new Error(error.value?.error ?? "Could not verify solve")
 			return data
 		},
 		onSuccess: () => {

@@ -72,9 +72,7 @@ export const groupsDao = {
 							select: {
 								solves: {
 									where: {
-										status: {
-											in: [SolveStatus.SOLVED, SolveStatus.PENDING_VERIFICATION],
-										},
+										status: SolveStatus.SOLVED,
 									},
 								},
 							},

@@ -1,5 +1,5 @@
 import type { Prisma } from "@/generated/prisma/client"
-import { SolveStatus } from "@/generated/prisma/enums"
+import { PointReason, SolveStatus } from "@/generated/prisma/enums"
 import { db } from "@/server/lib/db"
 import { NEETCODE_250_PROBLEMS } from "./problems.seed"
 import {
@@ -10,6 +10,41 @@ import {
 	type RoadmapProblemResponse,
 	type TodayProblemResponse,
 } from "./problems.type"
+
+const LEETCODE_GRAPHQL = "https://leetcode.com/graphql"
+
+const verifyLeetCodeSubmission = async (
+	handle: string,
+	problemSlug: string,
+	assignedDate: Date
+): Promise<boolean> => {
+	try {
+		const res = await fetch(LEETCODE_GRAPHQL, {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({
+				query: `query recentAcSubmissions($username: String!, $limit: Int!) {
+          recentAcSubmissionList(username: $username, limit: $limit) {
+            titleSlug
+            timestamp
+          }
+        }`,
+				variables: { username: handle, limit: 20 },
+			}),
+		})
+		const json = (await res.json()) as {
+			data?: { recentAcSubmissionList?: Array<{ titleSlug: string; timestamp: string }> }
+		}
+		const submissions = json.data?.recentAcSubmissionList ?? []
+		const assignedTimestampSeconds = assignedDate.getTime() / 1000
+		return submissions.some(
+			(s) =>
+				s.titleSlug === problemSlug && Number(s.timestamp) >= assignedTimestampSeconds
+		)
+	} catch {
+		return false
+	}
+}
 
 const LAUNCH_DATE_UTC = Date.UTC(2026, 0, 1)
 
@@ -110,6 +145,26 @@ const getUserPauseSummary = async (userId: string) => {
 }
 
 export const problemsDao = {
+	assignDailyProblems: async (date: Date) => {
+		const groups = await db.group.findMany({
+			where: { isActive: true },
+			select: { id: true, roadmap: true },
+		})
+
+		let assigned = 0
+		let skipped = 0
+
+		await Promise.all(
+			groups.map(async (group) => {
+				const result = await ensureDailyProblem(group.id, date, group.roadmap)
+				if (result) assigned++
+				else skipped++
+			})
+		)
+
+		return { total: groups.length, assigned, skipped }
+	},
+
 	seedStarterProblems: async () => {
 		const BATCH = 50
 		let seeded = 0
@@ -190,36 +245,98 @@ export const problemsDao = {
 		}
 	},
 
-	markTodaySolved: async (userId: string): Promise<MarkSolvedResult> => {
+	verifyAndMarkSolved: async (userId: string): Promise<MarkSolvedResult> => {
 		const today = await problemsDao.getTodayForUser(userId)
 		if (today.state !== "READY") return { error: today.state, today }
 
 		const existing = today.solve
-		if (existing?.status === SolveStatus.PAUSED) {
-			return { error: "PAUSED", today }
-		}
-		if (
-			existing?.status === SolveStatus.SOLVED ||
-			existing?.status === SolveStatus.PENDING_VERIFICATION
-		) {
-			return { error: null, today }
-		}
+		if (existing?.status === SolveStatus.PAUSED) return { error: "PAUSED", today }
+		if (existing?.status === SolveStatus.SOLVED) return { error: null, today }
 
-		await db.userSolve.upsert({
-			where: {
-				userId_dailyProblemId: {
+		const { id: dailyProblemId, assignedDate, problem } = today.dailyProblem
+
+		const user = await db.user.findUniqueOrThrow({
+			where: { id: userId },
+			select: { leetcodeHandle: true, currentStreak: true, longestStreak: true },
+		})
+
+		if (!user.leetcodeHandle) return { error: "NOT_VERIFIED", today }
+
+		const verified = await verifyLeetCodeSubmission(
+			user.leetcodeHandle,
+			problem.slug,
+			assignedDate
+		)
+		if (!verified) return { error: "NOT_VERIFIED", today }
+
+		const existingSolvedCount = await db.userSolve.count({
+			where: { dailyProblemId, status: SolveStatus.SOLVED },
+		})
+		const isFirstInGroup = existingSolvedCount === 0
+
+		const BASE_POINTS = 10
+		const FIRST_BONUS = 5
+		const pointsEarned = BASE_POINTS + (isFirstInGroup ? FIRST_BONUS : 0)
+		const newStreak = user.currentStreak + 1
+		const newLongest = Math.max(newStreak, user.longestStreak)
+		const now = new Date()
+
+		await db.$transaction(async (tx) => {
+			const upserted = await tx.userSolve.upsert({
+				where: { userId_dailyProblemId: { userId, dailyProblemId } },
+				create: {
 					userId,
-					dailyProblemId: today.dailyProblem.id,
+					dailyProblemId,
+					status: SolveStatus.SOLVED,
+					pointsEarned,
+					isFirstInGroup,
+					verifiedAt: now,
 				},
-			},
-			create: {
-				userId,
-				dailyProblemId: today.dailyProblem.id,
-				status: SolveStatus.PENDING_VERIFICATION,
-			},
-			update: {
-				status: SolveStatus.PENDING_VERIFICATION,
-			},
+				update: {
+					status: SolveStatus.SOLVED,
+					pointsEarned,
+					isFirstInGroup,
+					verifiedAt: now,
+				},
+			})
+
+			const ops: Promise<unknown>[] = [
+				tx.pointsHistory.create({
+					data: {
+						userId,
+						userSolveId: upserted.id,
+						delta: BASE_POINTS,
+						reason: PointReason.DAILY_SOLVE,
+					},
+				}),
+				tx.user.update({
+					where: { id: userId },
+					data: {
+						totalPoints: { increment: pointsEarned },
+						currentStreak: newStreak,
+						longestStreak: newLongest,
+					},
+				}),
+			]
+
+			if (isFirstInGroup) {
+				ops.push(
+					tx.pointsHistory.create({
+						data: {
+							userId,
+							userSolveId: upserted.id,
+							delta: FIRST_BONUS,
+							reason: PointReason.FIRST_IN_GROUP,
+						},
+					}),
+					tx.dailyProblem.update({
+						where: { id: dailyProblemId },
+						data: { firstSolverId: userId, firstSolveTime: now },
+					})
+				)
+			}
+
+			await Promise.all(ops)
 		})
 
 		return { error: null, today: await problemsDao.getTodayForUser(userId) }
@@ -229,10 +346,7 @@ export const problemsDao = {
 		const today = await problemsDao.getTodayForUser(userId)
 		if (today.state !== "READY") return { error: today.state, today }
 		if (today.solve?.status === SolveStatus.PAUSED) return { error: null, today }
-		if (
-			today.solve?.status === SolveStatus.SOLVED ||
-			today.solve?.status === SolveStatus.PENDING_VERIFICATION
-		) {
+		if (today.solve?.status === SolveStatus.SOLVED) {
 			return { error: "ALREADY_STARTED", today }
 		}
 

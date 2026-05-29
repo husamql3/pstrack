@@ -165,27 +165,35 @@ function GroupsPage() {
 				) : (
 					<>
 						{mine.length > 0 && (
-							<div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-								{mine.map((group) => (
-									<GroupCard
-										key={group.id}
-										group={group}
-										onJoin={handleJoin}
-										isJoining={requestJoin.isPending}
-									/>
-								))}
+							<div className="space-y-3">
+								<h2 className="font-semibold text-sm">Your Groups</h2>
+								<div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+									{mine.map((group) => (
+										<GroupCard
+											key={group.id}
+											group={group}
+											onJoin={handleJoin}
+											isJoining={requestJoin.isPending}
+										/>
+									))}
+								</div>
 							</div>
 						)}
 						{discovery.length > 0 && (
-							<div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-								{discovery.map((group) => (
-									<GroupCard
-										key={group.id}
-										group={group}
-										onJoin={handleJoin}
-										isJoining={requestJoin.isPending}
-									/>
-								))}
+							<div className="space-y-3">
+								<h2 className="font-semibold text-sm">
+									{mine.length > 0 ? "Discover" : "All Groups"}
+								</h2>
+								<div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+									{discovery.map((group) => (
+										<GroupCard
+											key={group.id}
+											group={group}
+											onJoin={handleJoin}
+											isJoining={requestJoin.isPending}
+										/>
+									))}
+								</div>
 							</div>
 						)}
 						{mine.length === 0 && discovery.length === 0 && (
