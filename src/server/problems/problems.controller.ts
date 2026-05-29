@@ -21,7 +21,7 @@ const requirePlatformAdmin = async (request: Request) => {
 	return { user, response: null }
 }
 
-export const problemsController = new Elysia()
+export const problemsController = new Elysia({ tags: ["Problems"] })
 	.use(problemsModel)
 	.get("/problems/today", async ({ request }) => {
 		const { user, response } = await requireSessionUser(request)
@@ -71,9 +71,13 @@ export const problemsController = new Elysia()
 
 		return result.today
 	})
-	.post("/admin/problems/seed", async ({ request }) => {
-		const { user, response } = await requirePlatformAdmin(request)
-		if (!user) return response
+	.post(
+		"/admin/problems/seed",
+		async ({ request }) => {
+			const { user, response } = await requirePlatformAdmin(request)
+			if (!user) return response
 
-		return problemsDao.seedStarterProblems()
-	})
+			return problemsDao.seedStarterProblems()
+		},
+		{ detail: { tags: ["Admin"] } }
+	)

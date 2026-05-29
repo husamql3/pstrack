@@ -8,7 +8,7 @@ export const problemSelect = {
 	slug: true,
 	title: true,
 	difficulty: true,
-	topics: true,
+	topic: true,
 	roadmapIndex: true,
 	leetcodeId: true,
 	neetcode250: true,

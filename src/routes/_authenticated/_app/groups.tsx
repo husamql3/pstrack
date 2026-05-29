@@ -9,6 +9,7 @@ import { GroupFilterRow } from "@/features/groups/components/group-filter-row"
 import { GroupsHeader } from "@/features/groups/components/groups-header"
 import { useGroups, useRequestJoinGroup } from "@/features/groups/hooks/use-groups"
 import type { TypeFilter } from "@/features/groups/types"
+import { ProFeatureError } from "@/lib/errors"
 
 // ─── Search params ─────────────────────────────────────────────────────────────
 
@@ -79,22 +80,34 @@ function GroupsPage() {
 			await sileo.promise(requestJoin.mutateAsync(groupId), {
 				loading: { title: "Requesting to join..." },
 				success: { title: "Join request sent!" },
-				error: (err: unknown) => ({
-					title: "Could not request access",
-					description: err instanceof Error ? err.message : "Please try again.",
-				}),
+				error: (err: unknown) => {
+					if (err instanceof ProFeatureError) {
+						return {
+							title: "Pro feature",
+							description: "Joining multiple groups requires a Pro account.",
+							button: {
+								title: "Upgrade to Pro",
+								onClick: () => void navigate({ to: "/settings/billing" }),
+							},
+						}
+					}
+					return {
+						title: "Could not request access",
+						description: err instanceof Error ? err.message : "Please try again.",
+					}
+				},
 			})
 		},
-		[requestJoin]
+		[requestJoin, navigate]
 	)
 
 	// filterQuery mirrors the URL `q` param but updates synchronously from the
 	// debounced callback so client-side filtering doesn't lag behind URL round-trips.
 	const searchTrim = filterQuery.trim().toLowerCase()
 
-	const filtered = useMemo(() => {
+	const { mine, discovery } = useMemo(() => {
 		const list = groupsQuery.data ?? []
-		return list.filter((g) => {
+		const filtered = list.filter((g) => {
 			if (type === "public" && g.type !== "PUBLIC") return false
 			if (type === "private" && g.type !== "PRIVATE") return false
 			if (searchTrim) {
@@ -102,6 +115,19 @@ function GroupsPage() {
 			}
 			return true
 		})
+		// JOINED first, then REQUESTED. Within each bucket, server order
+		// (member count desc, createdAt asc) is preserved.
+		const mine = filtered
+			.filter((g) => g.membershipStatus !== "NONE")
+			.sort((a, b) =>
+				a.membershipStatus === b.membershipStatus
+					? 0
+					: a.membershipStatus === "JOINED"
+						? -1
+						: 1
+			)
+		const discovery = filtered.filter((g) => g.membershipStatus === "NONE")
+		return { mine, discovery }
 	}, [groupsQuery.data, type, searchTrim])
 
 	const stats = useMemo(() => {
@@ -128,27 +154,48 @@ function GroupsPage() {
 				onTypeChange={handleTypeChange}
 			/>
 
-			<div className="pb-12">
-				<div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-					{groupsQuery.isPending
-						? Array.from({ length: 8 }).map((_, i) => <GroupCardSkeleton key={i} />)
-						: filtered.map((group) => (
-								<GroupCard
-									key={group.id}
-									group={group}
-									onJoin={handleJoin}
-									isJoining={requestJoin.isPending}
-								/>
-							))}
-				</div>
-
-				{!groupsQuery.isPending && filtered.length === 0 && (
-					<div className="py-16 text-center">
-						<p className="font-medium text-sm">No groups found</p>
-						<p className="mt-1 text-muted-foreground text-sm">
-							Try adjusting your search or filter.
-						</p>
+			<div className="space-y-8 pb-12">
+				{groupsQuery.isPending ? (
+					<div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+						{Array.from({ length: 8 }).map((_, i) => (
+							<GroupCardSkeleton key={i} />
+						))}
 					</div>
+				) : (
+					<>
+						{mine.length > 0 && (
+							<div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+								{mine.map((group) => (
+									<GroupCard
+										key={group.id}
+										group={group}
+										onJoin={handleJoin}
+										isJoining={requestJoin.isPending}
+									/>
+								))}
+							</div>
+						)}
+						{discovery.length > 0 && (
+							<div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+								{discovery.map((group) => (
+									<GroupCard
+										key={group.id}
+										group={group}
+										onJoin={handleJoin}
+										isJoining={requestJoin.isPending}
+									/>
+								))}
+							</div>
+						)}
+						{mine.length === 0 && discovery.length === 0 && (
+							<div className="py-16 text-center">
+								<p className="font-medium text-sm">No groups found</p>
+								<p className="mt-1 text-muted-foreground text-sm">
+									Try adjusting your search or filter.
+								</p>
+							</div>
+						)}
+					</>
 				)}
 			</div>
 		</div>

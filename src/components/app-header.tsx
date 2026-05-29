@@ -48,7 +48,7 @@ export function AppHeader() {
 	}, [])
 
 	return (
-		<header className="border-border/50 sticky top-0 z-50 border-b bg-background backdrop-blur-sm">
+		<header className="border-border/50 sticky top-0 border-b bg-background backdrop-blur-sm">
 			<div className="mx-auto flex h-14 items-center gap-8 px-4">
 				<Link to="/" className="flex items-center gap-2">
 					PStrack

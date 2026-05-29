@@ -149,11 +149,7 @@ export const DashboardPage = () => {
 							Problem #{problem.roadmapIndex} from the roadmap
 						</p>
 						<div className="mt-4 flex flex-wrap gap-2">
-							{problem.topics.map((topic) => (
-								<Badge key={topic} variant="secondary">
-									{topic}
-								</Badge>
-							))}
+							<Badge variant="secondary">{problem.topic}</Badge>
 						</div>
 					</div>
 

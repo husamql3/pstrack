@@ -4,8 +4,15 @@ import { renderHashvatar } from "hashvatar"
 import { useEffect, useRef } from "react"
 
 import { AvatarGroup, AvatarGroupCount } from "@/components/ui/avatar"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { HashAvatar } from "@/features/onboarding/components/hash-avatar"
+import {
+	LAUNCH_DATE_UTC,
+	ROADMAP_TOTALS,
+	TOPIC_TONE,
+	TOPIC_TONE_FALLBACK,
+} from "@/features/problems/constants"
 import { GroupType } from "@/generated/prisma/enums"
 import { cn } from "@/lib/utils"
 import type { GroupListResponse } from "@/server/groups/groups.type"
@@ -38,23 +45,61 @@ const MemberAvatar = ({ username }: { username: string | null }) => {
 	)
 }
 
-// ─── Progress bar ──────────────────────────────────────────────────────────────
+// ─── Roadmap progress ──────────────────────────────────────────────────────────
+// Position within the group's roadmap, derived deterministically from
+// `daysSinceLaunch % total` to match how the server assigns daily problems.
 
-const MemberProgress = ({ count, max }: { count: number; max: number }) => {
-	const pct = Math.min(Math.round((count / max) * 100), 100)
+const RoadmapProgress = ({ roadmap }: { roadmap: GroupListResponse["roadmap"] }) => {
+	const total = ROADMAP_TOTALS[roadmap]
+	if (!total) return null
+	const days = Math.max(0, Math.floor((Date.now() - LAUNCH_DATE_UTC) / 86_400_000))
+	const current = (days % total) + 1
+	const pct = Math.min(Math.round((current / total) * 100), 100)
 	return (
-		<div className="h-[3px] w-full overflow-hidden rounded-full bg-muted">
-			<div
-				className="h-full rounded-full bg-emerald-500 transition-all"
-				style={{ width: `${pct}%` }}
-			/>
+		<div className="flex flex-col gap-1">
+			<div className="flex items-center justify-between text-[10px] text-muted-foreground">
+				<span>Roadmap</span>
+				<span>
+					{current}/{total}
+				</span>
+			</div>
+			<div className="h-[3px] w-full overflow-hidden rounded-full bg-muted">
+				<div
+					className="h-full rounded-full bg-emerald-500 transition-all"
+					style={{ width: `${pct}%` }}
+				/>
+			</div>
 		</div>
 	)
 }
 
-// ─── Type badge ────────────────────────────────────────────────────────────────
+// ─── Membership / type badge ──────────────────────────────────────────────────
+// Header right-column status chip. User-state (JOINED, REQUESTED) takes
+// precedence over group-state (Public/Private) — once you're in, the
+// public/private distinction is no longer the actionable label.
 
-const TypeBadge = ({ type }: { type: GroupType }) => {
+const MembershipBadge = ({
+	type,
+	membershipStatus,
+}: {
+	type: GroupType
+	membershipStatus: GroupListResponse["membershipStatus"]
+}) => {
+	if (membershipStatus === "JOINED") {
+		return (
+			<span className="inline-flex shrink-0 items-center gap-1 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2 py-0.5 text-xs font-medium text-emerald-600 dark:border-emerald-500/30 dark:bg-emerald-950/40 dark:text-emerald-400">
+				<IconCheck className="size-2.5" />
+				Joined
+			</span>
+		)
+	}
+	if (membershipStatus === "REQUESTED") {
+		return (
+			<span className="inline-flex shrink-0 items-center rounded-full border border-border bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">
+				Requested
+			</span>
+		)
+	}
 	if (type === GroupType.PRIVATE) {
 		return (
 			<span className="inline-flex shrink-0 items-center gap-1 rounded-full border border-amber-500/40 bg-amber-500/10 px-2 py-0.5 text-xs font-medium text-amber-600 dark:border-amber-500/30 dark:bg-amber-950/40 dark:text-amber-400">
@@ -70,6 +115,51 @@ const TypeBadge = ({ type }: { type: GroupType }) => {
 	)
 }
 
+// ─── Action row (non-members only) ─────────────────────────────────────────────
+
+const ActionRow = ({
+	group,
+	onJoin,
+	isJoining,
+}: {
+	group: GroupListResponse
+	onJoin: (groupId: string) => Promise<void>
+	isJoining: boolean
+}) => {
+	const isFull = group._count.members >= group.maxMembers
+
+	if (group.type === GroupType.PRIVATE) {
+		return (
+			<Button variant="outline" className="w-full" disabled>
+				<IconLock className="size-3.5" />
+				Invite only
+			</Button>
+		)
+	}
+
+	if (isFull) {
+		return (
+			<Button variant="outline" className="w-full" disabled>
+				Full
+			</Button>
+		)
+	}
+
+	return (
+		<Button
+			className="w-full bg-emerald-500 text-white hover:bg-emerald-600 dark:bg-emerald-600 dark:hover:bg-emerald-700"
+			disabled={isJoining}
+			onClick={(e) => {
+				e.preventDefault()
+				e.stopPropagation()
+				void onJoin(group.id)
+			}}
+		>
+			+ Join
+		</Button>
+	)
+}
+
 // ─── Card ─────────────────────────────────────────────────────────────────────
 
 export const GroupCard = ({
@@ -81,23 +171,52 @@ export const GroupCard = ({
 	onJoin: (groupId: string) => Promise<void>
 	isJoining: boolean
 }) => {
-	const { membershipStatus } = group
 	const memberCount = group._count.members
-	const isMember = membershipStatus === "JOINED"
-	const isPrivateNonMember =
-		group.type === GroupType.PRIVATE && membershipStatus === "NONE"
-	const isFull = memberCount >= group.maxMembers
 	const overflow = memberCount - group.memberPreview.length
+	const isNonMember = group.membershipStatus === "NONE"
+	// Private groups the user isn't in have no viewable destination — skip the
+	// stretched-link overlay so the card is inert (no navigation, no hover lift).
+	const isLinked = !(isNonMember && group.type === GroupType.PRIVATE)
 
 	return (
-		<div className="flex flex-col gap-3 rounded-xl border border-border bg-card p-4">
-			{/* Header: icon + name + badge */}
+		// Stretched-link pattern: the <Link> absolutely fills the card so the whole
+		// surface is clickable, while the inner <Button> sits in a `relative`
+		// wrapper to paint above it and own its own click target.
+		<div
+			className={cn(
+				"relative flex flex-col gap-3 rounded-xl border border-border bg-popover p-4 transition-colors",
+				isLinked && "hover:border-foreground/20"
+			)}
+		>
+			{isLinked && (
+				<Link
+					to="/groups/$groupId"
+					params={{ groupId: group.id }}
+					aria-label={`View @${group.slug}`}
+					className="absolute inset-0 rounded-xl focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+				/>
+			)}
+
+			{/* Header: icon + name + badges */}
 			<div className="flex items-start justify-between gap-2">
 				<div className="flex min-w-0 items-center gap-2.5">
 					<HashAvatar username={group.slug} size={40} shape="square" />
 					<p className="truncate font-semibold leading-tight">@{group.slug}</p>
 				</div>
-				<TypeBadge type={group.type} />
+				<div className="flex shrink-0 flex-col items-end gap-1.5">
+					<MembershipBadge type={group.type} membershipStatus={group.membershipStatus} />
+					{group.currentProblem && (
+						<Badge
+							variant="outline"
+							className={cn(
+								"truncate",
+								TOPIC_TONE[group.currentProblem.topic] ?? TOPIC_TONE_FALLBACK
+							)}
+						>
+							{group.currentProblem.topic}
+						</Badge>
+					)}
+				</div>
 			</div>
 
 			{/* Stats: avatars + count + active today */}
@@ -124,60 +243,16 @@ export const GroupCard = ({
 				)}
 			</div>
 
-			{/* Progress bar */}
-			<MemberProgress count={memberCount} max={group.maxMembers} />
+			{/* Roadmap progress */}
+			<RoadmapProgress roadmap={group.roadmap} />
 
-			{/* Actions */}
-			<div className="flex gap-2">
-				{isMember ? (
-					<>
-						<Button variant="outline" className="flex-1" disabled>
-							<IconCheck className="size-3.5" />
-							Joined
-						</Button>
-						<Button asChild variant="outline">
-							<Link to="/groups/$groupId" params={{ groupId: group.id }}>
-								View
-							</Link>
-						</Button>
-					</>
-				) : isPrivateNonMember ? (
-					<Button variant="outline" className="flex-1" disabled>
-						<IconLock className="size-3.5" />
-						Invite only
-					</Button>
-				) : membershipStatus === "REQUESTED" ? (
-					<>
-						<Button variant="outline" className="flex-1" disabled>
-							Requested
-						</Button>
-						<Button asChild variant="outline">
-							<Link to="/groups/$groupId" params={{ groupId: group.id }}>
-								View
-							</Link>
-						</Button>
-					</>
-				) : (
-					<>
-						<Button
-							className={cn(
-								"flex-1",
-								!isFull &&
-									"bg-emerald-500 text-white hover:bg-emerald-600 dark:bg-emerald-600 dark:hover:bg-emerald-700"
-							)}
-							disabled={isFull || isJoining}
-							onClick={() => void onJoin(group.id)}
-						>
-							{isFull ? "Full" : "+ Join"}
-						</Button>
-						<Button asChild variant="outline">
-							<Link to="/groups/$groupId" params={{ groupId: group.id }}>
-								View
-							</Link>
-						</Button>
-					</>
-				)}
-			</div>
+			{/* Action row: only for non-members. Wrapped in `relative` so the Button
+			    paints above the absolute Link overlay and captures its own clicks. */}
+			{isNonMember && (
+				<div className="relative">
+					<ActionRow group={group} onJoin={onJoin} isJoining={isJoining} />
+				</div>
+			)}
 		</div>
 	)
 }

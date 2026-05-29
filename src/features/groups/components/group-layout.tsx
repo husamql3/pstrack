@@ -1,16 +1,26 @@
 import { IconArrowLeft, IconLock, IconWorld } from "@tabler/icons-react"
-import { Link, Outlet, useParams } from "@tanstack/react-router"
-import type { ReactNode } from "react"
+import { Link, Outlet, useNavigate, useParams } from "@tanstack/react-router"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
-import { cn } from "@/lib/utils"
+import { Route as GroupRoute } from "@/routes/_authenticated/_app/groups_/$groupId"
+import type { GroupProblemsRange } from "@/server/groups/groups.type"
 import { useGroup } from "../hooks/use-group"
+import { GroupProblemsTabs } from "./group-problems-tabs"
 
 export const GroupLayout = () => {
 	const { groupId } = useParams({ strict: false }) as { groupId: string }
 	const groupQuery = useGroup(groupId)
+	const { range } = GroupRoute.useSearch()
+	const navigate = useNavigate()
+
+	const setRange = (next: GroupProblemsRange) =>
+		navigate({
+			to: "/groups/$groupId",
+			params: { groupId },
+			search: { range: next },
+		})
 
 	if (groupQuery.isLoading) {
 		return (
@@ -33,85 +43,42 @@ export const GroupLayout = () => {
 	}
 
 	const group = groupQuery.data
-	const isAdmin = group.userRole === "ADMIN"
 
 	return (
-		<div className="flex flex-col gap-6">
-			<div>
+		<div className="flex h-full flex-col gap-4">
+			<div className="shrink-0">
 				<Link
-					className="flex items-center gap-1.5 text-muted-foreground text-sm transition-colors hover:text-foreground"
+					className="flex items-center gap-1.5 w-fit text-muted-foreground text-sm transition-colors hover:text-foreground"
 					to="/groups"
 				>
 					<IconArrowLeft className="size-4" />
 					All groups
 				</Link>
-				<div className="mt-3 flex flex-wrap items-center gap-3">
-					<h1 className="font-semibold text-3xl tracking-tight">@{group.slug}</h1>
-					<Badge variant="outline">
-						{group._count.members}/{group.maxMembers}
-					</Badge>
-					<Badge variant="secondary">
-						{group.type === "PRIVATE" ? (
-							<>
-								<IconLock className="mr-1 size-3" />
-								Private
-							</>
-						) : (
-							<>
-								<IconWorld className="mr-1 size-3" />
-								Public
-							</>
-						)}
-					</Badge>
+				<div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+					<div className="flex flex-wrap items-center gap-3">
+						<h1 className="font-semibold text-3xl tracking-tight">@{group.slug}</h1>
+						<Badge variant="outline">
+							{group._count.members}/{group.maxMembers}
+						</Badge>
+						<Badge variant="secondary">
+							{group.type === "PRIVATE" ? (
+								<>
+									<IconLock className="mr-1 size-3" />
+									Private
+								</>
+							) : (
+								<>
+									<IconWorld className="mr-1 size-3" />
+									Public
+								</>
+							)}
+						</Badge>
+					</div>
+					<GroupProblemsTabs range={range} onChange={setRange} />
 				</div>
 			</div>
 
-			<nav className="flex gap-1">
-				<GroupNavLink groupId={groupId} path="">
-					Overview
-				</GroupNavLink>
-				<GroupNavLink groupId={groupId} path="/members">
-					Members
-				</GroupNavLink>
-				{isAdmin && group.type === "PUBLIC" && (
-					<GroupNavLink groupId={groupId} path="/join-requests">
-						Join Requests
-					</GroupNavLink>
-				)}
-				{isAdmin && (
-					<GroupNavLink groupId={groupId} path="/settings">
-						Settings
-					</GroupNavLink>
-				)}
-			</nav>
-
 			<Outlet />
 		</div>
-	)
-}
-
-const GroupNavLink = ({
-	groupId,
-	path,
-	children,
-}: {
-	groupId: string
-	path: string
-	children: ReactNode
-}) => {
-	const isOverview = path === ""
-	return (
-		<Link
-			activeOptions={{ exact: isOverview }}
-			activeProps={{ className: "bg-muted text-foreground" }}
-			className={cn(
-				"rounded-md px-3 py-1.5 font-medium text-sm transition-colors",
-				"text-muted-foreground hover:bg-muted hover:text-foreground"
-			)}
-			// @ts-expect-error — dynamic group routes not in literal union
-			to={`/groups/${groupId}${path}`}
-		>
-			{children}
-		</Link>
 	)
 }

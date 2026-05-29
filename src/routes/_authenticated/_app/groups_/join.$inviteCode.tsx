@@ -4,6 +4,7 @@ import { sileo } from "sileo"
 
 import { Skeleton } from "@/components/ui/skeleton"
 import { useJoinByInvite } from "@/features/groups/hooks/use-group"
+import { ProFeatureError } from "@/lib/errors"
 
 export const Route = createFileRoute("/_authenticated/_app/groups_/join/$inviteCode")({
 	component: JoinByInvitePage,
@@ -24,11 +25,22 @@ function JoinByInvitePage() {
 				}
 			},
 			onError: (err: unknown) => {
-				sileo.error({
-					title: "Invalid invite link",
-					description: err instanceof Error ? err.message : "Please try again.",
-				})
-				navigate({ to: "/groups" })
+				if (err instanceof ProFeatureError) {
+					sileo.error({
+						title: "Pro feature",
+						description: "Joining multiple groups requires a Pro account.",
+						button: {
+							title: "Upgrade to Pro",
+							onClick: () => void navigate({ to: "/settings/billing" }),
+						},
+					})
+				} else {
+					sileo.error({
+						title: "Invalid invite link",
+						description: err instanceof Error ? err.message : "Please try again.",
+					})
+				}
+				void navigate({ to: "/groups" })
 			},
 		})
 		// eslint-disable-next-line react-hooks/exhaustive-deps

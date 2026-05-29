@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 import { api } from "@/lib/api"
+import { ProFeatureError } from "@/lib/errors"
 import type {
 	GenerateInviteInput,
 	GroupDetailResponse,
@@ -142,7 +143,10 @@ export const useJoinByInvite = () => {
 	return useMutation({
 		mutationFn: async (inviteCode: string) => {
 			const { data, error } = await api.v4.groups["join-by-invite"].post({ inviteCode })
-			if (error) throw new Error("Invalid or expired invite link")
+			if (error) {
+				if (error.status === 403) throw new ProFeatureError("multiple-groups")
+				throw new Error("Invalid or expired invite link")
+			}
 			return data
 		},
 		onSuccess: () => {

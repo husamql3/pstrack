@@ -6,7 +6,7 @@ export function groupByTopic(list: RoadmapProblemResponse[]) {
 	const groups = new Map<string, RoadmapProblemResponse[]>()
 
 	for (const p of sorted) {
-		const topic = p.topics[0] ?? "Other"
+		const topic = p.topic ?? "Other"
 		if (!groups.has(topic)) {
 			groups.set(topic, [])
 			categoryOrder.push(topic)

@@ -127,7 +127,7 @@ model Problem {
   slug         String     @unique
   title        String
   difficulty   Difficulty
-  topics       String[]
+  topic        String
   roadmapIndex Int        @unique
   leetcodeId   Int?
   neetcode250  Boolean    @default(false)
