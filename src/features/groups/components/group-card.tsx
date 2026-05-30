@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button"
 import { HashAvatar } from "@/features/onboarding/components/hash-avatar"
 import {
 	LAUNCH_DATE_UTC,
+	ROADMAP_SHORT,
+	ROADMAP_TONE,
 	ROADMAP_TOTALS,
 	TOPIC_TONE,
 	TOPIC_TONE_FALLBACK,
@@ -56,13 +58,19 @@ const RoadmapProgress = ({ roadmap }: { roadmap: GroupListResponse["roadmap"] })
 	const current = (days % total) + 1
 	const pct = Math.min(Math.round((current / total) * 100), 100)
 	return (
-		<div className="flex flex-col gap-1">
+		<div className="flex flex-col gap-1.5">
 			<div className="flex items-center justify-between text-[10px] text-muted-foreground">
-				<span>Roadmap</span>
+				<Badge
+					variant="outline"
+					className={cn("h-4 px-1.5 text-[10px]", ROADMAP_TONE[roadmap])}
+				>
+					{ROADMAP_SHORT[roadmap]}
+				</Badge>
 				<span>
 					{current}/{total}
 				</span>
 			</div>
+
 			<div className="h-[3px] w-full overflow-hidden rounded-full bg-muted">
 				<div
 					className="h-full rounded-full bg-emerald-500 transition-all"

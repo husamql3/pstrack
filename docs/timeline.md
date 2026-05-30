@@ -6,8 +6,8 @@ Stay consistent with LeetCode — solve one problem a day, earn points, and comp
 
 ## Phase 1 — Project Setup & Tooling · [#219](https://github.com/husamql3/pstrack/issues/219)
 
-- [ ] Update logo & slogan
-- [ ] `npx skills add nutlope/hallmark`
+- [x] Update logo & slogan
+- [x] `npx skills add nutlope/hallmark`
 - [x] Initialize TanStack Start project with Bun
 - [x] Configure TypeScript (strict mode)
 - [x] Set up Biome (linting + formatting, `biome.json` config)

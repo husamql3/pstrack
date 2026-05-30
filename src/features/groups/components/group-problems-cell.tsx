@@ -49,8 +49,8 @@ export const GroupProblemsCell = ({
 	isSolvePending,
 }: Props) => {
 	const status = solve?.status ?? null
-	const isInteractive =
-		isTodayRow && isOwnColumn && !isPreJoin && status === null && !isSolvePending
+	const canMarkSolved = isTodayRow && isOwnColumn && !isPreJoin && status === null
+	const isInteractive = canMarkSolved && !isSolvePending
 
 	const handleClick = async () => {
 		if (!isInteractive) return
@@ -81,7 +81,7 @@ export const GroupProblemsCell = ({
 	const cellInner = (
 		<div className={baseClasses}>
 			{status === null ? (
-				isInteractive ? (
+				canMarkSolved ? (
 					<Checkbox
 						checked={false}
 						disabled={isSolvePending}

@@ -16,6 +16,21 @@ export const ROADMAP_DESCRIPTIONS: Record<RoadmapKey, string> = {
 
 export const ROADMAP_KEYS: RoadmapKey[] = [Roadmap.NC250, Roadmap.NC150, Roadmap.BLIND75]
 
+export const ROADMAP_SHORT: Record<RoadmapKey, string> = {
+	[Roadmap.NC250]: "NC250",
+	[Roadmap.NC150]: "NC150",
+	[Roadmap.BLIND75]: "Blind75",
+}
+
+export const ROADMAP_TONE: Record<RoadmapKey, string> = {
+	[Roadmap.NC250]:
+		"border-blue-500/30 bg-blue-500/10 text-blue-700 dark:border-blue-500/35 dark:bg-blue-950/50 dark:text-blue-400 dark:ring-blue-500/20",
+	[Roadmap.NC150]:
+		"border-violet-500/30 bg-violet-500/10 text-violet-700 dark:border-violet-500/35 dark:bg-violet-950/50 dark:text-violet-400 dark:ring-violet-500/20",
+	[Roadmap.BLIND75]:
+		"border-amber-500/30 bg-amber-500/10 text-amber-700 dark:border-amber-500/35 dark:bg-amber-950/50 dark:text-amber-400 dark:ring-amber-500/20",
+}
+
 // Problems per roadmap. Mirrors the seed-time counts and the server's
 // `roadmapFilter` math — used client-side to compute deterministic
 // roadmap-position progress without an extra round trip.
