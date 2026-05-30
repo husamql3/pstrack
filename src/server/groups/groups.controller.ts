@@ -3,6 +3,7 @@ import { Elysia, status } from "elysia"
 import { getSessionUser, requireSessionUser } from "@/server/lib/session"
 import { groupsDao } from "./groups.dao"
 import { groupsModel } from "./groups.model"
+import { groupNotifications } from "./groups.notifications"
 
 export const groupsController = new Elysia({ prefix: "/groups", tags: ["Groups"] })
 	.use(groupsModel)
@@ -85,6 +86,10 @@ export const groupsController = new Elysia({ prefix: "/groups", tags: ["Groups"]
 				return status(403, { error: "Private groups require an invite link." })
 			}
 
+			if (result.status === "REQUESTED") {
+				groupNotifications.joinRequested(params.id, user.id)
+			}
+
 			return { status: result.status }
 		},
 		{ params: "groups.joinParams" }
@@ -131,6 +136,8 @@ export const groupsController = new Elysia({ prefix: "/groups", tags: ["Groups"]
 				return status(400, { error: "Use the leave endpoint to leave a group." })
 			}
 
+			groupNotifications.memberRemoved(params.id, params.userId)
+
 			return { success: true }
 		},
 		{ params: "groups.memberParams" }
@@ -173,6 +180,12 @@ export const groupsController = new Elysia({ prefix: "/groups", tags: ["Groups"]
 			if (result.error === "FULL") return status(409, { error: "The group is now full." })
 			if (result.error === "USER_GROUP_LIMIT") {
 				return status(409, { error: "The user has reached their group limit." })
+			}
+
+			if (body.action === "APPROVED") {
+				groupNotifications.joinApproved(params.id, result.requesterId)
+			} else {
+				groupNotifications.joinRejected(params.id, result.requesterId)
 			}
 
 			return { success: true }

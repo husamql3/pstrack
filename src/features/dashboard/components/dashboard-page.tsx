@@ -180,7 +180,10 @@ export const DashboardPage = () => {
 			</section>
 
 			<section className="grid gap-3 md:grid-cols-2">
-				<MetricCard label="Current streak" value="0 days" />
+				<MetricCard
+					label="Current streak"
+					value={`${today.userStats.currentStreak} ${today.userStats.currentStreak === 1 ? "day" : "days"}`}
+				/>
 				<MetricCard
 					label="Today's status"
 					value={solveStatus ? statusCopy[solveStatus] : "Open"}

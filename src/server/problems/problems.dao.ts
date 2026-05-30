@@ -53,6 +53,11 @@ const startOfTodayUtc = () => {
 	return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()))
 }
 
+const startOfUtcDay = (d: Date) =>
+	new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()))
+
+const MISSED_PENALTY = 3
+
 const pauseLimitFor = (user: { isPro: boolean }) => (user.isPro ? 4 : 2)
 
 const roadmapFilter = (roadmap: RoadmapKey): Prisma.ProblemWhereInput => {
@@ -132,15 +137,26 @@ const findPrimaryGroup = (userId: string) =>
 		},
 	})
 
-const getUserPauseSummary = async (userId: string) => {
+const getUserDashboardContext = async (userId: string) => {
 	const user = await db.user.findUniqueOrThrow({
 		where: { id: userId },
-		select: { isPro: true, pausesUsedThisMonth: true },
+		select: {
+			isPro: true,
+			pausesUsedThisMonth: true,
+			currentStreak: true,
+			longestStreak: true,
+			totalPoints: true,
+		},
 	})
 
 	return {
 		user,
 		pausesRemaining: Math.max(0, pauseLimitFor(user) - user.pausesUsedThisMonth),
+		userStats: {
+			currentStreak: user.currentStreak,
+			longestStreak: user.longestStreak,
+			totalPoints: user.totalPoints,
+		},
 	}
 }
 
@@ -165,6 +181,58 @@ export const problemsDao = {
 		return { total: groups.length, assigned, skipped }
 	},
 
+	getDailyDigestRecipients: async (date: Date) => {
+		const day = startOfUtcDay(date)
+
+		const memberships = await db.groupMember.findMany({
+			where: { joinedAt: { lt: day }, group: { isActive: true } },
+			orderBy: [{ userId: "asc" }, { joinedAt: "asc" }],
+			select: { groupId: true, userId: true },
+		})
+
+		const primaryByUser = new Map<string, string>()
+		for (const m of memberships) {
+			if (!primaryByUser.has(m.userId)) primaryByUser.set(m.userId, m.groupId)
+		}
+		if (primaryByUser.size === 0) return []
+
+		const groupIds = Array.from(new Set(primaryByUser.values()))
+		const dailyProblems = await db.dailyProblem.findMany({
+			where: { groupId: { in: groupIds }, assignedDate: day },
+			select: {
+				id: true,
+				groupId: true,
+				group: { select: { slug: true } },
+				problem: { select: { slug: true, title: true, difficulty: true, topic: true } },
+			},
+		})
+		const dailyByGroup = new Map(dailyProblems.map((dp) => [dp.groupId, dp]))
+
+		const userIds = Array.from(primaryByUser.keys())
+		const users = await db.user.findMany({
+			where: { id: { in: userIds }, notifyDailyProblem: true },
+			select: { id: true, email: true, name: true },
+		})
+
+		return users.flatMap((u) => {
+			const groupId = primaryByUser.get(u.id)
+			if (!groupId) return []
+			const dp = dailyByGroup.get(groupId)
+			if (!dp) return []
+			return [
+				{
+					email: u.email,
+					name: u.name,
+					groupSlug: dp.group.slug,
+					problemSlug: dp.problem.slug,
+					problemTitle: dp.problem.title,
+					difficulty: dp.problem.difficulty,
+					topic: dp.problem.topic,
+				},
+			]
+		})
+	},
+
 	seedStarterProblems: async () => {
 		const BATCH = 50
 		let seeded = 0
@@ -187,8 +255,8 @@ export const problemsDao = {
 	},
 
 	getTodayForUser: async (userId: string): Promise<TodayProblemResponse> => {
-		const [{ pausesRemaining }, membership] = await Promise.all([
-			getUserPauseSummary(userId),
+		const [{ pausesRemaining, userStats }, membership] = await Promise.all([
+			getUserDashboardContext(userId),
 			findPrimaryGroup(userId),
 		])
 
@@ -199,6 +267,7 @@ export const problemsDao = {
 				dailyProblem: null,
 				solve: null,
 				pausesRemaining,
+				userStats,
 			}
 		}
 
@@ -214,6 +283,7 @@ export const problemsDao = {
 				dailyProblem: null,
 				solve: null,
 				pausesRemaining,
+				userStats,
 			}
 		}
 
@@ -242,6 +312,7 @@ export const problemsDao = {
 			},
 			solve,
 			pausesRemaining,
+			userStats,
 		}
 	},
 
@@ -350,7 +421,7 @@ export const problemsDao = {
 			return { error: "ALREADY_STARTED", today }
 		}
 
-		const { pausesRemaining } = await getUserPauseSummary(userId)
+		const { pausesRemaining } = await getUserDashboardContext(userId)
 		if (pausesRemaining <= 0) {
 			return { error: "NO_PAUSES", today }
 		}
@@ -377,6 +448,96 @@ export const problemsDao = {
 		])
 
 		return { error: null, today: await problemsDao.getTodayForUser(userId) }
+	},
+
+	markMissedForDate: async (referenceDate: Date) => {
+		const day = startOfUtcDay(referenceDate)
+
+		const memberships = await db.groupMember.findMany({
+			where: {
+				joinedAt: { lt: day },
+				group: { isActive: true },
+			},
+			orderBy: [{ userId: "asc" }, { joinedAt: "asc" }],
+			select: { groupId: true, userId: true },
+		})
+
+		const primaryByUser = new Map<string, string>()
+		for (const m of memberships) {
+			if (!primaryByUser.has(m.userId)) primaryByUser.set(m.userId, m.groupId)
+		}
+		if (primaryByUser.size === 0) return { missed: 0 }
+
+		const groupIds = Array.from(new Set(primaryByUser.values()))
+		const dailyProblems = await db.dailyProblem.findMany({
+			where: { groupId: { in: groupIds }, assignedDate: day },
+			select: { id: true, groupId: true },
+		})
+		const dailyByGroup = new Map(dailyProblems.map((dp) => [dp.groupId, dp.id]))
+
+		const candidates: { userId: string; dailyProblemId: string }[] = []
+		for (const [userId, groupId] of primaryByUser) {
+			const dpId = dailyByGroup.get(groupId)
+			if (dpId) candidates.push({ userId, dailyProblemId: dpId })
+		}
+		if (candidates.length === 0) return { missed: 0 }
+
+		const userIds = Array.from(new Set(candidates.map((c) => c.userId)))
+		const dailyProblemIds = Array.from(new Set(candidates.map((c) => c.dailyProblemId)))
+		const existingSolves = await db.userSolve.findMany({
+			where: {
+				userId: { in: userIds },
+				dailyProblemId: { in: dailyProblemIds },
+			},
+			select: { userId: true, dailyProblemId: true },
+		})
+		const existingKey = new Set(
+			existingSolves.map((s) => `${s.userId}:${s.dailyProblemId}`)
+		)
+
+		const toMiss = candidates.filter(
+			(c) => !existingKey.has(`${c.userId}:${c.dailyProblemId}`)
+		)
+		if (toMiss.length === 0) return { missed: 0 }
+
+		await db.$transaction(async (tx) => {
+			for (const { userId, dailyProblemId } of toMiss) {
+				const solve = await tx.userSolve.create({
+					data: {
+						userId,
+						dailyProblemId,
+						status: SolveStatus.MISSED,
+						pointsEarned: -MISSED_PENALTY,
+					},
+					select: { id: true },
+				})
+				await tx.pointsHistory.create({
+					data: {
+						userId,
+						userSolveId: solve.id,
+						delta: -MISSED_PENALTY,
+						reason: PointReason.MISSED_DAY,
+					},
+				})
+				await tx.user.update({
+					where: { id: userId },
+					data: {
+						totalPoints: { decrement: MISSED_PENALTY },
+						currentStreak: 0,
+					},
+				})
+			}
+		})
+
+		return { missed: toMiss.length }
+	},
+
+	resetMonthlyPauses: async () => {
+		const result = await db.user.updateMany({
+			where: { pausesUsedThisMonth: { gt: 0 } },
+			data: { pausesUsedThisMonth: 0 },
+		})
+		return { reset: result.count }
 	},
 
 	getRoadmapForUser: async (

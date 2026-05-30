@@ -50,6 +50,12 @@ type DailyProblemRow = Prisma.DailyProblemGetPayload<{
 	select: typeof dailyProblemSelect
 }>
 
+type UserStats = {
+	currentStreak: number
+	longestStreak: number
+	totalPoints: number
+}
+
 export type TodayProblemResponse =
 	| {
 			state: "NO_GROUP"
@@ -57,6 +63,7 @@ export type TodayProblemResponse =
 			dailyProblem: null
 			solve: null
 			pausesRemaining: number
+			userStats: UserStats
 	  }
 	| {
 			state: "NO_PROBLEMS"
@@ -64,6 +71,7 @@ export type TodayProblemResponse =
 			dailyProblem: null
 			solve: null
 			pausesRemaining: number
+			userStats: UserStats
 	  }
 	| {
 			state: "READY"
@@ -74,6 +82,7 @@ export type TodayProblemResponse =
 			dailyProblem: Omit<DailyProblemRow, "solves">
 			solve: DailyProblemRow["solves"][number] | null
 			pausesRemaining: number
+			userStats: UserStats
 	  }
 
 export type RoadmapProblemResponse = ProblemResponse & {

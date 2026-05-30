@@ -392,7 +392,13 @@ export const groupsDao = {
 			})
 		}
 
-		return { error: null, email: request.user.email, name: request.user.name, action }
+		return {
+			error: null,
+			requesterId: request.userId,
+			email: request.user.email,
+			name: request.user.name,
+			action,
+		}
 	},
 
 	generateInvite: async (
@@ -642,6 +648,23 @@ export const groupsDao = {
 				: null
 
 		return { error: null, data: { members, rows, nextCursor } }
+	},
+
+	expirePendingRequests: async () => {
+		const now = new Date()
+		const stale = await db.groupJoinRequest.findMany({
+			where: { status: "PENDING", expiresAt: { lt: now } },
+			select: { id: true, groupId: true, userId: true },
+		})
+
+		if (stale.length === 0) return { expired: 0, requests: [] }
+
+		await db.groupJoinRequest.updateMany({
+			where: { id: { in: stale.map((r) => r.id) } },
+			data: { status: "EXPIRED" },
+		})
+
+		return { expired: stale.length, requests: stale }
 	},
 
 	updateSettings: async (adminId: string, groupId: string) => {

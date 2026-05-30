@@ -1,11 +1,12 @@
 import { logger, schedules } from "@trigger.dev/sdk/v3"
 
 import { problemsDao } from "@/server/problems/problems.dao"
+import { problemNotifications } from "@/server/problems/problems.notifications"
 
 export const assignDailyProblemTask = schedules.task({
 	id: "assign-daily-problem",
 	cron: "0 0 * * *", // midnight UTC
-	maxDuration: 120,
+	maxDuration: 300,
 	run: async (payload) => {
 		const date = new Date(
 			Date.UTC(
@@ -19,8 +20,12 @@ export const assignDailyProblemTask = schedules.task({
 
 		const result = await problemsDao.assignDailyProblems(date)
 
-		logger.log("Done", result)
+		logger.log("Sending daily problem digest")
+		const recipients = await problemsDao.getDailyDigestRecipients(date)
+		await problemNotifications.dailyProblemDigest(recipients)
 
-		return result
+		logger.log("Done", { ...result, emailsSent: recipients.length })
+
+		return { ...result, emailsSent: recipients.length }
 	},
 })

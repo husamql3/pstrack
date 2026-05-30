@@ -63,8 +63,8 @@ Stay consistent with LeetCode — solve one problem a day, earn points, and comp
 - [x] `GET /api/groups/:id/members` + build members page
 - [x] `DELETE /api/groups/:id/members/:userId` — remove member
 - [x] `POST /api/groups/:id/leave` — leave group
-- [ ] Set up Trigger.dev job: `expire-join-requests` (hourly cron, marks PENDING > 1 day as EXPIRED)
-- [x] Email templates: `join-request.tsx`, `join-approved.tsx`, `join-rejected.tsx`, `join-expired.tsx`, `removed-from-group.tsx`
+- [x] Set up Trigger.dev job: `expire-join-requests` (hourly cron, marks PENDING > 1 day as EXPIRED)
+- [x] Email templates: `join-request.tsx`, `join-approved.tsx`, `join-rejected.tsx`, `join-expired.tsx`, `removed-from-group.tsx` (wired into DAO via `groups.notifications.ts`)
 - [x] Enforce group limits (Free: 1 group / 30 members, Pro: 5 groups / 50 members)
 - [x] Join via invite link (`POST /api/groups/join-by-invite` + `/groups/join/$inviteCode` route)
 - [x] Group problems table (`GET /api/groups/:id/problems` + `group-problems-table` UI)
@@ -77,17 +77,18 @@ Stay consistent with LeetCode — solve one problem a day, earn points, and comp
 ## Phase 4 — Daily Problem System · [#222](https://github.com/husamql3/pstrack/issues/222)
 
 - [x] Seed NeetCode 250 problems via `POST /api/admin/problems/seed`
-- [ ] Set up Trigger.dev job: `assign-daily-problem` (midnight cron — creates `DailyProblem` row per active group)
+- [x] Set up Trigger.dev job: `assign-daily-problem` (midnight UTC cron — creates `DailyProblem` row per active group, fans out daily-problem email digest)
 - [x] `GET /api/problems/today` — return today's problem + user's current `UserSolve` status
 - [x] `GET /api/problems/roadmap` — NeetCode 250 list with user solve history
 - [x] Build dashboard page (`/dashboard`) — today's problem card, solve/pause buttons, streak display
 - [x] Build roadmap page (`/problems`)
-- [x] `POST /api/problems/today/solve` — create `UserSolve` (PENDING_VERIFICATION) (Trigger.dev hook pending)
-- [ ] Set up Trigger.dev job: `verify-submission` — poll LC/CF API, update status, award points
+- [x] `POST /api/problems/today/solve` — **synchronous** verification: fetch LeetCode `recentAcSubmissionList` at click time, award points + streak inline. No PENDING_VERIFICATION state; failures return a 409 to the client.
+- [x] ~~Set up Trigger.dev job: `verify-submission`~~ — **dropped**, replaced by sync verification above. Async verification can return post-MVP if rate limits become an issue.
 - [x] `POST /api/problems/today/pause` — set status to PAUSED, decrement available pauses
-- [ ] Set up Trigger.dev job: `mark-missed` (end-of-day cron — sets unresolved UserSolves to MISSED, applies -3 points)
-- [ ] Set up Trigger.dev job: `reset-monthly-pauses` (1st of month cron)
-- [ ] Email templates: `daily-problem.tsx`, `solve-verified.tsx`, `verification-failed.tsx`
+- [x] Set up Trigger.dev job: `mark-missed` (midnight UTC cron — sweeps yesterday: primary group only, skip join-day, -3 pts, streak = 0, PointsHistory MISSED_DAY)
+- [x] Set up Trigger.dev job: `reset-monthly-pauses` (1st of month cron)
+- [x] Email template: `daily-problem.tsx` (wired into `assign-daily-problem`, respects `notifyDailyProblem`)
+- [x] ~~Email templates: `solve-verified.tsx`, `verification-failed.tsx`~~ — **dropped** with sync verification.
 
 **Deliverable:** Daily problem loop works end-to-end — assign, solve, verify, pause, miss
 
