@@ -1,7 +1,16 @@
-export function FullScreenSpinner() {
+import { IconLoader } from "@tabler/icons-react"
+
+import { cn } from "@/lib/utils"
+
+function Spinner({ className, ...props }: React.ComponentProps<"svg">) {
 	return (
-		<div className="flex h-screen items-center justify-center">
-			<div className="h-8 w-8 animate-spin rounded-full border-4 border-muted border-t-primary" />
-		</div>
+		<IconLoader
+			role="status"
+			aria-label="Loading"
+			className={cn("size-4 animate-spin", className)}
+			{...props}
+		/>
 	)
 }
+
+export { Spinner }

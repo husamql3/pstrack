@@ -56,7 +56,7 @@ export const GroupFilterRow = ({
 			</InputGroup>
 
 			<Tabs onValueChange={handleTypeChange} value={type}>
-				<TabsList variant="ghost">
+				<TabsList>
 					<TabsTrigger value="all">All</TabsTrigger>
 					<TabsTrigger value="public">Public</TabsTrigger>
 					<TabsTrigger value="private">Private</TabsTrigger>

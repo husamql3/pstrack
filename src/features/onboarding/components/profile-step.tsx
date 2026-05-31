@@ -51,11 +51,18 @@ export const ProfileStep = ({
 		}
 		onChange({ usernameStatus: "checking", usernameError: "" })
 		try {
-			const available = await checkUsernameFn(value)
-			onChange({
-				usernameStatus: available ? "valid" : "invalid",
-				usernameError: available ? "" : "Username is already taken",
-			})
+			const result = await checkUsernameFn(value)
+			if (result.available) {
+				onChange({ usernameStatus: "valid", usernameError: "" })
+				return
+			}
+			const message =
+				result.reason === "reserved"
+					? "That username is reserved"
+					: result.reason === "invalid"
+						? "Only lowercase letters, numbers, _ and -"
+						: "Username is already taken"
+			onChange({ usernameStatus: "invalid", usernameError: message })
 		} catch {
 			onChange({ usernameStatus: "invalid", usernameError: "Could not verify username" })
 		}

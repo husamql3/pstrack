@@ -73,7 +73,7 @@ export const FilterRow = ({
 
 			<div className="flex flex-wrap items-center gap-2">
 				<Tabs onValueChange={handleDifficultyChange} value={difficulty}>
-					<TabsList variant="ghost">
+					<TabsList>
 						<TabsTrigger value="all">All</TabsTrigger>
 						<TabsTrigger value={Difficulty.EASY}>
 							Easy
@@ -91,7 +91,7 @@ export const FilterRow = ({
 				</Tabs>
 
 				<Tabs onValueChange={handleStatusChange} value={status}>
-					<TabsList variant="ghost">
+					<TabsList>
 						<TabsTrigger value="all">All</TabsTrigger>
 						<TabsTrigger value="solved">
 							<IconCheck className="size-3.5" />

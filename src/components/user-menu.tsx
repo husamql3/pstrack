@@ -1,10 +1,10 @@
 import {
-	IconBuilding,
 	IconLifebuoy,
 	IconLogout,
-	IconPhone,
 	IconSelector,
 	IconSettings,
+	IconSparkles,
+	IconUserCircle,
 } from "@tabler/icons-react"
 import { useNavigate } from "@tanstack/react-router"
 
@@ -42,61 +42,67 @@ export function UserMenu() {
 		})
 	}
 
+	const goToProfile = () => {
+		if (!user?.username) return
+		navigate({ to: "/$username", params: { username: user.username } })
+	}
+
+	const goToSettings = () => {
+		navigate({ to: "/settings/account" })
+	}
+
+	const goToHelp = () => {
+		navigate({ to: "/help" })
+	}
+
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
 				<Button variant="outline" className="ml-auto w-40" size="lg">
 					<HashAvatar username={user?.username ?? initials} size={16} />
 					<span className="font-medium text-sm">{displayName}</span>
+					{user?.isPro && (
+						<Badge variant="secondary" className="ml-1 gap-0.5 px-1.5">
+							<IconSparkles className="size-3" aria-hidden="true" />
+							Pro
+						</Badge>
+					)}
 					<IconSelector className="ml-auto opacity-60" aria-hidden="true" />
 				</Button>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent className="w-60" align="start" sideOffset={8}>
 				<div className="flex items-center gap-3 px-1 pt-1.5 pb-2.5">
 					<HashAvatar username={user?.username ?? initials} size={32} />
-					<div className="flex flex-col">
-						<span className="font-medium text-foreground text-sm">
-							{user?.name ?? "…"}
+					<div className="flex min-w-0 flex-col">
+						<div className="flex items-center gap-1.5">
+							<span className="truncate font-medium text-foreground text-sm">
+								{user?.name ?? "…"}
+							</span>
+							{user?.isPro && (
+								<Badge variant="secondary" className="shrink-0 gap-0.5 px-1.5">
+									<IconSparkles className="size-3" aria-hidden="true" />
+									Pro
+								</Badge>
+							)}
+						</div>
+						<span className="truncate text-muted-foreground text-xs">
+							{user?.email ?? "…"}
 						</span>
-						<span className="text-muted-foreground text-xs">{user?.email ?? "…"}</span>
 					</div>
 				</div>
 
 				<DropdownMenuGroup>
-					<DropdownMenuItem
-						onSelect={(e) => e.preventDefault()}
-						className="justify-between"
-					>
-						<span className="flex items-center gap-2">
-							<IconBuilding aria-hidden="true" />
-							Your Companies
-						</span>
-						<Badge variant="secondary" className="rounded-full px-1.5">
-							12
-						</Badge>
+					<DropdownMenuItem onSelect={goToProfile} disabled={!user?.username}>
+						<IconUserCircle aria-hidden="true" />
+						View profile
 					</DropdownMenuItem>
-					<DropdownMenuItem
-						onSelect={(e) => e.preventDefault()}
-						className="justify-between"
-					>
-						<span className="flex items-center gap-2">
-							<IconPhone aria-hidden="true" />
-							Your Numbers
-						</span>
-						<Badge variant="secondary" className="rounded-full px-1.5">
-							2
-						</Badge>
-					</DropdownMenuItem>
-				</DropdownMenuGroup>
-				<DropdownMenuSeparator />
-				<DropdownMenuGroup>
-					<DropdownMenuItem>
+					<DropdownMenuItem onSelect={goToSettings}>
 						<IconSettings aria-hidden="true" />
 						Settings
 					</DropdownMenuItem>
-					<DropdownMenuItem>
+					<DropdownMenuItem onSelect={goToHelp}>
 						<IconLifebuoy aria-hidden="true" />
-						Help Center
+						Help &amp; FAQ
 					</DropdownMenuItem>
 				</DropdownMenuGroup>
 				<DropdownMenuSeparator />

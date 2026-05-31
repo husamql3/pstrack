@@ -65,6 +65,8 @@ model User {
   notifyDailyProblem  Boolean  @default(true)
   notifyAchievements  Boolean  @default(true)
   notifyGroupActivity Boolean  @default(true)
+  // username change cooldown
+  usernameChangedAt   DateTime?
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
 
@@ -302,6 +304,8 @@ model Verification {
 | `pausesUsedThisMonth` resets on the 1st of each month | Trigger.dev `reset-monthly-pauses` cron |
 | Join requests expire after 1 day | `expiresAt` set on creation; hourly `expire-join-requests` cron marks EXPIRED |
 | Free groups: `maxMembers = 30` / Pro groups: `maxMembers = 50` | Set at group creation based on creator's `isPro` |
+| Username can change at most once per 30 days | `usernameChangedAt` checked in `PATCH /api/users/me`; UI disables the field and shows next available date |
+| Username must match `^[a-z0-9_-]{3,30}$` and not collide with reserved words | Enforced in `usersModel` (TypeBox) + reserved-words list in `users.constants.ts` |
 | Streak breaks on `MISSED`, preserved on `VERIFICATION_FAILED` | Application logic in `verify-submission` and `mark-missed` jobs |
 | Platform admin access gated on `User.isAdmin` (set manually in DB) | Elysia middleware on `/api/admin/*` |
 

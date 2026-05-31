@@ -16,7 +16,7 @@ export const GroupProblemsTabs = ({
 			if (next) onChange(next)
 		}}
 	>
-		<TabsList variant="ghost">
+		<TabsList>
 			{GROUP_PROBLEMS_RANGES.map((r) => (
 				<TabsTrigger key={r} value={r}>
 					{GROUP_PROBLEMS_RANGE_LABEL[r]}

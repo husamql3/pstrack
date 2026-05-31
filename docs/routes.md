@@ -12,7 +12,7 @@
 | `/verify-email` | Email verification confirmation |
 | `/forgot-password` | Request password reset email |
 | `/reset-password` | Set new password (via token from email) |
-| `/profile/$username` | Public user profile |
+| `/$username` | Public user profile (vanity URL; collides with reserved-words list) |
 
 ### Authenticated
 
@@ -30,9 +30,11 @@
 | `/groups/$groupId/members` | Member list, remove member (admin only) |
 | `/groups/$groupId/join-requests` | Pending join requests, approve / reject (admin only) |
 | `/settings` | Redirect to `/settings/account` |
-| `/settings/account` | Username, email, LeetCode/Codeforces handles, bio, links, visibility |
-| `/settings/notifications` | Email notification preferences |
+| `/settings/account` | Email, connected providers, active sessions, delete account (disabled) |
+| `/settings/profile` | Username (30-day cooldown), display name, bio, LeetCode/Codeforces handles, socials, visibility |
+| `/settings/notifications` | Daily reminder time (disabled placeholder) + three email preference toggles |
 | `/settings/billing` | Pro status, upgrade CTA, purchase history |
+| `/help` | "Coming soon" stub for FAQ + help content |
 
 ### Admin (platform admin only)
 
@@ -92,9 +94,12 @@ Handled entirely by Better Auth at `/api/auth/*` (sign in, sign up, session, ver
 | Method | Route | Auth | Description |
 |---|---|---|---|
 | `GET` | `/api/users/me` | Required | Current user profile, stats, pauses remaining |
-| `PATCH` | `/api/users/me` | Required | Update bio, handles, social links, visibility |
-| `GET` | `/api/users/:username` | Optional | Public profile (respects `isPublic` flag) |
-| `DELETE` | `/api/users/me` | Required | Delete account (cascades all data) |
+| `PATCH` | `/api/users/me` | Required | Update username (cooldown), display name, bio, handles, social links, visibility, notification prefs |
+| `POST` | `/api/users/check-username` | Optional | Validates regex, reserved-words list, and uniqueness; returns `{ available, reason? }` |
+| `GET` | `/api/users/:username` | Optional | Public profile (respects `isPublic`; private profiles return a placeholder shape) |
+| `GET` | `/api/users/me/sessions` | Required | Active Better Auth sessions (device, IP, last-active) |
+| `DELETE` | `/api/users/me/sessions/:id` | Required | Revoke a single session (or `/sessions/others` for sign-out-everywhere) |
+| `DELETE` | `/api/users/me` | Required | Delete account (cascades all data) — disabled in UI for MVP |
 
 ### Admin
 

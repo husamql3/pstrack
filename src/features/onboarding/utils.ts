@@ -1,8 +1,8 @@
 export const sanitizeUsername = (raw: string): string =>
 	raw
 		.toLowerCase()
-		.replace(/[^a-z0-9_]/g, "")
-		.slice(0, 20)
+		.replace(/[^a-z0-9_-]/g, "")
+		.slice(0, 30)
 
 export const deriveInitialUsername = (
 	name?: string | null,
