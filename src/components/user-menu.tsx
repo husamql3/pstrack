@@ -18,6 +18,7 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { Skeleton } from "@/components/ui/skeleton"
 import { HashAvatar } from "@/features/onboarding/components/hash-avatar"
 import { signOut, useSession } from "@/lib/auth-client"
 
@@ -26,7 +27,8 @@ export function UserMenu() {
 	const navigate = useNavigate()
 
 	const user = session?.user
-	const displayName = user?.username ?? user?.name ?? "…"
+	const isLoading = !user
+	const displayName = user?.username ?? user?.name ?? user?.email ?? "User"
 	const initials = (user?.name ?? "?")
 		.split(" ")
 		.map((n) => n[0])
@@ -59,8 +61,16 @@ export function UserMenu() {
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
 				<Button variant="outline" className="ml-auto w-40" size="lg">
-					<HashAvatar username={user?.username ?? initials} size={16} />
-					<span className="font-medium text-sm">{displayName}</span>
+					{isLoading ? (
+						<Skeleton className="size-4 shrink-0 rounded-full" />
+					) : (
+						<HashAvatar username={user?.username ?? initials} size={16} />
+					)}
+					{isLoading ? (
+						<Skeleton className="h-4 w-20" />
+					) : (
+						<span className="truncate font-medium text-sm">{displayName}</span>
+					)}
 					{user?.isPro && (
 						<Badge variant="secondary" className="ml-1 gap-0.5 px-1.5">
 							<IconSparkles className="size-3" aria-hidden="true" />
@@ -72,23 +82,35 @@ export function UserMenu() {
 			</DropdownMenuTrigger>
 			<DropdownMenuContent className="w-60" align="start" sideOffset={8}>
 				<div className="flex items-center gap-3 px-1 pt-1.5 pb-2.5">
-					<HashAvatar username={user?.username ?? initials} size={32} />
-					<div className="flex min-w-0 flex-col">
-						<div className="flex items-center gap-1.5">
-							<span className="truncate font-medium text-foreground text-sm">
-								{user?.name ?? "…"}
-							</span>
-							{user?.isPro && (
-								<Badge variant="secondary" className="shrink-0 gap-0.5 px-1.5">
-									<IconSparkles className="size-3" aria-hidden="true" />
-									Pro
-								</Badge>
-							)}
-						</div>
-						<span className="truncate text-muted-foreground text-xs">
-							{user?.email ?? "…"}
-						</span>
-					</div>
+					{isLoading ? (
+						<>
+							<Skeleton className="size-8 shrink-0 rounded-full" />
+							<div className="flex min-w-0 flex-1 flex-col gap-2">
+								<Skeleton className="h-4 w-28" />
+								<Skeleton className="h-3 w-36" />
+							</div>
+						</>
+					) : (
+						<>
+							<HashAvatar username={user?.username ?? initials} size={32} />
+							<div className="flex min-w-0 flex-col">
+								<div className="flex items-center gap-1.5">
+									<span className="truncate font-medium text-foreground text-sm">
+										{user?.name ?? displayName}
+									</span>
+									{user?.isPro && (
+										<Badge variant="secondary" className="shrink-0 gap-0.5 px-1.5">
+											<IconSparkles className="size-3" aria-hidden="true" />
+											Pro
+										</Badge>
+									)}
+								</div>
+								<span className="truncate text-muted-foreground text-xs">
+									{user?.email}
+								</span>
+							</div>
+						</>
+					)}
 				</div>
 
 				<DropdownMenuGroup>
