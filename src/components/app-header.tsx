@@ -1,9 +1,10 @@
-import { IconCode, IconHome, IconTrophy, IconUsers } from "@tabler/icons-react"
+import { IconCode, IconFlame, IconHome, IconTrophy, IconUsers } from "@tabler/icons-react"
 import { Link, useRouterState } from "@tanstack/react-router"
 import { useEffect, useRef, useState } from "react"
 
 import { Badge } from "@/components/ui/badge"
-import { ThemeSwitcher } from "./theme-switcher"
+import { Skeleton } from "@/components/ui/skeleton"
+import { useSession } from "@/lib/auth-client"
 import { UserMenu } from "./user-menu"
 
 const NAV_LINKS = [
@@ -16,8 +17,13 @@ const NAV_LINKS = [
 export function AppHeader() {
 	const routerState = useRouterState()
 	const pathname = routerState.location.pathname
+	const { data: session } = useSession()
+	const isLoggedIn = !!session?.user
 
-	const activeIndex = NAV_LINKS.findIndex(({ to }) => pathname.startsWith(to))
+	const visibleLinks = isLoggedIn
+		? NAV_LINKS
+		: NAV_LINKS.filter((l) => l.to !== "/dashboard")
+	const activeIndex = visibleLinks.findIndex(({ to }) => pathname.startsWith(to))
 
 	const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
 	const [hoverStyle, setHoverStyle] = useState({})
@@ -75,7 +81,7 @@ export function AppHeader() {
 
 					{/* Nav items */}
 					<div className="relative flex items-center gap-1">
-						{NAV_LINKS.map(({ to, label, icon: Icon }, index) => (
+						{visibleLinks.map(({ to, label, icon: Icon }, index) => (
 							// biome-ignore lint/a11y/noStaticElementInteractions: hover tracking for tab indicator animation
 							<div
 								key={to}
@@ -102,11 +108,40 @@ export function AppHeader() {
 					</div>
 				</nav>
 
-				<div className="ml-auto flex items-center gap-2">
-					<ThemeSwitcher />
+				<div className="ml-auto flex items-center gap-3">
+					<UserStats />
 					<UserMenu />
 				</div>
 			</div>
 		</header>
+	)
+}
+
+const UserStats = () => {
+	const { data: session, isPending } = useSession()
+	const user = session?.user
+
+	if (isPending) {
+		return (
+			<div className="flex flex-col items-end gap-1">
+				<Skeleton className="h-3 w-10" />
+				<Skeleton className="h-3 w-14" />
+			</div>
+		)
+	}
+
+	if (!user) return null
+
+	return (
+		<div className="flex flex-col items-start gap-0.5 tabular-nums">
+			<span className="flex items-center gap-1 font-medium text-[11px] text-muted-foreground">
+				<IconFlame className="size-3 text-orange-400" />
+				{user.currentStreak ?? 0}d streak
+			</span>
+			<span className="flex items-center gap-1 font-medium text-[11px] text-muted-foreground">
+				<IconTrophy className="size-3 text-emerald-500" />
+				{(user.totalPoints ?? 0).toLocaleString()} pts
+			</span>
+		</div>
 	)
 }

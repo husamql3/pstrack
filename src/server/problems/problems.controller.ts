@@ -1,7 +1,7 @@
 import { Elysia, status } from "elysia"
 
 import { db } from "@/server/lib/db"
-import { requireSessionUser } from "@/server/lib/session"
+import { getSessionUser, requireSessionUser } from "@/server/lib/session"
 import { problemsDao } from "./problems.dao"
 import { problemsModel } from "./problems.model"
 
@@ -32,10 +32,8 @@ export const problemsController = new Elysia({ tags: ["Problems"] })
 	.get(
 		"/problems/roadmap",
 		async ({ request, query }) => {
-			const { user, response } = await requireSessionUser(request)
-			if (!user) return response
-
-			return problemsDao.getRoadmapForUser(user.id, query.roadmap ?? "NC250")
+			const user = await getSessionUser(request)
+			return problemsDao.getRoadmapForUser(user?.id ?? null, query.roadmap ?? "NC250")
 		},
 		{ query: "problems.roadmapQuery" }
 	)

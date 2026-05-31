@@ -51,6 +51,16 @@ export const auth = betterAuth({
 				required: false,
 				input: false,
 			},
+			totalPoints: {
+				type: "number",
+				required: false,
+				input: false,
+			},
+			currentStreak: {
+				type: "number",
+				required: false,
+				input: false,
+			},
 		},
 	},
 	// todo add group no

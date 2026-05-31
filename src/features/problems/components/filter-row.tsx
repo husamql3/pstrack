@@ -15,6 +15,7 @@ export const FilterRow = ({
 	onQueryChange,
 	onDifficultyChange,
 	onStatusChange,
+	showStatus = true,
 }: {
 	initialQuery: string
 	difficulty: DifficultyFilter
@@ -22,6 +23,7 @@ export const FilterRow = ({
 	onQueryChange: (q: string) => void
 	onDifficultyChange: (d: DifficultyFilter) => void
 	onStatusChange: (s: StatusFilter) => void
+	showStatus?: boolean
 }) => {
 	const [inputValue, setInputValue] = useState(initialQuery)
 	const debouncedQ = useDebounce(inputValue)
@@ -73,7 +75,7 @@ export const FilterRow = ({
 
 			<div className="flex flex-wrap items-center gap-2">
 				<Tabs onValueChange={handleDifficultyChange} value={difficulty}>
-					<TabsList>
+					<TabsList variant="ghost">
 						<TabsTrigger value="all">All</TabsTrigger>
 						<TabsTrigger value={Difficulty.EASY}>
 							Easy
@@ -90,16 +92,18 @@ export const FilterRow = ({
 					</TabsList>
 				</Tabs>
 
-				<Tabs onValueChange={handleStatusChange} value={status}>
-					<TabsList>
-						<TabsTrigger value="all">All</TabsTrigger>
-						<TabsTrigger value="solved">
-							<IconCheck className="size-3.5" />
-							Solved
-						</TabsTrigger>
-						<TabsTrigger value="unsolved">Unsolved</TabsTrigger>
-					</TabsList>
-				</Tabs>
+				{showStatus && (
+					<Tabs onValueChange={handleStatusChange} value={status}>
+						<TabsList variant="ghost">
+							<TabsTrigger value="all">All</TabsTrigger>
+							<TabsTrigger value="solved">
+								<IconCheck className="size-3.5" />
+								Solved
+							</TabsTrigger>
+							<TabsTrigger value="unsolved">Unsolved</TabsTrigger>
+						</TabsList>
+					</Tabs>
+				)}
 			</div>
 		</div>
 	)

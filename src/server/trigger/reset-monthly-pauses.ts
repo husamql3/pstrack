@@ -1,18 +1,3 @@
-import { logger, schedules } from "@trigger.dev/sdk/v3"
+// Superseded by reset-monthly-counters.ts — kept to prevent Trigger.dev from re-scheduling the old job ID.
+// This file can be deleted once the old "reset-monthly-pauses" schedule is removed from Trigger.dev dashboard.
 
-import { problemsDao } from "@/server/problems/problems.dao"
-
-export const resetMonthlyPausesTask = schedules.task({
-	id: "reset-monthly-pauses",
-	cron: "0 0 1 * *", // first of the month, midnight UTC
-	maxDuration: 60,
-	run: async () => {
-		logger.log("Resetting monthly pause counts")
-
-		const result = await problemsDao.resetMonthlyPauses()
-
-		logger.log("Done", result)
-
-		return result
-	},
-})

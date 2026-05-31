@@ -1,9 +1,14 @@
 import {
+	IconCheck,
+	IconDeviceDesktop,
 	IconLifebuoy,
 	IconLogout,
+	IconMoon,
+	IconPalette,
 	IconSelector,
 	IconSettings,
 	IconSparkles,
+	IconSun,
 	IconUserCircle,
 } from "@tabler/icons-react"
 import { useNavigate } from "@tanstack/react-router"
@@ -16,15 +21,20 @@ import {
 	DropdownMenuGroup,
 	DropdownMenuItem,
 	DropdownMenuSeparator,
+	DropdownMenuSub,
+	DropdownMenuSubContent,
+	DropdownMenuSubTrigger,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Skeleton } from "@/components/ui/skeleton"
 import { HashAvatar } from "@/features/onboarding/components/hash-avatar"
 import { signOut, useSession } from "@/lib/auth-client"
+import { useTheme } from "@/lib/use-theme"
 
 export function UserMenu() {
 	const { data: session } = useSession()
 	const navigate = useNavigate()
+	const { theme, setTheme } = useTheme()
 
 	const user = session?.user
 	const isLoading = !user
@@ -60,7 +70,7 @@ export function UserMenu() {
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
-				<Button variant="outline" className="ml-auto w-40" size="lg">
+				<Button variant="outline" className="ml-auto w-52" size="lg">
 					{isLoading ? (
 						<Skeleton className="size-4 shrink-0 rounded-full" />
 					) : (
@@ -93,7 +103,7 @@ export function UserMenu() {
 					) : (
 						<>
 							<HashAvatar username={user?.username ?? initials} size={32} />
-							<div className="flex min-w-0 flex-col">
+							<div className="flex min-w-0 flex-col gap-0.5">
 								<div className="flex items-center gap-1.5">
 									<span className="truncate font-medium text-foreground text-sm">
 										{user?.name ?? displayName}
@@ -122,6 +132,29 @@ export function UserMenu() {
 						<IconSettings aria-hidden="true" />
 						Settings
 					</DropdownMenuItem>
+					<DropdownMenuSub>
+						<DropdownMenuSubTrigger>
+							<IconPalette aria-hidden="true" />
+							Appearance
+						</DropdownMenuSubTrigger>
+						<DropdownMenuSubContent>
+							<DropdownMenuItem onSelect={() => setTheme("light")}>
+								<IconSun aria-hidden="true" />
+								Light
+								{theme === "light" && <IconCheck className="ml-auto size-3.5" />}
+							</DropdownMenuItem>
+							<DropdownMenuItem onSelect={() => setTheme("dark")}>
+								<IconMoon aria-hidden="true" />
+								Dark
+								{theme === "dark" && <IconCheck className="ml-auto size-3.5" />}
+							</DropdownMenuItem>
+							<DropdownMenuItem onSelect={() => setTheme("system")}>
+								<IconDeviceDesktop aria-hidden="true" />
+								System
+								{theme === "system" && <IconCheck className="ml-auto size-3.5" />}
+							</DropdownMenuItem>
+						</DropdownMenuSubContent>
+					</DropdownMenuSub>
 					<DropdownMenuItem onSelect={goToHelp}>
 						<IconLifebuoy aria-hidden="true" />
 						Help &amp; FAQ

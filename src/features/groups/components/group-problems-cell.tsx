@@ -56,7 +56,7 @@ export const GroupProblemsCell = ({
 		if (!isInteractive) return
 		await sileo.promise(onSolve(), {
 			loading: { title: "Validating on LeetCode..." },
-			success: { title: "Solved! +10 pts" },
+			success: { title: "Solved!" },
 			error: (err: unknown) => ({
 				title: "Could not verify",
 				description: errorDescription(err),

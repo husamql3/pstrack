@@ -1,6 +1,17 @@
 import type { Prisma } from "@/generated/prisma/client"
-import { PointReason, SolveStatus } from "@/generated/prisma/enums"
+import { Difficulty, PointReason, SolveStatus } from "@/generated/prisma/enums"
 import { db } from "@/server/lib/db"
+import { pointsDao } from "@/server/points/points.dao"
+import {
+	COMEBACK_BONUS,
+	EARLY_BIRD_BONUS,
+	FIRST_IN_GROUP_BONUS,
+	MISSED_PENALTY,
+	PAUSE_PENALTY,
+	SOLVE_POINTS,
+	STREAK_MULTIPLIER_7,
+	STREAK_MULTIPLIER_30,
+} from "@/server/points/points.type"
 import { NEETCODE_250_PROBLEMS } from "./problems.seed"
 import {
 	type MarkSolvedResult,
@@ -55,8 +66,6 @@ const startOfTodayUtc = () => {
 
 const startOfUtcDay = (d: Date) =>
 	new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()))
-
-const MISSED_PENALTY = 3
 
 const pauseLimitFor = (user: { isPro: boolean }) => (user.isPro ? 4 : 2)
 
@@ -328,7 +337,12 @@ export const problemsDao = {
 
 		const user = await db.user.findUniqueOrThrow({
 			where: { id: userId },
-			select: { leetcodeHandle: true, currentStreak: true, longestStreak: true },
+			select: {
+				leetcodeHandle: true,
+				currentStreak: true,
+				longestStreak: true,
+				currentStreakStartedAt: true,
+			},
 		})
 
 		if (!user.leetcodeHandle) return { error: "NOT_VERIFIED", today }
@@ -340,17 +354,32 @@ export const problemsDao = {
 		)
 		if (!verified) return { error: "NOT_VERIFIED", today }
 
-		const existingSolvedCount = await db.userSolve.count({
-			where: { dailyProblemId, status: SolveStatus.SOLVED },
-		})
-		const isFirstInGroup = existingSolvedCount === 0
+		const [existingSolvedCount, isComeback] = await Promise.all([
+			db.userSolve.count({ where: { dailyProblemId, status: SolveStatus.SOLVED } }),
+			user.currentStreak === 0 ? pointsDao.hasEverMissed(userId) : Promise.resolve(false),
+		])
 
-		const BASE_POINTS = 10
-		const FIRST_BONUS = 5
-		const pointsEarned = BASE_POINTS + (isFirstInGroup ? FIRST_BONUS : 0)
+		const isFirstInGroup = existingSolvedCount === 0
+		const baseSolvePoints =
+			problem.difficulty === Difficulty.HARD
+				? SOLVE_POINTS.HARD
+				: problem.difficulty === Difficulty.MEDIUM
+					? SOLVE_POINTS.MEDIUM
+					: SOLVE_POINTS.EASY
+
+		const multiplier =
+			user.currentStreak >= 30
+				? STREAK_MULTIPLIER_30
+				: user.currentStreak >= 7
+					? STREAK_MULTIPLIER_7
+					: 1
+		const multiplierDelta = Math.floor(baseSolvePoints * multiplier) - baseSolvePoints
+
+		const now = new Date()
+		const isEarlyBird = now.getUTCHours() < 12
+		const isNewStreak = user.currentStreak === 0
 		const newStreak = user.currentStreak + 1
 		const newLongest = Math.max(newStreak, user.longestStreak)
-		const now = new Date()
 
 		await db.$transaction(async (tx) => {
 			const upserted = await tx.userSolve.upsert({
@@ -359,55 +388,76 @@ export const problemsDao = {
 					userId,
 					dailyProblemId,
 					status: SolveStatus.SOLVED,
-					pointsEarned,
+					pointsEarned: baseSolvePoints,
 					isFirstInGroup,
 					verifiedAt: now,
 				},
 				update: {
 					status: SolveStatus.SOLVED,
-					pointsEarned,
+					pointsEarned: baseSolvePoints,
 					isFirstInGroup,
 					verifiedAt: now,
 				},
+				select: { id: true },
 			})
 
-			const ops: Promise<unknown>[] = [
-				tx.pointsHistory.create({
-					data: {
-						userId,
-						userSolveId: upserted.id,
-						delta: BASE_POINTS,
-						reason: PointReason.DAILY_SOLVE,
-					},
-				}),
-				tx.user.update({
-					where: { id: userId },
-					data: {
-						totalPoints: { increment: pointsEarned },
-						currentStreak: newStreak,
-						longestStreak: newLongest,
-					},
-				}),
-			]
+			const opts = { tx, userSolveId: upserted.id }
 
-			if (isFirstInGroup) {
-				ops.push(
-					tx.pointsHistory.create({
-						data: {
-							userId,
-							userSolveId: upserted.id,
-							delta: FIRST_BONUS,
-							reason: PointReason.FIRST_IN_GROUP,
-						},
-					}),
-					tx.dailyProblem.update({
-						where: { id: dailyProblemId },
-						data: { firstSolverId: userId, firstSolveTime: now },
-					})
+			await pointsDao.applyPointsDelta(
+				userId,
+				baseSolvePoints,
+				PointReason.DAILY_SOLVE,
+				opts
+			)
+
+			if (multiplierDelta > 0) {
+				await pointsDao.applyPointsDelta(
+					userId,
+					multiplierDelta,
+					PointReason.STREAK_MULTIPLIER_BONUS,
+					opts
 				)
 			}
 
-			await Promise.all(ops)
+			if (isFirstInGroup) {
+				await pointsDao.applyPointsDelta(
+					userId,
+					FIRST_IN_GROUP_BONUS,
+					PointReason.FIRST_IN_GROUP,
+					opts
+				)
+				await tx.dailyProblem.update({
+					where: { id: dailyProblemId },
+					data: { firstSolverId: userId, firstSolveTime: now },
+				})
+			}
+
+			if (isComeback) {
+				await pointsDao.applyPointsDelta(
+					userId,
+					COMEBACK_BONUS,
+					PointReason.COMEBACK,
+					opts
+				)
+			}
+
+			if (isEarlyBird) {
+				await pointsDao.applyPointsDelta(
+					userId,
+					EARLY_BIRD_BONUS,
+					PointReason.EARLY_BIRD,
+					opts
+				)
+			}
+
+			await tx.user.update({
+				where: { id: userId },
+				data: {
+					currentStreak: newStreak,
+					longestStreak: newLongest,
+					...(isNewStreak && { currentStreakStartedAt: now }),
+				},
+			})
 		})
 
 		return { error: null, today: await problemsDao.getTodayForUser(userId) }
@@ -426,8 +476,8 @@ export const problemsDao = {
 			return { error: "NO_PAUSES", today }
 		}
 
-		await db.$transaction([
-			db.userSolve.upsert({
+		await db.$transaction(async (tx) => {
+			const upserted = await tx.userSolve.upsert({
 				where: {
 					userId_dailyProblemId: {
 						userId,
@@ -440,12 +490,19 @@ export const problemsDao = {
 					status: SolveStatus.PAUSED,
 				},
 				update: { status: SolveStatus.PAUSED },
-			}),
-			db.user.update({
+				select: { id: true },
+			})
+
+			await tx.user.update({
 				where: { id: userId },
 				data: { pausesUsedThisMonth: { increment: 1 } },
-			}),
-		])
+			})
+
+			await pointsDao.applyPointsDelta(userId, -PAUSE_PENALTY, PointReason.PAUSE, {
+				tx,
+				userSolveId: upserted.id,
+			})
+		})
 
 		return { error: null, today: await problemsDao.getTodayForUser(userId) }
 	},
@@ -484,15 +541,23 @@ export const problemsDao = {
 
 		const userIds = Array.from(new Set(candidates.map((c) => c.userId)))
 		const dailyProblemIds = Array.from(new Set(candidates.map((c) => c.dailyProblemId)))
-		const existingSolves = await db.userSolve.findMany({
-			where: {
-				userId: { in: userIds },
-				dailyProblemId: { in: dailyProblemIds },
-			},
-			select: { userId: true, dailyProblemId: true },
-		})
+
+		const [existingSolves, usersWithStreak] = await Promise.all([
+			db.userSolve.findMany({
+				where: { userId: { in: userIds }, dailyProblemId: { in: dailyProblemIds } },
+				select: { userId: true, dailyProblemId: true },
+			}),
+			db.user.findMany({
+				where: { id: { in: userIds } },
+				select: { id: true, currentStreakStartedAt: true },
+			}),
+		])
+
 		const existingKey = new Set(
 			existingSolves.map((s) => `${s.userId}:${s.dailyProblemId}`)
+		)
+		const streakStartByUser = new Map(
+			usersWithStreak.map((u) => [u.id, u.currentStreakStartedAt])
 		)
 
 		const toMiss = candidates.filter(
@@ -503,28 +568,39 @@ export const problemsDao = {
 		await db.$transaction(async (tx) => {
 			for (const { userId, dailyProblemId } of toMiss) {
 				const solve = await tx.userSolve.create({
-					data: {
-						userId,
-						dailyProblemId,
-						status: SolveStatus.MISSED,
-						pointsEarned: -MISSED_PENALTY,
-					},
+					data: { userId, dailyProblemId, status: SolveStatus.MISSED, pointsEarned: 0 },
 					select: { id: true },
 				})
-				await tx.pointsHistory.create({
-					data: {
+
+				const solveOpts = { tx, userSolveId: solve.id }
+				const streakStartedAt = streakStartByUser.get(userId) ?? null
+
+				if (streakStartedAt) {
+					const bonusSum = await pointsDao.sumBonusesSinceStreakStart(
+						tx,
 						userId,
-						userSolveId: solve.id,
-						delta: -MISSED_PENALTY,
-						reason: PointReason.MISSED_DAY,
-					},
-				})
+						streakStartedAt
+					)
+					if (bonusSum > 0) {
+						await pointsDao.applyPointsDelta(
+							userId,
+							-bonusSum,
+							PointReason.CLAWBACK,
+							solveOpts
+						)
+					}
+				}
+
+				await pointsDao.applyPointsDelta(
+					userId,
+					-MISSED_PENALTY,
+					PointReason.MISSED_DAY,
+					solveOpts
+				)
+
 				await tx.user.update({
 					where: { id: userId },
-					data: {
-						totalPoints: { decrement: MISSED_PENALTY },
-						currentStreak: 0,
-					},
+					data: { currentStreak: 0, currentStreakStartedAt: null },
 				})
 			}
 		})
@@ -532,16 +608,21 @@ export const problemsDao = {
 		return { missed: toMiss.length }
 	},
 
-	resetMonthlyPauses: async () => {
+	resetMonthlyCounters: async () => {
 		const result = await db.user.updateMany({
-			where: { pausesUsedThisMonth: { gt: 0 } },
-			data: { pausesUsedThisMonth: 0 },
+			where: {
+				OR: [
+					{ pausesUsedThisMonth: { gt: 0 } },
+					{ verificationFailuresThisMonth: { gt: 0 } },
+				],
+			},
+			data: { pausesUsedThisMonth: 0, verificationFailuresThisMonth: 0 },
 		})
 		return { reset: result.count }
 	},
 
 	getRoadmapForUser: async (
-		userId: string,
+		userId: string | null,
 		roadmap: RoadmapKey = "NC250"
 	): Promise<RoadmapProblemResponse[]> => {
 		const [problems, solves] = await Promise.all([
@@ -550,14 +631,16 @@ export const problemsDao = {
 				orderBy: { roadmapIndex: "asc" },
 				select: problemSelect,
 			}),
-			db.userSolve.findMany({
-				where: { userId },
-				select: {
-					status: true,
-					dailyProblem: { select: { problemId: true } },
-				},
-				orderBy: { updatedAt: "desc" },
-			}),
+			userId
+				? db.userSolve.findMany({
+						where: { userId },
+						select: {
+							status: true,
+							dailyProblem: { select: { problemId: true } },
+						},
+						orderBy: { updatedAt: "desc" },
+					})
+				: Promise.resolve([]),
 		])
 
 		const statusByProblemId = new Map<string, SolveStatus>()

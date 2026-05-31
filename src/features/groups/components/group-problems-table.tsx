@@ -25,14 +25,16 @@ import {
 	useGroupProblems,
 	useMarkTodaySolvedFromTable,
 } from "../hooks/use-group-problems"
+import type { SolveCelebrationData } from "../types"
 import { GroupProblemsCell } from "./group-problems-cell"
 import { GroupProblemsHeaderCell } from "./group-problems-header-cell"
+import { SolveCelebrationModal } from "./solve-celebration-modal"
 
 const META_COLS = [
 	{ key: "date", label: "Date", width: 80 },
 	{ key: "num", label: "#", width: 50 },
 	{ key: "title", label: "Problem", width: 240 },
-	{ key: "topic", label: "Topic", width: 140 },
+	{ key: "topic", label: "Topic", width: 100 },
 	{ key: "difficulty", label: "Difficulty", width: 90 },
 ] as const
 
@@ -90,6 +92,10 @@ export const GroupProblemsTable = () => {
 	const { range } = GroupRoute.useSearch()
 	const query = useGroupProblems(groupId, range)
 	const solveMutation = useMarkTodaySolvedFromTable(groupId, range)
+
+	const [celebrationData, setCelebrationData] = useState<SolveCelebrationData | null>(
+		null
+	)
 
 	const today = useMemo(() => startOfTodayUtc(), [])
 
@@ -155,10 +161,26 @@ export const GroupProblemsTable = () => {
 		fetchNextPage,
 	])
 
-	const handleSolve = useCallback(() => solveMutation.mutateAsync(), [solveMutation])
+	const handleSolve = useCallback(async () => {
+		const result = await solveMutation.mutateAsync()
+		if (result.state === "READY" && result.solve) {
+			setCelebrationData({
+				problemTitle: result.dailyProblem.problem.title,
+				pointsEarned: result.solve.pointsEarned,
+				isFirstInGroup: result.solve.isFirstInGroup,
+				currentStreak: result.userStats.currentStreak,
+				totalPoints: result.userStats.totalPoints,
+			})
+		}
+		return result
+	}, [solveMutation])
 
 	return (
 		<TooltipProvider>
+			<SolveCelebrationModal
+				data={celebrationData}
+				onClose={() => setCelebrationData(null)}
+			/>
 			<div className="flex min-h-0 flex-1 flex-col">
 				{query.isLoading ? (
 					<TableSkeleton />
@@ -280,7 +302,7 @@ const DataRow = ({
 		<div
 			className={cn(
 				"flex h-full border-border border-b",
-				isTodayRow && "bg-emerald-500/[0.04]"
+				isTodayRow && "bg-emerald-500/4"
 			)}
 		>
 			<div

@@ -43,7 +43,7 @@ export const GroupFilterRow = ({
 
 	return (
 		<div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-			<InputGroup className="sm:max-w-xs">
+			<InputGroup className="sm:max-w-xs" variant="ghost">
 				<InputGroupAddon align="inline-start" className="pl-1.75">
 					<IconSearch className="size-4" />
 				</InputGroupAddon>
@@ -56,7 +56,7 @@ export const GroupFilterRow = ({
 			</InputGroup>
 
 			<Tabs onValueChange={handleTypeChange} value={type}>
-				<TabsList>
+				<TabsList variant="ghost">
 					<TabsTrigger value="all">All</TabsTrigger>
 					<TabsTrigger value="public">Public</TabsTrigger>
 					<TabsTrigger value="private">Private</TabsTrigger>

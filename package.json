@@ -6,6 +6,7 @@
 	"scripts": {
 		"dev": "portless",
 		"dev:app": "vite dev --host 127.0.0.1 --port=${PORT:-3001}",
+		"dev:trigger": "npx trigger.dev@latest dev",
 		"dev:email": "bunx react-email dev --dir src/emails --port 3001",
 		"build": "prisma generate && vite build",
 		"preview": "vite preview",
@@ -62,7 +63,9 @@
 		"@tanstack/react-virtual": "^3.13.26",
 		"@tanstack/router-plugin": "^1.166.13",
 		"@trigger.dev/sdk": "4.4.6",
+		"@types/canvas-confetti": "^1.9.0",
 		"better-auth": "^1.6.11",
+		"canvas-confetti": "^1.9.4",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
 		"dotenv": "^17.4.2",

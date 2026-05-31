@@ -5,7 +5,7 @@ import type { TodayProblemResponse } from "@/server/problems/problems.type"
 
 const todayProblemQueryKey = ["problems", "today"] as const
 
-export const useTodayProblem = () =>
+export const useTodayProblem = ({ enabled = true }: { enabled?: boolean } = {}) =>
 	useQuery<TodayProblemResponse>({
 		queryKey: todayProblemQueryKey,
 		queryFn: async () => {
@@ -14,6 +14,7 @@ export const useTodayProblem = () =>
 			return data
 		},
 		staleTime: 1000 * 60,
+		enabled,
 	})
 
 export const useMarkTodaySolved = () => {

@@ -21,7 +21,6 @@ export const HashAvatar = ({
 			hash: username,
 			size,
 			mode: "gradient",
-			animated: false,
 		})
 		return stop
 	}, [username, size])

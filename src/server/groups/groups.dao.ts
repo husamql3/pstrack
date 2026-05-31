@@ -1,6 +1,8 @@
 import slugsPool from "@/data/slugs.json"
-import { SolveStatus } from "@/generated/prisma/enums"
+import { PointReason, SolveStatus } from "@/generated/prisma/enums"
 import { db } from "@/server/lib/db"
+import { pointsDao } from "@/server/points/points.dao"
+import { JOIN_GROUP_BONUS } from "@/server/points/points.type"
 import {
 	GROUP_PROBLEMS_PAGE_SIZE,
 	type GroupDetailResponse,
@@ -143,6 +145,10 @@ export const groupsDao = {
 			})
 			await tx.groupMember.create({
 				data: { groupId: created.id, userId, role: "ADMIN" },
+			})
+			await pointsDao.applyPointsDelta(userId, JOIN_GROUP_BONUS, PointReason.JOIN_GROUP, {
+				tx,
+				groupId: created.id,
 			})
 			return created
 		})
@@ -376,15 +382,28 @@ export const groupsDao = {
 				return { error: "USER_GROUP_LIMIT" as const }
 			}
 
-			await db.$transaction([
-				db.groupJoinRequest.update({
+			await db.$transaction(async (tx) => {
+				await tx.groupJoinRequest.update({
 					where: { id: requestId },
 					data: { status: "APPROVED" },
-				}),
-				db.groupMember.create({
+				})
+				await tx.groupMember.create({
 					data: { groupId, userId: request.userId, role: "MEMBER" },
-				}),
-			])
+				})
+				const hasJoinedBefore = await pointsDao.hasEverJoinedGroup(
+					tx,
+					request.userId,
+					groupId
+				)
+				if (!hasJoinedBefore) {
+					await pointsDao.applyPointsDelta(
+						request.userId,
+						JOIN_GROUP_BONUS,
+						PointReason.JOIN_GROUP,
+						{ tx, groupId }
+					)
+				}
+			})
 		} else {
 			await db.groupJoinRequest.update({
 				where: { id: requestId },
@@ -482,8 +501,22 @@ export const groupsDao = {
 			return { error: "GROUP_LIMIT" as const, groupId: null, status: null }
 		}
 
-		await db.groupMember.create({
-			data: { groupId: group.id, userId, role: "MEMBER" },
+		await db.$transaction(async (tx) => {
+			await tx.groupMember.create({
+				data: { groupId: group.id, userId, role: "MEMBER" },
+			})
+			const hasJoinedBefore = await pointsDao.hasEverJoinedGroup(tx, userId, group.id)
+			if (!hasJoinedBefore) {
+				await pointsDao.applyPointsDelta(
+					userId,
+					JOIN_GROUP_BONUS,
+					PointReason.JOIN_GROUP,
+					{
+						tx,
+						groupId: group.id,
+					}
+				)
+			}
 		})
 
 		return { error: null, status: "JOINED" as const, groupId: group.id }

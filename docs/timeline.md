@@ -96,14 +96,26 @@ Stay consistent with LeetCode — solve one problem a day, earn points, and comp
 
 ## Phase 5 — Points, Streaks & Gamification · [#223](https://github.com/husamql3/pstrack/issues/223)
 
-- [ ] Points calculation in `verify-submission` job (+10 solve, +5 first in group, streak multiplier)
-- [ ] All point changes logged to `PointsHistory`
-- [ ] `user.totalPoints` updated denormalized on every change
-- [ ] Streak increment / reset logic in `verify-submission` and `mark-missed` jobs
-- [ ] `user.longestStreak` updated when `currentStreak` exceeds it
+- [x] Add points model schema changes from `docs/POINTS.md` (`currentStreakStartedAt`, `verificationFailuresThisMonth`, `proSource`, `PointsHistory.groupId`, new `PointReason` values)
+- [x] Add atomic `pointsDao.applyPointsDelta()` for point mutations, `PointsHistory` audit rows, floor-at-0 balances, and points-threshold Pro unlock
+- [x] Refactor point-changing flows to use `applyPointsDelta`
+- [x] Difficulty-based solve points in the sync solve flow (Easy +5, Medium +10, Hard +15)
+- [x] First-in-group bonus (+10) logged separately as `FIRST_IN_GROUP`
+- [x] Streak multiplier bonuses (7d / 30d) logged separately as `STREAK_MULTIPLIER_BONUS`
+- [x] Comeback bonus (+3) after a missed streak
+- [ ] Early-bird bonus (+2) before user-local noon (current implementation uses UTC)
+- [x] Join-group bonus (+20) awarded once per unique group using immutable `PointsHistory`
+- [x] Set `currentStreakStartedAt` on the first solve of a new streak
+- [x] Pause penalty (-5) logged as `PAUSE` while preserving streak
+- [ ] Pause confirmation UI shows the -5 point cost before charging
+- [x] `mark-missed` clawback transaction: bonus sum, `CLAWBACK`, `MISSED_DAY`, streak reset, streak-start clear
+- [x] Streak increment / reset logic in the sync solve flow and `mark-missed` job
+- [x] `user.longestStreak` updated when `currentStreak` exceeds it
+- [x] Rename monthly reset job to `reset-monthly-counters` and reset both pause and verification-failure counters
+- [ ] Verification failure escalation: first monthly failure grace, second+ failure treated as miss
 - [ ] Badge evaluation after each solve: streak badges (7/30/100), First Solver (10/50), Consistent (30)
-- [ ] `POST /api/users/me` returns pauses remaining this month
-- [ ] Email templates: `streak-milestone.tsx`, `badge-earned.tsx`
+- [ ] `GET /api/v4/users/me` returns points economy fields (`pausesRemainingThisMonth`, `verificationFailuresRemainingThisMonth`, `proSource`, `pointsToProUnlock`)
+- [ ] Email templates: `streak-milestone.tsx`, `badge-earned.tsx`, `pro-unlocked-by-points.tsx`
 
 **Deliverable:** Points, streaks, and badges fully functional
 
@@ -136,11 +148,11 @@ Stay consistent with LeetCode — solve one problem a day, earn points, and comp
 
 ## Phase 8 — User Profiles & Settings · [#226](https://github.com/husamql3/pstrack/issues/226)
 
-- [ ] `GET /api/users/:username` — public profile endpoint
-- [ ] `PATCH /api/users/me` — update profile endpoint
+- [x] `GET /api/users/:username` — public profile endpoint
+- [x] `PATCH /api/users/me` — update profile endpoint
 - [ ] `DELETE /api/users/me` — account deletion
-- [ ] Build public profile page (`/profile/$username`)
-- [ ] Build settings pages (`/settings/account`, `/settings/notifications`, `/settings/billing`)
+- [x] Build public profile page (`/$username`)
+- [x] Build settings pages (`/settings/account`, `/settings/profile`, `/settings/notifications`, `/settings/billing`)
 - [ ] Email templates: `password-changed.tsx`, `security-alert.tsx`, `account-deletion.tsx`
 
 **Deliverable:** Full profile and settings experience
