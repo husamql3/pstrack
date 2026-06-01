@@ -15,6 +15,8 @@ export const Route = createFileRoute("/_authenticated")({
 		) {
 			throw redirect({ to: "/onboarding" })
 		}
+
+		console.log("session", session)
 		if (
 			session.user.username &&
 			session.user.leetcodeHandle &&

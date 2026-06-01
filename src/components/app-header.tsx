@@ -1,4 +1,11 @@
-import { IconCode, IconFlame, IconHome, IconTrophy, IconUsers } from "@tabler/icons-react"
+import {
+	IconCode,
+	IconFlame,
+	IconHome,
+	IconMedal,
+	IconTrophy,
+	IconUsers,
+} from "@tabler/icons-react"
 import { Link, useRouterState } from "@tanstack/react-router"
 import { useEffect, useRef, useState } from "react"
 
@@ -12,6 +19,7 @@ const NAV_LINKS = [
 	{ to: "/problems", label: "Problems", icon: IconCode },
 	{ to: "/groups", label: "Groups", icon: IconUsers },
 	{ to: "/leaderboard", label: "Leaderboard", icon: IconTrophy },
+	{ to: "/badges", label: "Badges", icon: IconMedal },
 ] as const
 
 export function AppHeader() {

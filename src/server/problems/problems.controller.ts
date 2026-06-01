@@ -4,6 +4,7 @@ import { db } from "@/server/lib/db"
 import { getSessionUser, requireSessionUser } from "@/server/lib/session"
 import { problemsDao } from "./problems.dao"
 import { problemsModel } from "./problems.model"
+import { problemNotifications } from "./problems.notifications"
 
 const requirePlatformAdmin = async (request: Request) => {
 	const { user, response } = await requireSessionUser(request)
@@ -52,8 +53,23 @@ export const problemsController = new Elysia({ tags: ["Problems"] })
 				error: "No accepted submission found on LeetCode for today's problem.",
 			})
 		}
+		if (result.error === "VERIFICATION_FAILED_PENALIZED") {
+			return status(409, {
+				error: "Solve not found on LeetCode. Streak broken and points deducted.",
+			})
+		}
 
-		return result.today
+		if (result.error !== null) return result.today
+
+		problemNotifications
+			.sendSolveAchievementEmails(user.id, user.email, user.name, {
+				crossedProThreshold: result.crossedProThreshold,
+				newBadges: result.newBadges,
+				newStreak: result.newStreak,
+			})
+			.catch(() => {})
+
+		return { today: result.today, newBadges: result.newBadges }
 	})
 	.post("/problems/today/pause", async ({ request }) => {
 		const { user, response } = await requireSessionUser(request)

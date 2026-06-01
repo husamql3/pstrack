@@ -2,15 +2,29 @@ import {
 	IconCalendar,
 	IconCircleCheck,
 	IconClock,
+	IconMedal,
 	IconPlayerPause,
 } from "@tabler/icons-react"
 import { Link } from "@tanstack/react-router"
 import { sileo } from "sileo"
 
+import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+	AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
+import { useUserBadges } from "@/features/badges/hooks/use-user-badges"
 import { cn } from "@/lib/utils"
+import { BADGE_CATEGORY, BADGE_LABELS } from "@/server/badges/badges.type"
 import {
 	useMarkTodaySolved,
 	usePauseToday,
@@ -32,10 +46,17 @@ const statusCopy = {
 const errorDescription = (err: unknown) =>
 	err instanceof Error ? err.message : "Please try again."
 
+const CATEGORY_DOT: Record<string, string> = {
+	streak: "bg-amber-400",
+	volume: "bg-emerald-400",
+	social: "bg-purple-400",
+}
+
 export const DashboardPage = () => {
 	const todayQuery = useTodayProblem()
 	const solveMutation = useMarkTodaySolved()
 	const pauseMutation = usePauseToday()
+	const badgesQuery = useUserBadges()
 
 	if (todayQuery.isLoading) {
 		return (
@@ -107,7 +128,7 @@ export const DashboardPage = () => {
 		})
 	}
 
-	const pauseToday = async () => {
+	const confirmPause = async () => {
 		await sileo.promise(pauseMutation.mutateAsync(), {
 			loading: { title: "Pausing today..." },
 			success: { title: "Today is paused" },
@@ -164,14 +185,34 @@ export const DashboardPage = () => {
 							<IconCircleCheck />
 							Mark as Solved
 						</Button>
-						<Button
-							disabled={isLocked || today.pausesRemaining <= 0}
-							onClick={pauseToday}
-							variant="outline"
-						>
-							<IconPlayerPause />
-							Pause Today
-						</Button>
+						<AlertDialog>
+							<AlertDialogTrigger asChild>
+								<Button
+									disabled={isLocked || today.pausesRemaining <= 0}
+									variant="outline"
+								>
+									<IconPlayerPause />
+									Pause Today
+								</Button>
+							</AlertDialogTrigger>
+							<AlertDialogContent>
+								<AlertDialogHeader>
+									<AlertDialogTitle>Pause today?</AlertDialogTitle>
+									<AlertDialogDescription>
+										Pausing costs <strong>-5 points</strong> but preserves your streak.
+										You have {today.pausesRemaining}{" "}
+										{today.pausesRemaining === 1 ? "pause" : "pauses"} remaining this
+										month.
+									</AlertDialogDescription>
+								</AlertDialogHeader>
+								<AlertDialogFooter>
+									<AlertDialogCancel>Cancel</AlertDialogCancel>
+									<AlertDialogAction onClick={confirmPause}>
+										Pause and lose 5 points
+									</AlertDialogAction>
+								</AlertDialogFooter>
+							</AlertDialogContent>
+						</AlertDialog>
 						<p className="text-muted-foreground text-xs">
 							{today.pausesRemaining} pauses remaining this month
 						</p>
@@ -189,6 +230,11 @@ export const DashboardPage = () => {
 					value={solveStatus ? statusCopy[solveStatus] : "Open"}
 				/>
 			</section>
+
+			<BadgesShelf
+				isLoading={badgesQuery.isLoading}
+				earned={badgesQuery.data?.earned ?? []}
+			/>
 		</div>
 	)
 }
@@ -209,3 +255,53 @@ const MetricCard = ({ label, value }: { label: string; value: string }) => (
 		<p className="mt-1 font-medium text-sm">{value}</p>
 	</div>
 )
+
+const BadgesShelf = ({
+	isLoading,
+	earned,
+}: {
+	isLoading: boolean
+	earned: { type: string; earnedAt: Date }[]
+}) => {
+	if (isLoading) {
+		return (
+			<section className="flex flex-col gap-3">
+				<div className="flex items-center gap-2">
+					<IconMedal className="size-4 text-muted-foreground" />
+					<span className="font-medium text-sm">Your Badges</span>
+				</div>
+				<div className="flex gap-2">
+					<Skeleton className="h-7 w-28 rounded-full" />
+					<Skeleton className="h-7 w-24 rounded-full" />
+					<Skeleton className="h-7 w-32 rounded-full" />
+				</div>
+			</section>
+		)
+	}
+
+	if (earned.length === 0) return null
+
+	return (
+		<section className="flex flex-col gap-3">
+			<div className="flex items-center gap-2">
+				<IconMedal className="size-4 text-muted-foreground" />
+				<span className="font-medium text-sm">Your Badges</span>
+			</div>
+			<div className="flex flex-wrap gap-2">
+				{earned.map((badge) => {
+					const category = BADGE_CATEGORY[badge.type as keyof typeof BADGE_CATEGORY]
+					const dotColor = category ? CATEGORY_DOT[category] : "bg-zinc-400"
+					return (
+						<span
+							key={badge.type}
+							className="flex items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1 text-xs"
+						>
+							<span className={cn("size-1.5 rounded-full", dotColor)} />
+							{BADGE_LABELS[badge.type as keyof typeof BADGE_LABELS] ?? badge.type}
+						</span>
+					)
+				})}
+			</div>
+		</section>
+	)
+}

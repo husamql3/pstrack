@@ -1,6 +1,7 @@
 import { z } from "zod"
 
 import type { Prisma } from "@/generated/prisma/client"
+import { PRO_THRESHOLD } from "@/server/points/points.type"
 import {
 	USERNAME_MAX_LENGTH,
 	USERNAME_MIN_LENGTH,
@@ -31,10 +32,12 @@ export const meSelect = {
 	websiteUrl: true,
 	isPublic: true,
 	isPro: true,
+	proSource: true,
 	totalPoints: true,
 	currentStreak: true,
 	longestStreak: true,
 	pausesUsedThisMonth: true,
+	verificationFailuresThisMonth: true,
 	notifyDailyProblem: true,
 	notifyAchievements: true,
 	notifyGroupActivity: true,
@@ -46,7 +49,12 @@ type MeBase = Prisma.UserGetPayload<{ select: typeof meSelect }>
 
 export type MeResponse = MeBase & {
 	usernameNextChangeAt: Date | null
+	pausesRemainingThisMonth: number
+	verificationFailuresRemainingThisMonth: number
+	pointsToProUnlock: number
 }
+
+export { PRO_THRESHOLD }
 
 // ─── Public profile (GET /users/:username) ────────────────────────────────────
 
@@ -63,6 +71,10 @@ export const publicProfileSelect = {
 	isPublic: true,
 	isPro: true,
 	createdAt: true,
+	badges: {
+		select: { type: true, earnedAt: true },
+		orderBy: [{ earnedAt: "asc" as const }],
+	},
 } satisfies Prisma.UserSelect
 
 type PublicProfileBase = Prisma.UserGetPayload<{ select: typeof publicProfileSelect }>

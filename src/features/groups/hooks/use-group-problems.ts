@@ -6,6 +6,7 @@ import {
 } from "@tanstack/react-query"
 import { useMemo } from "react"
 
+import type { BadgeType } from "@/generated/prisma/enums"
 import { api } from "@/lib/api"
 import type {
 	GroupProblemsMember,
@@ -13,6 +14,9 @@ import type {
 	GroupProblemsResponse,
 	GroupProblemsRow,
 } from "@/server/groups/groups.type"
+import type { TodayProblemResponse } from "@/server/problems/problems.type"
+
+type SolveResult = { today: TodayProblemResponse; newBadges: BadgeType[] }
 
 export const groupProblemsQueryKey = (groupId: string, range: GroupProblemsRange) =>
 	["groups", groupId, "problems", range] as const
@@ -101,11 +105,12 @@ export const useMarkTodaySolvedFromTable = (
 	range: GroupProblemsRange
 ) => {
 	const queryClient = useQueryClient()
-	return useMutation({
+	return useMutation<SolveResult>({
 		mutationFn: async () => {
 			const { data, error } = await api.v4.problems.today.solve.post()
+			console.log(error)
 			if (error) throw new Error(error.value?.error ?? "Could not verify solve")
-			return data
+			return data as SolveResult
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({

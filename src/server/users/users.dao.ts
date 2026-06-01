@@ -3,6 +3,7 @@ import { USERNAME_COOLDOWN_MS } from "./users.constants"
 import {
 	type MeResponse,
 	meSelect,
+	PRO_THRESHOLD,
 	type PublicProfileResponse,
 	publicProfileSelect,
 } from "./users.type"
@@ -46,9 +47,14 @@ export const usersDao = {
 			select: meSelect,
 		})
 		if (!user) return null
+		const pauseLimit = user.isPro ? 4 : 2
 		return {
 			...user,
 			usernameNextChangeAt: computeNextUsernameChangeAt(user.usernameChangedAt),
+			pausesRemainingThisMonth: Math.max(0, pauseLimit - user.pausesUsedThisMonth),
+			verificationFailuresRemainingThisMonth:
+				user.verificationFailuresThisMonth >= 1 ? 0 : 1,
+			pointsToProUnlock: user.isPro ? 0 : Math.max(0, PRO_THRESHOLD - user.totalPoints),
 		}
 	},
 

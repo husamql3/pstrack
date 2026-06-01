@@ -1,5 +1,5 @@
 import type { Prisma } from "@/generated/prisma/client"
-import type { Roadmap, SolveStatus } from "@/generated/prisma/enums"
+import type { BadgeType, Roadmap, SolveStatus } from "@/generated/prisma/enums"
 
 export type RoadmapKey = Roadmap
 
@@ -91,10 +91,21 @@ export type RoadmapProblemResponse = ProblemResponse & {
 
 export type MarkSolvedResult =
 	| {
-			error: "NO_GROUP" | "NO_PROBLEMS" | "PAUSED" | "NOT_VERIFIED"
+			error:
+				| "NO_GROUP"
+				| "NO_PROBLEMS"
+				| "PAUSED"
+				| "NOT_VERIFIED"
+				| "VERIFICATION_FAILED_PENALIZED"
 			today: TodayProblemResponse
 	  }
-	| { error: null; today: TodayProblemResponse }
+	| {
+			error: null
+			today: TodayProblemResponse
+			crossedProThreshold: boolean
+			newBadges: BadgeType[]
+			newStreak: number
+	  }
 
 export type PauseTodayResult =
 	| {

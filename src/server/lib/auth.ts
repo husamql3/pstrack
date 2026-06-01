@@ -51,6 +51,11 @@ export const auth = betterAuth({
 				required: false,
 				input: false,
 			},
+			proSource: {
+				type: "string",
+				required: false,
+				input: false,
+			},
 			totalPoints: {
 				type: "number",
 				required: false,

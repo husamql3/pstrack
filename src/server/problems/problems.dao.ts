@@ -1,12 +1,12 @@
 import type { Prisma } from "@/generated/prisma/client"
 import { Difficulty, PointReason, SolveStatus } from "@/generated/prisma/enums"
+import { badgesDao } from "@/server/badges/badges.dao"
 import { db } from "@/server/lib/db"
 import { pointsDao } from "@/server/points/points.dao"
 import {
 	COMEBACK_BONUS,
 	EARLY_BIRD_BONUS,
 	FIRST_IN_GROUP_BONUS,
-	MISSED_PENALTY,
 	PAUSE_PENALTY,
 	SOLVE_POINTS,
 	STREAK_MULTIPLIER_7,
@@ -331,7 +331,15 @@ export const problemsDao = {
 
 		const existing = today.solve
 		if (existing?.status === SolveStatus.PAUSED) return { error: "PAUSED", today }
-		if (existing?.status === SolveStatus.SOLVED) return { error: null, today }
+		if (existing?.status === SolveStatus.SOLVED) {
+			return {
+				error: null,
+				today,
+				crossedProThreshold: false,
+				newBadges: [],
+				newStreak: today.userStats.currentStreak,
+			}
+		}
 
 		const { id: dailyProblemId, assignedDate, problem } = today.dailyProblem
 
@@ -342,6 +350,7 @@ export const problemsDao = {
 				currentStreak: true,
 				longestStreak: true,
 				currentStreakStartedAt: true,
+				verificationFailuresThisMonth: true,
 			},
 		})
 
@@ -352,7 +361,49 @@ export const problemsDao = {
 			problem.slug,
 			assignedDate
 		)
-		if (!verified) return { error: "NOT_VERIFIED", today }
+
+		if (!verified) {
+			const failuresNow = user.verificationFailuresThisMonth + 1
+			const isGrace = user.verificationFailuresThisMonth === 0
+
+			await db.$transaction(async (tx) => {
+				await tx.user.update({
+					where: { id: userId },
+					data: { verificationFailuresThisMonth: failuresNow },
+				})
+
+				if (isGrace) {
+					await pointsDao.applyPointsDelta(
+						userId,
+						0,
+						PointReason.VERIFICATION_FAILURE_GRACE,
+						{ tx }
+					)
+				} else {
+					const solve = await tx.userSolve.upsert({
+						where: { userId_dailyProblemId: { userId, dailyProblemId } },
+						create: {
+							userId,
+							dailyProblemId,
+							status: SolveStatus.MISSED,
+							pointsEarned: 0,
+						},
+						update: { status: SolveStatus.MISSED },
+						select: { id: true },
+					})
+					await pointsDao.applyMissPenalty(tx, userId, {
+						userSolveId: solve.id,
+						streakStartedAt: user.currentStreakStartedAt,
+					})
+				}
+			})
+
+			if (isGrace) return { error: "NOT_VERIFIED", today }
+			return {
+				error: "VERIFICATION_FAILED_PENALIZED",
+				today: await problemsDao.getTodayForUser(userId),
+			}
+		}
 
 		const [existingSolvedCount, isComeback] = await Promise.all([
 			db.userSolve.count({ where: { dailyProblemId, status: SolveStatus.SOLVED } }),
@@ -381,7 +432,7 @@ export const problemsDao = {
 		const newStreak = user.currentStreak + 1
 		const newLongest = Math.max(newStreak, user.longestStreak)
 
-		await db.$transaction(async (tx) => {
+		const { crossedProThreshold, newBadges } = await db.$transaction(async (tx) => {
 			const upserted = await tx.userSolve.upsert({
 				where: { userId_dailyProblemId: { userId, dailyProblemId } },
 				create: {
@@ -402,30 +453,34 @@ export const problemsDao = {
 			})
 
 			const opts = { tx, userSolveId: upserted.id }
+			let crossedPro = false
 
-			await pointsDao.applyPointsDelta(
+			const r0 = await pointsDao.applyPointsDelta(
 				userId,
 				baseSolvePoints,
 				PointReason.DAILY_SOLVE,
 				opts
 			)
+			crossedPro ||= r0.crossedProThreshold
 
 			if (multiplierDelta > 0) {
-				await pointsDao.applyPointsDelta(
+				const r1 = await pointsDao.applyPointsDelta(
 					userId,
 					multiplierDelta,
 					PointReason.STREAK_MULTIPLIER_BONUS,
 					opts
 				)
+				crossedPro ||= r1.crossedProThreshold
 			}
 
 			if (isFirstInGroup) {
-				await pointsDao.applyPointsDelta(
+				const r2 = await pointsDao.applyPointsDelta(
 					userId,
 					FIRST_IN_GROUP_BONUS,
 					PointReason.FIRST_IN_GROUP,
 					opts
 				)
+				crossedPro ||= r2.crossedProThreshold
 				await tx.dailyProblem.update({
 					where: { id: dailyProblemId },
 					data: { firstSolverId: userId, firstSolveTime: now },
@@ -433,21 +488,23 @@ export const problemsDao = {
 			}
 
 			if (isComeback) {
-				await pointsDao.applyPointsDelta(
+				const r3 = await pointsDao.applyPointsDelta(
 					userId,
 					COMEBACK_BONUS,
 					PointReason.COMEBACK,
 					opts
 				)
+				crossedPro ||= r3.crossedProThreshold
 			}
 
 			if (isEarlyBird) {
-				await pointsDao.applyPointsDelta(
+				const r4 = await pointsDao.applyPointsDelta(
 					userId,
 					EARLY_BIRD_BONUS,
 					PointReason.EARLY_BIRD,
 					opts
 				)
+				crossedPro ||= r4.crossedProThreshold
 			}
 
 			await tx.user.update({
@@ -458,9 +515,19 @@ export const problemsDao = {
 					...(isNewStreak && { currentStreakStartedAt: now }),
 				},
 			})
+
+			const awarded = await badgesDao.evaluateAndAward(tx, userId, newStreak)
+
+			return { crossedProThreshold: crossedPro, newBadges: awarded }
 		})
 
-		return { error: null, today: await problemsDao.getTodayForUser(userId) }
+		return {
+			error: null,
+			today: await problemsDao.getTodayForUser(userId),
+			crossedProThreshold,
+			newBadges,
+			newStreak,
+		}
 	},
 
 	pauseToday: async (userId: string): Promise<PauseTodayResult> => {
@@ -572,35 +639,9 @@ export const problemsDao = {
 					select: { id: true },
 				})
 
-				const solveOpts = { tx, userSolveId: solve.id }
-				const streakStartedAt = streakStartByUser.get(userId) ?? null
-
-				if (streakStartedAt) {
-					const bonusSum = await pointsDao.sumBonusesSinceStreakStart(
-						tx,
-						userId,
-						streakStartedAt
-					)
-					if (bonusSum > 0) {
-						await pointsDao.applyPointsDelta(
-							userId,
-							-bonusSum,
-							PointReason.CLAWBACK,
-							solveOpts
-						)
-					}
-				}
-
-				await pointsDao.applyPointsDelta(
-					userId,
-					-MISSED_PENALTY,
-					PointReason.MISSED_DAY,
-					solveOpts
-				)
-
-				await tx.user.update({
-					where: { id: userId },
-					data: { currentStreak: 0, currentStreakStartedAt: null },
+				await pointsDao.applyMissPenalty(tx, userId, {
+					userSolveId: solve.id,
+					streakStartedAt: streakStartByUser.get(userId) ?? null,
 				})
 			}
 		})

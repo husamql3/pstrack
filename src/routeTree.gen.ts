@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ProblemsRouteImport } from './routes/problems'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as BadgesRouteImport } from './routes/badges'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as UsernameRouteImport } from './routes/$username'
 import { Route as IndexRouteImport } from './routes/index'
@@ -43,6 +44,11 @@ const ProblemsRoute = ProblemsRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BadgesRoute = BadgesRouteImport.update({
+  id: '/badges',
+  path: '/badges',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
@@ -176,6 +182,7 @@ const AuthenticatedAppGroupsGroupIdJoinRequestsRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$username': typeof UsernameRoute
+  '/badges': typeof BadgesRoute
   '/login': typeof LoginRoute
   '/problems': typeof ProblemsRoute
   '/api/$': typeof ApiSplatRoute
@@ -200,6 +207,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$username': typeof UsernameRoute
+  '/badges': typeof BadgesRoute
   '/login': typeof LoginRoute
   '/problems': typeof ProblemsRoute
   '/api/$': typeof ApiSplatRoute
@@ -224,6 +232,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/$username': typeof UsernameRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/badges': typeof BadgesRoute
   '/login': typeof LoginRoute
   '/problems': typeof ProblemsRoute
   '/_authenticated/_app': typeof AuthenticatedAppRouteWithChildren
@@ -252,6 +261,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/$username'
+    | '/badges'
     | '/login'
     | '/problems'
     | '/api/$'
@@ -276,6 +286,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/$username'
+    | '/badges'
     | '/login'
     | '/problems'
     | '/api/$'
@@ -299,6 +310,7 @@ export interface FileRouteTypes {
     | '/'
     | '/$username'
     | '/_authenticated'
+    | '/badges'
     | '/login'
     | '/problems'
     | '/_authenticated/_app'
@@ -327,6 +339,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   UsernameRoute: typeof UsernameRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  BadgesRoute: typeof BadgesRoute
   LoginRoute: typeof LoginRoute
   ProblemsRoute: typeof ProblemsRoute
   ApiSplatRoute: typeof ApiSplatRoute
@@ -346,6 +359,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/badges': {
+      id: '/badges'
+      path: '/badges'
+      fullPath: '/badges'
+      preLoaderRoute: typeof BadgesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -617,6 +637,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   UsernameRoute: UsernameRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  BadgesRoute: BadgesRoute,
   LoginRoute: LoginRoute,
   ProblemsRoute: ProblemsRoute,
   ApiSplatRoute: ApiSplatRoute,

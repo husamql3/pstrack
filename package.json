@@ -23,6 +23,7 @@
 		"db:seed-problems": "bun run prisma/seed-problems.ts",
 		"db:seed-groups": "bun run prisma/seed-groups.ts",
 		"db:seed-daily-problems": "bun run prisma/seed-daily-problems.ts",
+		"db:reset": "prisma migrate reset",
 		"db:studio": "bunx db-studio@latest --env .env",
 		"prisma:generate": "prisma generate",
 		"test": "vitest run",

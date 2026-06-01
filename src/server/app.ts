@@ -1,5 +1,6 @@
 import { Elysia } from "elysia"
 
+import { badgesController } from "@/server/badges/badges.controller"
 import { groupsController } from "@/server/groups/groups.controller"
 import { auth } from "@/server/lib/auth"
 import { captureServerException, initServerSentry } from "@/server/lib/sentry"
@@ -17,6 +18,7 @@ const api = new Elysia({ prefix: "/api/v4" })
 	.use(usersController)
 	.use(groupsController)
 	.use(problemsController)
+	.use(badgesController)
 	.onError(({ error }) => captureServerException(error))
 
 export const app = new Elysia()

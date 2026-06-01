@@ -60,14 +60,9 @@ export function Header() {
 									isScrolled && "lg:opacity-0 lg:blur-xs"
 								)}
 							>
-								<Button asChild variant="ghost" size="sm">
-									<Link to="/login">
-										<span>Login</span>
-									</Link>
-								</Button>
 								<Button asChild size="sm">
 									<Link to="/login">
-										<span>Sign Up</span>
+										<span>Login</span>
 									</Link>
 								</Button>
 							</div>

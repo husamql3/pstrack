@@ -163,16 +163,17 @@ export const GroupProblemsTable = () => {
 
 	const handleSolve = useCallback(async () => {
 		const result = await solveMutation.mutateAsync()
-		if (result.state === "READY" && result.solve) {
+		if (result.today.state === "READY" && result.today.solve) {
 			setCelebrationData({
-				problemTitle: result.dailyProblem.problem.title,
-				pointsEarned: result.solve.pointsEarned,
-				isFirstInGroup: result.solve.isFirstInGroup,
-				currentStreak: result.userStats.currentStreak,
-				totalPoints: result.userStats.totalPoints,
+				problemTitle: result.today.dailyProblem.problem.title,
+				pointsEarned: result.today.solve.pointsEarned,
+				isFirstInGroup: result.today.solve.isFirstInGroup,
+				currentStreak: result.today.userStats.currentStreak,
+				totalPoints: result.today.userStats.totalPoints,
+				newBadges: result.newBadges,
 			})
 		}
-		return result
+		return result.today
 	}, [solveMutation])
 
 	return (

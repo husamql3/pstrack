@@ -1,7 +1,7 @@
 import type { Prisma } from "@/generated/prisma/client"
 import { PointReason, ProSource } from "@/generated/prisma/enums"
 import { db } from "@/server/lib/db"
-import { PRO_THRESHOLD } from "./points.type"
+import { MISSED_PENALTY, PRO_THRESHOLD } from "./points.type"
 
 type Tx = Prisma.TransactionClient
 
@@ -88,6 +88,42 @@ export const pointsDao = {
 			select: { id: true },
 		})
 		return row !== null
+	},
+
+	applyMissPenalty: async (
+		tx: Tx,
+		userId: string,
+		opts: { userSolveId?: string; streakStartedAt: Date | null }
+	): Promise<void> => {
+		const solveOpts = { tx, userSolveId: opts.userSolveId }
+
+		if (opts.streakStartedAt) {
+			const bonusSum = await pointsDao.sumBonusesSinceStreakStart(
+				tx,
+				userId,
+				opts.streakStartedAt
+			)
+			if (bonusSum > 0) {
+				await pointsDao.applyPointsDelta(
+					userId,
+					-bonusSum,
+					PointReason.CLAWBACK,
+					solveOpts
+				)
+			}
+		}
+
+		await pointsDao.applyPointsDelta(
+			userId,
+			-MISSED_PENALTY,
+			PointReason.MISSED_DAY,
+			solveOpts
+		)
+
+		await tx.user.update({
+			where: { id: userId },
+			data: { currentStreak: 0, currentStreakStartedAt: null },
+		})
 	},
 
 	hasEverJoinedGroup: async (

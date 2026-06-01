@@ -1,10 +1,18 @@
-import { IconFlame, IconTrophy } from "@tabler/icons-react"
+import { IconAward, IconBolt, IconFlame, IconTrophy } from "@tabler/icons-react"
 import confetti from "canvas-confetti"
 import { Dialog as DialogPrimitive } from "radix-ui"
 import type { ReactNode } from "react"
 import { useLayoutEffect, useRef } from "react"
 
 import { Dialog, DialogOverlay, DialogPortal } from "@/components/ui/dialog"
+import type { BadgeType } from "@/generated/prisma/enums"
+import { cn } from "@/lib/utils"
+import {
+	BADGE_CATEGORY,
+	BADGE_DESCRIPTIONS,
+	BADGE_LABELS,
+} from "@/server/badges/badges.type"
+import { FIRST_IN_GROUP_BONUS } from "@/server/points/points.type"
 import type { SolveCelebrationData } from "../types"
 
 const BANNER_CONFETTI_DEFAULTS = {
@@ -52,6 +60,30 @@ const fireBannerStars = (banner: HTMLElement) => {
 	}
 }
 
+const BADGE_CATEGORY_STYLES: Record<
+	"streak" | "volume" | "social",
+	{ icon: ReactNode; border: string; iconBg: string; iconColor: string }
+> = {
+	streak: {
+		icon: <IconFlame className="size-5" />,
+		border: "ring-amber-500/30",
+		iconBg: "bg-amber-500/15",
+		iconColor: "text-amber-400",
+	},
+	volume: {
+		icon: <IconAward className="size-5" />,
+		border: "ring-emerald-500/30",
+		iconBg: "bg-emerald-500/15",
+		iconColor: "text-emerald-400",
+	},
+	social: {
+		icon: <IconBolt className="size-5" />,
+		border: "ring-purple-500/30",
+		iconBg: "bg-purple-500/15",
+		iconColor: "text-purple-400",
+	},
+}
+
 export const SolveCelebrationModal = ({
 	data,
 	onClose,
@@ -91,12 +123,15 @@ export const SolveCelebrationModal = ({
 		}
 	}, [data])
 
+	const sessionPoints =
+		(data?.pointsEarned ?? 0) + (data?.isFirstInGroup ? FIRST_IN_GROUP_BONUS : 0)
+
 	return (
 		<Dialog open={!!data} onOpenChange={(open) => !open && onClose()}>
 			{data ? (
 				<DialogPortal>
 					<DialogOverlay />
-					<DialogPrimitive.Content className="data-open:fade-in-0 data-open:zoom-in-95 data-closed:fade-out-0 data-closed:zoom-out-95 fixed top-1/2 left-1/2 z-50 w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-2xl bg-[#0d0e10] outline-none ring-1 ring-white/10 duration-150 data-closed:animate-out data-open:animate-in sm:max-w-sm">
+					<DialogPrimitive.Content className="data-open:fade-in-0 data-open:zoom-in-95 data-closed:fade-out-0 data-closed:zoom-out-95 fixed top-1/2 left-1/2 z-50 w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-2xl bg-[#0d0e10] outline-none ring-1 ring-white/10 duration-150 data-closed:animate-out data-open:animate-in sm:max-w-md">
 						<div
 							aria-hidden="true"
 							className="absolute inset-0 isolate hidden overflow-hidden contain-strict lg:block"
@@ -110,11 +145,14 @@ export const SolveCelebrationModal = ({
 							className="relative flex flex-col items-center justify-center gap-1.5 overflow-hidden pt-6 pb-4"
 						>
 							<span className="relative z-10 font-bold text-5xl text-white tabular-nums leading-none">
-								+{data?.pointsEarned ?? 0}
-								<span className="ml-1.5 font-semibold text-2xl text-zinc-400">pts</span>
+								+{sessionPoints}
+								<span className="ml-1.5 font-semibold text-2xl text-zinc-400">
+									points
+								</span>
 							</span>
 							<p className="text-xs text-zinc-500">
-								+10 Daily solve{data?.isFirstInGroup ? " · +5 First in group" : ""}
+								+{data.pointsEarned} Daily solve
+								{data.isFirstInGroup ? ` · +${FIRST_IN_GROUP_BONUS} First in group` : ""}
 							</p>
 						</div>
 
@@ -130,38 +168,60 @@ export const SolveCelebrationModal = ({
 							<div className="grid grid-cols-2 gap-2.5">
 								<StatCard
 									icon={<IconFlame className="size-[18px] text-orange-400" />}
-									value={`${data?.currentStreak ?? 0}d`}
+									value={`${data.currentStreak}d`}
 									label="Streak"
 								/>
 								<StatCard
 									icon={<IconTrophy className="size-[18px] text-emerald-400" />}
-									value={(data?.totalPoints ?? 0).toLocaleString()}
+									value={data.totalPoints.toLocaleString()}
 									label="Points"
 								/>
 							</div>
 
-							{/* <div className="flex gap-2.5">
-								<Button
-									onClick={onClose}
-									className="flex-1 gap-2 bg-emerald-500 text-white shadow-none hover:bg-emerald-400 focus-visible:ring-emerald-500"
-								>
-									<IconCheck className="size-[15px]" strokeWidth={2.5} />
-									Got it
-								</Button>
-								<Button
-									onClick={handleShare}
-									variant="outline"
-									className="gap-2 border-white/10 bg-white/5 text-white shadow-none hover:bg-white/10 hover:text-white"
-								>
-									<IconShare2 className="size-[15px]" />
-									Share
-								</Button>
-							</div> */}
+							{data.newBadges.length > 0 && (
+								<div className="flex flex-col gap-2">
+									{data.newBadges.map((badge) => (
+										<BadgeCard key={badge} badge={badge} />
+									))}
+								</div>
+							)}
 						</div>
 					</DialogPrimitive.Content>
 				</DialogPortal>
 			) : null}
 		</Dialog>
+	)
+}
+
+const BadgeCard = ({ badge }: { badge: BadgeType }) => {
+	const category = BADGE_CATEGORY[badge]
+	const styles = BADGE_CATEGORY_STYLES[category]
+	return (
+		<div
+			className={cn(
+				"flex items-center gap-3.5 rounded-xl px-4 py-3 text-left ring-1",
+				"bg-white/3",
+				styles.border
+			)}
+		>
+			<div
+				className={cn(
+					"flex shrink-0 items-center justify-center rounded-lg p-2.5",
+					styles.iconBg,
+					styles.iconColor
+				)}
+			>
+				{styles.icon}
+			</div>
+			<div className="min-w-0 flex-1">
+				<p className="font-semibold text-sm text-white leading-snug">
+					{BADGE_LABELS[badge]}
+				</p>
+				<p className="mt-0.5 text-xs text-zinc-500 leading-snug">
+					{BADGE_DESCRIPTIONS[badge]}
+				</p>
+			</div>
+		</div>
 	)
 }
 

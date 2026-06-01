@@ -47,6 +47,7 @@ model User {
   firstSolves                   DailyProblem[]     @relation("DailyProblemFirstSolver")
   sessions                      Session[]
   accounts                      Account[]
+  badges                        UserBadge[]
 
   @@index([totalPoints])
   @@index([currentStreak])
@@ -212,6 +213,37 @@ model PointsHistory {
 
   @@index([userId, createdAt])
   @@index([userId, groupId, reason])
+}
+
+model UserBadge {
+  id       String    @id @default(cuid())
+  userId   String
+  type     BadgeType
+  earnedAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, type])
+  @@index([userId])
+  @@map("user_badge")
+}
+
+enum BadgeType {
+  STREAK_7
+  STREAK_30
+  STREAK_100
+  STREAK_365
+  SOLVED_1
+  SOLVED_10
+  SOLVED_50
+  SOLVED_100
+  NC250_COMPLETE
+  NC150_COMPLETE
+  BLIND75_COMPLETE
+  FIRST_SOLVER_1
+  FIRST_SOLVER_10
+  FIRST_SOLVER_50
+  CONSISTENT_30
 }
 
 enum PointReason {
