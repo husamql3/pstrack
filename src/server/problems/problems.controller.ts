@@ -1,26 +1,13 @@
 import { Elysia, status } from "elysia"
 
-import { db } from "@/server/lib/db"
-import { getSessionUser, requireSessionUser } from "@/server/lib/session"
+import {
+	getSessionUser,
+	requireRealSession,
+	requireSessionUser,
+} from "@/server/lib/session"
 import { problemsDao } from "./problems.dao"
 import { problemsModel } from "./problems.model"
 import { problemNotifications } from "./problems.notifications"
-
-const requirePlatformAdmin = async (request: Request) => {
-	const { user, response } = await requireSessionUser(request)
-	if (!user) return { user: null, response }
-
-	const dbUser = await db.user.findUnique({
-		where: { id: user.id },
-		select: { role: true },
-	})
-
-	if (dbUser?.role !== "admin") {
-		return { user: null, response: status(403, { error: "Admin access required" }) }
-	}
-
-	return { user, response: null }
-}
 
 export const problemsController = new Elysia({ tags: ["Problems"] })
 	.use(problemsModel)
@@ -39,7 +26,7 @@ export const problemsController = new Elysia({ tags: ["Problems"] })
 		{ query: "problems.roadmapQuery" }
 	)
 	.post("/problems/today/solve", async ({ request }) => {
-		const { user, response } = await requireSessionUser(request)
+		const { user, response } = await requireRealSession(request)
 		if (!user) return response
 
 		const result = await problemsDao.verifyAndMarkSolved(user.id)
@@ -72,7 +59,7 @@ export const problemsController = new Elysia({ tags: ["Problems"] })
 		return { today: result.today, newBadges: result.newBadges }
 	})
 	.post("/problems/today/pause", async ({ request }) => {
-		const { user, response } = await requireSessionUser(request)
+		const { user, response } = await requireRealSession(request)
 		if (!user) return response
 
 		const result = await problemsDao.pauseToday(user.id)
@@ -89,13 +76,3 @@ export const problemsController = new Elysia({ tags: ["Problems"] })
 
 		return result.today
 	})
-	.post(
-		"/admin/problems/seed",
-		async ({ request }) => {
-			const { user, response } = await requirePlatformAdmin(request)
-			if (!user) return response
-
-			return problemsDao.seedStarterProblems()
-		},
-		{ detail: { tags: ["Admin"] } }
-	)

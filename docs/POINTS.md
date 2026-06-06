@@ -15,7 +15,7 @@ Designed around a single goal: **increase daily tension**. Every rule below is c
 | Solve Hard | +15 |
 | First in group to solve (per day) | +10 |
 | Comeback (first solve after a `MISSED` day) | +3 |
-| Early-bird (solve before user-local noon) | +2 |
+| Early-bird (LeetCode submission timestamp within 12 hours of the daily problem being assigned) | +2 |
 | Join a group (first time joining each unique group) | +20 |
 | Streak multiplier — 7+ days | 1.2x on solve points |
 | Streak multiplier — 30+ days | 1.5x on solve points |
@@ -233,3 +233,19 @@ Callers never compute new balances directly. The floor is enforced here and nowh
 - **First solve of a new streak**: `currentStreakStartedAt` is set to the solve's `createdAt`. Clawback uses `>=` comparison so this row's bonuses (if any) are included.
 - **Verification job retries**: only the *final* failure increments `verificationFailuresThisMonth`. Intermediate retries within the same Trigger.dev run don't count.
 - **Pause used on the same day as a previously-verified solve**: not allowed; UserSolve unique constraint `(userId, dailyProblemId)` prevents double-state.
+
+---
+
+## Badge Triggers
+
+Badges are evaluated after every solved submission. The check queries `UserBadge` for existing awards to avoid duplicates. New badges are returned in the `MarkSolvedResult` so the client can show a celebration modal.
+
+| Badge | Condition |
+|---|---|
+| `STREAK_7` / `STREAK_30` / `STREAK_100` / `STREAK_365` | `currentStreak >= N` |
+| `SOLVED_1` / `SOLVED_10` / `SOLVED_50` / `SOLVED_100` | Total `SOLVED` solve count crosses `N` |
+| `NC250_COMPLETE` / `NC150_COMPLETE` / `BLIND75_COMPLETE` | All problems in the corresponding roadmap solved |
+| `FIRST_SOLVER_1` / `FIRST_SOLVER_10` / `FIRST_SOLVER_50` | Total first-in-group solves crosses `N` |
+| `CONSISTENT_30` | 30-day `SOLVED`-or-`PAUSED` streak (paused days count) |
+
+The `UserBadge` table has a unique constraint on `(userId, type)` so re-evaluation after every solve is idempotent.

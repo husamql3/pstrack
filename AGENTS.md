@@ -74,32 +74,98 @@ TanStack Start (Vercel)
     └── /api/v4/*       → Elysia routes (Eden Treaty contract)
 ```
 
+TanStack Start's `api.$.ts` catch-all route forwards every `/api/*` request to the Elysia app — one deployment unit, full type safety between client and server via Eden Treaty without codegen.
+
+## Repo Layout
+
+```
+pstrack/
+├── src/
+│   ├── components/          # Shared UI (shadcn primitives + app-level shells)
+│   ├── emails/              # React Email templates (Resend)
+│   ├── features/            # Feature modules (components + hooks per domain)
+│   ├── hooks/               # Global custom hooks
+│   ├── lib/                 # Client-side utilities, API client, query client
+│   ├── routes/              # TanStack Router file-based routes
+│   ├── server/              # Elysia controllers, DAOs, models, types
+│   │   ├── badges/
+│   │   ├── groups/
+│   │   ├── points/
+│   │   ├── problems/
+│   │   ├── users/
+│   │   ├── jobs/            # Trigger.dev task definitions
+│   │   ├── lib/             # auth, db, email, sentry, session
+│   │   └── modules/         # health check, OpenAPI docs
+│   └── env.ts               # T3 env validation schema
+├── prisma/
+│   ├── schema.prisma
+│   └── data/                # Seed data (NeetCode 250 problems)
+├── generated/
+│   └── prisma/              # Prisma generated client + enums
+└── docs/                    # Supplementary specs (POINTS, SCHEMA, ROUTES, DECISIONS, FLOWS, …)
+```
+
 ## Key Data Model
 
-- `User` — points (denormalized), streak, isPro, pausesUsedThisMonth, notification prefs
-- `Group` — public/private, maxMembers, optional inviteCode
-- `DailyProblem` — one problem per group per day (unique constraint)
-- `UserSolve` — single source of truth per user per day: `PENDING_VERIFICATION | SOLVED | PAUSED | MISSED | VERIFICATION_FAILED`
-- `PointsHistory` — immutable audit log of every point change
-- Streaks break on `MISSED`, not `VERIFICATION_FAILED` (grace window)
+- **User** — central entity. Denormalized `totalPoints` and `currentStreak` for fast leaderboard reads. `isPro` is set automatically when `totalPoints >= 3,000` or when a Polar purchase webhook fires; `proSource` records which path unlocked it.
+- **Group** — `PUBLIC` groups use join requests; `PRIVATE` groups use invite links. `slug` is human-readable and URL-safe. A group sits in one roadmap (`NC250 | NC150 | BLIND75`).
+- **DailyProblem** — one row per group per calendar day (unique on `groupId + assignedDate`). Tracks `firstSolverId` to award the first-in-group bonus exactly once.
+- **UserSolve** — one row per user per daily problem (unique on `userId + dailyProblemId`). The `status` field is a terminal state machine: `PENDING_VERIFICATION → SOLVED | VERIFICATION_FAILED`, or `PAUSED | MISSED`. Streaks break only on `MISSED`, never on `VERIFICATION_FAILED` (grace window for flaky LC/CF API responses).
+- **PointsHistory** — immutable append-only ledger. Every point change (positive or negative) writes a row. `User.totalPoints` is a denormalized cache of this ledger's sum.
+- **UserBadge** — unique constraint on `userId + type` prevents duplicate badge awards.
+
+## Auth
+
+**Better Auth** owns sessions. Three sign-in methods: Google OAuth, GitHub OAuth, Magic Link.
+
+Extract the session on every protected route — `requireSessionUser` never throws, it returns a 401 response object on failure that the controller returns directly:
+
+```ts
+const { user, response } = await requireSessionUser(request)
+if (!user) return response   // { status: 401, body: { error: "Unauthorized" } }
+```
+
+`getSessionUser` is the nullable variant for endpoints that are public but show different data when signed in.
+
+**Admin access** is role-gated at the controller level:
+
+```ts
+const dbUser = await db.user.findUnique({ where: { id: user.id }, select: { role: true } })
+if (dbUser?.role !== "admin") return error(403, { error: "Admin access required" })
+```
+
+**Polar integration** is a Better Auth plugin. When a Polar webhook fires for a completed purchase, Better Auth sets `isPro = true` and `proSource = POLAR_PURCHASE` on the user record automatically.
 
 ## Trigger.dev Jobs
 
-| Job                    | Schedule     | Purpose                                                |
-| ---------------------- | ------------ | ------------------------------------------------------ |
-| `assign-daily-problem` | Midnight     | Assigns next NeetCode 250 problem to all active groups |
-| `verify-submission`    | On solve     | Polls LC/CF API, awards points, updates streak         |
-| `mark-missed`          | End of day   | Sets unresolved UserSolves to MISSED, applies -3 pts   |
-| `expire-join-requests` | Hourly       | Marks PENDING requests > 1 day as EXPIRED              |
-| `reset-monthly-pauses` | 1st of month | Resets `pausesUsedThisMonth` to 0                      |
+| Task | Schedule | What it does |
+|---|---|---|
+| `assign-daily-problem` | `0 0 * * *` | Picks the next NeetCode 250 problem per group's roadmap position; creates `DailyProblem` rows; sends daily digest emails |
+| `verify-submission` | On solve | Polls LeetCode/Codeforces for an accepted submission matching the problem + timestamp; awards points/bonuses, updates streak, evaluates badges |
+| `mark-missed` | `0 0 * * *` | For every `UserSolve` from yesterday without a terminal status: sets `MISSED`, applies −5, breaks streak, clawbacks same-day bonuses |
+| `expire-join-requests` | Every hour | Marks `GroupJoinRequest` rows older than 1 day with status `PENDING` as `EXPIRED` |
+| `reset-monthly-pauses` | `0 0 1 * *` | Resets `User.pausesUsedThisMonth = 0` |
+| `reset-monthly-counters` | `0 0 1 * *` | Resets `User.verificationFailuresThisMonth = 0` |
+
+`mark-missed` and `assign-daily-problem` both run at midnight UTC. The assign job runs first (sorted by `scheduleId`); `mark-missed` operates on the previous day's rows so there is no ordering conflict.
+
+See `docs/FLOWS.md` for the full Daily Solve lifecycle, and `docs/POINTS.md` for clawback mechanics.
 
 ## Email Notifications (Resend)
 
-Auth: welcome, magic-link, security-alert
-Groups: join-request (to admin), join-approved/rejected/expired (to user), removed-from-group
-Daily: daily-problem digest, solve-verified, verification-failed
-Achievements: streak-milestone, badge-earned
-Users can opt out per category from `/settings/notifications`.
+Transactional emails use **Resend** with **React Email** templates. Templates live in `src/emails/`.
+
+Notification triggers are co-located with the resource that owns the event:
+- `src/server/groups/groups.notifications.ts` — join request, approval, rejection, expiry, removal
+- `src/server/problems/problems.notifications.ts` — daily digest, solve verified, verification failed, streak milestone, badge earned
+
+All notification calls are **fire-and-forget** — never `await`ed in request handlers:
+
+```ts
+groupNotifications.joinRequested(groupId, userId).catch(() => {})
+```
+
+This prevents email delivery failures from blocking the user's request. Users can opt out per category from `/settings/notifications`.
 
 ## Routes Summary
 

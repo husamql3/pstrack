@@ -7,6 +7,7 @@ export const SOLVE_POINTS = {
 export const FIRST_IN_GROUP_BONUS = 10
 export const COMEBACK_BONUS = 3
 export const EARLY_BIRD_BONUS = 2
+export const EARLY_BIRD_WINDOW_MS = 12 * 60 * 60 * 1000
 export const MISSED_PENALTY = 5
 export const PAUSE_PENALTY = 5
 export const JOIN_GROUP_BONUS = 20

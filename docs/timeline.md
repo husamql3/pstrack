@@ -103,19 +103,19 @@ Stay consistent with LeetCode — solve one problem a day, earn points, and comp
 - [x] First-in-group bonus (+10) logged separately as `FIRST_IN_GROUP`
 - [x] Streak multiplier bonuses (7d / 30d) logged separately as `STREAK_MULTIPLIER_BONUS`
 - [x] Comeback bonus (+3) after a missed streak
-- [ ] Early-bird bonus (+2) before user-local noon (current implementation uses UTC)
+- [x] Early-bird bonus (+2) when the LeetCode submission lands within 12 hours of `DailyProblem.assignedDate`
 - [x] Join-group bonus (+20) awarded once per unique group using immutable `PointsHistory`
 - [x] Set `currentStreakStartedAt` on the first solve of a new streak
 - [x] Pause penalty (-5) logged as `PAUSE` while preserving streak
-- [ ] Pause confirmation UI shows the -5 point cost before charging
+- [x] Pause confirmation UI shows the -5 point cost before charging
 - [x] `mark-missed` clawback transaction: bonus sum, `CLAWBACK`, `MISSED_DAY`, streak reset, streak-start clear
 - [x] Streak increment / reset logic in the sync solve flow and `mark-missed` job
 - [x] `user.longestStreak` updated when `currentStreak` exceeds it
 - [x] Rename monthly reset job to `reset-monthly-counters` and reset both pause and verification-failure counters
-- [ ] Verification failure escalation: first monthly failure grace, second+ failure treated as miss
-- [ ] Badge evaluation after each solve: streak badges (7/30/100), First Solver (10/50), Consistent (30)
-- [ ] `GET /api/v4/users/me` returns points economy fields (`pausesRemainingThisMonth`, `verificationFailuresRemainingThisMonth`, `proSource`, `pointsToProUnlock`)
-- [ ] Email templates: `streak-milestone.tsx`, `badge-earned.tsx`, `pro-unlocked-by-points.tsx`
+- [x] Verification failure escalation: first monthly failure grace, second+ failure treated as miss
+- [x] Badge evaluation after each solve: streak badges (7/30/100), First Solver (10/50), Consistent (30)
+- [x] `GET /api/v4/users/me` returns points economy fields (`pausesRemainingThisMonth`, `verificationFailuresRemainingThisMonth`, `proSource`, `pointsToProUnlock`)
+- [x] Email templates: `streak-milestone.tsx`, `badge-earned.tsx`, `pro-unlocked-by-points.tsx`
 
 **Deliverable:** Points, streaks, and badges fully functional
 

@@ -30,6 +30,7 @@ model User {
   isPublic                      Boolean            @default(true)
   isPro                         Boolean            @default(false)
   proSource                     ProSource?
+  proExpiresAt                  DateTime?
   totalPoints                   Int                @default(0)
   currentStreak                 Int                @default(0)
   longestStreak                 Int                @default(0)
@@ -48,6 +49,7 @@ model User {
   sessions                      Session[]
   accounts                      Account[]
   badges                        UserBadge[]
+  adminAuditLogs                AdminAuditLog[]    @relation("AdminAuditLogActor")
 
   @@index([totalPoints])
   @@index([currentStreak])
@@ -70,6 +72,7 @@ model Group {
   inviteCode      String?   @unique
   inviteExpiresAt DateTime?
   isActive        Boolean   @default(true)
+  frozen          Boolean   @default(false)
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
@@ -135,16 +138,17 @@ enum JoinRequestStatus {
 }
 
 model Problem {
-  id           String     @id @default(cuid())
-  slug         String     @unique
+  id           String        @id @default(cuid())
+  slug         String        @unique
   title        String
   difficulty   Difficulty
   topic        String
-  roadmapIndex Int        @unique
+  roadmapIndex Int           @unique
   leetcodeId   Int?
-  neetcode250  Boolean    @default(false)
-  neetcode150  Boolean    @default(false)
-  blind75      Boolean    @default(false)
+  neetcode250  Boolean       @default(false)
+  neetcode150  Boolean       @default(false)
+  blind75      Boolean       @default(false)
+  source       ProblemSource @default(NEETCODE)
 
   dailyProblems DailyProblem[]
 }
@@ -153,6 +157,11 @@ enum Difficulty {
   EASY
   MEDIUM
   HARD
+}
+
+enum ProblemSource {
+  NEETCODE
+  CUSTOM
 }
 
 model DailyProblem {
@@ -306,4 +315,70 @@ model Verification {
 
   @@index([identifier])
   @@map("verification")
+}
+
+model AdminAuditLog {
+  id         String                @id @default(cuid())
+  adminId    String
+  action     AdminAuditAction
+  targetType AdminAuditTargetType?
+  targetId   String?
+  metadata   Json                  @default("{}")
+  createdAt  DateTime              @default(now())
+
+  admin User @relation("AdminAuditLogActor", fields: [adminId], references: [id], onDelete: Cascade)
+
+  @@index([adminId, createdAt])
+  @@index([targetType, targetId, createdAt])
+  @@index([action, createdAt])
+  @@map("admin_audit_log")
+}
+
+enum AdminAuditAction {
+  USER_BANNED
+  USER_UNBANNED
+  POINTS_ADJUSTED
+  PRO_GRANTED
+  PRO_REVOKED
+  USER_IMPERSONATED
+  USER_IMPERSONATION_ENDED
+  GROUP_DELETED
+  GROUP_FROZEN
+  GROUP_UNFROZEN
+  PROBLEM_CREATED
+  PROBLEM_UPDATED
+  PROBLEM_DELETED
+  PROBLEMS_RESEEDED
+  FEATURE_FLAG_TOGGLED
+  SYSTEM_CONFIG_UPDATED
+  EMAIL_SENT
+}
+
+enum AdminAuditTargetType {
+  USER
+  GROUP
+  PROBLEM
+  FEATURE_FLAG
+  SYSTEM_CONFIG
+  EMAIL
+}
+
+model FeatureFlag {
+  key         String   @id
+  enabled     Boolean  @default(false)
+  description String?
+  updatedAt   DateTime @updatedAt
+  createdAt   DateTime @default(now())
+
+  @@map("feature_flag")
+}
+
+model SystemConfig {
+  key         String   @id
+  value       Json
+  description String?
+  updatedAt   DateTime @updatedAt
+  createdAt   DateTime @default(now())
+
+  @@map("system_config")
 }

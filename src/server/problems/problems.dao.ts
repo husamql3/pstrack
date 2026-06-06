@@ -6,6 +6,7 @@ import { pointsDao } from "@/server/points/points.dao"
 import {
 	COMEBACK_BONUS,
 	EARLY_BIRD_BONUS,
+	EARLY_BIRD_WINDOW_MS,
 	FIRST_IN_GROUP_BONUS,
 	PAUSE_PENALTY,
 	SOLVE_POINTS,
@@ -24,11 +25,13 @@ import {
 
 const LEETCODE_GRAPHQL = "https://leetcode.com/graphql"
 
+type LeetCodeVerifyResult = { matched: false } | { matched: true; submittedAt: Date }
+
 const verifyLeetCodeSubmission = async (
 	handle: string,
 	problemSlug: string,
 	assignedDate: Date
-): Promise<boolean> => {
+): Promise<LeetCodeVerifyResult> => {
 	try {
 		const res = await fetch(LEETCODE_GRAPHQL, {
 			method: "POST",
@@ -48,12 +51,14 @@ const verifyLeetCodeSubmission = async (
 		}
 		const submissions = json.data?.recentAcSubmissionList ?? []
 		const assignedTimestampSeconds = assignedDate.getTime() / 1000
-		return submissions.some(
+		const match = submissions.find(
 			(s) =>
 				s.titleSlug === problemSlug && Number(s.timestamp) >= assignedTimestampSeconds
 		)
+		if (!match) return { matched: false }
+		return { matched: true, submittedAt: new Date(Number(match.timestamp) * 1000) }
 	} catch {
-		return false
+		return { matched: false }
 	}
 }
 
@@ -245,11 +250,28 @@ export const problemsDao = {
 	seedStarterProblems: async () => {
 		const BATCH = 50
 		let seeded = 0
+		let skipped = 0
+
+		const customSlugs = new Set(
+			(
+				await db.problem.findMany({
+					where: { source: "CUSTOM" },
+					select: { slug: true },
+				})
+			).map((p) => p.slug)
+		)
 
 		for (let i = 0; i < NEETCODE_250_PROBLEMS.length; i += BATCH) {
 			const batch = NEETCODE_250_PROBLEMS.slice(i, i + BATCH)
+			const writable = batch.filter((p) => {
+				if (customSlugs.has(p.slug)) {
+					skipped += 1
+					return false
+				}
+				return true
+			})
 			const results = await db.$transaction(
-				batch.map((problem) =>
+				writable.map((problem) =>
 					db.problem.upsert({
 						where: { slug: problem.slug },
 						create: problem,
@@ -260,7 +282,7 @@ export const problemsDao = {
 			seeded += results.length
 		}
 
-		return { seeded }
+		return { seeded, skipped }
 	},
 
 	getTodayForUser: async (userId: string): Promise<TodayProblemResponse> => {
@@ -356,13 +378,13 @@ export const problemsDao = {
 
 		if (!user.leetcodeHandle) return { error: "NOT_VERIFIED", today }
 
-		const verified = await verifyLeetCodeSubmission(
+		const verifyResult = await verifyLeetCodeSubmission(
 			user.leetcodeHandle,
 			problem.slug,
 			assignedDate
 		)
 
-		if (!verified) {
+		if (!verifyResult.matched) {
 			const failuresNow = user.verificationFailuresThisMonth + 1
 			const isGrace = user.verificationFailuresThisMonth === 0
 
@@ -427,7 +449,9 @@ export const problemsDao = {
 		const multiplierDelta = Math.floor(baseSolvePoints * multiplier) - baseSolvePoints
 
 		const now = new Date()
-		const isEarlyBird = now.getUTCHours() < 12
+		const submittedAt = verifyResult.submittedAt
+		const isEarlyBird =
+			submittedAt.getTime() - assignedDate.getTime() < EARLY_BIRD_WINDOW_MS
 		const isNewStreak = user.currentStreak === 0
 		const newStreak = user.currentStreak + 1
 		const newLongest = Math.max(newStreak, user.longestStreak)
