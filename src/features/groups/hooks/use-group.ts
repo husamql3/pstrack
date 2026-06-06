@@ -19,7 +19,7 @@ export const useGroup = (groupId: string) =>
 	useQuery<GroupDetailResponse>({
 		queryKey: groupDetailQueryKey(groupId),
 		queryFn: async () => {
-			const { data, error } = await api.v4.groups({ id: groupId }).get()
+			const { data, error } = await api.v3.groups({ id: groupId }).get()
 			if (error) throw new Error("Failed to load group")
 			return data as GroupDetailResponse
 		},
@@ -30,7 +30,7 @@ export const useGroupMembers = (groupId: string) =>
 	useQuery<GroupMemberResponse[]>({
 		queryKey: groupMembersQueryKey(groupId),
 		queryFn: async () => {
-			const { data, error } = await api.v4.groups({ id: groupId }).members.get()
+			const { data, error } = await api.v3.groups({ id: groupId }).members.get()
 			if (error) throw new Error("Failed to load members")
 			return data as GroupMemberResponse[]
 		},
@@ -41,7 +41,7 @@ export const useJoinRequests = (groupId: string) =>
 	useQuery<JoinRequestResponse[]>({
 		queryKey: joinRequestsQueryKey(groupId),
 		queryFn: async () => {
-			const { data, error } = await api.v4.groups({ id: groupId })["join-requests"].get()
+			const { data, error } = await api.v3.groups({ id: groupId })["join-requests"].get()
 			if (error) throw new Error("Failed to load join requests")
 			return data as JoinRequestResponse[]
 		},
@@ -59,7 +59,7 @@ export const useUpdateJoinRequest = (groupId: string) => {
 			requestId: string
 			action: "APPROVED" | "REJECTED"
 		}) => {
-			const { data, error } = await api.v4
+			const { data, error } = await api.v3
 				.groups({ id: groupId })
 				["join-requests"]({ requestId })
 				.patch({ action })
@@ -78,7 +78,7 @@ export const useRemoveMember = (groupId: string) => {
 
 	return useMutation({
 		mutationFn: async (userId: string) => {
-			const { data, error } = await api.v4
+			const { data, error } = await api.v3
 				.groups({ id: groupId })
 				.members({ userId })
 				.delete()
@@ -97,7 +97,7 @@ export const useLeaveGroup = (groupId: string) => {
 
 	return useMutation({
 		mutationFn: async () => {
-			const { data, error } = await api.v4.groups({ id: groupId }).leave.post()
+			const { data, error } = await api.v3.groups({ id: groupId }).leave.post()
 			if (error) throw new Error("Could not leave group")
 			return data
 		},
@@ -112,7 +112,7 @@ export const useGenerateInvite = (groupId: string) => {
 
 	return useMutation({
 		mutationFn: async (input: GenerateInviteInput) => {
-			const { data, error } = await api.v4.groups({ id: groupId }).invite.post(input)
+			const { data, error } = await api.v3.groups({ id: groupId }).invite.post(input)
 			if (error) throw new Error("Could not generate invite link")
 			return data
 		},
@@ -127,7 +127,7 @@ export const useRevokeInvite = (groupId: string) => {
 
 	return useMutation({
 		mutationFn: async () => {
-			const { data, error } = await api.v4.groups({ id: groupId }).invite.delete()
+			const { data, error } = await api.v3.groups({ id: groupId }).invite.delete()
 			if (error) throw new Error("Could not revoke invite link")
 			return data
 		},
@@ -142,7 +142,7 @@ export const useJoinByInvite = () => {
 
 	return useMutation({
 		mutationFn: async (inviteCode: string) => {
-			const { data, error } = await api.v4.groups["join-by-invite"].post({ inviteCode })
+			const { data, error } = await api.v3.groups["join-by-invite"].post({ inviteCode })
 			if (error) {
 				if (error.status === 403) throw new ProFeatureError("multiple-groups")
 				throw new Error("Invalid or expired invite link")

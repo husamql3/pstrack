@@ -53,7 +53,7 @@ function AdminProblemsPage() {
 	const { data, isLoading } = useQuery({
 		queryKey: ["admin", "problems", search],
 		queryFn: async () => {
-			const { data, error } = await api.v4.admin.problems.get({
+			const { data, error } = await api.v3.admin.problems.get({
 				query: {
 					...(search.q ? { q: search.q } : {}),
 					...(search.difficulty ? { difficulty: search.difficulty } : {}),
@@ -71,7 +71,7 @@ function AdminProblemsPage() {
 	)
 
 	const handleReseed = async () => {
-		const result = await sileo.promise(api.v4.admin.problems.seed.post(), {
+		const result = await sileo.promise(api.v3.admin.problems.seed.post(), {
 			loading: { title: "Re-seeding..." },
 			success: (r) => ({
 				title: "Seed complete",

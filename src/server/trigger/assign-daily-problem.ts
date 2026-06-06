@@ -1,7 +1,9 @@
 import { logger, schedules } from "@trigger.dev/sdk/v3"
 
 import { problemsDao } from "@/server/problems/problems.dao"
-import { problemNotifications } from "@/server/problems/problems.notifications"
+import { sendDailyDigestBatchTask } from "./send-daily-digest-batch"
+
+const DIGEST_BATCH_SIZE = 100
 
 export const assignDailyProblemTask = schedules.task({
 	id: "assign-daily-problem",
@@ -15,17 +17,43 @@ export const assignDailyProblemTask = schedules.task({
 				payload.timestamp.getUTCDate()
 			)
 		)
+		const dateKey = date.toISOString().slice(0, 10)
 
 		logger.log("Assigning daily problems", { date: date.toISOString() })
-
 		const result = await problemsDao.assignDailyProblems(date)
 
-		logger.log("Sending daily problem digest")
 		const recipients = await problemsDao.getDailyDigestRecipients(date)
-		await problemNotifications.dailyProblemDigest(recipients)
 
-		logger.log("Done", { ...result, emailsSent: recipients.length })
+		const batches: (typeof recipients)[] = []
+		for (let i = 0; i < recipients.length; i += DIGEST_BATCH_SIZE) {
+			batches.push(recipients.slice(i, i + DIGEST_BATCH_SIZE))
+		}
 
-		return { ...result, emailsSent: recipients.length }
+		if (batches.length > 0) {
+			logger.log("Scheduling daily digest batches", {
+				batches: batches.length,
+				recipients: recipients.length,
+			})
+			await sendDailyDigestBatchTask.batchTrigger(
+				batches.map((batch, batchIndex) => ({
+					payload: { recipients: batch, dateKey, batchIndex },
+					options: {
+						idempotencyKey: `daily-digest:${dateKey}:${batchIndex}`,
+					},
+				}))
+			)
+		}
+
+		logger.log("Done", {
+			...result,
+			recipients: recipients.length,
+			batches: batches.length,
+		})
+
+		return {
+			...result,
+			recipients: recipients.length,
+			batches: batches.length,
+		}
 	},
 })

@@ -43,7 +43,10 @@ export const GroupFilterRow = ({
 
 	return (
 		<div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-			<InputGroup className="sm:max-w-xs" variant="ghost">
+			<InputGroup
+				className="max-w-xs sm:w-auto sm:max-w-[min(320px,100%)]"
+				variant="ghost"
+			>
 				<InputGroupAddon align="inline-start" className="pl-1.75">
 					<IconSearch className="size-4" />
 				</InputGroupAddon>

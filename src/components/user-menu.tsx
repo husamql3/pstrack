@@ -7,13 +7,11 @@ import {
 	IconPalette,
 	IconSelector,
 	IconSettings,
-	IconSparkles,
 	IconSun,
 	IconUserCircle,
 } from "@tabler/icons-react"
 import { useNavigate } from "@tanstack/react-router"
 
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
 	DropdownMenu,
@@ -32,12 +30,11 @@ import { signOut, useSession } from "@/lib/auth-client"
 import { useTheme } from "@/lib/use-theme"
 
 export function UserMenu() {
-	const { data: session } = useSession()
+	const { data: session, isPending } = useSession()
 	const navigate = useNavigate()
 	const { theme, setTheme } = useTheme()
 
 	const user = session?.user
-	const isLoading = !user
 	const displayName = user?.username ?? user?.name ?? user?.email ?? "User"
 	const initials = (user?.name ?? "?")
 		.split(" ")
@@ -71,28 +68,22 @@ export function UserMenu() {
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
 				<Button variant="outline" className="ml-auto w-52" size="lg">
-					{isLoading ? (
+					{isPending ? (
 						<Skeleton className="size-4 shrink-0 rounded-full" />
 					) : (
 						<HashAvatar username={user?.username ?? initials} size={16} />
 					)}
-					{isLoading ? (
+					{isPending ? (
 						<Skeleton className="h-4 w-20" />
 					) : (
 						<span className="truncate font-medium text-sm">{displayName}</span>
-					)}
-					{user?.isPro && (
-						<Badge variant="secondary" className="ml-1 gap-0.5 px-1.5">
-							<IconSparkles className="size-3" aria-hidden="true" />
-							Pro
-						</Badge>
 					)}
 					<IconSelector className="ml-auto opacity-60" aria-hidden="true" />
 				</Button>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent className="w-60" align="start" sideOffset={8}>
 				<div className="flex items-center gap-3 px-1 pt-1.5 pb-2.5">
-					{isLoading ? (
+					{isPending ? (
 						<>
 							<Skeleton className="size-8 shrink-0 rounded-full" />
 							<div className="flex min-w-0 flex-1 flex-col gap-2">
@@ -104,17 +95,9 @@ export function UserMenu() {
 						<>
 							<HashAvatar username={user?.username ?? initials} size={32} />
 							<div className="flex min-w-0 flex-col gap-0.5">
-								<div className="flex items-center gap-1.5">
-									<span className="truncate font-medium text-foreground text-sm">
-										{user?.name ?? displayName}
-									</span>
-									{user?.isPro && (
-										<Badge variant="secondary" className="shrink-0 gap-0.5 px-1.5">
-											<IconSparkles className="size-3" aria-hidden="true" />
-											Pro
-										</Badge>
-									)}
-								</div>
+								<span className="truncate font-medium text-foreground text-sm">
+									{user?.name ?? displayName}
+								</span>
 								<span className="truncate text-muted-foreground text-xs">
 									{user?.email}
 								</span>

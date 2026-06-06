@@ -26,7 +26,7 @@ const fetchPage = async (
 	range: GroupProblemsRange,
 	cursor?: string
 ): Promise<GroupProblemsResponse> => {
-	const { data, error } = await api.v4
+	const { data, error } = await api.v3
 		.groups({ id: groupId })
 		.problems.get({ query: { range, ...(cursor ? { cursor } : {}) } })
 	if (error) throw new Error("Failed to load group problems")
@@ -107,7 +107,7 @@ export const useMarkTodaySolvedFromTable = (
 	const queryClient = useQueryClient()
 	return useMutation<SolveResult>({
 		mutationFn: async () => {
-			const { data, error } = await api.v4.problems.today.solve.post()
+			const { data, error } = await api.v3.problems.today.solve.post()
 			console.log(error)
 			if (error) throw new Error(error.value?.error ?? "Could not verify solve")
 			return data as SolveResult

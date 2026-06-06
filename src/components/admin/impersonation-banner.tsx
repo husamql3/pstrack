@@ -33,7 +33,7 @@ export function ImpersonationBanner() {
 			: undefined
 		await authClient.admin.stopImpersonating()
 		if (targetId) {
-			await api.v4.admin.users({ id: targetId })["impersonate-end-audit"].post({
+			await api.v3.admin.users({ id: targetId })["impersonate-end-audit"].post({
 				durationMs,
 			})
 		}

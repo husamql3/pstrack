@@ -16,7 +16,7 @@ export const RoadmapTabs = ({
 		}}
 		value={value}
 	>
-		<TabsList>
+		<TabsList variant="ghost">
 			{ROADMAP_KEYS.map((r) => (
 				<TabsTrigger key={r} value={r}>
 					{ROADMAP_LABELS[r]}

@@ -32,7 +32,7 @@ function AdminEmailsPage() {
 	const { data: templates, isLoading } = useQuery({
 		queryKey: ["admin", "email-templates"],
 		queryFn: async () => {
-			const { data, error } = await api.v4.admin.emails.templates.get()
+			const { data, error } = await api.v3.admin.emails.templates.get()
 			if (error) throw new Error("Failed to load templates")
 			return data
 		},
@@ -56,7 +56,7 @@ function AdminEmailsPage() {
 			return
 		}
 		await sileo.promise(
-			api.v4.admin.emails.send.post({
+			api.v3.admin.emails.send.post({
 				template: selected.key,
 				toUserId: toUserId.trim(),
 				props,

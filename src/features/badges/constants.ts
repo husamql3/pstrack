@@ -75,29 +75,21 @@ export const BADGE_PROGRESS_VALUE = (
 
 export type CategoryConfig = {
 	label: string
-	color: string
-	gradientFrom: string
 	iconColor: string
 }
 
 export const CATEGORY_CONFIG: Record<BadgeCategory, CategoryConfig> = {
 	streak: {
 		label: "Streaks",
-		color: "amber",
-		gradientFrom: "amber-500/20",
-		iconColor: "text-amber-400",
+		iconColor: "text-warning",
 	},
 	volume: {
 		label: "Volume",
-		color: "emerald",
-		gradientFrom: "emerald-500/20",
-		iconColor: "text-emerald-400",
+		iconColor: "text-success",
 	},
 	social: {
 		label: "Social",
-		color: "purple",
-		gradientFrom: "purple-500/20",
-		iconColor: "text-purple-400",
+		iconColor: "text-info",
 	},
 }
 

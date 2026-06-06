@@ -1,8 +1,12 @@
 import { Link } from "@tanstack/react-router"
 
 import { Button } from "@/components/ui/button"
+import { useSession } from "@/lib/auth-client"
 
 export function Hero() {
+	const { data: session } = useSession()
+	const isLoggedIn = Boolean(session?.user)
+
 	return (
 		<section className="h-[200dvh]">
 			<div className="pt-44 pb-32">
@@ -17,19 +21,29 @@ export function Hero() {
 				</div>
 
 				<div className="relative z-10 mx-auto w-full max-w-5xl px-6">
-					<div className="mx-auto max-w-md text-center">
+					<div className="mx-auto max-w-lg text-center">
 						<h1 className="text-balance font-medium text-4xl sm:text-5xl">
-							Ship faster. Integrate smarter.
+							Show up. Solve. Repeat.
 						</h1>
 						<p className="mt-4 text-balance text-muted-foreground">
-							Veil is your all-in-one engine for adding seamless integrations to your app.
+							One daily problem from NeetCode 250. Verified automatically. Streaks,
+							points, and accountability with your group.
 						</p>
 
-						<Button asChild className="mt-6 pr-1.5">
-							<Link to="/login">
-								<span className="text-nowrap">Start Building</span>
-							</Link>
-						</Button>
+						<div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+							{isLoggedIn ? (
+								<Button asChild size="lg">
+									<Link to="/dashboard">Go to dashboard</Link>
+								</Button>
+							) : (
+								<Button asChild size="lg">
+									<Link to="/login">Start solving</Link>
+								</Button>
+							)}
+							<Button asChild size="lg" variant="secondary">
+								<Link to="/groups">Browse groups</Link>
+							</Button>
+						</div>
 					</div>
 				</div>
 			</div>

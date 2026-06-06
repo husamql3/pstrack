@@ -66,7 +66,7 @@ export function AppHeader() {
 			<div className="mx-auto flex h-14 items-center gap-8 px-4">
 				<Link to="/" className="flex items-center gap-2">
 					PStrack
-					<Badge variant="outline">v4.0.0</Badge>
+					<Badge variant="outline">v3.0.0</Badge>
 				</Link>
 
 				<nav className="relative flex items-center">

@@ -53,7 +53,7 @@ function AdminAuditPage() {
 	const { data, isLoading } = useQuery({
 		queryKey: ["admin", "audit", search],
 		queryFn: async () => {
-			const { data, error } = await api.v4.admin.audit.get({
+			const { data, error } = await api.v3.admin.audit.get({
 				query: {
 					...(search.actor ? { actor: search.actor } : {}),
 					...(search.action ? { action: search.action } : {}),

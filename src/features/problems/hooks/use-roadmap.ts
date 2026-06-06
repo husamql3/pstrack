@@ -8,7 +8,7 @@ export const useRoadmap = (roadmap: RoadmapKey = Roadmap.NC250) =>
 	useQuery<RoadmapProblemResponse[]>({
 		queryKey: ["problems", "roadmap", roadmap],
 		queryFn: async () => {
-			const { data, error } = await api.v4.problems.roadmap.get({ query: { roadmap } })
+			const { data, error } = await api.v3.problems.roadmap.get({ query: { roadmap } })
 			if (error) throw new Error("Failed to load roadmap")
 			return data
 		},

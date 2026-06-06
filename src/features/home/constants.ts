@@ -1,5 +1,6 @@
 export const MENU_ITEMS = [
-	{ name: "Features", href: "#link" },
-	{ name: "Pricing", href: "#link" },
-	{ name: "Company", href: "#link" },
-]
+	{ name: "Groups", href: "/groups" },
+	{ name: "Problems", href: "/problems" },
+	{ name: "Leaderboard", href: "/leaderboard" },
+	{ name: "Badges", href: "/badges" },
+] as const

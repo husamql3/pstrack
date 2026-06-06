@@ -1,16 +1,40 @@
 import {
-	IconBrandGithub,
+	IconAward,
+	IconBolt,
 	IconBrandLinkedin,
 	IconBrandX,
 	IconCode,
+	IconFlame,
 	IconLink,
-	IconSparkles,
 } from "@tabler/icons-react"
+import { format } from "date-fns"
 
-import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
 import { HashAvatar } from "@/features/onboarding/components/hash-avatar"
+import { BadgeType } from "@/generated/prisma/enums"
+import { cn } from "@/lib/utils"
+import {
+	BADGE_CATEGORY,
+	BADGE_LABELS,
+	type BadgeCategory,
+	type EarnedBadge,
+} from "@/server/badges/badges.type"
 import type { PublicProfileResponse } from "@/server/users/users.type"
+
+const CATEGORY_ICON: Record<BadgeCategory, typeof IconFlame> = {
+	streak: IconFlame,
+	volume: IconAward,
+	social: IconBolt,
+}
+
+const RARE_BADGES: Set<BadgeType> = new Set([
+	BadgeType.STREAK_365,
+	BadgeType.NC250_COMPLETE,
+	BadgeType.FIRST_SOLVER_50,
+])
+
+const CARD_GRADIENT =
+	"dark:bg-[radial-gradient(50%_80%_at_25%_0%,--theme(--color-foreground/.1),transparent)]"
 
 const Stat = ({
 	icon: Icon,
@@ -32,16 +56,137 @@ const Stat = ({
 	</a>
 )
 
-export const PublicProfileSkeleton = () => (
-	<main className="mx-auto flex w-full max-w-2xl flex-col gap-6 px-6 py-16">
-		<div className="flex items-center gap-4">
-			<Skeleton className="size-20 rounded-full" />
-			<div className="flex flex-1 flex-col gap-2">
-				<Skeleton className="h-6 w-40" />
-				<Skeleton className="h-4 w-24" />
+const ProChip = () => (
+	<span className="inline-flex items-center rounded-full border border-warning/30 bg-warning/5 px-2 py-0.5 font-mono font-semibold text-[10px] text-warning uppercase tracking-[0.18em]">
+		Pro
+	</span>
+)
+
+const BadgeMedal = ({
+	type,
+	earnedAt,
+	isPro,
+}: {
+	type: BadgeType
+	earnedAt: Date | string
+	isPro: boolean
+}) => {
+	const category = BADGE_CATEGORY[type]
+	const Icon = CATEGORY_ICON[category]
+	const isRare = RARE_BADGES.has(type)
+
+	return (
+		<div
+			className={cn(
+				"relative flex flex-col items-center gap-3.5 rounded-xl border p-5",
+				isPro ? "border-warning/25" : "border-border",
+				CARD_GRADIENT
+			)}
+		>
+			{isRare && (
+				<span
+					className={cn(
+						"absolute top-2.5 right-2.5 inline-flex items-center gap-1 font-mono text-[9px] uppercase tracking-[0.18em]",
+						isPro ? "text-warning/80" : "text-muted-foreground"
+					)}
+				>
+					<span aria-hidden="true">◆</span>
+					Rare
+				</span>
+			)}
+
+			<Icon className="size-7" aria-hidden="true" />
+
+			<div className="flex w-full flex-col items-center gap-1 text-center">
+				<span className="font-medium text-sm leading-tight">{BADGE_LABELS[type]}</span>
+				<span className="font-mono text-[11px] text-muted-foreground tabular-nums">
+					{format(new Date(earnedAt), "MMM d, yyyy")}
+				</span>
 			</div>
 		</div>
-		<Skeleton className="h-16 w-full" />
+	)
+}
+
+const sortBadges = (badges: EarnedBadge[]): EarnedBadge[] =>
+	[...badges].sort((a, b) => {
+		const aRare = RARE_BADGES.has(a.type) ? 0 : 1
+		const bRare = RARE_BADGES.has(b.type) ? 0 : 1
+		if (aRare !== bRare) return aRare - bRare
+		return new Date(b.earnedAt).getTime() - new Date(a.earnedAt).getTime()
+	})
+
+const AchievementsSection = ({
+	badges,
+	isPro,
+}: {
+	badges: EarnedBadge[]
+	isPro: boolean
+}) => {
+	if (badges.length === 0) return null
+
+	const sorted = sortBadges(badges)
+	const rarest = sorted.find((b) => RARE_BADGES.has(b.type))
+
+	return (
+		<section className="flex flex-col gap-6 border-border border-t pt-8">
+			<div className="flex flex-col gap-2">
+				<span className="font-mono text-[10px] text-muted-foreground uppercase tracking-[0.24em]">
+					Achievements
+				</span>
+				<div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
+					<h2 className="font-semibold text-xl tracking-tight">{badges.length} earned</h2>
+					{rarest && (
+						<p className="text-muted-foreground text-sm">
+							Rarest{" "}
+							<span className="mx-1 text-muted-foreground/50" aria-hidden="true">
+								·
+							</span>
+							<span className="text-foreground">{BADGE_LABELS[rarest.type]}</span>
+						</p>
+					)}
+				</div>
+			</div>
+
+			<div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+				{sorted.map((badge) => (
+					<BadgeMedal
+						key={badge.type}
+						type={badge.type}
+						earnedAt={badge.earnedAt}
+						isPro={isPro}
+					/>
+				))}
+			</div>
+		</section>
+	)
+}
+
+export const PublicProfileSkeleton = () => (
+	<main className="mx-auto flex w-full max-w-3xl flex-col gap-8 px-6 py-16">
+		<div className="flex items-center gap-4">
+			<Skeleton className="size-24 rounded-full" />
+			<div className="flex flex-1 flex-col gap-2">
+				<Skeleton className="h-7 w-48" />
+				<Skeleton className="h-4 w-28" />
+				<Skeleton className="mt-2 h-4 w-64" />
+			</div>
+		</div>
+		<div className="grid gap-2 sm:grid-cols-2">
+			<Skeleton className="h-10 w-full" />
+			<Skeleton className="h-10 w-full" />
+		</div>
+		<div className="flex flex-col gap-6 border-border border-t pt-8">
+			<div className="flex flex-col gap-2">
+				<Skeleton className="h-3 w-28" />
+				<Skeleton className="h-6 w-40" />
+			</div>
+			<div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+				{Array.from({ length: 6 }).map((_, i) => (
+					// biome-ignore lint/suspicious/noArrayIndexKey: static skeleton
+					<Skeleton key={i} className="h-32 rounded-xl" />
+				))}
+			</div>
+		</div>
 	</main>
 )
 
@@ -60,15 +205,12 @@ export const PublicProfile = ({ profile }: { profile: PublicProfileResponse }) =
 			<main className="mx-auto flex w-full max-w-md flex-col items-center gap-4 px-6 py-24 text-center">
 				<HashAvatar username={profile.username} size={80} />
 				<div className="flex flex-col items-center gap-1">
-					<h1 className="font-semibold text-xl">{profile.name}</h1>
+					<div className="flex items-center gap-2">
+						<h1 className="font-semibold text-xl">{profile.name}</h1>
+						{profile.isPro && <ProChip />}
+					</div>
 					<p className="font-mono text-muted-foreground text-sm">@{profile.username}</p>
 				</div>
-				{profile.isPro && (
-					<Badge className="gap-1">
-						<IconSparkles className="size-3" aria-hidden="true" />
-						Pro
-					</Badge>
-				)}
 				<p className="mt-4 text-muted-foreground text-sm">
 					This user keeps their profile private.
 				</p>
@@ -115,28 +257,18 @@ export const PublicProfile = ({ profile }: { profile: PublicProfileResponse }) =
 	}
 
 	return (
-		<main className="mx-auto flex w-full max-w-2xl flex-col gap-8 px-6 py-16">
-			<header className="flex flex-col items-center gap-4 text-center sm:flex-row sm:text-left">
+		<main className="mx-auto flex w-full max-w-3xl flex-col gap-8 px-6 py-16">
+			<header className="flex flex-col items-center gap-5 text-center sm:flex-row sm:items-start sm:text-left">
 				<HashAvatar username={username} size={96} />
-				<div className="flex min-w-0 flex-1 flex-col gap-1.5">
+				<div className="flex min-w-0 flex-1 flex-col gap-1">
 					<div className="flex flex-wrap items-center justify-center gap-2 sm:justify-start">
 						<h1 className="font-semibold text-2xl tracking-tight">{profile.name}</h1>
-						{profile.isPro && (
-							<Badge className="gap-1">
-								<IconSparkles className="size-3" aria-hidden="true" />
-								Pro
-							</Badge>
-						)}
+						{profile.isPro && <ProChip />}
 					</div>
 					<p className="font-mono text-muted-foreground text-sm">@{username}</p>
-					{profile.bio && <p className="mt-2 text-sm">{profile.bio}</p>}
+					{profile.bio && <p className="mt-2 text-sm leading-relaxed">{profile.bio}</p>}
 				</div>
 			</header>
-
-			{/* Brand icon unused: IconBrandGithub. Kept for future GitHub link wiring. */}
-			<span className="hidden">
-				<IconBrandGithub />
-			</span>
 
 			{links.length > 0 && (
 				<section className="grid gap-2 sm:grid-cols-2">
@@ -146,9 +278,7 @@ export const PublicProfile = ({ profile }: { profile: PublicProfileResponse }) =
 				</section>
 			)}
 
-			<p className="text-muted-foreground text-xs">
-				Stats, badges, and activity coming soon.
-			</p>
+			<AchievementsSection badges={profile.badges} isPro={profile.isPro} />
 		</main>
 	)
 }

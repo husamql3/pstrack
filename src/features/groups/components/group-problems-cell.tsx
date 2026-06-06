@@ -22,7 +22,6 @@ type Props = {
 	isOwnColumn: boolean
 	isPreJoin: boolean
 	isCurrentUser: boolean
-	isPro: boolean
 	onSolve: () => Promise<unknown>
 	isSolvePending: boolean
 }
@@ -44,7 +43,6 @@ export const GroupProblemsCell = ({
 	isOwnColumn,
 	isPreJoin,
 	isCurrentUser,
-	isPro,
 	onSolve,
 	isSolvePending,
 }: Props) => {
@@ -66,7 +64,6 @@ export const GroupProblemsCell = ({
 
 	const baseClasses = cn(
 		"relative grid h-full w-full place-items-center",
-		isPro && "bg-amber-400/[0.06]",
 		isCurrentUser && "bg-primary/[0.06]"
 	)
 

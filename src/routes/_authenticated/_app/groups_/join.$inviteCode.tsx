@@ -27,12 +27,8 @@ function JoinByInvitePage() {
 			onError: (err: unknown) => {
 				if (err instanceof ProFeatureError) {
 					sileo.error({
-						title: "Pro feature",
-						description: "Joining multiple groups requires a Pro account.",
-						button: {
-							title: "Upgrade to Pro",
-							onClick: () => void navigate({ to: "/settings/billing" }),
-						},
+						title: "Group limit reached",
+						description: "You can only be in one group right now.",
 					})
 				} else {
 					sileo.error({

@@ -15,7 +15,7 @@ export const useAdminUsers = (filters: AdminUserListFilters) =>
 	useQuery({
 		queryKey: ["admin", "users", filters],
 		queryFn: async () => {
-			const { data, error } = await api.v4.admin.users.get({
+			const { data, error } = await api.v3.admin.users.get({
 				query: {
 					...(filters.q ? { q: filters.q } : {}),
 					...(filters.role ? { role: filters.role } : {}),
@@ -37,7 +37,7 @@ export const useAdminUser = (id: string | undefined) =>
 		enabled: !!id,
 		queryFn: async () => {
 			if (!id) throw new Error("Missing user id")
-			const { data, error } = await api.v4.admin.users({ id }).get()
+			const { data, error } = await api.v3.admin.users({ id }).get()
 			if (error) throw new Error("Failed to load user")
 			return data
 		},
@@ -49,7 +49,7 @@ export const useAdminUserPointsHistory = (id: string | undefined) =>
 		enabled: !!id,
 		queryFn: async () => {
 			if (!id) throw new Error("Missing user id")
-			const { data, error } = await api.v4.admin.users({ id })["points-history"].get({
+			const { data, error } = await api.v3.admin.users({ id })["points-history"].get({
 				query: {},
 			})
 			if (error) throw new Error("Failed to load points history")

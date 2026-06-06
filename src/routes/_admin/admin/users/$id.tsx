@@ -137,7 +137,7 @@ function AdjustPointsForm({ userId }: { userId: string }) {
 	})
 
 	const onSubmit = handleSubmit(async (values) => {
-		await sileo.promise(api.v4.admin.users({ id: userId }).points.post(values), {
+		await sileo.promise(api.v3.admin.users({ id: userId }).points.post(values), {
 			loading: { title: "Adjusting points..." },
 			success: { title: "Points adjusted" },
 			error: (err) => ({
@@ -260,7 +260,7 @@ function ProGrantForm({
 	})
 
 	const onSubmit = handleSubmit(async (values) => {
-		const { error } = await api.v4.admin.users({ id: userId }).pro.post({
+		const { error } = await api.v3.admin.users({ id: userId }).pro.post({
 			grant,
 			expiresAt: values.expiresAt ?? null,
 			reason: values.reason,

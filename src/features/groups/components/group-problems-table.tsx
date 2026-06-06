@@ -14,7 +14,7 @@ import {
 } from "@/features/problems/constants"
 import { useSession } from "@/lib/auth-client"
 import { cn } from "@/lib/utils"
-import { Route as GroupRoute } from "@/routes/_authenticated/_app/groups_/$groupId"
+import { Route as GroupRoute } from "@/routes/groups_/$groupId"
 import type {
 	GroupProblemsMember,
 	GroupProblemsRange,
@@ -34,7 +34,7 @@ const META_COLS = [
 	{ key: "date", label: "Date", width: 80 },
 	{ key: "num", label: "#", width: 50 },
 	{ key: "title", label: "Problem", width: 240 },
-	{ key: "topic", label: "Topic", width: 100 },
+	{ key: "topic", label: "Topic", width: 140 },
 	{ key: "difficulty", label: "Difficulty", width: 90 },
 ] as const
 
@@ -377,7 +377,6 @@ const DataRow = ({
 							isOwnColumn={m.userId === currentUserId}
 							isPreJoin={isPreJoin}
 							isCurrentUser={m.userId === currentUserId}
-							isPro={m.isPro}
 							onSolve={onSolve}
 							isSolvePending={isSolvePending}
 						/>

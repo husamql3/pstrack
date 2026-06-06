@@ -11,20 +11,25 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ProblemsRouteImport } from './routes/problems'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as LeaderboardRouteImport } from './routes/leaderboard'
+import { Route as GroupsRouteImport } from './routes/groups'
 import { Route as BadgesRouteImport } from './routes/badges'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as AdminRouteImport } from './routes/_admin'
 import { Route as UsernameRouteImport } from './routes/$username'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as GroupsGroupIdRouteImport } from './routes/groups_/$groupId'
 import { Route as ApiSplatRouteImport } from './routes/api.$'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/_onboarding'
 import { Route as AuthenticatedAppRouteImport } from './routes/_authenticated/_app'
+import { Route as GroupsGroupIdIndexRouteImport } from './routes/groups_/$groupId/index'
 import { Route as AdminAdminIndexRouteImport } from './routes/_admin/admin/index'
+import { Route as GroupsGroupIdSettingsRouteImport } from './routes/groups_/$groupId/settings'
+import { Route as GroupsGroupIdMembersRouteImport } from './routes/groups_/$groupId/members'
+import { Route as GroupsGroupIdJoinRequestsRouteImport } from './routes/groups_/$groupId/join-requests'
 import { Route as AuthenticatedOnboardingOnboardingRouteImport } from './routes/_authenticated/_onboarding/onboarding'
 import { Route as AuthenticatedAppSettingsRouteImport } from './routes/_authenticated/_app/settings'
-import { Route as AuthenticatedAppLeaderboardRouteImport } from './routes/_authenticated/_app/leaderboard'
 import { Route as AuthenticatedAppHelpRouteImport } from './routes/_authenticated/_app/help'
-import { Route as AuthenticatedAppGroupsRouteImport } from './routes/_authenticated/_app/groups'
 import { Route as AuthenticatedAppDashboardRouteImport } from './routes/_authenticated/_app/dashboard'
 import { Route as AdminAdminProblemsRouteImport } from './routes/_admin/admin/problems'
 import { Route as AdminAdminGroupsRouteImport } from './routes/_admin/admin/groups'
@@ -36,15 +41,9 @@ import { Route as AuthenticatedAppSettingsIndexRouteImport } from './routes/_aut
 import { Route as AdminAdminUsersIndexRouteImport } from './routes/_admin/admin/users/index'
 import { Route as AuthenticatedAppSettingsProfileRouteImport } from './routes/_authenticated/_app/settings/profile'
 import { Route as AuthenticatedAppSettingsNotificationsRouteImport } from './routes/_authenticated/_app/settings/notifications'
-import { Route as AuthenticatedAppSettingsBillingRouteImport } from './routes/_authenticated/_app/settings/billing'
 import { Route as AuthenticatedAppSettingsAccountRouteImport } from './routes/_authenticated/_app/settings/account'
-import { Route as AuthenticatedAppGroupsGroupIdRouteImport } from './routes/_authenticated/_app/groups_/$groupId'
 import { Route as AdminAdminUsersIdRouteImport } from './routes/_admin/admin/users/$id'
-import { Route as AuthenticatedAppGroupsGroupIdIndexRouteImport } from './routes/_authenticated/_app/groups_/$groupId/index'
 import { Route as AuthenticatedAppGroupsJoinInviteCodeRouteImport } from './routes/_authenticated/_app/groups_/join.$inviteCode'
-import { Route as AuthenticatedAppGroupsGroupIdSettingsRouteImport } from './routes/_authenticated/_app/groups_/$groupId/settings'
-import { Route as AuthenticatedAppGroupsGroupIdMembersRouteImport } from './routes/_authenticated/_app/groups_/$groupId/members'
-import { Route as AuthenticatedAppGroupsGroupIdJoinRequestsRouteImport } from './routes/_authenticated/_app/groups_/$groupId/join-requests'
 
 const ProblemsRoute = ProblemsRouteImport.update({
   id: '/problems',
@@ -54,6 +53,16 @@ const ProblemsRoute = ProblemsRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LeaderboardRoute = LeaderboardRouteImport.update({
+  id: '/leaderboard',
+  path: '/leaderboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GroupsRoute = GroupsRouteImport.update({
+  id: '/groups',
+  path: '/groups',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BadgesRoute = BadgesRouteImport.update({
@@ -79,6 +88,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GroupsGroupIdRoute = GroupsGroupIdRouteImport.update({
+  id: '/groups_/$groupId',
+  path: '/groups/$groupId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiSplatRoute = ApiSplatRouteImport.update({
   id: '/api/$',
   path: '/api/$',
@@ -92,11 +106,32 @@ const AuthenticatedAppRoute = AuthenticatedAppRouteImport.update({
   id: '/_app',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const GroupsGroupIdIndexRoute = GroupsGroupIdIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => GroupsGroupIdRoute,
+} as any)
 const AdminAdminIndexRoute = AdminAdminIndexRouteImport.update({
   id: '/admin/',
   path: '/admin/',
   getParentRoute: () => AdminRoute,
 } as any)
+const GroupsGroupIdSettingsRoute = GroupsGroupIdSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => GroupsGroupIdRoute,
+} as any)
+const GroupsGroupIdMembersRoute = GroupsGroupIdMembersRouteImport.update({
+  id: '/members',
+  path: '/members',
+  getParentRoute: () => GroupsGroupIdRoute,
+} as any)
+const GroupsGroupIdJoinRequestsRoute =
+  GroupsGroupIdJoinRequestsRouteImport.update({
+    id: '/join-requests',
+    path: '/join-requests',
+    getParentRoute: () => GroupsGroupIdRoute,
+  } as any)
 const AuthenticatedOnboardingOnboardingRoute =
   AuthenticatedOnboardingOnboardingRouteImport.update({
     id: '/onboarding',
@@ -109,20 +144,9 @@ const AuthenticatedAppSettingsRoute =
     path: '/settings',
     getParentRoute: () => AuthenticatedAppRoute,
   } as any)
-const AuthenticatedAppLeaderboardRoute =
-  AuthenticatedAppLeaderboardRouteImport.update({
-    id: '/leaderboard',
-    path: '/leaderboard',
-    getParentRoute: () => AuthenticatedAppRoute,
-  } as any)
 const AuthenticatedAppHelpRoute = AuthenticatedAppHelpRouteImport.update({
   id: '/help',
   path: '/help',
-  getParentRoute: () => AuthenticatedAppRoute,
-} as any)
-const AuthenticatedAppGroupsRoute = AuthenticatedAppGroupsRouteImport.update({
-  id: '/groups',
-  path: '/groups',
   getParentRoute: () => AuthenticatedAppRoute,
 } as any)
 const AuthenticatedAppDashboardRoute =
@@ -184,67 +208,34 @@ const AuthenticatedAppSettingsNotificationsRoute =
     path: '/notifications',
     getParentRoute: () => AuthenticatedAppSettingsRoute,
   } as any)
-const AuthenticatedAppSettingsBillingRoute =
-  AuthenticatedAppSettingsBillingRouteImport.update({
-    id: '/billing',
-    path: '/billing',
-    getParentRoute: () => AuthenticatedAppSettingsRoute,
-  } as any)
 const AuthenticatedAppSettingsAccountRoute =
   AuthenticatedAppSettingsAccountRouteImport.update({
     id: '/account',
     path: '/account',
     getParentRoute: () => AuthenticatedAppSettingsRoute,
   } as any)
-const AuthenticatedAppGroupsGroupIdRoute =
-  AuthenticatedAppGroupsGroupIdRouteImport.update({
-    id: '/groups_/$groupId',
-    path: '/groups/$groupId',
-    getParentRoute: () => AuthenticatedAppRoute,
-  } as any)
 const AdminAdminUsersIdRoute = AdminAdminUsersIdRouteImport.update({
   id: '/admin/users/$id',
   path: '/admin/users/$id',
   getParentRoute: () => AdminRoute,
 } as any)
-const AuthenticatedAppGroupsGroupIdIndexRoute =
-  AuthenticatedAppGroupsGroupIdIndexRouteImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => AuthenticatedAppGroupsGroupIdRoute,
-  } as any)
 const AuthenticatedAppGroupsJoinInviteCodeRoute =
   AuthenticatedAppGroupsJoinInviteCodeRouteImport.update({
     id: '/groups_/join/$inviteCode',
     path: '/groups/join/$inviteCode',
     getParentRoute: () => AuthenticatedAppRoute,
   } as any)
-const AuthenticatedAppGroupsGroupIdSettingsRoute =
-  AuthenticatedAppGroupsGroupIdSettingsRouteImport.update({
-    id: '/settings',
-    path: '/settings',
-    getParentRoute: () => AuthenticatedAppGroupsGroupIdRoute,
-  } as any)
-const AuthenticatedAppGroupsGroupIdMembersRoute =
-  AuthenticatedAppGroupsGroupIdMembersRouteImport.update({
-    id: '/members',
-    path: '/members',
-    getParentRoute: () => AuthenticatedAppGroupsGroupIdRoute,
-  } as any)
-const AuthenticatedAppGroupsGroupIdJoinRequestsRoute =
-  AuthenticatedAppGroupsGroupIdJoinRequestsRouteImport.update({
-    id: '/join-requests',
-    path: '/join-requests',
-    getParentRoute: () => AuthenticatedAppGroupsGroupIdRoute,
-  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$username': typeof UsernameRoute
   '/badges': typeof BadgesRoute
+  '/groups': typeof GroupsRoute
+  '/leaderboard': typeof LeaderboardRoute
   '/login': typeof LoginRoute
   '/problems': typeof ProblemsRoute
   '/api/$': typeof ApiSplatRoute
+  '/groups/$groupId': typeof GroupsGroupIdRouteWithChildren
   '/admin/audit': typeof AdminAdminAuditRoute
   '/admin/config': typeof AdminAdminConfigRoute
   '/admin/emails': typeof AdminAdminEmailsRoute
@@ -252,30 +243,28 @@ export interface FileRoutesByFullPath {
   '/admin/groups': typeof AdminAdminGroupsRoute
   '/admin/problems': typeof AdminAdminProblemsRoute
   '/dashboard': typeof AuthenticatedAppDashboardRoute
-  '/groups': typeof AuthenticatedAppGroupsRoute
   '/help': typeof AuthenticatedAppHelpRoute
-  '/leaderboard': typeof AuthenticatedAppLeaderboardRoute
   '/settings': typeof AuthenticatedAppSettingsRouteWithChildren
   '/onboarding': typeof AuthenticatedOnboardingOnboardingRoute
+  '/groups/$groupId/join-requests': typeof GroupsGroupIdJoinRequestsRoute
+  '/groups/$groupId/members': typeof GroupsGroupIdMembersRoute
+  '/groups/$groupId/settings': typeof GroupsGroupIdSettingsRoute
   '/admin/': typeof AdminAdminIndexRoute
+  '/groups/$groupId/': typeof GroupsGroupIdIndexRoute
   '/admin/users/$id': typeof AdminAdminUsersIdRoute
-  '/groups/$groupId': typeof AuthenticatedAppGroupsGroupIdRouteWithChildren
   '/settings/account': typeof AuthenticatedAppSettingsAccountRoute
-  '/settings/billing': typeof AuthenticatedAppSettingsBillingRoute
   '/settings/notifications': typeof AuthenticatedAppSettingsNotificationsRoute
   '/settings/profile': typeof AuthenticatedAppSettingsProfileRoute
   '/admin/users/': typeof AdminAdminUsersIndexRoute
   '/settings/': typeof AuthenticatedAppSettingsIndexRoute
-  '/groups/$groupId/join-requests': typeof AuthenticatedAppGroupsGroupIdJoinRequestsRoute
-  '/groups/$groupId/members': typeof AuthenticatedAppGroupsGroupIdMembersRoute
-  '/groups/$groupId/settings': typeof AuthenticatedAppGroupsGroupIdSettingsRoute
   '/groups/join/$inviteCode': typeof AuthenticatedAppGroupsJoinInviteCodeRoute
-  '/groups/$groupId/': typeof AuthenticatedAppGroupsGroupIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$username': typeof UsernameRoute
   '/badges': typeof BadgesRoute
+  '/groups': typeof GroupsRoute
+  '/leaderboard': typeof LeaderboardRoute
   '/login': typeof LoginRoute
   '/problems': typeof ProblemsRoute
   '/api/$': typeof ApiSplatRoute
@@ -286,23 +275,20 @@ export interface FileRoutesByTo {
   '/admin/groups': typeof AdminAdminGroupsRoute
   '/admin/problems': typeof AdminAdminProblemsRoute
   '/dashboard': typeof AuthenticatedAppDashboardRoute
-  '/groups': typeof AuthenticatedAppGroupsRoute
   '/help': typeof AuthenticatedAppHelpRoute
-  '/leaderboard': typeof AuthenticatedAppLeaderboardRoute
   '/onboarding': typeof AuthenticatedOnboardingOnboardingRoute
+  '/groups/$groupId/join-requests': typeof GroupsGroupIdJoinRequestsRoute
+  '/groups/$groupId/members': typeof GroupsGroupIdMembersRoute
+  '/groups/$groupId/settings': typeof GroupsGroupIdSettingsRoute
   '/admin': typeof AdminAdminIndexRoute
+  '/groups/$groupId': typeof GroupsGroupIdIndexRoute
   '/admin/users/$id': typeof AdminAdminUsersIdRoute
   '/settings/account': typeof AuthenticatedAppSettingsAccountRoute
-  '/settings/billing': typeof AuthenticatedAppSettingsBillingRoute
   '/settings/notifications': typeof AuthenticatedAppSettingsNotificationsRoute
   '/settings/profile': typeof AuthenticatedAppSettingsProfileRoute
   '/admin/users': typeof AdminAdminUsersIndexRoute
   '/settings': typeof AuthenticatedAppSettingsIndexRoute
-  '/groups/$groupId/join-requests': typeof AuthenticatedAppGroupsGroupIdJoinRequestsRoute
-  '/groups/$groupId/members': typeof AuthenticatedAppGroupsGroupIdMembersRoute
-  '/groups/$groupId/settings': typeof AuthenticatedAppGroupsGroupIdSettingsRoute
   '/groups/join/$inviteCode': typeof AuthenticatedAppGroupsJoinInviteCodeRoute
-  '/groups/$groupId': typeof AuthenticatedAppGroupsGroupIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -311,11 +297,14 @@ export interface FileRoutesById {
   '/_admin': typeof AdminRouteWithChildren
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/badges': typeof BadgesRoute
+  '/groups': typeof GroupsRoute
+  '/leaderboard': typeof LeaderboardRoute
   '/login': typeof LoginRoute
   '/problems': typeof ProblemsRoute
   '/_authenticated/_app': typeof AuthenticatedAppRouteWithChildren
   '/_authenticated/_onboarding': typeof AuthenticatedOnboardingRouteWithChildren
   '/api/$': typeof ApiSplatRoute
+  '/groups_/$groupId': typeof GroupsGroupIdRouteWithChildren
   '/_admin/admin/audit': typeof AdminAdminAuditRoute
   '/_admin/admin/config': typeof AdminAdminConfigRoute
   '/_admin/admin/emails': typeof AdminAdminEmailsRoute
@@ -323,25 +312,21 @@ export interface FileRoutesById {
   '/_admin/admin/groups': typeof AdminAdminGroupsRoute
   '/_admin/admin/problems': typeof AdminAdminProblemsRoute
   '/_authenticated/_app/dashboard': typeof AuthenticatedAppDashboardRoute
-  '/_authenticated/_app/groups': typeof AuthenticatedAppGroupsRoute
   '/_authenticated/_app/help': typeof AuthenticatedAppHelpRoute
-  '/_authenticated/_app/leaderboard': typeof AuthenticatedAppLeaderboardRoute
   '/_authenticated/_app/settings': typeof AuthenticatedAppSettingsRouteWithChildren
   '/_authenticated/_onboarding/onboarding': typeof AuthenticatedOnboardingOnboardingRoute
+  '/groups_/$groupId/join-requests': typeof GroupsGroupIdJoinRequestsRoute
+  '/groups_/$groupId/members': typeof GroupsGroupIdMembersRoute
+  '/groups_/$groupId/settings': typeof GroupsGroupIdSettingsRoute
   '/_admin/admin/': typeof AdminAdminIndexRoute
+  '/groups_/$groupId/': typeof GroupsGroupIdIndexRoute
   '/_admin/admin/users/$id': typeof AdminAdminUsersIdRoute
-  '/_authenticated/_app/groups_/$groupId': typeof AuthenticatedAppGroupsGroupIdRouteWithChildren
   '/_authenticated/_app/settings/account': typeof AuthenticatedAppSettingsAccountRoute
-  '/_authenticated/_app/settings/billing': typeof AuthenticatedAppSettingsBillingRoute
   '/_authenticated/_app/settings/notifications': typeof AuthenticatedAppSettingsNotificationsRoute
   '/_authenticated/_app/settings/profile': typeof AuthenticatedAppSettingsProfileRoute
   '/_admin/admin/users/': typeof AdminAdminUsersIndexRoute
   '/_authenticated/_app/settings/': typeof AuthenticatedAppSettingsIndexRoute
-  '/_authenticated/_app/groups_/$groupId/join-requests': typeof AuthenticatedAppGroupsGroupIdJoinRequestsRoute
-  '/_authenticated/_app/groups_/$groupId/members': typeof AuthenticatedAppGroupsGroupIdMembersRoute
-  '/_authenticated/_app/groups_/$groupId/settings': typeof AuthenticatedAppGroupsGroupIdSettingsRoute
   '/_authenticated/_app/groups_/join/$inviteCode': typeof AuthenticatedAppGroupsJoinInviteCodeRoute
-  '/_authenticated/_app/groups_/$groupId/': typeof AuthenticatedAppGroupsGroupIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -349,9 +334,12 @@ export interface FileRouteTypes {
     | '/'
     | '/$username'
     | '/badges'
+    | '/groups'
+    | '/leaderboard'
     | '/login'
     | '/problems'
     | '/api/$'
+    | '/groups/$groupId'
     | '/admin/audit'
     | '/admin/config'
     | '/admin/emails'
@@ -359,30 +347,28 @@ export interface FileRouteTypes {
     | '/admin/groups'
     | '/admin/problems'
     | '/dashboard'
-    | '/groups'
     | '/help'
-    | '/leaderboard'
     | '/settings'
     | '/onboarding'
+    | '/groups/$groupId/join-requests'
+    | '/groups/$groupId/members'
+    | '/groups/$groupId/settings'
     | '/admin/'
+    | '/groups/$groupId/'
     | '/admin/users/$id'
-    | '/groups/$groupId'
     | '/settings/account'
-    | '/settings/billing'
     | '/settings/notifications'
     | '/settings/profile'
     | '/admin/users/'
     | '/settings/'
-    | '/groups/$groupId/join-requests'
-    | '/groups/$groupId/members'
-    | '/groups/$groupId/settings'
     | '/groups/join/$inviteCode'
-    | '/groups/$groupId/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/$username'
     | '/badges'
+    | '/groups'
+    | '/leaderboard'
     | '/login'
     | '/problems'
     | '/api/$'
@@ -393,23 +379,20 @@ export interface FileRouteTypes {
     | '/admin/groups'
     | '/admin/problems'
     | '/dashboard'
-    | '/groups'
     | '/help'
-    | '/leaderboard'
     | '/onboarding'
+    | '/groups/$groupId/join-requests'
+    | '/groups/$groupId/members'
+    | '/groups/$groupId/settings'
     | '/admin'
+    | '/groups/$groupId'
     | '/admin/users/$id'
     | '/settings/account'
-    | '/settings/billing'
     | '/settings/notifications'
     | '/settings/profile'
     | '/admin/users'
     | '/settings'
-    | '/groups/$groupId/join-requests'
-    | '/groups/$groupId/members'
-    | '/groups/$groupId/settings'
     | '/groups/join/$inviteCode'
-    | '/groups/$groupId'
   id:
     | '__root__'
     | '/'
@@ -417,11 +400,14 @@ export interface FileRouteTypes {
     | '/_admin'
     | '/_authenticated'
     | '/badges'
+    | '/groups'
+    | '/leaderboard'
     | '/login'
     | '/problems'
     | '/_authenticated/_app'
     | '/_authenticated/_onboarding'
     | '/api/$'
+    | '/groups_/$groupId'
     | '/_admin/admin/audit'
     | '/_admin/admin/config'
     | '/_admin/admin/emails'
@@ -429,25 +415,21 @@ export interface FileRouteTypes {
     | '/_admin/admin/groups'
     | '/_admin/admin/problems'
     | '/_authenticated/_app/dashboard'
-    | '/_authenticated/_app/groups'
     | '/_authenticated/_app/help'
-    | '/_authenticated/_app/leaderboard'
     | '/_authenticated/_app/settings'
     | '/_authenticated/_onboarding/onboarding'
+    | '/groups_/$groupId/join-requests'
+    | '/groups_/$groupId/members'
+    | '/groups_/$groupId/settings'
     | '/_admin/admin/'
+    | '/groups_/$groupId/'
     | '/_admin/admin/users/$id'
-    | '/_authenticated/_app/groups_/$groupId'
     | '/_authenticated/_app/settings/account'
-    | '/_authenticated/_app/settings/billing'
     | '/_authenticated/_app/settings/notifications'
     | '/_authenticated/_app/settings/profile'
     | '/_admin/admin/users/'
     | '/_authenticated/_app/settings/'
-    | '/_authenticated/_app/groups_/$groupId/join-requests'
-    | '/_authenticated/_app/groups_/$groupId/members'
-    | '/_authenticated/_app/groups_/$groupId/settings'
     | '/_authenticated/_app/groups_/join/$inviteCode'
-    | '/_authenticated/_app/groups_/$groupId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -456,9 +438,12 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRouteWithChildren
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   BadgesRoute: typeof BadgesRoute
+  GroupsRoute: typeof GroupsRoute
+  LeaderboardRoute: typeof LeaderboardRoute
   LoginRoute: typeof LoginRoute
   ProblemsRoute: typeof ProblemsRoute
   ApiSplatRoute: typeof ApiSplatRoute
+  GroupsGroupIdRoute: typeof GroupsGroupIdRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -475,6 +460,20 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/leaderboard': {
+      id: '/leaderboard'
+      path: '/leaderboard'
+      fullPath: '/leaderboard'
+      preLoaderRoute: typeof LeaderboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/groups': {
+      id: '/groups'
+      path: '/groups'
+      fullPath: '/groups'
+      preLoaderRoute: typeof GroupsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/badges': {
@@ -512,6 +511,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/groups_/$groupId': {
+      id: '/groups_/$groupId'
+      path: '/groups/$groupId'
+      fullPath: '/groups/$groupId'
+      preLoaderRoute: typeof GroupsGroupIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/$': {
       id: '/api/$'
       path: '/api/$'
@@ -533,12 +539,40 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/groups_/$groupId/': {
+      id: '/groups_/$groupId/'
+      path: '/'
+      fullPath: '/groups/$groupId/'
+      preLoaderRoute: typeof GroupsGroupIdIndexRouteImport
+      parentRoute: typeof GroupsGroupIdRoute
+    }
     '/_admin/admin/': {
       id: '/_admin/admin/'
       path: '/admin'
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminAdminIndexRouteImport
       parentRoute: typeof AdminRoute
+    }
+    '/groups_/$groupId/settings': {
+      id: '/groups_/$groupId/settings'
+      path: '/settings'
+      fullPath: '/groups/$groupId/settings'
+      preLoaderRoute: typeof GroupsGroupIdSettingsRouteImport
+      parentRoute: typeof GroupsGroupIdRoute
+    }
+    '/groups_/$groupId/members': {
+      id: '/groups_/$groupId/members'
+      path: '/members'
+      fullPath: '/groups/$groupId/members'
+      preLoaderRoute: typeof GroupsGroupIdMembersRouteImport
+      parentRoute: typeof GroupsGroupIdRoute
+    }
+    '/groups_/$groupId/join-requests': {
+      id: '/groups_/$groupId/join-requests'
+      path: '/join-requests'
+      fullPath: '/groups/$groupId/join-requests'
+      preLoaderRoute: typeof GroupsGroupIdJoinRequestsRouteImport
+      parentRoute: typeof GroupsGroupIdRoute
     }
     '/_authenticated/_onboarding/onboarding': {
       id: '/_authenticated/_onboarding/onboarding'
@@ -554,25 +588,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppSettingsRouteImport
       parentRoute: typeof AuthenticatedAppRoute
     }
-    '/_authenticated/_app/leaderboard': {
-      id: '/_authenticated/_app/leaderboard'
-      path: '/leaderboard'
-      fullPath: '/leaderboard'
-      preLoaderRoute: typeof AuthenticatedAppLeaderboardRouteImport
-      parentRoute: typeof AuthenticatedAppRoute
-    }
     '/_authenticated/_app/help': {
       id: '/_authenticated/_app/help'
       path: '/help'
       fullPath: '/help'
       preLoaderRoute: typeof AuthenticatedAppHelpRouteImport
-      parentRoute: typeof AuthenticatedAppRoute
-    }
-    '/_authenticated/_app/groups': {
-      id: '/_authenticated/_app/groups'
-      path: '/groups'
-      fullPath: '/groups'
-      preLoaderRoute: typeof AuthenticatedAppGroupsRouteImport
       parentRoute: typeof AuthenticatedAppRoute
     }
     '/_authenticated/_app/dashboard': {
@@ -652,26 +672,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppSettingsNotificationsRouteImport
       parentRoute: typeof AuthenticatedAppSettingsRoute
     }
-    '/_authenticated/_app/settings/billing': {
-      id: '/_authenticated/_app/settings/billing'
-      path: '/billing'
-      fullPath: '/settings/billing'
-      preLoaderRoute: typeof AuthenticatedAppSettingsBillingRouteImport
-      parentRoute: typeof AuthenticatedAppSettingsRoute
-    }
     '/_authenticated/_app/settings/account': {
       id: '/_authenticated/_app/settings/account'
       path: '/account'
       fullPath: '/settings/account'
       preLoaderRoute: typeof AuthenticatedAppSettingsAccountRouteImport
       parentRoute: typeof AuthenticatedAppSettingsRoute
-    }
-    '/_authenticated/_app/groups_/$groupId': {
-      id: '/_authenticated/_app/groups_/$groupId'
-      path: '/groups/$groupId'
-      fullPath: '/groups/$groupId'
-      preLoaderRoute: typeof AuthenticatedAppGroupsGroupIdRouteImport
-      parentRoute: typeof AuthenticatedAppRoute
     }
     '/_admin/admin/users/$id': {
       id: '/_admin/admin/users/$id'
@@ -680,40 +686,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAdminUsersIdRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/_authenticated/_app/groups_/$groupId/': {
-      id: '/_authenticated/_app/groups_/$groupId/'
-      path: '/'
-      fullPath: '/groups/$groupId/'
-      preLoaderRoute: typeof AuthenticatedAppGroupsGroupIdIndexRouteImport
-      parentRoute: typeof AuthenticatedAppGroupsGroupIdRoute
-    }
     '/_authenticated/_app/groups_/join/$inviteCode': {
       id: '/_authenticated/_app/groups_/join/$inviteCode'
       path: '/groups/join/$inviteCode'
       fullPath: '/groups/join/$inviteCode'
       preLoaderRoute: typeof AuthenticatedAppGroupsJoinInviteCodeRouteImport
       parentRoute: typeof AuthenticatedAppRoute
-    }
-    '/_authenticated/_app/groups_/$groupId/settings': {
-      id: '/_authenticated/_app/groups_/$groupId/settings'
-      path: '/settings'
-      fullPath: '/groups/$groupId/settings'
-      preLoaderRoute: typeof AuthenticatedAppGroupsGroupIdSettingsRouteImport
-      parentRoute: typeof AuthenticatedAppGroupsGroupIdRoute
-    }
-    '/_authenticated/_app/groups_/$groupId/members': {
-      id: '/_authenticated/_app/groups_/$groupId/members'
-      path: '/members'
-      fullPath: '/groups/$groupId/members'
-      preLoaderRoute: typeof AuthenticatedAppGroupsGroupIdMembersRouteImport
-      parentRoute: typeof AuthenticatedAppGroupsGroupIdRoute
-    }
-    '/_authenticated/_app/groups_/$groupId/join-requests': {
-      id: '/_authenticated/_app/groups_/$groupId/join-requests'
-      path: '/join-requests'
-      fullPath: '/groups/$groupId/join-requests'
-      preLoaderRoute: typeof AuthenticatedAppGroupsGroupIdJoinRequestsRouteImport
-      parentRoute: typeof AuthenticatedAppGroupsGroupIdRoute
     }
   }
 }
@@ -746,7 +724,6 @@ const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface AuthenticatedAppSettingsRouteChildren {
   AuthenticatedAppSettingsAccountRoute: typeof AuthenticatedAppSettingsAccountRoute
-  AuthenticatedAppSettingsBillingRoute: typeof AuthenticatedAppSettingsBillingRoute
   AuthenticatedAppSettingsNotificationsRoute: typeof AuthenticatedAppSettingsNotificationsRoute
   AuthenticatedAppSettingsProfileRoute: typeof AuthenticatedAppSettingsProfileRoute
   AuthenticatedAppSettingsIndexRoute: typeof AuthenticatedAppSettingsIndexRoute
@@ -755,7 +732,6 @@ interface AuthenticatedAppSettingsRouteChildren {
 const AuthenticatedAppSettingsRouteChildren: AuthenticatedAppSettingsRouteChildren =
   {
     AuthenticatedAppSettingsAccountRoute: AuthenticatedAppSettingsAccountRoute,
-    AuthenticatedAppSettingsBillingRoute: AuthenticatedAppSettingsBillingRoute,
     AuthenticatedAppSettingsNotificationsRoute:
       AuthenticatedAppSettingsNotificationsRoute,
     AuthenticatedAppSettingsProfileRoute: AuthenticatedAppSettingsProfileRoute,
@@ -767,48 +743,17 @@ const AuthenticatedAppSettingsRouteWithChildren =
     AuthenticatedAppSettingsRouteChildren,
   )
 
-interface AuthenticatedAppGroupsGroupIdRouteChildren {
-  AuthenticatedAppGroupsGroupIdJoinRequestsRoute: typeof AuthenticatedAppGroupsGroupIdJoinRequestsRoute
-  AuthenticatedAppGroupsGroupIdMembersRoute: typeof AuthenticatedAppGroupsGroupIdMembersRoute
-  AuthenticatedAppGroupsGroupIdSettingsRoute: typeof AuthenticatedAppGroupsGroupIdSettingsRoute
-  AuthenticatedAppGroupsGroupIdIndexRoute: typeof AuthenticatedAppGroupsGroupIdIndexRoute
-}
-
-const AuthenticatedAppGroupsGroupIdRouteChildren: AuthenticatedAppGroupsGroupIdRouteChildren =
-  {
-    AuthenticatedAppGroupsGroupIdJoinRequestsRoute:
-      AuthenticatedAppGroupsGroupIdJoinRequestsRoute,
-    AuthenticatedAppGroupsGroupIdMembersRoute:
-      AuthenticatedAppGroupsGroupIdMembersRoute,
-    AuthenticatedAppGroupsGroupIdSettingsRoute:
-      AuthenticatedAppGroupsGroupIdSettingsRoute,
-    AuthenticatedAppGroupsGroupIdIndexRoute:
-      AuthenticatedAppGroupsGroupIdIndexRoute,
-  }
-
-const AuthenticatedAppGroupsGroupIdRouteWithChildren =
-  AuthenticatedAppGroupsGroupIdRoute._addFileChildren(
-    AuthenticatedAppGroupsGroupIdRouteChildren,
-  )
-
 interface AuthenticatedAppRouteChildren {
   AuthenticatedAppDashboardRoute: typeof AuthenticatedAppDashboardRoute
-  AuthenticatedAppGroupsRoute: typeof AuthenticatedAppGroupsRoute
   AuthenticatedAppHelpRoute: typeof AuthenticatedAppHelpRoute
-  AuthenticatedAppLeaderboardRoute: typeof AuthenticatedAppLeaderboardRoute
   AuthenticatedAppSettingsRoute: typeof AuthenticatedAppSettingsRouteWithChildren
-  AuthenticatedAppGroupsGroupIdRoute: typeof AuthenticatedAppGroupsGroupIdRouteWithChildren
   AuthenticatedAppGroupsJoinInviteCodeRoute: typeof AuthenticatedAppGroupsJoinInviteCodeRoute
 }
 
 const AuthenticatedAppRouteChildren: AuthenticatedAppRouteChildren = {
   AuthenticatedAppDashboardRoute: AuthenticatedAppDashboardRoute,
-  AuthenticatedAppGroupsRoute: AuthenticatedAppGroupsRoute,
   AuthenticatedAppHelpRoute: AuthenticatedAppHelpRoute,
-  AuthenticatedAppLeaderboardRoute: AuthenticatedAppLeaderboardRoute,
   AuthenticatedAppSettingsRoute: AuthenticatedAppSettingsRouteWithChildren,
-  AuthenticatedAppGroupsGroupIdRoute:
-    AuthenticatedAppGroupsGroupIdRouteWithChildren,
   AuthenticatedAppGroupsJoinInviteCodeRoute:
     AuthenticatedAppGroupsJoinInviteCodeRoute,
 }
@@ -845,15 +790,36 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
   AuthenticatedRouteChildren,
 )
 
+interface GroupsGroupIdRouteChildren {
+  GroupsGroupIdJoinRequestsRoute: typeof GroupsGroupIdJoinRequestsRoute
+  GroupsGroupIdMembersRoute: typeof GroupsGroupIdMembersRoute
+  GroupsGroupIdSettingsRoute: typeof GroupsGroupIdSettingsRoute
+  GroupsGroupIdIndexRoute: typeof GroupsGroupIdIndexRoute
+}
+
+const GroupsGroupIdRouteChildren: GroupsGroupIdRouteChildren = {
+  GroupsGroupIdJoinRequestsRoute: GroupsGroupIdJoinRequestsRoute,
+  GroupsGroupIdMembersRoute: GroupsGroupIdMembersRoute,
+  GroupsGroupIdSettingsRoute: GroupsGroupIdSettingsRoute,
+  GroupsGroupIdIndexRoute: GroupsGroupIdIndexRoute,
+}
+
+const GroupsGroupIdRouteWithChildren = GroupsGroupIdRoute._addFileChildren(
+  GroupsGroupIdRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   UsernameRoute: UsernameRoute,
   AdminRoute: AdminRouteWithChildren,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   BadgesRoute: BadgesRoute,
+  GroupsRoute: GroupsRoute,
+  LeaderboardRoute: LeaderboardRoute,
   LoginRoute: LoginRoute,
   ProblemsRoute: ProblemsRoute,
   ApiSplatRoute: ApiSplatRoute,
+  GroupsGroupIdRoute: GroupsGroupIdRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

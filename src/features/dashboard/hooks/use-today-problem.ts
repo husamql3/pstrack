@@ -9,7 +9,7 @@ export const useTodayProblem = ({ enabled = true }: { enabled?: boolean } = {}) 
 	useQuery<TodayProblemResponse>({
 		queryKey: todayProblemQueryKey,
 		queryFn: async () => {
-			const { data, error } = await api.v4.problems.today.get()
+			const { data, error } = await api.v3.problems.today.get()
 			if (error) throw new Error("Failed to load today's problem")
 			return data
 		},
@@ -22,7 +22,7 @@ export const useMarkTodaySolved = () => {
 
 	return useMutation({
 		mutationFn: async () => {
-			const { data, error } = await api.v4.problems.today.solve.post()
+			const { data, error } = await api.v3.problems.today.solve.post()
 			if (error) throw new Error("Could not mark today's problem solved")
 			return data
 		},
@@ -37,7 +37,7 @@ export const usePauseToday = () => {
 
 	return useMutation({
 		mutationFn: async () => {
-			const { data, error } = await api.v4.problems.today.pause.post()
+			const { data, error } = await api.v3.problems.today.pause.post()
 			if (error) throw new Error("Could not pause today's problem")
 			return data
 		},

@@ -59,7 +59,7 @@ function AdminGroupsPage() {
 	const refresh = () => queryClient.invalidateQueries({ queryKey: ["admin", "groups"] })
 
 	const handleFreezeToggle = async (id: string, frozen: boolean) => {
-		await sileo.promise(api.v4.admin.groups({ id }).freeze.patch({ frozen: !frozen }), {
+		await sileo.promise(api.v3.admin.groups({ id }).freeze.patch({ frozen: !frozen }), {
 			loading: { title: frozen ? "Unfreezing..." : "Freezing..." },
 			success: { title: frozen ? "Group unfrozen" : "Group frozen" },
 			error: () => ({ title: "Failed" }),
@@ -75,7 +75,7 @@ function AdminGroupsPage() {
 		) {
 			return
 		}
-		await sileo.promise(api.v4.admin.groups({ id }).delete(), {
+		await sileo.promise(api.v3.admin.groups({ id }).delete(), {
 			loading: { title: "Deleting..." },
 			success: { title: "Group deleted" },
 			error: () => ({ title: "Failed" }),

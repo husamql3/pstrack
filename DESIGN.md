@@ -8,7 +8,7 @@ The source of truth for tokens is `src/styles.css`. This document explains what'
 
 ## 1. Color Tokens
 
-All colors are **semantic CSS variables in OKLCH**, defined in `src/styles.css` under `:root` (light) and `.dark` (dark). Tailwind v4 `@theme inline` directives expose them as utility classes (`bg-primary`, `text-muted-foreground`, etc.).
+All colors are **semantic CSS variables in OKLCH**, defined in `src/styles.css` under `:root` (light) and `.dark` (dark). Tailwind v3 `@theme inline` directives expose them as utility classes (`bg-primary`, `text-muted-foreground`, etc.).
 
 ### Surface & content
 
@@ -98,7 +98,7 @@ Base: `--radius: 0.625rem` (~10px). Scale multiplies that base:
 
 ## 5. Tailwind & Class Composition
 
-- **Tailwind v4** with `@theme inline` — the variables in `styles.css` are the configuration. There is no `tailwind.config.{js,ts}` to edit.
+- **Tailwind v3** with `@theme inline` — the variables in `styles.css` are the configuration. There is no `tailwind.config.{js,ts}` to edit.
 - **Class composition uses `cn()`** from `@/lib/utils`:
 
   ```tsx

@@ -28,7 +28,7 @@ function AdminConfigPage() {
 	const { data, isLoading } = useQuery({
 		queryKey: ["admin", "system-config"],
 		queryFn: async () => {
-			const { data, error } = await api.v4.admin["system-config"].get()
+			const { data, error } = await api.v3.admin["system-config"].get()
 			if (error) throw new Error("Failed to load config")
 			return data
 		},
@@ -49,7 +49,7 @@ function AdminConfigPage() {
 			parsed = rawValue
 		}
 		await sileo.promise(
-			api.v4.admin["system-config"].put({
+			api.v3.admin["system-config"].put({
 				key,
 				value: parsed,
 				description,

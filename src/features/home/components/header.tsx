@@ -5,13 +5,17 @@ import { useState } from "react"
 
 import { Logo } from "@/components/logo"
 import { Button } from "@/components/ui/button"
+import { UserMenu } from "@/components/user-menu"
 import { NavItems } from "@/features/home/components/nav-items"
+import { useSession } from "@/lib/auth-client"
 import { cn } from "@/lib/utils"
 
 export function Header() {
 	const [menuState, setMenuState] = useState(false)
 	const [isScrolled, setIsScrolled] = useState(false)
 	const { scrollY } = useScroll()
+	const { data: session } = useSession()
+	const isLoggedIn = Boolean(session?.user)
 
 	useMotionValueEvent(scrollY, "change", (latest) => {
 		setIsScrolled(latest > 75)
@@ -60,11 +64,15 @@ export function Header() {
 									isScrolled && "lg:opacity-0 lg:blur-xs"
 								)}
 							>
-								<Button asChild size="sm">
-									<Link to="/login">
-										<span>Login</span>
-									</Link>
-								</Button>
+								{isLoggedIn ? (
+									<UserMenu />
+								) : (
+									<Button asChild size="sm">
+										<Link to="/login">
+											<span>Login</span>
+										</Link>
+									</Button>
+								)}
 							</div>
 						</div>
 					</div>

@@ -6,7 +6,7 @@ export const useAdminStats = () =>
 	useQuery({
 		queryKey: ["admin", "stats"],
 		queryFn: async () => {
-			const { data, error } = await api.v4.admin.stats.get()
+			const { data, error } = await api.v3.admin.stats.get()
 			if (error) throw new Error("Failed to load stats")
 			return data
 		},

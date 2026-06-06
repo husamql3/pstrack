@@ -14,7 +14,7 @@ export const useAdminGroups = (filters: AdminGroupFilters) =>
 	useQuery({
 		queryKey: ["admin", "groups", filters],
 		queryFn: async () => {
-			const { data, error } = await api.v4.admin.groups.get({
+			const { data, error } = await api.v3.admin.groups.get({
 				query: {
 					...(filters.q ? { q: filters.q } : {}),
 					...(filters.type ? { type: filters.type } : {}),

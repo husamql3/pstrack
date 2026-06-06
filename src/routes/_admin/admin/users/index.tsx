@@ -65,7 +65,7 @@ function AdminUsersListPage() {
 
 	const handleBanToggle = async (id: string, banned: boolean) => {
 		await sileo.promise(
-			api.v4.admin.users({ id }).ban.patch({
+			api.v3.admin.users({ id }).ban.patch({
 				banned: !banned,
 				reason: banned ? undefined : "Banned via admin UI",
 			}),
@@ -79,7 +79,7 @@ function AdminUsersListPage() {
 	}
 
 	const handleImpersonate = async (id: string) => {
-		await api.v4.admin.users({ id })["impersonate-audit"].post()
+		await api.v3.admin.users({ id })["impersonate-audit"].post()
 		const { error } = await authClient.admin.impersonateUser({ userId: id })
 		if (error) {
 			sileo.error({ title: "Impersonation failed", description: error.message })

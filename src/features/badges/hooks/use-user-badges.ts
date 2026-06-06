@@ -9,7 +9,7 @@ export const useUserBadges = () =>
 	useQuery<UserBadgesResponse>({
 		queryKey: userBadgesQueryKey,
 		queryFn: async () => {
-			const { data, error } = await api.v4.badges.me.get()
+			const { data, error } = await api.v3.badges.me.get()
 			if (error) throw new Error("Failed to load badges")
 			return data as UserBadgesResponse
 		},

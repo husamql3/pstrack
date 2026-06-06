@@ -114,7 +114,7 @@ Stay consistent with LeetCode — solve one problem a day, earn points, and comp
 - [x] Rename monthly reset job to `reset-monthly-counters` and reset both pause and verification-failure counters
 - [x] Verification failure escalation: first monthly failure grace, second+ failure treated as miss
 - [x] Badge evaluation after each solve: streak badges (7/30/100), First Solver (10/50), Consistent (30)
-- [x] `GET /api/v4/users/me` returns points economy fields (`pausesRemainingThisMonth`, `verificationFailuresRemainingThisMonth`, `proSource`, `pointsToProUnlock`)
+- [x] `GET /api/v3/users/me` returns points economy fields (`pausesRemainingThisMonth`, `verificationFailuresRemainingThisMonth`, `proSource`, `pointsToProUnlock`)
 - [x] Email templates: `streak-milestone.tsx`, `badge-earned.tsx`, `pro-unlocked-by-points.tsx`
 
 **Deliverable:** Points, streaks, and badges fully functional

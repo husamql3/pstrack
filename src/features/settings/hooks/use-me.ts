@@ -18,7 +18,7 @@ export const useMe = () =>
 	useQuery({
 		queryKey: ME_QUERY_KEY,
 		queryFn: async (): Promise<MeResponse> => {
-			const { data, error } = await api.v4.users.me.get()
+			const { data, error } = await api.v3.users.me.get()
 			throwIfError(error)
 			return data as MeResponse
 		},
@@ -37,7 +37,7 @@ const useMeMutation = <Input>(fn: (input: Input) => Promise<MeResponse>) => {
 
 export const useUpdateUsername = () =>
 	useMeMutation(async (username: string) => {
-		const { data, error } = await api.v4.users.me.username.patch({ username })
+		const { data, error } = await api.v3.users.me.username.patch({ username })
 		throwIfError(error)
 		return data as MeResponse
 	})
@@ -53,7 +53,7 @@ type UpdateProfileBody = Partial<{
 
 export const useUpdateProfile = () =>
 	useMeMutation(async (input: UpdateProfileBody) => {
-		const { data, error } = await api.v4.users.me.profile.patch(input)
+		const { data, error } = await api.v3.users.me.profile.patch(input)
 		throwIfError(error)
 		return data as MeResponse
 	})
@@ -65,7 +65,7 @@ type UpdateHandlesBody = {
 
 export const useUpdateHandles = () =>
 	useMeMutation(async (input: UpdateHandlesBody) => {
-		const { data, error } = await api.v4.users.me.handles.patch(input)
+		const { data, error } = await api.v3.users.me.handles.patch(input)
 		throwIfError(error)
 		return data as MeResponse
 	})
@@ -78,7 +78,7 @@ type UpdateNotificationsBody = {
 
 export const useUpdateNotifications = () =>
 	useMeMutation(async (input: UpdateNotificationsBody) => {
-		const { data, error } = await api.v4.users.me.notifications.patch(input)
+		const { data, error } = await api.v3.users.me.notifications.patch(input)
 		throwIfError(error)
 		return data as MeResponse
 	})

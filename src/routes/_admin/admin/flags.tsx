@@ -25,7 +25,7 @@ function AdminFlagsPage() {
 	const { data, isLoading } = useQuery({
 		queryKey: ["admin", "feature-flags"],
 		queryFn: async () => {
-			const { data, error } = await api.v4.admin["feature-flags"].get()
+			const { data, error } = await api.v3.admin["feature-flags"].get()
 			if (error) throw new Error("Failed to load flags")
 			return data
 		},
@@ -35,7 +35,7 @@ function AdminFlagsPage() {
 		queryClient.invalidateQueries({ queryKey: ["admin", "feature-flags"] })
 
 	const handleToggle = async (key: string, enabled: boolean) => {
-		await sileo.promise(api.v4.admin["feature-flags"]({ key }).patch({ enabled }), {
+		await sileo.promise(api.v3.admin["feature-flags"]({ key }).patch({ enabled }), {
 			loading: { title: "Updating..." },
 			success: { title: enabled ? "Flag enabled" : "Flag disabled" },
 			error: () => ({ title: "Failed" }),
@@ -46,7 +46,7 @@ function AdminFlagsPage() {
 	const handleCreate = async () => {
 		if (!newKey.trim()) return
 		await sileo.promise(
-			api.v4.admin["feature-flags"].post({
+			api.v3.admin["feature-flags"].post({
 				key: newKey.trim(),
 				enabled: false,
 				description: newDescription.trim() || null,

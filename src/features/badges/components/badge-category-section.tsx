@@ -16,9 +16,9 @@ const CATEGORY_ICON: Record<BadgeCategory, typeof IconFlame> = {
 }
 
 const SECTION_PROGRESS_BAR: Record<BadgeCategory, string> = {
-	streak: "bg-amber-400",
-	volume: "bg-emerald-400",
-	social: "bg-purple-400",
+	streak: "bg-warning",
+	volume: "bg-success",
+	social: "bg-info",
 }
 
 export const BadgeCategorySection = ({
@@ -44,11 +44,11 @@ export const BadgeCategorySection = ({
 		<section className="flex flex-col gap-4">
 			<div className="flex items-center gap-3">
 				<Icon className={cn("size-5", config.iconColor)} />
-				<h2 className="font-semibold text-base text-white">{config.label}</h2>
-				<span className="ml-auto text-sm text-zinc-500 tabular-nums">
+				<h2 className="font-semibold text-base text-foreground">{config.label}</h2>
+				<span className="ml-auto font-mono text-muted-foreground text-sm tabular-nums">
 					{earnedCount}/{totalCount}
 				</span>
-				<div className="h-1 w-24 rounded-full bg-white/[0.06]">
+				<div className="h-1 w-24 rounded-full bg-muted">
 					<div
 						className={cn(
 							"h-full rounded-full transition-all",

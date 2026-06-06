@@ -18,7 +18,7 @@ export const useSessions = () =>
 	useQuery({
 		queryKey: SESSIONS_QUERY_KEY,
 		queryFn: async (): Promise<SessionResponse[]> => {
-			const { data, error } = await api.v4.users.me.sessions.get()
+			const { data, error } = await api.v3.users.me.sessions.get()
 			throwIfError(error)
 			return data as SessionResponse[]
 		},
@@ -29,7 +29,7 @@ export const useRevokeSession = () => {
 	const queryClient = useQueryClient()
 	return useMutation({
 		mutationFn: async (id: string) => {
-			const { error } = await api.v4.users.me.sessions({ id }).delete()
+			const { error } = await api.v3.users.me.sessions({ id }).delete()
 			throwIfError(error)
 		},
 		onSuccess: () => {
@@ -42,7 +42,7 @@ export const useRevokeOtherSessions = () => {
 	const queryClient = useQueryClient()
 	return useMutation({
 		mutationFn: async () => {
-			const { error } = await api.v4.users.me.sessions.others.delete()
+			const { error } = await api.v3.users.me.sessions.others.delete()
 			throwIfError(error)
 		},
 		onSuccess: () => {

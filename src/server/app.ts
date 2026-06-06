@@ -16,7 +16,7 @@ import { requestLogger } from "./lib/request-logger"
 
 initServerSentry()
 
-const api = new Elysia({ prefix: "/api/v4" })
+const api = new Elysia({ prefix: "/api/v3" })
 	.use(health)
 	.use(docs)
 	.use(usersController)
@@ -31,11 +31,11 @@ const api = new Elysia({ prefix: "/api/v4" })
 
 export const app = new Elysia()
 	.use(requestLogger)
-	.all("/api/v4/auth/*", ({ request }) => auth.handler(request), {
+	.all("/api/v3/auth/*", ({ request }) => auth.handler(request), {
 		detail: { tags: ["Auth"] },
 	})
 	.get(
-		"/api/v4/magic-link",
+		"/api/v3/magic-link",
 		({ request }) => {
 			const { searchParams } = new URL(request.url)
 			const token = searchParams.get("token") ?? ""

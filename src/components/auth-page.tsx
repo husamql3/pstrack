@@ -100,6 +100,31 @@ export function AuthPage({ redirect }: { redirect?: string }) {
 						</p>
 					</div>
 
+					<div className="space-y-2">
+						<Button
+							className="w-full"
+							type="button"
+							variant="outline"
+							disabled={isBusy}
+							onClick={() => handleOAuth("google")}
+						>
+							<GoogleIcon data-icon="inline-start" />
+							{oauthLoading === "google" ? "Redirecting…" : "Google"}
+						</Button>
+						<Button
+							className="w-full"
+							type="button"
+							variant="outline"
+							disabled={isBusy}
+							onClick={() => handleOAuth("github")}
+						>
+							<GithubIcon data-icon="inline-start" />
+							{oauthLoading === "github" ? "Redirecting…" : "GitHub"}
+						</Button>
+					</div>
+
+					<AuthDivider>OR CONTINUE WITH</AuthDivider>
+
 					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
 						<InputGroup>
 							<InputGroupInput
@@ -127,31 +152,6 @@ export function AuthPage({ redirect }: { redirect?: string }) {
 							</p>
 						)}
 					</form>
-
-					<AuthDivider>OR CONTINUE WITH</AuthDivider>
-
-					<div className="space-y-2">
-						<Button
-							className="w-full"
-							type="button"
-							variant="outline"
-							disabled={isBusy}
-							onClick={() => handleOAuth("google")}
-						>
-							<GoogleIcon data-icon="inline-start" />
-							{oauthLoading === "google" ? "Redirecting…" : "Google"}
-						</Button>
-						<Button
-							className="w-full"
-							type="button"
-							variant="outline"
-							disabled={isBusy}
-							onClick={() => handleOAuth("github")}
-						>
-							<GithubIcon data-icon="inline-start" />
-							{oauthLoading === "github" ? "Redirecting…" : "GitHub"}
-						</Button>
-					</div>
 				</div>
 
 				<p className="text-center text-muted-foreground text-sm">

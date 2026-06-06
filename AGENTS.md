@@ -70,8 +70,8 @@ Pro is a **lifetime one-time purchase** via Polar ($14 standard, $9 sale). No su
 TanStack Start (Vercel)
 ├── client: TanStack Router SPA
 └── server: Elysia middleware
-    ├── /api/v4/auth/*  → Better Auth (+ Polar plugin)
-    └── /api/v4/*       → Elysia routes (Eden Treaty contract)
+    ├── /api/v3/auth/*  → Better Auth (+ Polar plugin)
+    └── /api/v3/*       → Elysia routes (Eden Treaty contract)
 ```
 
 TanStack Start's `api.$.ts` catch-all route forwards every `/api/*` request to the Elysia app — one deployment unit, full type safety between client and server via Eden Treaty without codegen.
@@ -208,7 +208,7 @@ Always use the Eden Treaty client from `@/lib/api` — never raw `fetch()` for i
 ```ts
 import { api } from "@/lib/api"
 
-const { data, error } = await api.v4.users["check-username"].post({ username })
+const { data, error } = await api.v3.users["check-username"].post({ username })
 ```
 
 ### Server Module Structure
@@ -227,7 +227,7 @@ No barrel `index.ts` — import from the specific file to prevent client bundles
 Register the controller in `src/server/app.ts`:
 ```ts
 import { myResourceController } from "@/server/my-resource/my-resource.controller"
-const api = new Elysia({ prefix: "/api/v4" }).use(myResourceController)
+const api = new Elysia({ prefix: "/api/v3" }).use(myResourceController)
 ```
 
 **Model files** use TypeBox (`t` from elysia):
@@ -403,7 +403,7 @@ export const useUsers = () => {
   const { data, isLoading } = useQuery({
     queryKey: ["users"],
     queryFn: async () => {
-      const { data, error } = await api.v4.users.get()
+      const { data, error } = await api.v3.users.get()
       if (error) throw new Error("Failed to fetch users")
       return data
     },
@@ -418,7 +418,7 @@ Use `useMutation` for imperative operations (form saves, async validations on bl
 export const useCheckUsername = () =>
   useMutation({
     mutationFn: async (username: string) => {
-      const { data, error } = await api.v4.users["check-username"].post({ username })
+      const { data, error } = await api.v3.users["check-username"].post({ username })
       if (error) throw new Error("Could not verify username")
       return data.available
     },
@@ -482,4 +482,4 @@ export type CreateRoomFormInput = z.infer<typeof createRoomSchema>
 - Schema lives in `[resource].type.ts`, never inline in the component
 - Use `register()` for native `<input>` / `<textarea>`; use `<Controller>` for Radix/custom components
 - `disabled={isPending}` on all inputs and the submit button during mutation
-- **Zod v4 error messages**: use `{ error: "..." }` — never the v3 `{ message }`, `{ required_error }`, or `{ invalid_type_error }` forms
+- **Zod v3 error messages**: use `{ error: "..." }` — never the v3 `{ message }`, `{ required_error }`, or `{ invalid_type_error }` forms

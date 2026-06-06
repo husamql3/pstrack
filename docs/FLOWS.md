@@ -13,7 +13,7 @@ End-to-end lifecycles for the load-bearing user actions. Cross-references the re
      → sends daily digest email to opted-in members
 
 2. User clicks "Mark as Solved"
-   POST /api/v4/problems/today/solve
+   POST /api/v3/problems/today/solve
      → creates UserSolve { status: PENDING_VERIFICATION }
      → triggers verify-submission Trigger.dev task
 

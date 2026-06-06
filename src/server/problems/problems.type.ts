@@ -113,3 +113,13 @@ export type PauseTodayResult =
 			today: TodayProblemResponse
 	  }
 	| { error: null; today: TodayProblemResponse }
+
+export type DailyProblemRecipient = {
+	email: string
+	name: string
+	groupSlug: string
+	problemSlug: string
+	problemTitle: string
+	difficulty: string
+	topic: string
+}
