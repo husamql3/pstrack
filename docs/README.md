@@ -47,6 +47,7 @@ A competitive programming accountability platform. Users join groups, solve one 
 - [Freemium Model](./freemium-model.md)
 - [Notifications](./notifications.md)
 - [Routes](./routes.md)
+- [Trigger.dev GitHub Actions](./TRIGGER_GITHUB_ACTIONS.md)
 - [Timeline](./timeline.md)
 
 ## Post-MVP

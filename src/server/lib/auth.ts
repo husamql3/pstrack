@@ -91,7 +91,7 @@ export const auth = betterAuth({
 				// uses JS to redirect to the actual verify path. Email pre-fetchers (e.g.
 				// Gmail) don't execute JS so the one-time token isn't consumed early.
 				const redirectUrl = new URL(url)
-				redirectUrl.pathname = "/api/v4/magic-link"
+				redirectUrl.pathname = "/api/v3/magic-link"
 				console.info("redirectUrl", redirectUrl.toString())
 				await resend.emails.send({
 					from: env.EMAIL_FROM,

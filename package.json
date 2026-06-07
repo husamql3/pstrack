@@ -6,7 +6,8 @@
 	"scripts": {
 		"dev": "portless",
 		"dev:app": "vite dev --host 127.0.0.1 --port=${PORT:-3001}",
-		"dev:trigger": "npx trigger.dev@latest dev",
+		"dev:trigger": "trigger dev",
+		"deploy:trigger-prod": "trigger deploy",
 		"dev:email": "bunx react-email dev --dir src/emails --port 3001",
 		"build": "prisma generate && vite build",
 		"preview": "vite preview",
@@ -106,6 +107,7 @@
 		"portless": "^0.13.0",
 		"prisma": "^7.8.0",
 		"react-email": "^6.2.0",
+		"trigger.dev": "4.4.6",
 		"typescript": "^5.9.3",
 		"vite": "^7.3.1",
 		"vitest": "^3.2.4",

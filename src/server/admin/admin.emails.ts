@@ -37,7 +37,7 @@ export const EMAIL_TEMPLATES: TemplateMeta[] = [
 		label: "Magic link",
 		subject: () => "Your PSTrack sign-in link",
 		render: (props) => MagicLinkEmail(cast(props)),
-		exampleProps: { url: "https://pstrack.app/api/v4/magic-link?token=test" },
+		exampleProps: { url: "https://pstrack.app/api/v3/magic-link?token=test" },
 	},
 	{
 		key: "daily-problem",
