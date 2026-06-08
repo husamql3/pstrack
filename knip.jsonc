@@ -1,6 +1,12 @@
 {
 	"$schema": "https://unpkg.com/knip@6/schema-jsonc.json",
-	"entry": ["src/lib/api.ts", "src/server/lib/db.ts"],
+	"entry": [
+		"src/lib/api.ts",
+		"src/routes/**/*.{ts,tsx}",
+		"src/server/lib/db.ts",
+		"src/server/trigger/**/*.{ts,tsx}",
+		"trigger.config.ts"
+	],
 	"ignoreDependencies": ["@prisma/client"],
 	"project": ["src/**/*.{ts,tsx,css}", "*.{ts,tsx}"],
 	"ignoreIssues": {

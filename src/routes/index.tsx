@@ -1,9 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router"
 
 import { Dither } from "@/components/dither"
-// import { LetterGlitch } from "@/components/letter-glitch"
-// import { Header } from "@/features/home/components/header"
-// import { Hero } from "@/features/home/components/hero"
 import { Header } from "@/features/home/header"
 import { Hero } from "@/features/home/hero"
 
@@ -28,16 +25,6 @@ function App() {
 
 			<Header />
 			<Hero />
-
-			{/* <LetterGlitch
-				glitchColors={["#2b4539", "#61dca3", "#61b3dc"]}
-				glitchSpeed={150}
-				centerVignette
-				outerVignette
-				smooth
-			/>
-			<Header />
-			<Hero /> */}
 		</>
 	)
 }
