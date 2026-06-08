@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router"
 
 import { Dither } from "@/components/dither"
+import { Footer } from "@/features/home/footer"
 import { Header } from "@/features/home/header"
 import { Hero } from "@/features/home/hero"
 
@@ -8,8 +9,8 @@ export const Route = createFileRoute("/")({ component: App })
 
 function App() {
 	return (
-		<>
-			<div className="absolute h-dvh w-full">
+		<div className="relative h-dvh overflow-hidden">
+			<div className="absolute inset-0">
 				<Dither
 					waveColor={[0.30980392156862746, 0.30980392156862746, 0.30980392156862746]}
 					disableAnimation={false}
@@ -25,6 +26,7 @@ function App() {
 
 			<Header />
 			<Hero />
-		</>
+			<Footer />
+		</div>
 	)
 }

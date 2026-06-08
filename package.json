@@ -28,7 +28,7 @@
 		"db:studio": "bunx db-studio@latest --env .env",
 		"prisma:generate": "prisma generate",
 		"test": "vitest run",
-		"format": "biome check --write .",
+		"format": "biome check --write --unsafe .",
 		"check": "bun run biome check .",
 		"knip": "knip",
 		"typecheck": "prisma generate && tsc --noEmit",

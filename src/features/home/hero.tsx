@@ -31,8 +31,8 @@ export function Hero() {
 	const isLoggedIn = Boolean(session?.user)
 
 	return (
-		<section className="lg:h-screen">
-			<div className="flex items-center justify-center pt-12 pb-24 md:pb-32 lg:min-h-screen lg:pt-44 lg:pb-56">
+		<section className="h-dvh lg:h-screen">
+			<div className="flex h-full items-center justify-center lg:min-h-screen lg:pt-44 lg:pb-56">
 				<div className="relative mx-auto flex max-w-xl flex-col items-center px-6">
 					<div className="mx-auto max-w-3xl text-center">
 						<TextEffect
