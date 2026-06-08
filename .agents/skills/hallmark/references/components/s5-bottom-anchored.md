@@ -6,7 +6,7 @@ The label or heading sits *below* the section's content. Inverts hierarchy.
 ```html
 <section>
   <div class="content">…</div>
-  <p class="num-label">— end of 02</p>
+  <p class="num-label">- end of 02</p>
 </section>
 ```
 

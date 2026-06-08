@@ -163,15 +163,28 @@ const getUserDashboardContext = async (userId: string) => {
 		},
 	})
 
+	const pausesTotal = pauseLimitFor(user)
+
 	return {
 		user,
-		pausesRemaining: Math.max(0, pauseLimitFor(user) - user.pausesUsedThisMonth),
+		pausesRemaining: Math.max(0, pausesTotal - user.pausesUsedThisMonth),
+		pausesTotal,
 		userStats: {
 			currentStreak: user.currentStreak,
 			longestStreak: user.longestStreak,
 			totalPoints: user.totalPoints,
 		},
 	}
+}
+
+const getGroupRank = async (groupId: string, userTotalPoints: number) => {
+	const [higherRanked, groupSize] = await Promise.all([
+		db.groupMember.count({
+			where: { groupId, user: { totalPoints: { gt: userTotalPoints } } },
+		}),
+		db.groupMember.count({ where: { groupId } }),
+	])
+	return { groupRank: higherRanked + 1, groupSize }
 }
 
 export const problemsDao = {
@@ -286,7 +299,7 @@ export const problemsDao = {
 	},
 
 	getTodayForUser: async (userId: string): Promise<TodayProblemResponse> => {
-		const [{ pausesRemaining, userStats }, membership] = await Promise.all([
+		const [{ pausesRemaining, pausesTotal, userStats }, membership] = await Promise.all([
 			getUserDashboardContext(userId),
 			findPrimaryGroup(userId),
 		])
@@ -298,15 +311,22 @@ export const problemsDao = {
 				dailyProblem: null,
 				solve: null,
 				pausesRemaining,
+				pausesTotal,
+				groupRank: null,
+				groupSize: null,
 				userStats,
 			}
 		}
 
-		const dailyProblem = await ensureDailyProblem(
-			membership.group.id,
-			startOfTodayUtc(),
-			membership.group.roadmap
-		)
+		const [dailyProblem, { groupRank, groupSize }] = await Promise.all([
+			ensureDailyProblem(
+				membership.group.id,
+				startOfTodayUtc(),
+				membership.group.roadmap
+			),
+			getGroupRank(membership.group.id, userStats.totalPoints),
+		])
+
 		if (!dailyProblem) {
 			return {
 				state: "NO_PROBLEMS",
@@ -314,21 +334,29 @@ export const problemsDao = {
 				dailyProblem: null,
 				solve: null,
 				pausesRemaining,
+				pausesTotal,
+				groupRank: null,
+				groupSize: null,
 				userStats,
 			}
 		}
 
-		const solve = await db.userSolve.findUnique({
-			where: { userId_dailyProblemId: { userId, dailyProblemId: dailyProblem.id } },
-			select: {
-				id: true,
-				status: true,
-				pointsEarned: true,
-				isFirstInGroup: true,
-				createdAt: true,
-				verifiedAt: true,
-			},
-		})
+		const [solve, groupSolvedCount] = await Promise.all([
+			db.userSolve.findUnique({
+				where: { userId_dailyProblemId: { userId, dailyProblemId: dailyProblem.id } },
+				select: {
+					id: true,
+					status: true,
+					pointsEarned: true,
+					isFirstInGroup: true,
+					createdAt: true,
+					verifiedAt: true,
+				},
+			}),
+			db.userSolve.count({
+				where: { dailyProblemId: dailyProblem.id, status: SolveStatus.SOLVED },
+			}),
+		])
 
 		return {
 			state: "READY",
@@ -343,6 +371,10 @@ export const problemsDao = {
 			},
 			solve,
 			pausesRemaining,
+			pausesTotal,
+			groupRank,
+			groupSize,
+			groupSolvedCount,
 			userStats,
 		}
 	},

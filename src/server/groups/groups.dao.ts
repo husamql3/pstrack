@@ -1,4 +1,10 @@
 import slugsPool from "@/data/slugs.json"
+import {
+	CAPACITY_FOR_FREE_USER,
+	CAPACITY_FOR_PRO_USER,
+	JOIN_LIMIT_FOR_FREE_USER,
+	JOIN_LIMIT_FOR_PRO_USER,
+} from "@/features/groups/constants"
 import { PointReason, SolveStatus } from "@/generated/prisma/enums"
 import { db } from "@/server/lib/db"
 import { pointsDao } from "@/server/points/points.dao"
@@ -10,6 +16,7 @@ import {
 	type GroupMemberResponse,
 	type GroupProblemsRange,
 	type GroupProblemsResponse,
+	type GroupTodayActivityResponse,
 	groupDetailSelect,
 	groupListSelect,
 	groupMemberSelect,
@@ -19,8 +26,10 @@ import {
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-const joinLimitFor = (user: { isPro: boolean }) => (user.isPro ? 5 : 1)
-const capacityFor = (user: { isPro: boolean }) => (user.isPro ? 50 : 30)
+const joinLimitFor = (user: { isPro: boolean }) =>
+	user.isPro ? JOIN_LIMIT_FOR_PRO_USER : JOIN_LIMIT_FOR_FREE_USER
+const capacityFor = (user: { isPro: boolean }) =>
+	user.isPro ? CAPACITY_FOR_PRO_USER : CAPACITY_FOR_FREE_USER
 
 const DAY_MS = 86_400_000
 
@@ -42,7 +51,7 @@ async function pickSlug(): Promise<string> {
 	})
 	const usedSet = new Set(used.map((g) => g.slug))
 	const available = (slugsPool as string[]).filter((s) => !usedSet.has(s))
-	if (available.length === 0) throw new Error("Slug pool exhausted — add more slugs.")
+	if (available.length === 0) throw new Error("Slug pool exhausted - add more slugs.")
 	return available[Math.floor(Math.random() * available.length)]
 }
 
@@ -722,5 +731,87 @@ export const groupsDao = {
 				userRole: "ADMIN" as const,
 			},
 		}
+	},
+
+	getTodayActivity: async (
+		groupId: string,
+		requestingUserId: string
+	): Promise<GroupTodayActivityResponse | null> => {
+		const membership = await db.groupMember.findUnique({
+			where: { groupId_userId: { groupId, userId: requestingUserId } },
+			select: { id: true },
+		})
+		if (!membership) return null
+
+		const [solves, pauses, joins] = await Promise.all([
+			db.userSolve.findMany({
+				where: { status: SolveStatus.SOLVED, dailyProblem: { groupId } },
+				orderBy: { verifiedAt: "desc" },
+				take: 4,
+				select: {
+					userId: true,
+					isFirstInGroup: true,
+					verifiedAt: true,
+					createdAt: true,
+					dailyProblem: {
+						select: {
+							problem: { select: { title: true, roadmapIndex: true } },
+						},
+					},
+					user: { select: { id: true, username: true, name: true } },
+				},
+			}),
+			db.userSolve.findMany({
+				where: { status: SolveStatus.PAUSED, dailyProblem: { groupId } },
+				orderBy: { createdAt: "desc" },
+				take: 4,
+				select: {
+					userId: true,
+					createdAt: true,
+					user: { select: { id: true, username: true, name: true } },
+				},
+			}),
+			db.groupMember.findMany({
+				where: { groupId },
+				orderBy: { joinedAt: "desc" },
+				take: 4,
+				select: {
+					joinedAt: true,
+					group: { select: { slug: true } },
+					user: { select: { id: true, username: true, name: true } },
+				},
+			}),
+		])
+
+		const events: GroupTodayActivityResponse["events"] = [
+			...solves.map((s) => ({
+				type: (s.isFirstInGroup ? "FIRST_SOLVE" : "SOLVED") as "FIRST_SOLVE" | "SOLVED",
+				userId: s.user.id,
+				username: s.user.username,
+				name: s.user.name,
+				problemTitle: s.dailyProblem.problem.title,
+				problemRoadmapIndex: s.dailyProblem.problem.roadmapIndex,
+				at: s.verifiedAt ?? s.createdAt,
+			})),
+			...pauses.map((p) => ({
+				type: "PAUSED" as const,
+				userId: p.user.id,
+				username: p.user.username,
+				name: p.user.name,
+				at: p.createdAt,
+			})),
+			...joins.map((j) => ({
+				type: "JOINED" as const,
+				userId: j.user.id,
+				username: j.user.username,
+				name: j.user.name,
+				groupSlug: j.group.slug,
+				at: j.joinedAt,
+			})),
+		]
+
+		events.sort((a, b) => b.at.getTime() - a.at.getTime())
+
+		return { events: events.slice(0, 4) }
 	},
 }

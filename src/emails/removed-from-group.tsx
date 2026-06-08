@@ -1,12 +1,6 @@
-import {
-	Body,
-	Button,
-	Container,
-	Head,
-	Html,
-	Preview,
-	Text,
-} from "@react-email/components"
+import { Button, Section, Text } from "@react-email/components"
+
+import { EmailLayout, s } from "./layout"
 
 interface RemovedFromGroupEmailProps {
 	name: string
@@ -20,43 +14,21 @@ export default function RemovedFromGroupEmail({
 	browseUrl,
 }: RemovedFromGroupEmailProps) {
 	return (
-		<Html>
-			<Head />
-			<Preview>You've been removed from {groupName}</Preview>
-			<Body style={body}>
-				<Container style={container}>
-					<Text style={heading}>PSTrack</Text>
-					<Text style={paragraph}>Hi {name},</Text>
-					<Text style={paragraph}>
-						You have been removed from <strong>{groupName}</strong>. Your points and
-						streak are unaffected. Browse other groups to continue your streak.
-					</Text>
-					<Button href={browseUrl} style={button}>
-						Browse groups
-					</Button>
-				</Container>
-			</Body>
-		</Html>
+		<EmailLayout
+			preview={`Removed from ${groupName} - your progress is safe`}
+			note="You're receiving this because you were a member of a PSTrack group."
+		>
+			<Text style={s.heading}>You&apos;ve been removed.</Text>
+			<Text style={s.para}>
+				Hey {name} - you&apos;ve been removed from <strong>{groupName}</strong>. Your
+				points and streak are untouched - they belong to you, not the group. Find your
+				next group and keep going.
+			</Text>
+			<Section style={s.ctaSection}>
+				<Button href={browseUrl} style={s.ctaDark}>
+					Browse Groups
+				</Button>
+			</Section>
+		</EmailLayout>
 	)
-}
-
-const body = { backgroundColor: "#f6f6f6", fontFamily: "sans-serif" }
-const container = {
-	margin: "0 auto",
-	padding: "40px 20px",
-	maxWidth: "560px",
-	backgroundColor: "#ffffff",
-	borderRadius: "8px",
-}
-const heading = { fontSize: "24px", fontWeight: "700", color: "#0a0a0a" }
-const paragraph = { fontSize: "16px", color: "#404040", lineHeight: "24px" }
-const button = {
-	backgroundColor: "#0a0a0a",
-	color: "#ffffff",
-	padding: "12px 24px",
-	borderRadius: "6px",
-	fontSize: "15px",
-	fontWeight: "600",
-	textDecoration: "none",
-	display: "inline-block",
 }

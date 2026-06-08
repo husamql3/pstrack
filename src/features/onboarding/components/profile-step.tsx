@@ -135,7 +135,7 @@ export const ProfileStep = ({
 				<div className="flex flex-col items-center gap-2">
 					<HashAvatar username={profile.username} size={80} />
 					<p className="text-muted-foreground text-xs">
-						Unique avatar — auto-generated from your username
+						Unique avatar - auto-generated from your username
 					</p>
 				</div>
 

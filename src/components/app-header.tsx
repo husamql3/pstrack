@@ -9,7 +9,6 @@ import {
 import { Link, useRouterState } from "@tanstack/react-router"
 import { useEffect, useRef, useState } from "react"
 
-import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useSession } from "@/lib/auth-client"
 import { UserMenu } from "./user-menu"
@@ -18,7 +17,7 @@ const NAV_LINKS = [
 	{ to: "/dashboard", label: "Dashboard", icon: IconHome },
 	{ to: "/problems", label: "Problems", icon: IconCode },
 	{ to: "/groups", label: "Groups", icon: IconUsers },
-	{ to: "/leaderboard", label: "Leaderboard", icon: IconTrophy },
+	// { to: "/leaderboard", label: "Leaderboard", icon: IconTrophy },
 	{ to: "/badges", label: "Badges", icon: IconMedal },
 ] as const
 
@@ -65,8 +64,16 @@ export function AppHeader() {
 		<header className="sticky top-0 border-border/50 border-b bg-background backdrop-blur-sm">
 			<div className="mx-auto flex h-14 items-center gap-8 px-4">
 				<Link to="/" className="flex items-center gap-2">
-					PStrack
-					<Badge variant="outline">v3.0.0</Badge>
+					<img
+						src="/logo-dark.png"
+						alt="pstrack"
+						className="hidden h-5 select-none dark:block"
+					/>
+					<img
+						src="/logo-light.png"
+						alt="pstrack"
+						className="h-5 select-none dark:hidden"
+					/>
 				</Link>
 
 				<nav className="relative flex items-center">

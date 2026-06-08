@@ -44,7 +44,7 @@ End-to-end lifecycles for the load-bearing user actions. Cross-references the re
 
 ### Key invariants
 
-- `verify-submission` and `mark-missed` both write through `applyPointsDelta` — the floor (`totalPoints >= 0`) and the Pro auto-grant live in one place.
+- `verify-submission` and `mark-missed` both write through `applyPointsDelta` - the floor (`totalPoints >= 0`) and the Pro auto-grant live in one place.
 - The clawback sum must be computed *before* `currentStreakStartedAt` is cleared. Same transaction.
 - Streak multiplier bonus is written as a separate `PointsHistory` row (`reason = STREAK_MULTIPLIER_BONUS`) so clawback can find and reverse just the delta, not the base solve points.
-- `firstSolver` is awarded only if no `firstSolverId` is set on the `DailyProblem` yet — race-safe via the unique constraint.
+- `firstSolver` is awarded only if no `firstSolverId` is set on the `DailyProblem` yet - race-safe via the unique constraint.

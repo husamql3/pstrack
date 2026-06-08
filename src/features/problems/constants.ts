@@ -32,7 +32,7 @@ export const ROADMAP_TONE: Record<RoadmapKey, string> = {
 }
 
 // Problems per roadmap. Mirrors the seed-time counts and the server's
-// `roadmapFilter` math — used client-side to compute deterministic
+// `roadmapFilter` math - used client-side to compute deterministic
 // roadmap-position progress without an extra round trip.
 export const ROADMAP_TOTALS: Record<RoadmapKey, number> = {
 	[Roadmap.NC250]: 249,
@@ -40,7 +40,7 @@ export const ROADMAP_TOTALS: Record<RoadmapKey, number> = {
 	[Roadmap.BLIND75]: 75,
 }
 
-// Global launch date — daily problem assignment uses `daysSinceLaunch % total`
+// Global launch date - daily problem assignment uses `daysSinceLaunch % total`
 // so every group on the same roadmap is at the same position on any given day.
 // Keep this in sync with `LAUNCH_DATE_UTC` in `src/server/problems/problems.dao.ts`.
 export const LAUNCH_DATE_UTC = Date.UTC(2026, 0, 1)
@@ -67,6 +67,12 @@ export const DIFFICULTY_LABELS: Record<Difficulty, string> = {
 	[Difficulty.EASY]: "Easy",
 	[Difficulty.MEDIUM]: "Medium",
 	[Difficulty.HARD]: "Hard",
+}
+
+export const DIFFICULTY_POINTS: Record<Difficulty, number> = {
+	[Difficulty.EASY]: 5,
+	[Difficulty.MEDIUM]: 10,
+	[Difficulty.HARD]: 15,
 }
 
 export const TOPIC_TONE_FALLBACK =

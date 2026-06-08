@@ -6,15 +6,15 @@ The "why" behind PStrack's load-bearing architectural choices. When a decision i
 
 ## SPA over SSR
 
-TanStack Start is configured for SPA mode (no server-side rendering). Dashboard and group pages are behind auth and highly personalized — SSR would add latency and complexity without meaningful SEO benefit for these routes. The public marketing/profile routes are simple enough that the SPA shell + a fast initial paint is sufficient.
+TanStack Start is configured for SPA mode (no server-side rendering). Dashboard and group pages are behind auth and highly personalized - SSR would add latency and complexity without meaningful SEO benefit for these routes. The public marketing/profile routes are simple enough that the SPA shell + a fast initial paint is sufficient.
 
 ## Eden Treaty for type safety
 
-Zero codegen. The server `App` type is imported directly by the client. Renaming a route or changing a response shape produces a TypeScript error immediately in the calling hook — no `openapi.json` regeneration, no client SDK to publish.
+Zero codegen. The server `App` type is imported directly by the client. Renaming a route or changing a response shape produces a TypeScript error immediately in the calling hook - no `openapi.json` regeneration, no client SDK to publish.
 
 ## Points ledger as immutable append-only log
 
-`PointsHistory` is never mutated, only appended. `User.totalPoints` is a denormalized cache. This gives a complete audit trail and makes clawbacks trivial — add a negative row instead of deleting the original. It also means a future "show me my points history" feature is already paid for.
+`PointsHistory` is never mutated, only appended. `User.totalPoints` is a denormalized cache. This gives a complete audit trail and makes clawbacks trivial - add a negative row instead of deleting the original. It also means a future "show me my points history" feature is already paid for.
 
 ## Streaks survive VERIFICATION_FAILED
 
@@ -26,7 +26,7 @@ Pauses preserve streaks (a pause doesn't break the chain), but cost −5 points 
 
 ## Pro as a one-time purchase, not a subscription
 
-Reduces churn anxiety and support burden. Pro can also be earned by grinding to 3,000 points — this keeps non-paying users engaged and the Pro gate feel achievable. The threshold is calibrated (~7 months of consistent play at average earn velocity) so a $14 buyer's mental math always favors paying.
+Reduces churn anxiety and support burden. Pro can also be earned by grinding to 3,000 points - this keeps non-paying users engaged and the Pro gate feel achievable. The threshold is calibrated (~7 months of consistent play at average earn velocity) so a $14 buyer's mental math always favors paying.
 
 ## hashvatar for avatars
 
@@ -34,11 +34,11 @@ Deterministic SVG generated from the username hash. No file uploads, no S3 bucke
 
 ## No barrel `index.ts` files
 
-TanStack Start uses Vite, which tree-shakes per-file. A barrel that re-exports a DAO file will pull `@prisma/client` (which imports `node:path`) into the browser bundle and crash. Direct imports are the safe default — every import points to the file that owns the symbol.
+TanStack Start uses Vite, which tree-shakes per-file. A barrel that re-exports a DAO file will pull `@prisma/client` (which imports `node:path`) into the browser bundle and crash. Direct imports are the safe default - every import points to the file that owns the symbol.
 
 ## Enums imported from `@/generated/prisma/enums`, never from `client`
 
-The `client` file pulls in `node:url` and `node:path` and crashes the browser bundle. The `enums` file is pure values. `import type { Prisma }` from `client` is safe — type-only imports are erased at compile time.
+The `client` file pulls in `node:url` and `node:path` and crashes the browser bundle. The `enums` file is pure values. `import type { Prisma }` from `client` is safe - type-only imports are erased at compile time.
 
 ## Atomic points mutation in one DAO function
 

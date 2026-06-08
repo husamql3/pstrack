@@ -1,10 +1,14 @@
 import { TanStackDevtools } from "@tanstack/react-devtools"
 import { type QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools"
 import { createRootRouteWithContext, HeadContent, Scripts } from "@tanstack/react-router"
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools"
 import type { ReactNode } from "react"
 import { Toaster } from "sileo"
 
+import { ErrorPage } from "@/components/error"
+import { NotFoundPage } from "@/components/not-found"
+import { Spinner } from "@/components/ui/spinner"
 import { authClient } from "@/lib/auth-client"
 import { getQueryClient } from "@/lib/query-client"
 import appCss from "../styles.css?url"
@@ -44,9 +48,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 			},
 		],
 	}),
-	notFoundComponent: () => <div>Not Found!</div>,
-	pendingComponent: () => <div>Loading...</div>,
-	errorComponent: () => <div>Error!</div>,
+	notFoundComponent: () => <NotFoundPage />,
+	pendingComponent: () => (
+		<div className="flex h-dvh items-center justify-center">
+			<Spinner size="size-8" />
+		</div>
+	),
+	errorComponent: () => <ErrorPage />,
 	shellComponent: RootDocument,
 	ssr: false,
 })
@@ -68,18 +76,24 @@ function RootDocument({ children }: { children: ReactNode }) {
 			</head>
 			<body suppressHydrationWarning>
 				<Toaster position="top-center" />
-				<QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-				<TanStackDevtools
-					config={{
-						position: "bottom-right",
-					}}
-					plugins={[
-						{
-							name: "Tanstack Router",
-							render: <TanStackRouterDevtoolsPanel />,
-						},
-					]}
-				/>
+				<QueryClientProvider client={queryClient}>
+					{children}
+					<TanStackDevtools
+						config={{
+							position: "bottom-right",
+						}}
+						plugins={[
+							{
+								name: "TanStack Query",
+								render: <ReactQueryDevtoolsPanel />,
+							},
+							{
+								name: "TanStack Router",
+								render: <TanStackRouterDevtoolsPanel />,
+							},
+						]}
+					/>
+				</QueryClientProvider>
 				<Scripts />
 			</body>
 		</html>

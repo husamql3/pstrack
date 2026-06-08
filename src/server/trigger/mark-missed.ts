@@ -6,7 +6,7 @@ const DAY_MS = 86_400_000
 
 export const markMissedTask = schedules.task({
 	id: "mark-missed",
-	cron: "0 0 * * *", // midnight UTC — sweeps the day that just ended
+	cron: "0 0 * * *", // midnight UTC - sweeps the day that just ended
 	maxDuration: 300,
 	run: async (payload) => {
 		const yesterday = new Date(

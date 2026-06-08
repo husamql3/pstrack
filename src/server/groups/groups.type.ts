@@ -98,6 +98,23 @@ export const generateInviteSchema = z.object({
 
 export type GenerateInviteInput = z.infer<typeof generateInviteSchema>
 
+// ─── Today's activity ─────────────────────────────────────────────────────────
+
+type ActivityBase = { userId: string; username: string | null; name: string; at: Date }
+
+export type GroupActivityEvent =
+	| (ActivityBase & {
+			type: "SOLVED" | "FIRST_SOLVE"
+			problemTitle: string
+			problemRoadmapIndex: number
+	  })
+	| (ActivityBase & { type: "PAUSED" })
+	| (ActivityBase & { type: "JOINED"; groupSlug: string })
+
+export type GroupTodayActivityResponse = {
+	events: GroupActivityEvent[]
+}
+
 // ─── Problems table ───────────────────────────────────────────────────────────
 
 export type GroupProblemsRange = "7d" | "30d" | "all"

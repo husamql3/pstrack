@@ -108,7 +108,7 @@ async function main() {
 		}
 	}
 
-	console.log(`\nDone — ${created} created, ${updated} updated, ${failed} failed\n`)
+	console.log(`\nDone - ${created} created, ${updated} updated, ${failed} failed\n`)
 	if (failed > 0) process.exit(1)
 }
 

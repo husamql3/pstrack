@@ -2,7 +2,7 @@
 
 Most AI-generated UIs are visually distinct but structurally identical: hero → three features → CTA → footer. Same heading positions, same column counts, same component vocabulary. **Structural sameness is the AI fingerprint, not visual sameness.** Hallmark's job is to break it.
 
-This file catalogues the **primitive axes** of structural variety. For most builds you should NOT compose a fingerprint axis-by-axis from this file — instead pick a named whole-page shape from [`macrostructures.md`](macrostructures.md), which is faster and prevents default-attractor sameness. Use this file when you need to deviate from a macrostructure's defaults on one or two axes, or when you're auditing an existing page and need vocabulary for what you see.
+This file catalogues the **primitive axes** of structural variety. For most builds you should NOT compose a fingerprint axis-by-axis from this file - instead pick a named whole-page shape from [`macrostructures.md`](macrostructures.md), which is faster and prevents default-attractor sameness. Use this file when you need to deviate from a macrostructure's defaults on one or two axes, or when you're auditing an existing page and need vocabulary for what you see.
 
 The axes below are still the building blocks. Pick one option from each to form a *structural fingerprint*. Two pages should never share the same fingerprint.
 
@@ -14,16 +14,16 @@ Where does a section's title live in space? Pick one per page.
 
 | Pattern | Description | Real-world reference |
 | --- | --- | --- |
-| **Left-margin** | ⚠️ **Opt-in only — never default.** Eyebrow / number / label in a narrow left column with heading + body to the right. Reads as a templated-editorial AI tell when applied to SaaS / dev-tool / consumer pages. Permitted ONLY when the user explicitly asks for an editorial / specimen layout AND no eyebrow is paired with the heading (label may sit beside body copy; heading must stay in its own row above). The eyebrow-left / heading-right variant is banned outright by slop-test gate 54. | The New York Times Magazine; our Specimen theme — when the user explicitly requests that voice. |
+| **Left-margin** | ⚠️ **Opt-in only - never default.** Eyebrow / number / label in a narrow left column with heading + body to the right. Reads as a templated-editorial AI tell when applied to SaaS / dev-tool / consumer pages. Permitted ONLY when the user explicitly asks for an editorial / specimen layout AND no eyebrow is paired with the heading (label may sit beside body copy; heading must stay in its own row above). The eyebrow-left / heading-right variant is banned outright by slop-test gate 54. | The New York Times Magazine; our Specimen theme - when the user explicitly requests that voice. |
 | **Hanging** | Heading floats in negative space *above* the section, with generous breathing room. | David Airey's portfolio; minimal modernist. |
 | **Centered display** | Heading dominates centre stage, symmetrical. Formal, welcoming, can feel static if used everywhere. | Apple product pages; Atelier-style runway invitations. |
 | **Bottom-aligned** | Heading anchors the *base* of a section, content flows above. Inverts hierarchy. | Swiss editorial; Newsprint masthead-below pattern. |
 | **Overlapping image** | Heading layered atop photography or colour block. Demands strong contrast. | Pentagram project pages; Manifesto posters. |
 | **Sticky / pinned** | Heading remains visible while content scrolls beneath. Orientation aid. | GSAP ScrollTrigger docs; Almanac-style references. |
-| **Numbered display** | ⚠️ **Opt-in only — never default.** "01." with a rule line and the heading right beside it. Procedural, sequenced. Banned for default SaaS / consumer / dev-tool pages by slop-test gate 54 (the tag-beside-heading pattern is a templated tell). Permitted only when the user explicitly asks for ordinal / chaptered numbering AND the macrostructure is Long Document, Manifesto, or Catalogue numbered. Even then, prefer the stacked variant: number on its own line above the heading. | Rauno Freiberg's portfolio — when the user explicitly invokes that voice. |
-| **Inline with body** | No section break — the heading emerges from the paragraph flow. Conversational. | Medium articles; long-form essays. |
+| **Numbered display** | ⚠️ **Opt-in only - never default.** "01." with a rule line and the heading right beside it. Procedural, sequenced. Banned for default SaaS / consumer / dev-tool pages by slop-test gate 54 (the tag-beside-heading pattern is a templated tell). Permitted only when the user explicitly asks for ordinal / chaptered numbering AND the macrostructure is Long Document, Manifesto, or Catalogue numbered. Even then, prefer the stacked variant: number on its own line above the heading. | Rauno Freiberg's portfolio - when the user explicitly invokes that voice. |
+| **Inline with body** | No section break - the heading emerges from the paragraph flow. Conversational. | Medium articles; long-form essays. |
 
-**Coherence, not a fixed side.** Any of these placements is fair game — the head's alignment just has to *cohere* with the body it introduces rather than mismatch it by accident. A narrow centred head stranded over full-width, left-flush content (often a `margin-inline:auto` head above a wide grid) is the tell — not centring or left-flushing as such. See [`layout-and-space.md`](layout-and-space.md) § Asymmetry techniques.
+**Coherence, not a fixed side.** Any of these placements is fair game - the head's alignment just has to *cohere* with the body it introduces rather than mismatch it by accident. A narrow centred head stranded over full-width, left-flush content (often a `margin-inline:auto` head above a wide grid) is the tell - not centring or left-flushing as such. See [`layout-and-space.md`](layout-and-space.md) § Asymmetry techniques.
 
 ### 2. Body composition
 
@@ -45,7 +45,7 @@ How do sections separate?
 
 - **Hairline rule.** 0.5–1px line, inset or full-bleed. Hallmark's default; modernist.
 - **Ornament.** Fleuron (`❦`), centered dot, geometric mark. Garden, editorial classic.
-- **Negative space.** No rule at all — the gap *is* the divider. Apple, Coral, modern minimalism.
+- **Negative space.** No rule at all - the gap *is* the divider. Apple, Coral, modern minimalism.
 - **Bleed-color block.** Section background colour shifts; the colour edge is the divider. Manifesto, Brutal.
 - **Double rule / typographic mark.** Top + bottom line tight together; signals masthead in Newsprint.
 
@@ -86,12 +86,12 @@ A fingerprint = one choice per axis. There are 8 × 7 × 5 × 5 × 5 × 6 = **42
 
 Two rules govern choices:
 
-1. **Coherence.** A Newsprint page with multi-column justified body should have a typographic CTA, not an oversized solid button — those don't share a voice. Pick choices that belong to the same *world*.
+1. **Coherence.** A Newsprint page with multi-column justified body should have a typographic CTA, not an oversized solid button - those don't share a voice. Pick choices that belong to the same *world*.
 2. **Anti-repetition.** Across consecutive pages built in the same session, no two should share more than three of the six axes. If the previous page used left-margin headings + single column + hairline divider + outlined button, this page should differ on at least three of those.
 
 ## Theme-suggested fingerprints
 
-Each Hallmark theme has a default structural fingerprint. Use them as starting points only when the brief specifies a theme. **For most builds, pick a macrostructure from [`macrostructures.md`](macrostructures.md) instead** — themes describe *visual surface*, macrostructures describe *page shape*; the latter drives variety more.
+Each Hallmark theme has a default structural fingerprint. Use them as starting points only when the brief specifies a theme. **For most builds, pick a macrostructure from [`macrostructures.md`](macrostructures.md) instead** - themes describe *visual surface*, macrostructures describe *page shape*; the latter drives variety more.
 
 The table below is alphabetical by theme to neutralise any "first row = default" attractor. No theme is the default. The **Nav** and **Footer** columns name the default archetype from [`component-cookbook.md`](component-cookbook.md); the routing tables in that file list the acceptable alternates.
 
@@ -132,7 +132,7 @@ The point of three is contrast: a grid-led shape, a document-led shape, a poster
 
 ### Domain → trio (offer these three; never default)
 
-If you can't infer the domain, ask one question — "what does this thing do?" — and then map it.
+If you can't infer the domain, ask one question - "what does this thing do?" - and then map it.
 
 | Domain words in the brief | Trio to offer |
 | --- | --- |
@@ -151,10 +151,10 @@ If you can't infer the domain, ask one question — "what does this thing do?" �
 | **conference, event, speaker, keynote** | **Marquee Hero** · **Manifesto** · **Photographic** |
 | **fallback (genuinely no signal)** | **Bento Grid** · **Long Document** · **Manifesto** |
 
-**Note on splits.** Some domains split on intent. *Developer-tool docs* and *developer-tool marketing* both have "developer" in them, but the docs page wants a Workbench walkthrough; the marketing page wants Bento Grid + Stat-Led so the SRE can read the value prop in 30 seconds. Same for *personal*: a one-pager about-me and a multi-project portfolio of case studies are *different briefs* — the one-pager wants prose (Long Doc / Letter); the portfolio wants Portfolio Grid / Split Studio. If the brief is ambiguous, **ask one question** to disambiguate ("docs walkthrough or marketing landing?", "one-pager or case studies?") before picking the trio.
+**Note on splits.** Some domains split on intent. *Developer-tool docs* and *developer-tool marketing* both have "developer" in them, but the docs page wants a Workbench walkthrough; the marketing page wants Bento Grid + Stat-Led so the SRE can read the value prop in 30 seconds. Same for *personal*: a one-pager about-me and a multi-project portfolio of case studies are *different briefs* - the one-pager wants prose (Long Doc / Letter); the portfolio wants Portfolio Grid / Split Studio. If the brief is ambiguous, **ask one question** to disambiguate ("docs walkthrough or marketing landing?", "one-pager or case studies?") before picking the trio.
 
-If the user shrugs and says "you pick", read the project's CSS for a `/* Hallmark · macrostructure: ... */` stamp; whichever of the trio is most categorically distant from the stamped family is the right pick. Two consecutive outputs should never be from the same family — never two editorial macrostructures, never two grid-led macrostructures.
+If the user shrugs and says "you pick", read the project's CSS for a `/* Hallmark · macrostructure: ... */` stamp; whichever of the trio is most categorically distant from the stamped family is the right pick. Two consecutive outputs should never be from the same family - never two editorial macrostructures, never two grid-led macrostructures.
 
 If the user answers a vague tone word ("modern", "clean", "professional"), that is not a feeling. Re-ask with the domain trio.
 
-The fallback row at the bottom of the table is the *last* resort — only if no domain words appear and the user genuinely cannot pick. In practice, almost every brief contains a domain word; using the fallback usually means you didn't read carefully enough.
+The fallback row at the bottom of the table is the *last* resort - only if no domain words appear and the user genuinely cannot pick. In practice, almost every brief contains a domain word; using the fallback usually means you didn't read carefully enough.

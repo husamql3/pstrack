@@ -1,5 +1,5 @@
 /**
- * Global seed — runs all seed scripts in order.
+ * Global seed - runs all seed scripts in order.
  * Usage: bun run prisma/seed.ts
  */
 

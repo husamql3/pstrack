@@ -15,10 +15,6 @@ export function getRouter() {
 		context: {
 			queryClient: getQueryClient(),
 		},
-		// todo: replace with custom components
-		defaultNotFoundComponent: () => <div>Not Found!</div>,
-		defaultPendingComponent: () => <div>Loading...</div>,
-		defaultErrorComponent: () => <div>Error!</div>,
 	})
 
 	return router

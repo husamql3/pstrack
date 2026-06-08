@@ -7,6 +7,6 @@ A quote sits in the wide column; the attribution and source link float in the na
 ```html
 <aside class="proof-margin">
   <blockquote class="serif-italic">"…"</blockquote>
-  <p class="attribution muted">— Name<br />Role, Company</p>
+  <p class="attribution muted">- Name<br />Role, Company</p>
 </aside>
 ```

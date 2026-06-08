@@ -6,7 +6,6 @@ import { AppSearch } from "@/components/app-search"
 import { navGroups } from "@/components/app-shared"
 import { CustomTrigger } from "@/components/custom-trigger"
 import { LatestChange } from "@/components/latest-change"
-import { LogoIcon } from "@/components/logo"
 import { ThemeSwitcher } from "@/components/theme-switcher"
 import { Button } from "@/components/ui/button"
 import {
@@ -34,12 +33,6 @@ export function AppSidebar() {
 			variant="sidebar"
 		>
 			<SidebarHeader className="h-(--app-header-height,3rem) flex-row items-center justify-between">
-				<Button asChild variant="ghost">
-					<a href="#link">
-						<LogoIcon />
-						<span className="font-medium">Efferd</span>
-					</a>
-				</Button>
 				<CustomTrigger place="sidebar" />
 			</SidebarHeader>
 			<SidebarContent>

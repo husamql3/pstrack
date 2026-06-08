@@ -9,7 +9,7 @@
 - Connect LeetCode handle (required) and Codeforces handle (optional) post-signup
 - Login / logout / forgot password / reset password
 - Onboarding step: browse groups and request to join one
-- hashvatar generated from username — no uploads
+- hashvatar generated from username - no uploads
 
 ### 2. Daily Problem System
 
@@ -30,7 +30,7 @@
 6. If not found after retry window (1 hour): status → `VERIFICATION_FAILED`
 
 **Pause**
-- User clicks "Pause Today" — status → `PAUSED`, streak preserved, no points lost
+- User clicks "Pause Today" - status → `PAUSED`, streak preserved, no points lost
 - Consumes 1 pause from `pausesUsedThisMonth`
 - Allowed: Free 2/month, Pro 4/month
 - Auto-approved, no excuse needed
@@ -42,8 +42,8 @@
 ### 3. Groups
 
 **Types**
-- **Public** — request to join, admin approves or rejects, request expires in 1 day
-- **Private** — invite link only, instant join on valid link, no approval needed
+- **Public** - request to join, admin approves or rejects, request expires in 1 day
+- **Private** - invite link only, instant join on valid link, no approval needed
 
 **Limits**
 - Free: join 1 group, group capacity 30 members
@@ -97,8 +97,8 @@
 
 ### 5. Leaderboard
 
-- **Group leaderboard** — all tiers, ranked by total points, filterable by week / month / all-time
-- **Global leaderboard** — Pro only, top 100 users platform-wide, same time filters
+- **Group leaderboard** - all tiers, ranked by total points, filterable by week / month / all-time
+- **Global leaderboard** - Pro only, top 100 users platform-wide, same time filters
 - No Twitter auto-post
 
 ### 6. User Profile
@@ -151,4 +151,4 @@ See [notifications.md](./notifications.md) for full event list.
 | In-app notification inbox | Requires Upstash Realtime or polling |
 | Redis leaderboard cache | Add when DB queries become slow |
 | PostHog analytics | Add after user base grows |
-| Custom roadmaps | Pro admin perk — choose roadmap for their group |
+| Custom roadmaps | Pro admin perk - choose roadmap for their group |

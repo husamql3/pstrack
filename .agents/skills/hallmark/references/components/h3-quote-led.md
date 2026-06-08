@@ -6,6 +6,6 @@ A pull-quote with attribution is the hero. Your headline is borrowed credibility
 ```html
 <section class="hero-quote">
   <blockquote class="display-italic">"…"</blockquote>
-  <p class="attribution">— Name, Role, Company</p>
+  <p class="attribution">- Name, Role, Company</p>
 </section>
 ```

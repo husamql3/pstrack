@@ -2,7 +2,7 @@
 
 The full points, streaks, and Pro-via-points design for PStrack v3.
 
-Designed around a single goal: **increase daily tension**. Every rule below is calibrated so that showing up matters and missing a day actually hurts — without making the system so punitive that users rage-quit.
+Designed around a single goal: **increase daily tension**. Every rule below is calibrated so that showing up matters and missing a day actually hurts - without making the system so punitive that users rage-quit.
 
 ---
 
@@ -17,8 +17,8 @@ Designed around a single goal: **increase daily tension**. Every rule below is c
 | Comeback (first solve after a `MISSED` day) | +3 |
 | Early-bird (LeetCode submission timestamp within 12 hours of the daily problem being assigned) | +2 |
 | Join a group (first time joining each unique group) | +20 |
-| Streak multiplier — 7+ days | 1.2x on solve points |
-| Streak multiplier — 30+ days | 1.5x on solve points |
+| Streak multiplier - 7+ days | 1.2x on solve points |
+| Streak multiplier - 30+ days | 1.5x on solve points |
 
 Notes:
 - Streak multiplier applies only to base solve points (5/10/15), not to first-in-group, comeback, early-bird, or join.
@@ -32,9 +32,9 @@ Notes:
 |---|---|
 | Miss | **-5 flat + clawback** of all multiplier-delta and first-solver bonuses accumulated during the now-broken streak |
 | Pause | -5 flat (streak preserved) |
-| Verification failure — 1st in month | 0 (grace, audit-only) |
-| Verification failure — 2nd+ in month | Treated as MISS (full penalty + clawback + streak broken) |
-| Floor | 0 — scores cannot go negative |
+| Verification failure - 1st in month | 0 (grace, audit-only) |
+| Verification failure - 2nd+ in month | Treated as MISS (full penalty + clawback + streak broken) |
+| Floor | 0 - scores cannot go negative |
 
 ### Clawback Mechanics
 
@@ -88,11 +88,11 @@ Pro is unlockable two ways:
 | Polar purchase | $14 standard, $9 sale |
 | Points threshold | 3,000 points earned in-app |
 
-**Pro is permanent once unlocked**, by either path. There is no revocation — a user who reaches 3,000, gets Pro, then clawback drops them below 3,000 keeps Pro. Matches the lifetime promise of the $14 purchase.
+**Pro is permanent once unlocked**, by either path. There is no revocation - a user who reaches 3,000, gets Pro, then clawback drops them below 3,000 keeps Pro. Matches the lifetime promise of the $14 purchase.
 
 ### Why 3,000?
 
-Working from average earn velocity of ~14 points/day (mix of difficulty, with comeback and early-bird factored in), 3,000 points is roughly 7 months of consistent play. The threshold is deliberately set high enough that **a $14 buyer's mental math always favors paying** — 7 months of grinding to save $14 is irrational for anyone with disposable income. This protects revenue while still offering a legitimate free path for highly committed users.
+Working from average earn velocity of ~14 points/day (mix of difficulty, with comeback and early-bird factored in), 3,000 points is roughly 7 months of consistent play. The threshold is deliberately set high enough that **a $14 buyer's mental math always favors paying** - 7 months of grinding to save $14 is irrational for anyone with disposable income. This protects revenue while still offering a legitimate free path for highly committed users.
 
 ### Auto-Grant
 
@@ -101,11 +101,11 @@ When a user's `totalPoints` crosses 3,000 for the first time, the system:
 2. Sets `User.proSource = POINTS_THRESHOLD`
 3. Fires the existing Pro-unlocked notification/email flow
 
-This happens as a side effect of the same transaction that mutates points — **not a separate cron**. Users must see Pro status update instantly upon crossing the threshold.
+This happens as a side effect of the same transaction that mutates points - **not a separate cron**. Users must see Pro status update instantly upon crossing the threshold.
 
 ### Post-Pro Motivation
 
-Tension fades after a user crosses 3,000 (Pro is permanent, points stop having terminal value). The existing leaderboard, badges, and streak prestige carry post-Pro motivation. If this becomes a problem, future work can add prestige tiers (e.g., new badges at 5,000 / 10,000) — but not before launch.
+Tension fades after a user crosses 3,000 (Pro is permanent, points stop having terminal value). The existing leaderboard, badges, and streak prestige carry post-Pro motivation. If this becomes a problem, future work can add prestige tiers (e.g., new badges at 5,000 / 10,000) - but not before launch.
 
 ---
 
@@ -117,7 +117,7 @@ Tension fades after a user crosses 3,000 (Pro is permanent, points stop having t
 | Pause leak | Free unlimited until monthly cap | -5 cost per pause (still preserves streak) |
 | Verification leak | Unlimited free grace | One grace per month, then full miss penalty |
 | Stakes | Vanity only (leaderboard rank) | Currency (Pro unlock at 3,000) |
-| Per-day stakes | Flat regardless of difficulty | Hard days worth 3x Easy — non-uniform tension |
+| Per-day stakes | Flat regardless of difficulty | Hard days worth 3x Easy - non-uniform tension |
 | Onboarding push | None | +20 join + multiplier on first solves |
 | Safety net for clawback | None | Comeback bonus (+3) softens rage-quit risk |
 
@@ -195,7 +195,7 @@ model Group {
 
 ### `UserSolve.pointsEarned` semantics
 
-Stores only the **base solve points** (5 / 10 / 15). Bonuses (multiplier delta, first-in-group, comeback, early-bird) are separate `PointsHistory` rows. This keeps clawback math straightforward — the clawback query targets bonus rows, never base-solve rows.
+Stores only the **base solve points** (5 / 10 / 15). Bonuses (multiplier delta, first-in-group, comeback, early-bird) are separate `PointsHistory` rows. This keeps clawback math straightforward - the clawback query targets bonus rows, never base-solve rows.
 
 ---
 

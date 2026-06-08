@@ -1,12 +1,6 @@
-import {
-	Body,
-	Button,
-	Container,
-	Head,
-	Html,
-	Preview,
-	Text,
-} from "@react-email/components"
+import { Button, Section, Text } from "@react-email/components"
+
+import { EmailLayout, s } from "./layout"
 
 interface JoinApprovedEmailProps {
 	name: string
@@ -20,43 +14,20 @@ export default function JoinApprovedEmail({
 	groupUrl,
 }: JoinApprovedEmailProps) {
 	return (
-		<Html>
-			<Head />
-			<Preview>You've been approved to join {groupName}</Preview>
-			<Body style={body}>
-				<Container style={container}>
-					<Text style={heading}>PSTrack</Text>
-					<Text style={paragraph}>Hi {name},</Text>
-					<Text style={paragraph}>
-						Your request to join <strong>{groupName}</strong> has been approved. Welcome
-						to the group — show up, solve, repeat.
-					</Text>
-					<Button href={groupUrl} style={button}>
-						Go to group
-					</Button>
-				</Container>
-			</Body>
-		</Html>
+		<EmailLayout
+			preview={`You're in - ${groupName} approved your request`}
+			note="You're receiving this because you requested to join a group on PSTrack."
+		>
+			<Text style={s.heading}>You&apos;re in.</Text>
+			<Text style={s.para}>
+				Hey {name} - <strong>{groupName}</strong> approved your request. Grab today&apos;s
+				problem and get on the board.
+			</Text>
+			<Section style={s.ctaSection}>
+				<Button href={groupUrl} style={s.ctaGreen}>
+					Go to Group
+				</Button>
+			</Section>
+		</EmailLayout>
 	)
-}
-
-const body = { backgroundColor: "#f6f6f6", fontFamily: "sans-serif" }
-const container = {
-	margin: "0 auto",
-	padding: "40px 20px",
-	maxWidth: "560px",
-	backgroundColor: "#ffffff",
-	borderRadius: "8px",
-}
-const heading = { fontSize: "24px", fontWeight: "700", color: "#0a0a0a" }
-const paragraph = { fontSize: "16px", color: "#404040", lineHeight: "24px" }
-const button = {
-	backgroundColor: "#0a0a0a",
-	color: "#ffffff",
-	padding: "12px 24px",
-	borderRadius: "6px",
-	fontSize: "15px",
-	fontWeight: "600",
-	textDecoration: "none",
-	display: "inline-block",
 }

@@ -63,6 +63,9 @@ export type TodayProblemResponse =
 			dailyProblem: null
 			solve: null
 			pausesRemaining: number
+			pausesTotal: number
+			groupRank: null
+			groupSize: null
 			userStats: UserStats
 	  }
 	| {
@@ -71,6 +74,9 @@ export type TodayProblemResponse =
 			dailyProblem: null
 			solve: null
 			pausesRemaining: number
+			pausesTotal: number
+			groupRank: null
+			groupSize: null
 			userStats: UserStats
 	  }
 	| {
@@ -82,6 +88,10 @@ export type TodayProblemResponse =
 			dailyProblem: Omit<DailyProblemRow, "solves">
 			solve: DailyProblemRow["solves"][number] | null
 			pausesRemaining: number
+			pausesTotal: number
+			groupRank: number
+			groupSize: number
+			groupSolvedCount: number
 			userStats: UserStats
 	  }
 

@@ -83,7 +83,7 @@ const RoadmapProgress = ({ roadmap }: { roadmap: GroupListResponse["roadmap"] })
 
 // ─── Membership / type badge ──────────────────────────────────────────────────
 // Header right-column status chip. User-state (JOINED, REQUESTED) takes
-// precedence over group-state (Public/Private) — once you're in, the
+// precedence over group-state (Public/Private) - once you're in, the
 // public/private distinction is no longer the actionable label.
 
 const MembershipBadge = ({
@@ -188,7 +188,7 @@ export const GroupCard = ({
 	const memberCount = group._count.members
 	const overflow = memberCount - group.memberPreview.length
 	const isNonMember = group.membershipStatus === "NONE"
-	// Private groups the user isn't in have no viewable destination — skip the
+	// Private groups the user isn't in have no viewable destination - skip the
 	// stretched-link overlay so the card is inert (no navigation, no hover lift).
 	const isLinked = !(isNonMember && group.type === GroupType.PRIVATE)
 
@@ -198,7 +198,7 @@ export const GroupCard = ({
 		// wrapper to paint above it and own its own click target.
 		<div
 			className={cn(
-				"relative flex flex-col gap-3 rounded-xl border bg-popover p-4 transition-colors",
+				"relative flex flex-col gap-3 rounded-xl border p-4 transition-colors",
 				group.membershipStatus === "JOINED"
 					? "border-emerald-500/40 dark:border-emerald-500/30"
 					: "border-border",

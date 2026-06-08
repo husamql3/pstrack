@@ -70,7 +70,7 @@ function AdminConfigPage() {
 		<>
 			<AdminPageHeader
 				title="System config"
-				description="Ops knobs only — product economics live in code."
+				description="Ops knobs only - product economics live in code."
 			/>
 
 			<Card>

@@ -1,4 +1,4 @@
--- Replace Problem.topics (String[]) with Problem.topic (String) — single primary topic.
+-- Replace Problem.topics (String[]) with Problem.topic (String) - single primary topic.
 
 ALTER TABLE "Problem" ADD COLUMN "topic" TEXT;
 

@@ -13,7 +13,7 @@ export const useRoadmap = (roadmap: RoadmapKey = Roadmap.NC250) =>
 			return data
 		},
 		staleTime: 1000 * 60 * 5,
-		// Keep previous roadmap's data visible while the next one loads —
+		// Keep previous roadmap's data visible while the next one loads -
 		// prevents the skeleton flash when switching tabs.
 		placeholderData: keepPreviousData,
 	})

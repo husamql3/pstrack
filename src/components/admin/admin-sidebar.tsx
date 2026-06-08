@@ -1,6 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router"
 
-import { LogoIcon } from "@/components/logo"
 import { ThemeSwitcher } from "@/components/theme-switcher"
 import { Button } from "@/components/ui/button"
 import {
@@ -30,7 +29,7 @@ export function AdminSidebar() {
 			<SidebarHeader className="h-(--app-header-height,3rem) flex-row items-center gap-2 px-3">
 				<Button asChild size="icon-sm" variant="ghost">
 					<Link to="/dashboard">
-						<LogoIcon className="size-4" />
+						<img src="/logo-light.png" alt="PSTrack" className="size-4" />
 					</Link>
 				</Button>
 				<div className="flex flex-col leading-tight">

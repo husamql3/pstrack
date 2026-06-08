@@ -1,6 +1,5 @@
 # Timeline
 
-
 Show up. Solve. Repeat.
 Stay consistent with LeetCode — solve one problem a day, earn points, and compete with your group.
 

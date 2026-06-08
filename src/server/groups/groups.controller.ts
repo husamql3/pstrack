@@ -121,6 +121,18 @@ export const groupsController = new Elysia({ prefix: "/groups", tags: ["Groups"]
 		},
 		{ params: "groups.groupIdParams" }
 	)
+	.get(
+		"/:id/today-activity",
+		async ({ params, request }) => {
+			const { user, response } = await requireSessionUser(request)
+			if (!user) return response
+
+			const result = await groupsDao.getTodayActivity(params.id, user.id)
+			if (!result) return status(403, { error: "Not a member of this group." })
+			return result
+		},
+		{ params: "groups.groupIdParams" }
+	)
 	.delete(
 		"/:id/members/:userId",
 		async ({ params, request }) => {

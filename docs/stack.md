@@ -6,7 +6,7 @@ TanStack Start (SPA, no SSR) deployed on Vercel. Elysia is mounted inside TanSta
 
 ```
 TanStack Start (Vercel)
-├── client: TanStack Router — SPA, no SSR
+├── client: TanStack Router - SPA, no SSR
 └── server: Elysia (via TanStack Start middleware)
     ├── /api/auth/*  → Better Auth (+ Polar plugin)
     ├── /api/*       → Elysia routes (Eden Treaty contract)
@@ -83,8 +83,8 @@ pstrack/
 
 ## External APIs
 
-- LeetCode GraphQL API — submission verification
-- Codeforces API — submission verification
+- LeetCode GraphQL API - submission verification
+- Codeforces API - submission verification
 
 ## Trigger.dev Jobs
 
@@ -98,9 +98,9 @@ pstrack/
 
 ## Post-MVP Services (not in v3)
 
-- **Upstash Redis** — leaderboard caching, rate limiting
-- **Upstash Realtime** — in-app notification inbox, WebSocket feed
-- **PostHog** — product analytics
+- **Upstash Redis** - leaderboard caching, rate limiting
+- **Upstash Realtime** - in-app notification inbox, WebSocket feed
+- **PostHog** - product analytics
 
 ## Utilities
 
@@ -131,7 +131,7 @@ pstrack/
 
 ## GitHub Actions
 
-**`ci.yml`** — runs on every PR (all jobs in parallel):
+**`ci.yml`** - runs on every PR (all jobs in parallel):
 
 ```yaml
 - cache: ~/.bun/install/cache
@@ -142,11 +142,11 @@ pstrack/
 - build:      bun run build
 ```
 
-**`release.yml`** — runs on merge to main:
+**`release.yml`** - runs on merge to main:
 
 ```yaml
 - same quality + test + build jobs
 - sentry: upload source maps (SENTRY_AUTH_TOKEN)
 ```
 
-Vercel auto-deploys via its GitHub integration — no deploy job needed.
+Vercel auto-deploys via its GitHub integration - no deploy job needed.

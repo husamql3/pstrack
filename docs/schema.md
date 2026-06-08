@@ -5,18 +5,18 @@ Database: **Neon (PostgreSQL)**
 
 ## Design Principles
 
-- Points stored denormalized (`user.totalPoints`) and historically (`PointsHistory`) — denormalized for fast leaderboard queries
-- `DailyProblem` has `groupId` — keeps schema ready for per-group roadmap choice (Pro feature, post-MVP)
+- Points stored denormalized (`user.totalPoints`) and historically (`PointsHistory`) - denormalized for fast leaderboard queries
+- `DailyProblem` has `groupId` - keeps schema ready for per-group roadmap choice (Pro feature, post-MVP)
 - Cascade deletes on all membership and solve relations
 - `UserSolve.status` is the single source of truth for a day's outcome: `PENDING_VERIFICATION | SOLVED | PAUSED | MISSED | VERIFICATION_FAILED`
-- Better Auth manages `Session`, `Account`, `Verification` — do not add business logic to these tables
-- Streaks break on `MISSED`, not on `VERIFICATION_FAILED` — a failed verification gives a grace window
+- Better Auth manages `Session`, `Account`, `Verification` - do not add business logic to these tables
+- Streaks break on `MISSED`, not on `VERIFICATION_FAILED` - a failed verification gives a grace window
 
 ## Tables
 
 | Table | Purpose |
 |---|---|
-| `User` | Platform user — points, streak, Pro status, notification prefs |
+| `User` | Platform user - points, streak, Pro status, notification prefs |
 | `Group` | Group container (public or private) |
 | `GroupMember` | User ↔ Group membership + role |
 | `GroupJoinRequest` | Pending join requests for public groups (expire after 1 day) |
@@ -255,7 +255,7 @@ model UserBadge {
   @@unique([userId, badgeId])
 }
 
-// Better Auth — do not modify
+// Better Auth - do not modify
 model Session {
   id        String   @id
   expiresAt DateTime
@@ -336,8 +336,8 @@ model Verification {
 
 When community features ship, add:
 
-- `Solution` — shared solutions for a daily problem
-- `Comment` — comments on solutions
-- `Vote` — upvotes on solutions
-- `Resource` — community-submitted links
-- `Notification` — in-app inbox entries (requires Upstash Realtime)
+- `Solution` - shared solutions for a daily problem
+- `Comment` - comments on solutions
+- `Vote` - upvotes on solutions
+- `Resource` - community-submitted links
+- `Notification` - in-app inbox entries (requires Upstash Realtime)

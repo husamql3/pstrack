@@ -19,7 +19,7 @@ Two steps. Progress indicator shown throughout. Back navigation is allowed from 
 
 ---
 
-## Step 1 — Profile Setup
+## Step 1 - Profile Setup
 
 **Fields**
 
@@ -31,11 +31,11 @@ Two steps. Progress indicator shown throughout. Back navigation is allowed from 
 
 **Validation (all on blur)**
 
-- **Username** — API call to check uniqueness; returns error if taken
-- **LeetCode handle** — hit LeetCode's public GraphQL API to confirm the account exists
-- **Codeforces handle** — if non-empty, confirm account exists via Codeforces API
+- **Username** - API call to check uniqueness; returns error if taken
+- **LeetCode handle** - hit LeetCode's public GraphQL API to confirm the account exists
+- **Codeforces handle** - if non-empty, confirm account exists via Codeforces API
 
-**Continue button** — enabled only when username and LeetCode handle have both passed blur validation. Codeforces may be empty.
+**Continue button** - enabled only when username and LeetCode handle have both passed blur validation. Codeforces may be empty.
 
 **On Continue**
 
@@ -45,9 +45,9 @@ Two steps. Progress indicator shown throughout. Back navigation is allowed from 
 
 ---
 
-## Step 2 — Join a Group
+## Step 2 - Join a Group
 
-**Default state** — public groups listed, sorted by member count (descending). Searchable by group name.
+**Default state** - public groups listed, sorted by member count (descending). Searchable by group name.
 
 **Actions**
 
@@ -56,7 +56,7 @@ Two steps. Progress indicator shown throughout. Back navigation is allowed from 
 | Request to Join (public group) | Join request submitted; advance to `/dashboard` immediately |
 | Skip                           | Advance to `/dashboard` immediately                         |
 
-Users cannot create a group from this step — that is a post-onboarding action via `/groups/new`.
+Users cannot create a group from this step - that is a post-onboarding action via `/groups/new`.
 
 ---
 
@@ -75,6 +75,6 @@ After Step 2 (join request or skip):
 
 If the user is not a member of any group, show a persistent banner on `/dashboard`:
 
-> You're not in a group yet — you won't receive daily problems until you join one. [Browse groups →]
+> You're not in a group yet - you won't receive daily problems until you join one. [Browse groups →]
 
 Banner is dismissed automatically once the user joins a group.

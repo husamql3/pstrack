@@ -5,7 +5,7 @@ import { SectionCard } from "../section-card"
 export const DailyReminderSection = () => (
 	<SectionCard
 		title="Daily reminder"
-		description="A nudge email at the time you pick — keeping you on streak."
+		description="A nudge email at the time you pick - keeping you on streak."
 		badge="Coming soon"
 	>
 		<div className="grid max-w-xs gap-1.5">

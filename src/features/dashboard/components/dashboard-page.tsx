@@ -1,50 +1,21 @@
-import {
-	IconCalendar,
-	IconCircleCheck,
-	IconClock,
-	IconMedal,
-	IconPlayerPause,
-} from "@tabler/icons-react"
+import { IconInfoCircle, IconMedal } from "@tabler/icons-react"
 import { Link } from "@tanstack/react-router"
-import { sileo } from "sileo"
 
-import {
-	AlertDialog,
-	AlertDialogAction,
-	AlertDialogCancel,
-	AlertDialogContent,
-	AlertDialogDescription,
-	AlertDialogFooter,
-	AlertDialogHeader,
-	AlertDialogTitle,
-	AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from "@/components/ui/tooltip"
 import { useUserBadges } from "@/features/badges/hooks/use-user-badges"
 import { cn } from "@/lib/utils"
 import { BADGE_CATEGORY, BADGE_LABELS } from "@/server/badges/badges.type"
-import {
-	useMarkTodaySolved,
-	usePauseToday,
-	useTodayProblem,
-} from "../hooks/use-today-problem"
-
-const difficultyTone = {
-	EASY: "text-emerald-600 bg-emerald-500/10",
-	MEDIUM: "text-amber-600 bg-amber-500/10",
-	HARD: "text-red-600 bg-red-500/10",
-} as const
-
-const statusCopy = {
-	SOLVED: "Solved",
-	PAUSED: "Paused",
-	MISSED: "Missed",
-} as const
-
-const errorDescription = (err: unknown) =>
-	err instanceof Error ? err.message : "Please try again."
+import { useGroupTodayActivity } from "../hooks/use-group-activity"
+import { useTodayProblem } from "../hooks/use-today-problem"
+import { GroupActivityCard } from "./group-activity-card"
+import { TodayProblemCard } from "./today-problem-card"
 
 const CATEGORY_DOT: Record<string, string> = {
 	streak: "bg-amber-400",
@@ -54,9 +25,10 @@ const CATEGORY_DOT: Record<string, string> = {
 
 export const DashboardPage = () => {
 	const todayQuery = useTodayProblem()
-	const solveMutation = useMarkTodaySolved()
-	const pauseMutation = usePauseToday()
 	const badgesQuery = useUserBadges()
+	const groupId =
+		todayQuery.data?.state === "READY" ? todayQuery.data.group.id : undefined
+	const activityQuery = useGroupTodayActivity(groupId)
 
 	if (todayQuery.isLoading) {
 		return (
@@ -109,126 +81,59 @@ export const DashboardPage = () => {
 		)
 	}
 
-	const problem = today.dailyProblem.problem
-	const solveStatus = today.solve?.status
-	const isLocked =
-		solveMutation.isPending ||
-		pauseMutation.isPending ||
-		solveStatus === "SOLVED" ||
-		solveStatus === "PAUSED"
-
-	const markSolved = async () => {
-		await sileo.promise(solveMutation.mutateAsync(), {
-			loading: { title: "Validating on LeetCode..." },
-			success: { title: "Solved! +10 pts" },
-			error: (err: unknown) => ({
-				title: "Could not verify",
-				description: errorDescription(err),
-			}),
-		})
-	}
-
-	const confirmPause = async () => {
-		await sileo.promise(pauseMutation.mutateAsync(), {
-			loading: { title: "Pausing today..." },
-			success: { title: "Today is paused" },
-			error: (err: unknown) => ({
-				title: "Could not pause",
-				description: errorDescription(err),
-			}),
-		})
-	}
-
 	return (
 		<div className="flex flex-col gap-6">
 			<DashboardHeader />
-			<section className="rounded-lg border border-border bg-background p-5 md:p-6">
-				<div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
-					<div className="min-w-0">
-						<div className="flex flex-wrap items-center gap-2">
-							<Badge variant="outline">@{today.group.slug}</Badge>
-							<Badge
-								className={cn("border-transparent", difficultyTone[problem.difficulty])}
-								variant="outline"
-							>
-								{problem.difficulty}
-							</Badge>
-							{solveStatus && (
-								<Badge variant={solveStatus === "PAUSED" ? "secondary" : "outline"}>
-									{statusCopy[solveStatus]}
-								</Badge>
-							)}
-						</div>
-						<h2 className="mt-4 font-semibold text-2xl tracking-tight">
-							{problem.title}
-						</h2>
-						<p className="mt-2 flex items-center gap-2 text-muted-foreground text-sm">
-							<IconCalendar className="size-4" />
-							Problem #{problem.roadmapIndex} from the roadmap
-						</p>
-						<div className="mt-4 flex flex-wrap gap-2">
-							<Badge variant="secondary">{problem.topic}</Badge>
-						</div>
-					</div>
+			<TooltipProvider delayDuration={200}>
+				<section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+					<StatCard
+						label="Current Streak"
+						value={`${today.userStats.currentStreak}d`}
+						subtitle={
+							today.userStats.currentStreak > 0 &&
+							today.userStats.currentStreak === today.userStats.longestStreak
+								? "Personal best"
+								: `Best: ${today.userStats.longestStreak}d`
+						}
+						highlight={
+							today.userStats.currentStreak > 0 &&
+							today.userStats.currentStreak === today.userStats.longestStreak
+						}
+						tooltip="Consecutive days you’ve solved. Misses reset it; pauses keep it alive."
+					/>
+					<StatCard
+						label="Total Points"
+						value={today.userStats.totalPoints.toLocaleString()}
+						subtitle="+10 today if solved"
+						tooltip="+10 per solve, +5 if first in group, −3 on miss."
+					/>
+					<StatCard
+						label="Pauses Left"
+						value={`${today.pausesRemaining}/${today.pausesTotal}`}
+						subtitle="this month"
+						tooltip="Skip a day without losing your streak or points. Resets monthly."
+					/>
+					<StatCard
+						label="Group Rank"
+						value={`#${today.groupRank}`}
+						subtitle={`of ${today.groupSize}`}
+						tooltip="Your position in this group, sorted by total points."
+					/>
+				</section>
+			</TooltipProvider>
 
-					<div className="flex shrink-0 flex-col gap-2 md:w-52">
-						<Button asChild variant="outline">
-							<a
-								href={`https://leetcode.com/problems/${problem.slug}/`}
-								rel="noreferrer"
-								target="_blank"
-							>
-								Open LeetCode
-							</a>
-						</Button>
-						<Button disabled={isLocked} onClick={markSolved}>
-							<IconCircleCheck />
-							Mark as Solved
-						</Button>
-						<AlertDialog>
-							<AlertDialogTrigger asChild>
-								<Button
-									disabled={isLocked || today.pausesRemaining <= 0}
-									variant="outline"
-								>
-									<IconPlayerPause />
-									Pause Today
-								</Button>
-							</AlertDialogTrigger>
-							<AlertDialogContent>
-								<AlertDialogHeader>
-									<AlertDialogTitle>Pause today?</AlertDialogTitle>
-									<AlertDialogDescription>
-										Pausing costs <strong>-5 points</strong> but preserves your streak.
-										You have {today.pausesRemaining}{" "}
-										{today.pausesRemaining === 1 ? "pause" : "pauses"} remaining this
-										month.
-									</AlertDialogDescription>
-								</AlertDialogHeader>
-								<AlertDialogFooter>
-									<AlertDialogCancel>Cancel</AlertDialogCancel>
-									<AlertDialogAction onClick={confirmPause}>
-										Pause and lose 5 points
-									</AlertDialogAction>
-								</AlertDialogFooter>
-							</AlertDialogContent>
-						</AlertDialog>
-						<p className="text-muted-foreground text-xs">
-							{today.pausesRemaining} pauses remaining this month
-						</p>
-					</div>
+			<section className="grid gap-3 lg:grid-cols-3">
+				<div className="lg:col-span-2">
+					<TodayProblemCard today={today} />
 				</div>
-			</section>
-
-			<section className="grid gap-3 md:grid-cols-2">
-				<MetricCard
-					label="Current streak"
-					value={`${today.userStats.currentStreak} ${today.userStats.currentStreak === 1 ? "day" : "days"}`}
-				/>
-				<MetricCard
-					label="Today's status"
-					value={solveStatus ? statusCopy[solveStatus] : "Open"}
-				/>
+				<div className="lg:col-span-1">
+					<GroupActivityCard
+						groupId={today.group.id}
+						groupSlug={today.group.slug}
+						events={activityQuery.data?.events ?? []}
+						isLoading={activityQuery.isLoading}
+					/>
+				</div>
 			</section>
 
 			<BadgesShelf
@@ -240,19 +145,51 @@ export const DashboardPage = () => {
 }
 
 const DashboardHeader = () => (
-	<div>
-		<p className="flex items-center gap-2 text-muted-foreground text-sm">
-			<IconClock className="size-4" />
-			Show up. Solve. Repeat.
-		</p>
-		<h1 className="mt-1 font-semibold text-3xl tracking-tight">Dashboard</h1>
+	<div className="space-y-1">
+		<h1 className="font-semibold text-2xl tracking-tight">Dashboard</h1>
 	</div>
 )
 
-const MetricCard = ({ label, value }: { label: string; value: string }) => (
-	<div className="rounded-lg border border-border bg-background p-4">
-		<p className="text-muted-foreground text-xs">{label}</p>
-		<p className="mt-1 font-medium text-sm">{value}</p>
+const StatCard = ({
+	label,
+	value,
+	subtitle,
+	highlight = false,
+	tooltip,
+}: {
+	label: string
+	value: string
+	subtitle: string
+	highlight?: boolean
+	tooltip?: string
+}) => (
+	<div className="rounded-lg border border-border bg-background p-5">
+		<p className="flex items-center gap-1.5 font-medium text-muted-foreground text-xs uppercase tracking-wider">
+			{label}
+			{tooltip && (
+				<Tooltip>
+					<TooltipTrigger asChild>
+						<button
+							type="button"
+							aria-label={`About ${label}`}
+							className="text-muted-foreground/70 transition-colors hover:text-foreground focus-visible:text-foreground"
+						>
+							<IconInfoCircle className="size-3.5" />
+						</button>
+					</TooltipTrigger>
+					<TooltipContent side="top">{tooltip}</TooltipContent>
+				</Tooltip>
+			)}
+		</p>
+		<p
+			className={cn(
+				"mt-3 font-bold text-3xl tracking-tight",
+				highlight && "text-primary"
+			)}
+		>
+			{value}
+		</p>
+		<p className="mt-1 text-muted-foreground text-sm">{subtitle}</p>
 	</div>
 )
 

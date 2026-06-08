@@ -119,7 +119,7 @@ const Field = ({
 	<div className="flex flex-col gap-0.5">
 		<span className="text-muted-foreground text-xs">{label}</span>
 		<span className="font-medium">
-			{value ?? <span className="text-muted-foreground">—</span>}
+			{value ?? <span className="text-muted-foreground">-</span>}
 		</span>
 	</div>
 )
@@ -224,7 +224,7 @@ function PointsHistoryTable({ userId }: { userId: string }) {
 										{row.delta}
 									</TableCell>
 									<TableCell className="text-muted-foreground text-xs">
-										{row.adminNote ?? "—"}
+										{row.adminNote ?? "-"}
 									</TableCell>
 								</TableRow>
 							))}

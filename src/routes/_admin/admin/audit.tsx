@@ -112,7 +112,7 @@ function AdminAuditPage() {
 												{row.targetId ? `:${row.targetId.slice(0, 8)}` : ""}
 											</span>
 										) : (
-											"—"
+											"-"
 										)}
 									</TableCell>
 									<TableCell>

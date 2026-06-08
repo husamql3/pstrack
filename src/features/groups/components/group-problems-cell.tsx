@@ -70,7 +70,7 @@ export const GroupProblemsCell = ({
 	if (isPreJoin) {
 		return (
 			<div className={cn(baseClasses, "text-muted-foreground/40")} aria-hidden>
-				—
+				-
 			</div>
 		)
 	}

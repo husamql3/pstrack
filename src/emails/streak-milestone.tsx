@@ -1,4 +1,14 @@
-import { Body, Container, Head, Html, Preview, Text } from "@react-email/components"
+import { Link, Text } from "@react-email/components"
+
+import { EmailLayout, s } from "./layout"
+
+function getStreakCopy(streak: number): string {
+	if (streak >= 365)
+		return "You showed up every single day for a full year. That's extraordinary."
+	if (streak >= 100) return "That's not a habit anymore - it's who you are."
+	if (streak >= 30) return "Most people quit before now. You haven't."
+	return "The habit is forming - show up tomorrow and lock it in."
+}
 
 interface StreakMilestoneEmailProps {
 	name: string
@@ -12,37 +22,19 @@ export default function StreakMilestoneEmail({
 	dashboardUrl,
 }: StreakMilestoneEmailProps) {
 	return (
-		<Html>
-			<Head />
-			<Preview>{`${streak}-day streak — keep it going on PSTrack`}</Preview>
-			<Body style={body}>
-				<Container style={container}>
-					<Text style={heading}>PSTrack</Text>
-					<Text style={paragraph}>Hi {name},</Text>
-					<Text style={paragraph}>
-						You just hit a <strong>{streak}-day streak</strong>. Show up tomorrow and keep
-						the momentum going.
-					</Text>
-					<Text style={link}>
-						<a href={dashboardUrl} style={anchor}>
-							Go to dashboard →
-						</a>
-					</Text>
-				</Container>
-			</Body>
-		</Html>
+		<EmailLayout
+			preview={`${streak}-day streak - don't stop now`}
+			note="You're receiving this because you hit a streak milestone on PSTrack."
+		>
+			<Text style={s.heading}>{streak}-day streak.</Text>
+			<Text style={s.para}>
+				Hey {name} - {getStreakCopy(streak)}
+			</Text>
+			<Text style={s.para}>
+				<Link href={dashboardUrl} style={s.link}>
+					View dashboard →
+				</Link>
+			</Text>
+		</EmailLayout>
 	)
 }
-
-const body = { backgroundColor: "#f6f6f6", fontFamily: "sans-serif" }
-const container = {
-	margin: "0 auto",
-	padding: "40px 20px",
-	maxWidth: "560px",
-	backgroundColor: "#ffffff",
-	borderRadius: "8px",
-}
-const heading = { fontSize: "24px", fontWeight: "700", color: "#0a0a0a" }
-const paragraph = { fontSize: "16px", color: "#404040", lineHeight: "24px" }
-const link = { fontSize: "16px", color: "#404040", lineHeight: "24px" }
-const anchor = { color: "#0a0a0a", fontWeight: "600" }

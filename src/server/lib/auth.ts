@@ -14,7 +14,7 @@ export const auth = betterAuth({
 	database: prismaAdapter(db, { provider: "postgresql" }),
 	secret: env.BETTER_AUTH_SECRET,
 	baseURL: env.BETTER_AUTH_URL,
-	basePath: "/api/v4/auth",
+	basePath: "/api/v3/auth",
 	socialProviders: {
 		google: {
 			clientId: env.GOOGLE_CLIENT_ID,
@@ -87,7 +87,7 @@ export const auth = betterAuth({
 	plugins: [
 		magicLink({
 			sendMagicLink: async ({ email, url }) => {
-				// Rewrite the verify URL to /api/magic-link — a plain HTML endpoint that
+				// Rewrite the verify URL to /api/magic-link - a plain HTML endpoint that
 				// uses JS to redirect to the actual verify path. Email pre-fetchers (e.g.
 				// Gmail) don't execute JS so the one-time token isn't consumed early.
 				const redirectUrl = new URL(url)

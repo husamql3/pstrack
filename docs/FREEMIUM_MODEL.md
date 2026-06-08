@@ -19,7 +19,7 @@
 - Standard price: **$14**
 - Sale price: **$9**
 - Promo codes: supported natively in Polar dashboard
-- Integration: **Better Auth Polar plugin** — Pro status is tied directly to the auth session, no manual webhook handling required
+- Integration: **Better Auth Polar plugin** - Pro status is tied directly to the auth session, no manual webhook handling required
 
 ## How Pro Status Works
 

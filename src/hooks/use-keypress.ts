@@ -9,7 +9,7 @@ const isMod = (p: string): boolean => (MODS as readonly string[]).includes(p)
 const IGNORE_FOCUS = new Set(["INPUT", "TEXTAREA", "SELECT"])
 
 export type UseKeypressOptions = {
-	/** One or more chords, e.g. `"meta+k"` or `["ctrl+b", "meta+b"]` — any match fires `callback`. */
+	/** One or more chords, e.g. `"meta+k"` or `["ctrl+b", "meta+b"]` - any match fires `callback`. */
 	combo: string | string[]
 	callback: (event: KeyboardEvent) => void
 	/** When true, calls `preventDefault()` if a chord matches. Default is true. */

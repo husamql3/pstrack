@@ -1,4 +1,4 @@
-# PStrack — App Context
+# PStrack - App Context
 
 ## What It Is
 
@@ -6,7 +6,7 @@ PStrack is a competitive programming accountability platform. Users join groups,
 
 ## Core Loop
 
-1. Midnight — Trigger.dev cron assigns the next NeetCode 250 problem to all active groups
+1. Midnight - Trigger.dev cron assigns the next NeetCode 250 problem to all active groups
 2. User clicks "Mark as Solved"
 3. `verify-submission` job polls LeetCode/Codeforces for an accepted submission matching the problem + timestamp
 4. If found: +10 points, streak incremented, badges evaluated
@@ -41,10 +41,10 @@ Pro is a **lifetime one-time purchase** via Polar ($14 standard, $9 sale). No su
 
 ## Groups
 
-- **Public** — request to join, admin approves/rejects within 1 day (auto-expires)
-- **Private** — invite link only (7/30/90 day or permanent expiry), instant join
+- **Public** - request to join, admin approves/rejects within 1 day (auto-expires)
+- **Private** - invite link only (7/30/90 day or permanent expiry), instant join
 - Admin actions: approve/reject requests, remove members, update group, manage invite links
-- Points and streaks belong to the user, not the group — leaving a group doesn't lose progress
+- Points and streaks belong to the user, not the group - leaving a group doesn't lose progress
 
 ## Stack
 
@@ -74,7 +74,7 @@ TanStack Start (Vercel)
     └── /api/v3/*       → Elysia routes (Eden Treaty contract)
 ```
 
-TanStack Start's `api.$.ts` catch-all route forwards every `/api/*` request to the Elysia app — one deployment unit, full type safety between client and server via Eden Treaty without codegen.
+TanStack Start's `api.$.ts` catch-all route forwards every `/api/*` request to the Elysia app - one deployment unit, full type safety between client and server via Eden Treaty without codegen.
 
 ## Repo Layout
 
@@ -107,18 +107,18 @@ pstrack/
 
 ## Key Data Model
 
-- **User** — central entity. Denormalized `totalPoints` and `currentStreak` for fast leaderboard reads. `isPro` is set automatically when `totalPoints >= 3,000` or when a Polar purchase webhook fires; `proSource` records which path unlocked it.
-- **Group** — `PUBLIC` groups use join requests; `PRIVATE` groups use invite links. `slug` is human-readable and URL-safe. A group sits in one roadmap (`NC250 | NC150 | BLIND75`).
-- **DailyProblem** — one row per group per calendar day (unique on `groupId + assignedDate`). Tracks `firstSolverId` to award the first-in-group bonus exactly once.
-- **UserSolve** — one row per user per daily problem (unique on `userId + dailyProblemId`). The `status` field is a terminal state machine: `PENDING_VERIFICATION → SOLVED | VERIFICATION_FAILED`, or `PAUSED | MISSED`. Streaks break only on `MISSED`, never on `VERIFICATION_FAILED` (grace window for flaky LC/CF API responses).
-- **PointsHistory** — immutable append-only ledger. Every point change (positive or negative) writes a row. `User.totalPoints` is a denormalized cache of this ledger's sum.
-- **UserBadge** — unique constraint on `userId + type` prevents duplicate badge awards.
+- **User** - central entity. Denormalized `totalPoints` and `currentStreak` for fast leaderboard reads. `isPro` is set automatically when `totalPoints >= 3,000` or when a Polar purchase webhook fires; `proSource` records which path unlocked it.
+- **Group** - `PUBLIC` groups use join requests; `PRIVATE` groups use invite links. `slug` is human-readable and URL-safe. A group sits in one roadmap (`NC250 | NC150 | BLIND75`).
+- **DailyProblem** - one row per group per calendar day (unique on `groupId + assignedDate`). Tracks `firstSolverId` to award the first-in-group bonus exactly once.
+- **UserSolve** - one row per user per daily problem (unique on `userId + dailyProblemId`). The `status` field is a terminal state machine: `PENDING_VERIFICATION → SOLVED | VERIFICATION_FAILED`, or `PAUSED | MISSED`. Streaks break only on `MISSED`, never on `VERIFICATION_FAILED` (grace window for flaky LC/CF API responses).
+- **PointsHistory** - immutable append-only ledger. Every point change (positive or negative) writes a row. `User.totalPoints` is a denormalized cache of this ledger's sum.
+- **UserBadge** - unique constraint on `userId + type` prevents duplicate badge awards.
 
 ## Auth
 
 **Better Auth** owns sessions. Three sign-in methods: Google OAuth, GitHub OAuth, Magic Link.
 
-Extract the session on every protected route — `requireSessionUser` never throws, it returns a 401 response object on failure that the controller returns directly:
+Extract the session on every protected route - `requireSessionUser` never throws, it returns a 401 response object on failure that the controller returns directly:
 
 ```ts
 const { user, response } = await requireSessionUser(request)
@@ -156,10 +156,10 @@ See `docs/FLOWS.md` for the full Daily Solve lifecycle, and `docs/POINTS.md` for
 Transactional emails use **Resend** with **React Email** templates. Templates live in `src/emails/`.
 
 Notification triggers are co-located with the resource that owns the event:
-- `src/server/groups/groups.notifications.ts` — join request, approval, rejection, expiry, removal
-- `src/server/problems/problems.notifications.ts` — daily digest, solve verified, verification failed, streak milestone, badge earned
+- `src/server/groups/groups.notifications.ts` - join request, approval, rejection, expiry, removal
+- `src/server/problems/problems.notifications.ts` - daily digest, solve verified, verification failed, streak milestone, badge earned
 
-All notification calls are **fire-and-forget** — never `await`ed in request handlers:
+All notification calls are **fire-and-forget** - never `await`ed in request handlers:
 
 ```ts
 groupNotifications.joinRequested(groupId, userId).catch(() => {})
@@ -181,7 +181,7 @@ This prevents email delivery failures from blocking the user's request. Users ca
 4. Daily problem system (assign, solve, verify, pause, miss)
 5. Points, streaks & badges
 6. Leaderboard (group + global)
-7. Freemium — Polar integration
+7. Freemium - Polar integration
 8. User profiles & settings
 9. Admin dashboard
 10. Polish & beta launch (50 users)
@@ -203,7 +203,7 @@ This prevents email delivery failures from blocking the user's request. Users ca
 
 ### API Calls
 
-Always use the Eden Treaty client from `@/lib/api` — never raw `fetch()` for internal API routes:
+Always use the Eden Treaty client from `@/lib/api` - never raw `fetch()` for internal API routes:
 
 ```ts
 import { api } from "@/lib/api"
@@ -219,10 +219,10 @@ Each resource lives in `src/server/[resource]/` with four files:
 |------|---------|
 | `[resource].controller.ts` | Elysia routes |
 | `[resource].model.ts` | TypeBox validation schemas |
-| `[resource].dao.ts` | Prisma queries only — no business logic |
+| `[resource].dao.ts` | Prisma queries only - no business logic |
 | `[resource].type.ts` | Shared TypeScript types imported by both server and client |
 
-No barrel `index.ts` — import from the specific file to prevent client bundles from pulling in server-only code.
+No barrel `index.ts` - import from the specific file to prevent client bundles from pulling in server-only code.
 
 Register the controller in `src/server/app.ts`:
 ```ts
@@ -269,7 +269,7 @@ export type UserResponse = Prisma.UserGetPayload<{ select: typeof userSelect }>
 import type { UserResponse } from "@/server/users/users.type"
 ```
 
-Use `satisfies Prisma.XSelect` (not `as const`) for select objects — it validates the shape against Prisma's generated type while preserving the inferred literal types.
+Use `satisfies Prisma.XSelect` (not `as const`) for select objects - it validates the shape against Prisma's generated type while preserving the inferred literal types.
 
 When a payload type is referenced more than once inside a type file, alias it locally to avoid repetition:
 
@@ -278,7 +278,7 @@ type DailyProblemRow = Prisma.DailyProblemGetPayload<{ select: typeof dailyProbl
 // then use DailyProblemRow["solves"][number] instead of the full generic twice
 ```
 
-Add explicit `Promise<ReturnType>` annotations to DAO methods whose return type is a discriminated union — this enables TypeScript contextual typing so state discriminants like `state: "NO_GROUP"` are narrowed automatically without `as const`.
+Add explicit `Promise<ReturnType>` annotations to DAO methods whose return type is a discriminated union - this enables TypeScript contextual typing so state discriminants like `state: "NO_GROUP"` are narrowed automatically without `as const`.
 
 Derive enum key types from Prisma instead of writing string unions by hand:
 
@@ -293,7 +293,7 @@ export type RoadmapKey = "NC250" | "NC150" | "BLIND75"
 
 ### Prisma Enums
 
-**Import from `@/generated/prisma/enums`, never from `@/generated/prisma/client`** for any value import. The `client` file uses Node.js APIs (`node:url`, `node:path`) and will crash in the browser. `import type { Prisma }` from `client` is safe — type-only imports are erased at compile time.
+**Import from `@/generated/prisma/enums`, never from `@/generated/prisma/client`** for any value import. The `client` file uses Node.js APIs (`node:url`, `node:path`) and will crash in the browser. `import type { Prisma }` from `client` is safe - type-only imports are erased at compile time.
 
 ```ts
 // ✅
@@ -314,17 +314,17 @@ if (solve.status === SolveStatus.SOLVED) { ... }
 if (solve.status === "SOLVED") { ... }
 ```
 
-**No `as` keyword** — use alternatives instead:
+**No `as` keyword** - use alternatives instead:
 
 | Instead of | Use |
 |-----------|-----|
-| `roadmap as RoadmapKey` | Remove the cast — Prisma types `group.roadmap` as `Roadmap` already |
+| `roadmap as RoadmapKey` | Remove the cast - Prisma types `group.roadmap` as `Roadmap` already |
 | `["NC250"] as const` inline | `const ROADMAP_KEYS: RoadmapKey[] = [Roadmap.NC250, ...]` |
 | `v as RoadmapKey` in event handlers | `ROADMAP_KEYS.find(r => r === v)` returns `RoadmapKey \| undefined` |
-| `"READY" as const` in return | Add explicit `Promise<ReturnType>` — contextual typing handles it |
+| `"READY" as const` in return | Add explicit `Promise<ReturnType>` - contextual typing handles it |
 | `obj as const` on select objects | `satisfies Prisma.XSelect` |
 
-**Zod schemas** — use the object form, never a duplicated string array:
+**Zod schemas** - use the object form, never a duplicated string array:
 
 ```ts
 // ✅
@@ -335,7 +335,7 @@ z.union([z.literal("all"), z.enum(Difficulty)])    // filter with "all" sentinel
 z.enum(["NC250", "NC150", "BLIND75"])
 ```
 
-**TypeBox/Elysia models** — same principle:
+**TypeBox/Elysia models** - same principle:
 
 ```ts
 // ✅
@@ -359,7 +359,7 @@ src/features/[feature]/
   utils.ts          ← pure functions (e.g. groupByTopic)
 ```
 
-**Atomic components** — every component renders exactly one concern. Split when a component handles display AND data fetching, or renders two unrelated UI regions. Examples of atomic splits for a problems page:
+**Atomic components** - every component renders exactly one concern. Split when a component handles display AND data fetching, or renders two unrelated UI regions. Examples of atomic splits for a problems page:
 
 | Component | Single responsibility |
 |-----------|----------------------|
@@ -397,7 +397,7 @@ useEffect(() => {
 
 Location: `src/hooks/` for global hooks, `src/features/[feature]/hooks/` for feature hooks.
 
-**Pattern** — named object return, never a tuple:
+**Pattern** - named object return, never a tuple:
 ```ts
 export const useUsers = () => {
   const { data, isLoading } = useQuery({
@@ -427,7 +427,7 @@ export const useCheckUsername = () =>
 
 ### Mutation Toast Feedback
 
-Use `sileo.promise` — never call `sileo.success` / `sileo.error` manually around mutations. The component owns the toast text; hooks stay pure:
+Use `sileo.promise` - never call `sileo.success` / `sileo.error` manually around mutations. The component owns the toast text; hooks stay pure:
 
 ```ts
 await sileo.promise(
@@ -448,12 +448,12 @@ await sileo.promise(
 export const WelcomeStep = ({ onContinue }: { onContinue: () => void }) => { ... }
 ```
 
-**Props**: destructure inline — no separate `Props` interface:
+**Props**: destructure inline - no separate `Props` interface:
 ```ts
 export const MyComponent = ({ id, label }: { id: string; label: string }) => { ... }
 ```
 
-**React imports**: only import what you use — never `import type * as React from "react"`:
+**React imports**: only import what you use - never `import type * as React from "react"`:
 ```ts
 import { useState, useCallback } from "react"
 import type { ReactNode } from "react"
@@ -482,4 +482,4 @@ export type CreateRoomFormInput = z.infer<typeof createRoomSchema>
 - Schema lives in `[resource].type.ts`, never inline in the component
 - Use `register()` for native `<input>` / `<textarea>`; use `<Controller>` for Radix/custom components
 - `disabled={isPending}` on all inputs and the submit button during mutation
-- **Zod v3 error messages**: use `{ error: "..." }` — never the v3 `{ message }`, `{ required_error }`, or `{ invalid_type_error }` forms
+- **Zod v3 error messages**: use `{ error: "..." }` - never the v3 `{ message }`, `{ required_error }`, or `{ invalid_type_error }` forms

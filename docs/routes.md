@@ -6,7 +6,7 @@
 
 | Route | Page |
 |---|---|
-| `/` | Landing page — marketing, CTA to sign up |
+| `/` | Landing page - marketing, CTA to sign up |
 | `/login` | Login form |
 | `/signup` | Sign up form |
 | `/verify-email` | Email verification confirmation |
@@ -20,7 +20,7 @@
 |---|---|
 | `/onboarding` | Post-signup: connect handles, browse + join a group |
 | `/dashboard` | Today's problem, solve/pause actions, my streak, group snapshot |
-| `/problems` | NeetCode 250 roadmap — full list with personal solve history |
+| `/problems` | NeetCode 250 roadmap - full list with personal solve history |
 | `/leaderboard` | Global leaderboard (Pro gate) |
 | `/leaderboard/$groupId` | Group leaderboard |
 | `/groups` | Browse public groups, search, join |
@@ -47,7 +47,7 @@
 
 ---
 
-## API Routes (Elysia — Eden Treaty contract)
+## API Routes (Elysia - Eden Treaty contract)
 
 Base: `/api`
 
@@ -61,8 +61,8 @@ Handled entirely by Better Auth at `/api/auth/*` (sign in, sign up, session, ver
 |---|---|---|---|
 | `GET` | `/api/problems/today` | Required | Today's problem for user's group, with solve status |
 | `GET` | `/api/problems/roadmap` | Required | Full NeetCode 250 list with user's solve history |
-| `POST` | `/api/problems/today/solve` | Required | Mark today's problem as solved — triggers verification job |
-| `POST` | `/api/problems/today/pause` | Required | Pause today — consumes 1 pause, sets status to PAUSED |
+| `POST` | `/api/problems/today/solve` | Required | Mark today's problem as solved - triggers verification job |
+| `POST` | `/api/problems/today/pause` | Required | Pause today - consumes 1 pause, sets status to PAUSED |
 
 ### Groups
 
@@ -99,7 +99,7 @@ Handled entirely by Better Auth at `/api/auth/*` (sign in, sign up, session, ver
 | `GET` | `/api/users/:username` | Optional | Public profile (respects `isPublic`; private profiles return a placeholder shape) |
 | `GET` | `/api/users/me/sessions` | Required | Active Better Auth sessions (device, IP, last-active) |
 | `DELETE` | `/api/users/me/sessions/:id` | Required | Revoke a single session (or `/sessions/others` for sign-out-everywhere) |
-| `DELETE` | `/api/users/me` | Required | Delete account (cascades all data) — disabled in UI for MVP |
+| `DELETE` | `/api/users/me` | Required | Delete account (cascades all data) - disabled in UI for MVP |
 
 ### Admin
 

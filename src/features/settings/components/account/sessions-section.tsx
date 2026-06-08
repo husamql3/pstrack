@@ -71,8 +71,8 @@ export const SessionsSection = () => {
 										)}
 									</div>
 									<p className="text-muted-foreground text-xs">
-										{session.ipAddress ?? "—"} · last active{" "}
-										{formatDate(session.updatedAt) ?? "—"}
+										{session.ipAddress ?? "-"} · last active{" "}
+										{formatDate(session.updatedAt) ?? "-"}
 									</p>
 								</div>
 								{!session.isCurrent && (

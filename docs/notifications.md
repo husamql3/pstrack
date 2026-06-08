@@ -2,7 +2,7 @@
 
 ## MVP: Email Only
 
-All notifications sent via **Resend** using **React Email** templates. No in-app inbox in v3 — that ships post-MVP alongside community features.
+All notifications sent via **Resend** using **React Email** templates. No in-app inbox in v3 - that ships post-MVP alongside community features.
 
 ## Events
 
