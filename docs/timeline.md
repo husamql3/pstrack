@@ -1,230 +1,200 @@
-# Development Timeline
+# Timeline
 
-## Phase 1
+Show up. Solve. Repeat.
+Stay consistent with LeetCode — solve one problem a day, earn points, and compete with your group.
 
-### Project Setup
+## Phase 1 — Project Setup & Tooling · [#219](https://github.com/husamql3/pstrack/issues/219)
 
-- [ ] Initialize project
-- [ ] Configure Turborepo monorepo structure
-- [ ] Setup Lefthook git hooks (pre-commit, pre-push)
-- [ ] Configure Oxlint for linting
-- [ ] Setup PostgreSQL database
-- [ ] Configure Prisma ORM + migrations
-- [ ] Setup Supabase (Storage)
-- [ ] Initialize Redis (local via Docker Compose)
-- [ ] Initialize Upstash Realtime
-- [ ] Configure T3-env for environment variables
-- [ ] Setup Docker Compose for local development
-- [ ] Configure Sentry error tracking
+- [x] Update logo & slogan
+- [x] `npx skills add nutlope/hallmark`
+- [x] Initialize TanStack Start project with Bun
+- [x] Configure TypeScript (strict mode)
+- [x] Set up Biome (linting + formatting, `biome.json` config)
+- [x] Set up Lefthook (`pre-commit: biome check --write`, `pre-push: bun run typecheck`)
+- [x] Configure T3-env for environment variable validation
+- [x] Set up Knip for unused code detection
+- [x] Mount Elysia inside TanStack Start server middleware
+- [x] Wire up Eden Treaty client in `src/client/lib/eden.ts`
+- [x] Configure `@prisma/adapter-neon` + `@neondatabase/serverless` in Prisma client setup
+- [x] Set up Neon database, initialize Prisma schema, run first migration
+- [x] Configure Sentry (client: `@sentry/react`, server: `@sentry/bun`)
+- [x] Set up GitHub Actions `ci.yml` with `.bun` cache:
+  - [x] Cache `~/.bun/install/cache`
+  - [x] Jobs (parallel): typecheck, `biome ci`, knip, `vitest run`, build
+- [x] Set up GitHub Actions `release.yml` (merge to main):
+  - [x] Same quality + test + build jobs
+  - [x] Sentry source map upload
 
-### Week 2: Authentication & Database
-
-- [ ] Implement Better-Auth setup
-- [ ] Create database schema (users, groups, problems, etc.)
-- [ ] Build signup flow (email verification)
-- [ ] Build login flow (sessions)
-- [ ] Create user profile CRUD operations
-- [ ] Setup Sentry error tracking
-- [ ] Configure PostHog analytics
-
-**Deliverable**: Users can signup, login, and manage profiles
+**Deliverable:** Repo boots, Elysia handles `/api/ping`, Eden client calls it with full type safety
 
 ---
 
-## Phase 2: Core Features (Weeks 3-4)
+## Phase 2 — Auth · [#220](https://github.com/husamql3/pstrack/issues/220)
 
-### Week 3: Daily Problem System
+- [x] Install and configure Better Auth (Google, GitHub, magic link)
+- [x] Add Polar plugin to Better Auth config
+- [x] Wire Better Auth to `/api/auth/*` inside Elysia
+- [x] Set up Resend + email templates (`magic-link.tsx`, `welcome.tsx`)
+- [x] Build login page (`/login`)
+- [x] Add auth guard to TanStack Router (`_authenticated/` layout, username gate → `/onboarding`)
+- [x] Build onboarding page (`/onboarding`) — set username
+- [x] Integrate hashvatar on user profile display
 
-- [ ] Build problem assignment logic
-- [ ] Integrate LeetCode GraphQL API
-- [ ] Integrate Codeforces API
-- [ ] Create submission verification job (Trigger.dev)
-- [ ] Build "mark as solved" UI
-- [ ] Implement points calculation
-- [ ] Create streak tracking logic
-
-**Deliverable**: Daily problems work end-to-end
-
-### Week 4: Groups & Permissions
-
-- [ ] Build group creation flow
-- [ ] Implement public/private group logic
-- [ ] Create invite link generation
-- [ ] Build admin approval system
-- [ ] Implement group switching
-- [ ] Create group settings page
-
-**Deliverable**: Users can create/join groups
+**Deliverable:** Users can sign up, log in, and complete onboarding
 
 ---
 
-## Phase 3: Accountability (Weeks 5-6)
+## Phase 3 — Groups · [#221](https://github.com/husamql3/pstrack/issues/221)
 
-### Week 5: Pause & Suspension System
+- [x] Build group creation form (`/groups/new`)
+- [x] Build public group browse page (`/groups`)
+- [x] `POST /api/groups` — create group endpoint
+- [x] `GET /api/groups` — list public groups endpoint
+- [x] `POST /api/groups/:id/join` — request to join (public) or instant join (private)
+- [x] `GET /api/groups/:id` — group detail endpoint
+- [x] Build group overview page (`/groups/$groupId`)
+- [x] `GET /api/groups/:id/join-requests` — list pending requests
+- [x] `PATCH /api/groups/:id/join-requests/:requestId` — approve / reject
+- [x] Build join requests page (`/groups/$groupId/join-requests`)
+- [x] `POST /api/groups/:id/invite` — generate invite link
+- [x] `DELETE /api/groups/:id/invite` — revoke invite link
+- [x] Build group settings page (`/groups/$groupId/settings`)
+- [x] `GET /api/groups/:id/members` + build members page
+- [x] `DELETE /api/groups/:id/members/:userId` — remove member
+- [x] `POST /api/groups/:id/leave` — leave group
+- [x] Set up Trigger.dev job: `expire-join-requests` (hourly cron, marks PENDING > 1 day as EXPIRED)
+- [x] Email templates: `join-request.tsx`, `join-approved.tsx`, `join-rejected.tsx`, `join-expired.tsx`, `removed-from-group.tsx` (wired into DAO via `groups.notifications.ts`)
+- [x] Enforce group limits (Free: 1 group / 30 members, Pro: 5 groups / 50 members)
+- [x] Join via invite link (`POST /api/groups/join-by-invite` + `/groups/join/$inviteCode` route)
+- [x] Group problems table (`GET /api/groups/:id/problems` + `group-problems-table` UI)
+- [x] Group slugs (URL by slug, unique constraint, slug-based filters)
 
-- [ ] Build pause request UI
-- [ ] Implement excuse form
-- [ ] Create admin approval queue
-- [ ] Build suspension automation (Trigger.dev)
-- [ ] Implement unexcused miss tracking
-- [ ] Create suspension appeal system
-- [ ] Build notification system (email via Resend)
-
-**Deliverable**: Accountability mechanisms functional
-
-### Week 6: Notifications
-
-- [ ] Build email templates (React Email)
-- [ ] Implement in-app notification panel
-- [ ] Setup Upstash Realtime for WebSocket notifications
-- [ ] Create React hooks for real-time updates
-- [ ] Implement notification bell with unread count
-- [ ] Create notification preferences UI
-- [ ] Build daily digest job (Trigger.dev)
-- [ ] Implement notification batching
-- [ ] Add presence indicators (who's online)
-
-**Deliverable**: Users receive timely notifications via email and real-time in-app updates
-
----
-
-## Phase 4: Community (Weeks 7-8)
-
-### Week 7: Leaderboards & Solutions
-
-- [ ] Build platform leaderboard (Redis sorted sets)
-- [ ] Build group leaderboard
-- [ ] Create solution submission UI
-- [ ] Implement syntax highlighting (Shiki)
-- [ ] Build solution voting system
-- [ ] Create line-by-line commenting (Diffs)
-
-**Deliverable**: Leaderboards and solutions working
-
-### Week 8: Resources & Feed
-
-- [ ] Build resource submission form
-- [ ] Create admin resource approval queue
-- [ ] Implement resource voting
-- [ ] Build activity feed (with pagination)
-- [ ] Create feed filtering
-- [ ] Implement Twitter bot for weekly leaderboard
-
-**Deliverable**: Community features live
+**Deliverable:** Users can create groups, join/leave, admins can manage members and requests
 
 ---
 
-## Phase 5: Polish & Premium (Weeks 9-10)
+## Phase 4 — Daily Problem System · [#222](https://github.com/husamql3/pstrack/issues/222)
 
-### Week 9: Admin Dashboard
+- [x] Seed NeetCode 250 problems via `POST /api/admin/problems/seed`
+- [x] Set up Trigger.dev job: `assign-daily-problem` (midnight UTC cron — creates `DailyProblem` row per active group, fans out daily-problem email digest)
+- [x] `GET /api/problems/today` — return today's problem + user's current `UserSolve` status
+- [x] `GET /api/problems/roadmap` — NeetCode 250 list with user solve history
+- [x] Build dashboard page (`/dashboard`) — today's problem card, solve/pause buttons, streak display
+- [x] Build roadmap page (`/problems`)
+- [x] `POST /api/problems/today/solve` — **synchronous** verification: fetch LeetCode `recentAcSubmissionList` at click time, award points + streak inline. No PENDING_VERIFICATION state; failures return a 409 to the client.
+- [x] ~~Set up Trigger.dev job: `verify-submission`~~ — **dropped**, replaced by sync verification above. Async verification can return post-MVP if rate limits become an issue.
+- [x] `POST /api/problems/today/pause` — set status to PAUSED, decrement available pauses
+- [x] Set up Trigger.dev job: `mark-missed` (midnight UTC cron — sweeps yesterday: primary group only, skip join-day, -3 pts, streak = 0, PointsHistory MISSED_DAY)
+- [x] Set up Trigger.dev job: `reset-monthly-pauses` (1st of month cron)
+- [x] Email template: `daily-problem.tsx` (wired into `assign-daily-problem`, respects `notifyDailyProblem`)
+- [x] ~~Email templates: `solve-verified.tsx`, `verification-failed.tsx`~~ — **dropped** with sync verification.
 
-- [ ] Build admin user management UI
-- [ ] Create group management tools
-- [ ] Implement content moderation queue
-- [ ] Build analytics dashboard (PostHog integration)
-- [ ] Create manual override tools
-- [ ] Implement ban/suspend actions
-
-**Deliverable**: Admin tools functional
-
-### Week 10: Premium Features
-
-- [ ] Implement Stripe integration
-- [ ] Build subscription management
-- [ ] Create premium-only features (extra pauses, analytics)
-- [ ] Build billing portal
-- [ ] Implement team tier features
-- [ ] Create upgrade prompts in UI
-
-**Deliverable**: Freemium model implemented
+**Deliverable:** Daily problem loop works end-to-end — assign, solve, verify, pause, miss
 
 ---
 
-## Phase 6: Testing & Launch (Weeks 11-12)
+## Phase 5 — Points, Streaks & Gamification · [#223](https://github.com/husamql3/pstrack/issues/223)
 
-### Week 11: Testing & Optimization
+- [x] Add points model schema changes from `docs/POINTS.md` (`currentStreakStartedAt`, `verificationFailuresThisMonth`, `proSource`, `PointsHistory.groupId`, new `PointReason` values)
+- [x] Add atomic `pointsDao.applyPointsDelta()` for point mutations, `PointsHistory` audit rows, floor-at-0 balances, and points-threshold Pro unlock
+- [x] Refactor point-changing flows to use `applyPointsDelta`
+- [x] Difficulty-based solve points in the sync solve flow (Easy +5, Medium +10, Hard +15)
+- [x] First-in-group bonus (+10) logged separately as `FIRST_IN_GROUP`
+- [x] Streak multiplier bonuses (7d / 30d) logged separately as `STREAK_MULTIPLIER_BONUS`
+- [x] Comeback bonus (+3) after a missed streak
+- [x] Early-bird bonus (+2) when the LeetCode submission lands within 12 hours of `DailyProblem.assignedDate`
+- [x] Join-group bonus (+20) awarded once per unique group using immutable `PointsHistory`
+- [x] Set `currentStreakStartedAt` on the first solve of a new streak
+- [x] Pause penalty (-5) logged as `PAUSE` while preserving streak
+- [x] Pause confirmation UI shows the -5 point cost before charging
+- [x] `mark-missed` clawback transaction: bonus sum, `CLAWBACK`, `MISSED_DAY`, streak reset, streak-start clear
+- [x] Streak increment / reset logic in the sync solve flow and `mark-missed` job
+- [x] `user.longestStreak` updated when `currentStreak` exceeds it
+- [x] Rename monthly reset job to `reset-monthly-counters` and reset both pause and verification-failure counters
+- [x] Verification failure escalation: first monthly failure grace, second+ failure treated as miss
+- [x] Badge evaluation after each solve: streak badges (7/30/100), First Solver (10/50), Consistent (30)
+- [x] `GET /api/v3/users/me` returns points economy fields (`pausesRemainingThisMonth`, `verificationFailuresRemainingThisMonth`, `proSource`, `pointsToProUnlock`)
+- [x] Email templates: `streak-milestone.tsx`, `badge-earned.tsx`, `pro-unlocked-by-points.tsx`
 
-- [ ] Write integration tests (Bun test)
-- [ ] Perform load testing (k6 or Artillery)
-- [ ] Optimize database queries (add indexes)
-- [ ] Implement Redis caching for hot paths
-- [ ] Fix critical bugs from testing
-- [ ] Setup monitoring dashboards (Sentry + PostHog)
-
-**Deliverable**: Platform stable under load
-
-### Week 12: Launch Preparation
-
-- [ ] Create onboarding flow/tutorial
-- [ ] Build landing page (marketing site)
-- [ ] Write documentation (user guide, API docs)
-- [ ] Create Dockerfiles for web and api
-- [ ] Setup Docker Compose for production
-- [ ] Configure Dokploy for deployment
-- [ ] Setup CI/CD with GitHub Actions
-- [ ] Configure custom domain (pstrack.tech)
-- [ ] Setup DNS and SSL certificates
-- [ ] Perform security audit
-- [ ] Configure Sentry source map uploads
-- [ ] Soft launch to beta testers (50-100 users)
-
-**Deliverable**: Beta launch 🚀
+**Deliverable:** Points, streaks, and badges fully functional
 
 ---
 
-## Post-Launch (Weeks 13+)
+## Phase 6 — Leaderboard · [#224](https://github.com/husamql3/pstrack/issues/224)
 
-### Immediate Priorities
+- [ ] `GET /api/leaderboard/groups/:id` — group leaderboard with period filter
+- [ ] `GET /api/leaderboard/global` — global top 100 (Pro gate)
+- [ ] Build leaderboard page (`/leaderboard`) with Pro paywall UI
+- [ ] Build group leaderboard on `/groups/$groupId`
+- [ ] Period filter: week / month / all-time (query `PointsHistory` for windowed totals)
 
-- [ ] Monitor error rates (Sentry)
-- [ ] Track user engagement (PostHog funnels)
-- [ ] Collect user feedback
-- [ ] Fix critical bugs
-- [ ] Optimize slow queries
-
-### Future Features (Backlog)
-
-- [ ] Mobile app (React Native)
-- [ ] Discord bot integration
-- [ ] Public API for developers
-- [ ] Custom problem sets (premium)
-- [ ] Video solution explanations
-- [ ] 1-on-1 pairing mode
-- [ ] Company partnerships (B2B)
+**Deliverable:** Leaderboards live, global gated behind Pro
 
 ---
 
-## Key Milestones
+## Phase 7 — Freemium (Polar) · [#225](https://github.com/husamql3/pstrack/issues/225)
 
-| Week | Milestone          | Success Criteria                       |
-| ---- | ------------------ | -------------------------------------- |
-| 2    | Auth Working       | Users can signup/login                 |
-| 4    | Daily Problems     | Users can solve and get verified       |
-| 6    | Notifications      | Users receive emails and in-app alerts |
-| 8    | Community Features | Leaderboards and solutions live        |
-| 10   | Premium Tier       | Stripe integration complete            |
-| 12   | Beta Launch        | 50+ active users                       |
+- [x] Create Polar product ($14, one-time)
+- [ ] Set up sale pricing ($9) and promo codes in Polar dashboard
+- [x] Configure Better Auth Polar plugin (webhook handler, `isPro` sync)
+- [ ] Build billing settings page (`/settings/billing`) — Pro status, upgrade CTA (stub exists)
+- [ ] Add Pro gates in UI: group limits, global leaderboard, private group creation
+- [ ] Add Pro gates in API: enforce on relevant Elysia routes
+
+**Deliverable:** Users can purchase Pro, gates enforced on client and server
 
 ---
 
-## Risk Mitigation
+## Phase 8 — User Profiles & Settings · [#226](https://github.com/husamql3/pstrack/issues/226)
 
-### Technical Risks
+- [x] `GET /api/users/:username` — public profile endpoint
+- [x] `PATCH /api/users/me` — update profile endpoint
+- [ ] `DELETE /api/users/me` — account deletion
+- [x] Build public profile page (`/$username`)
+- [x] Build settings pages (`/settings/account`, `/settings/profile`, `/settings/notifications`, `/settings/billing`)
+- [ ] Email templates: `password-changed.tsx`, `security-alert.tsx`, `account-deletion.tsx`
 
-- **API rate limits**: Implement aggressive caching, batch requests
-- **Docker resource limits**: Monitor container resource usage, implement auto-scaling if needed
-- **Database connection pooling**: Configure Prisma connection limits appropriately
-- **WebSocket connections**: Upstash Realtime handles auto-reconnection, test connection stability
+**Deliverable:** Full profile and settings experience
 
-### Product Risks
+---
 
-- **Low engagement**: A/B test onboarding, add more gamification
-- **Admin overhead**: Build better auto-moderation tools
-- **Payment failures**: Test Stripe webhooks thoroughly
+## Phase 9 — Admin Dashboard · [#227](https://github.com/husamql3/pstrack/issues/227)
 
-### Timeline Risks
+- [x] Platform admin flag on `User` (Better Auth `role` column, enforced on `/admin/*` routes)
+- [ ] `GET /api/admin/users` + `/admin/users` page
+- [ ] `PATCH /api/admin/users/:id` — adjust points, ban
+- [ ] `GET /api/admin/groups` + `DELETE /api/admin/groups/:id`
+- [ ] `GET /api/admin/stats` + `/admin` overview page
+- [ ] Admin route guard (redirect non-admins)
 
-- **Scope creep**: Lock features after Phase 4, move extras to backlog
-- **Bugs**: Allocate 20% buffer time for unexpected issues
-- **Integration delays**: Test external APIs (LeetCode/CF) early
-- **Deployment complexity**: Test Docker containers and Dokploy setup early in development
+**Deliverable:** Platform admins can manage users, groups, and view stats
+
+---
+
+## Phase 10 — Polish & Launch · [#228](https://github.com/husamql3/pstrack/issues/228)
+
+- [ ] `react-error-boundary` on all routes with useful fallback UIs
+- [ ] Error boundaries on all pages
+- [ ] Loading skeletons on all data-fetching routes
+- [ ] Empty states (no group joined, no problems solved yet, etc.)
+- [ ] Mobile-responsive UI audit
+- [x] Sentry source map upload in CI
+- [ ] Environment variables documented in `.env.example`
+- [ ] Vercel project configured (env vars, domain)
+- [ ] Soft launch to beta testers (50 users)
+- [ ] Monitor error rates in Sentry
+
+**Deliverable:** Beta launch
+
+---
+
+## Post-MVP Backlog
+
+- [ ] Solutions sharing (submit, view, upvote)
+- [ ] Activity feed (group-scoped, poll-based)
+- [ ] Resources hub (submit links, community upvotes)
+- [ ] In-app notification inbox (Upstash Realtime)
+- [ ] Redis leaderboard cache
+- [ ] PostHog analytics
+- [ ] Custom roadmaps (Pro admin perk)
+- [ ] Mobile app

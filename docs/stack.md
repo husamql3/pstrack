@@ -1,242 +1,152 @@
 # Stack
 
+## Architecture
+
+TanStack Start (SPA, no SSR) deployed on Vercel. Elysia is mounted inside TanStack Start's server to catch all `/api/*` routes. Eden Treaty provides end-to-end type safety between client and server with zero codegen.
+
+```
+TanStack Start (Vercel)
+├── client: TanStack Router - SPA, no SSR
+└── server: Elysia (via TanStack Start middleware)
+    ├── /api/auth/*  → Better Auth (+ Polar plugin)
+    ├── /api/*       → Elysia routes (Eden Treaty contract)
+    └── /*           → SPA shell
+```
+
+## Project Structure
+
+```
+pstrack/
+├── src/
+│   ├── client/
+│   │   ├── routes/          # TanStack Router pages
+│   │   ├── components/      # UI components
+│   │   ├── hooks/           # Custom React hooks
+│   │   └── lib/             # Client utilities, eden client
+│   ├── server/
+│   │   ├── routes/          # Elysia route groups
+│   │   ├── services/        # Business logic
+│   │   ├── jobs/            # Trigger.dev job definitions
+│   │   ├── emails/          # React Email templates
+│   │   └── lib/             # Auth, db, sentry setup
+│   ├── db/
+│   │   ├── schema.prisma
+│   │   └── migrations/
+│   └── shared/
+│       └── types/           # Types shared across client + server
+├── package.json
+├── tsconfig.json
+├── app.config.ts            # TanStack Start config
+└── .env
+```
+
 ## Client
 
-### Framework & Routing
-
-- **React 19**
-- **TanStack Router**
-- **TanStack Query**
-
-### UI & Styling
-
-- **ShadCN**
-- **shadcnstudio**
-- **Tailwind CSS**
-- **tabler/icons-react**
-- **React Email**
-
-### State & Forms
-
-- **Zod**
-- **React Hook Form**
-- **Zustand**
-
-### Code Display
-
-- **Diffs**
-
----
+| Purpose | Technology |
+|---|---|
+| Meta-framework | TanStack Start |
+| Routing | TanStack Router (file-based) |
+| Data fetching | TanStack Query |
+| Tables | @tanstack/react-table |
+| UI | ShadCN + Tailwind CSS |
+| Animation | Motion (Framer Motion) |
+| Icons | tabler/icons-react |
+| Toast | Sileo |
+| Charts | recharts |
+| URL state | nuqs |
+| Forms | React Hook Form + Zod + @hookform/resolvers |
+| State | Zustand |
+| Error boundaries | react-error-boundary |
+| Avatars | hashvatar (deterministic from username hash, no uploads) |
+| Emails | React Email |
 
 ## Server
 
-### Runtime & Framework
+| Purpose | Technology |
+|---|---|
+| HTTP framework | Elysia |
+| API contract | Eden Treaty |
+| Auth | Better Auth + Polar plugin |
+| ORM | Prisma |
+| DB driver | @prisma/adapter-neon + @neondatabase/serverless |
+| Database | Neon (PostgreSQL) |
+| Schema validation | TypeBox (Elysia native) |
+| Background jobs | Trigger.dev |
+| Email | Resend |
+| Error tracking | Sentry |
+| Payments | Polar (via Better Auth plugin) |
+| Logging | pino |
+| CORS | @elysiajs/cors |
+| Rate limiting | @elysiajs/rate-limit |
+| Bearer auth | @elysiajs/bearer |
+| API docs | @elysiajs/swagger |
 
-- **Bun**
-- **Hono**
+## External APIs
 
-### Database & ORM
+- LeetCode GraphQL API - submission verification
+- Codeforces API - submission verification
 
-- **PostgreSQL**
-- **Prisma**
+## Trigger.dev Jobs
 
-### Caching & Real-time
+| Job | Trigger | Description |
+|---|---|---|
+| `assign-daily-problem` | Cron: midnight | Assigns next NeetCode 250 problem to all active groups |
+| `verify-submission` | Event: user marks solved | Polls LC/CF API, awards points, updates streak |
+| `expire-join-requests` | Cron: every hour | Marks PENDING requests older than 1 day as EXPIRED |
+| `reset-monthly-pauses` | Cron: 1st of month | Resets `pausesUsedThisMonth` to 0 for all users |
+| `send-email` | Event: various | Sends transactional email via Resend |
 
-- **Redis**
-  - Rate limiting
-  - Leaderboard caching (sorted sets)
-  - Feed caching
-- **Upstash Realtime**
-  - In-app notifications
-  - Live activity feed updates
-  - Real-time leaderboard updates
-  - Presence indicators (who's online)
-  - Pub/sub for user events
+## Post-MVP Services (not in v3)
 
-### Background Jobs
+- **Upstash Redis** - leaderboard caching, rate limiting
+- **Upstash Realtime** - in-app notification inbox, WebSocket feed
+- **PostHog** - product analytics
 
-- **Trigger.dev**
-  - Daily problem verification checks
-  - Streak calculations
-  - Suspension automation
-  - Weekly Twitter posts
-  - Email batch sends
+## Utilities
 
-### Authentication
+| Purpose | Technology |
+|---|---|
+| ID generation | nanoid |
+| JSON serialization (with Dates) | superjson |
+| Date formatting | date-fns |
+| Status/enum pattern matching | ts-pattern |
 
-- **Better-Auth**
+## Testing
 
-### File Storage
+| Purpose | Technology |
+|---|---|
+| Unit tests | vitest |
 
-- **Supabase Storage** (Avatar uploads)
-  - Buckets organized by group ID
-  - Auto-resize with Sharp before upload
-  - CDN delivery
-- **Sharp**
-  - Server-side image processing
-  - Resize to 256x256 and 64x64
-  - Convert to WebP for efficiency
+## Tooling
 
-### Email
+| Purpose | Technology |
+|---|---|
+| Runtime + package manager | Bun |
+| Type checking | TypeScript |
+| Linting + formatting | Biome |
+| Git hooks | Lefthook (pre-commit: `biome check --write`, pre-push: typecheck) |
+| Env validation | T3-env |
+| Unused code | Knip |
+| CI/CD | GitHub Actions |
 
-- **Resend**
-- **React Email**
+## GitHub Actions
 
-### Validation & Type Safety
+**`ci.yml`** - runs on every PR (all jobs in parallel):
 
-- **Zod**
-- **T3-env**
-
-### Monitoring & Analytics
-
-- **Sentry**
-- **PostHog**
-
-### External APIs
-
-- **LeetCode GraphQL API**
-- **Codeforces API**
-- **Twitter API**
-
----
-
-## DevOps & Infrastructure
-
-### Deployment
-
-- **Docker**
-- **docker-compose**
-- **Dokploy**
-
-### Hosting
-
-- **Docker Containers**
-  - Web
-  - API
-  - PostgreSQL
-  - Redis
-- **Supabase** - Storage CDN
-- **Upstash** - Realtime hosting
-- **Trigger.dev Cloud** - Background job hosting
-
-### CI/CD
-
-- **GitHub Actions** (Automated workflows)
-  - Lint & Format & check-types & tests on PR
-  - Build Docker images
-  - Deploy via Dokploy
-  - Upload source maps to Sentry
-
----
-
-## Tooling & DX
-
-- **Turborepo** - Build system and task runner
-- **Oxlint** - Ultra-fast linter (Rust-based)
-- **TypeScript** - Type safety across stack
-- **Knip** - Unused code detection
-
-### Git Hooks
-
-- **Lefthook**
-  - Pre-commit: lint & format staged files
-  - Pre-push: run tests
-
-### Package Management
-
-- **Bun**
-
-### Local Development
-
-- **Docker Compose** - Local services (Postgres, Redis)
-
-### AI
-
-- <https://github.com/lobehub/lobehub/blob/main/.cursor/skills>
-- <https://github.com/lobehub/lobehub/tree/main/.agents/skills>
-- <https://skills.sh>
-
----
-
-## Architecture Diagram
-
-```text
-┌────────────────────────────────────────────────────────────────┐
-│                        User Browser                            │
-└───────────────────────────┬────────────────────────────────────┘
-                            │
-                            ▼
-┌────────────────────────────────────────────────────────────────┐
-│                     Dokploy Server                             │
-│                  (Self-hosted Deployment)                      │
-├────────────────────────────────────────────────────────────────┤
-│                                                                │
-│  ┌──────────────────────────────────────────────────────┐      │
-│  │           Docker Container: Web (React)              │      │
-│  │    React 19 + TanStack Router + ShadCN               │      │
-│  │           Nginx serving static files                 │      │
-│  └────────────────────┬─────────────────────────────────┘      │
-│                       │                                        │
-│                       ▼                                        │
-│  ┌──────────────────────────────────────────────────────┐      │
-│  │        Docker Container: API (Hono on Bun)           │      │
-│  ├──────────────────────────────────────────────────────┤      │
-│  │  ┌──────────────┐  ┌──────────────┐  ┌──────────┐    │      │
-│  │  │ Better-Auth  │  │   Prisma     │  │  Sentry  │    │      │
-│  │  │  (Sessions)  │  │     ORM      │  │ (Errors) │    │      │
-│  │  └──────────────┘  └──────────────┘  └──────────┘    │      │
-│  └────────┬────────────────┬────────────────┬───────────┘      │
-│           │                │                │                  │
-│           ▼                ▼                ▼                  │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐          │
-│  │   Docker:    │  │   Docker:    │  │  Supabase    │          │
-│  │    Redis     │  │  PostgreSQL  │  │   Storage    │          │
-│  │  (Caching)   │  │  (Database)  │  │  (Avatars)   │          │
-│  └──────────────┘  └──────────────┘  └──────────────┘          │
-│           │                                                    │
-│           ▼                                                    │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐          │
-│  │   Upstash    │  │ Trigger.dev  │  │   PostHog    │          │
-│  │  Realtime    │  │ (Background) │  │ (Analytics)  │          │
-│  │ (WebSocket)  │  │    Jobs      │  │              │          │
-│  └──────────────┘  └──────────────┘  └──────────────┘          │
-│                                                                │
-└────────────────────────────────────────────────────────────────┘
+```yaml
+- cache: ~/.bun/install/cache
+- typecheck:  bun run typecheck
+- lint:       bun run biome ci
+- knip:       bun run knip
+- test:       bun run test (vitest run)
+- build:      bun run build
 ```
 
----
+**`release.yml`** - runs on merge to main:
 
-## Package Structure
-
-```text
-pstrack/
-├── apps/
-│   ├── web/                 # React client
-│   │   ├── src/
-│   │   │   ├── routes/      # TanStack Router routes
-│   │   │   ├── components/  # UI components
-│   │   │   ├── lib/         # Utilities
-│   │   │   └── hooks/       # Custom hooks
-│   │   ├── Dockerfile
-│   │   └── package.json
-│   │
-│   └── api/                 # Hono API
-│       ├── src/
-│       │   ├── routes/      # API routes
-│       │   ├── lib/         # Business logic
-│       │   ├── jobs/        # Trigger.dev jobs
-│       │   └── db/          # Prisma schema & migrations
-│       ├── Dockerfile
-│       └── package.json
-│
-├── packages/
-│   └── shared/              # Shared types & utilities
-│       ├── src/
-│       │   ├── types/       # TypeScript types
-│       │   └── utils/       # Shared utilities
-│       └── package.json
-│
-├── docker-compose.yml       # Local & production services
-├── turbo.json
-└── package.json
+```yaml
+- same quality + test + build jobs
+- sentry: upload source maps (SENTRY_AUTH_TOKEN)
 ```
+
+Vercel auto-deploys via its GitHub integration - no deploy job needed.

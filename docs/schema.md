@@ -1,199 +1,343 @@
 # Database Schema
 
-Current date reference: February 2026  
-Database: **PostgreSQL** (hosted on Supabase / Neon)  
-ORM: **Drizzle ORM**  
-Schema file: `packages/db/src/schema.ts`
+ORM: **Prisma**
+Database: **Neon (PostgreSQL)**
 
 ## Design Principles
 
-- Heavy use of **cascading deletes** to keep data consistent
-- Many **unique constraints** to prevent logical duplicates
-- **Indexes** on fields frequently used in filtering/sorting
-- Soft values (flags) instead of hard deletes where possible
-- Monthly-resetting counters (pauses, suspensions windows)
-- Separation of **problem** (evergreen) vs **daily_problem** (instance per group/day)
-- Points are stored both denormalized (`user.totalPoints`) and historically (`points_history`)
+- Points stored denormalized (`user.totalPoints`) and historically (`PointsHistory`) - denormalized for fast leaderboard queries
+- `DailyProblem` has `groupId` - keeps schema ready for per-group roadmap choice (Pro feature, post-MVP)
+- Cascade deletes on all membership and solve relations
+- `UserSolve.status` is the single source of truth for a day's outcome: `PENDING_VERIFICATION | SOLVED | PAUSED | MISSED | VERIFICATION_FAILED`
+- Better Auth manages `Session`, `Account`, `Verification` - do not add business logic to these tables
+- Streaks break on `MISSED`, not on `VERIFICATION_FAILED` - a failed verification gives a grace window
 
-## Tables Overview
+## Tables
 
-| Table            | Main purpose                               | Key relations                                                 | Important fields                                                 |
-| ---------------- | ------------------------------------------ | ------------------------------------------------------------- | ---------------------------------------------------------------- |
-| `user`           | Core user entity                           | sessions, accounts, group_memberships, solves, pauses, points | username, email, totalPoints, currentStreak, pausesUsedThisMonth |
-| `group`          | Group / team container                     | members, dailyProblems, creator                               | name, type, platform, maxMembers                                 |
-| `group_member`   | Membership + role                          | user ↔ group                                                  | role (admin/member)                                              |
-| `problem`        | Reusable problem definition                | dailyProblems, solves                                         | slug, title, source, difficulty                                  |
-| `daily_problem`  | One problem assignment per group per day   | group, problem, solves, firstSolver                           | assignedDate, slot, firstSolverId                                |
-| `user_solve`     | User's solve attempt + verification result | user, dailyProblem, problem                                   | isVerified, pointsEarned, isFirstInGroup                         |
-| `pause_request`  | User's request to skip a day               | user, dailyProblem                                            | category, status, isAutoApproved                                 |
-| `points_history` | Audit trail of all point changes           | user, user_solve (optional)                                   | amount, reason                                                   |
-| `session`        | Better-Auth session                        | user                                                          | expiresAt, token                                                 |
-| `account`        | Better-Auth linked accounts / credentials  | user                                                          | providerId, accessToken, password                                |
-| `verification`   | Email verification / password reset tokens | —                                                             | identifier, value, expiresAt                                     |
+| Table | Purpose |
+|---|---|
+| `User` | Platform user - points, streak, Pro status, notification prefs |
+| `Group` | Group container (public or private) |
+| `GroupMember` | User ↔ Group membership + role |
+| `GroupJoinRequest` | Pending join requests for public groups (expire after 1 day) |
+| `Problem` | NeetCode 250 problem definitions (evergreen, seeded by admin) |
+| `DailyProblem` | One problem assigned per group per day |
+| `UserSolve` | User's outcome for a daily problem (one row per user per group per day) |
+| `PointsHistory` | Immutable audit log of all point changes |
+| `Badge` | Badge definitions (static, seeded) |
+| `UserBadge` | Badges earned by users |
+| `Session` | Better Auth |
+| `Account` | Better Auth |
+| `Verification` | Better Auth |
 
-## Detailed Table Documentation
+## Schema
 
-### `user`
+```prisma
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
 
-Central entity representing a platform user.
+generator client {
+  provider = "prisma-client-js"
+}
 
-**Important fields**
+model User {
+  id                  String   @id
+  username            String   @unique
+  email               String   @unique
+  emailVerified       Boolean  @default(false)
+  leetcodeHandle      String?
+  codeforcesHandle    String?
+  bio                 String?
+  twitterHandle       String?
+  linkedinHandle      String?
+  websiteUrl          String?
+  isPublic            Boolean  @default(true)
+  isPro               Boolean  @default(false)
+  isAdmin             Boolean  @default(false)
+  isBanned            Boolean  @default(false)
+  totalPoints         Int      @default(0)
+  currentStreak       Int      @default(0)
+  longestStreak       Int      @default(0)
+  pausesUsedThisMonth Int      @default(0)
+  // notification preferences
+  notifyDailyProblem  Boolean  @default(true)
+  notifyAchievements  Boolean  @default(true)
+  notifyGroupActivity Boolean  @default(true)
+  // username change cooldown
+  usernameChangedAt   DateTime?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
 
-- `username` – unique, public identifier
-- `email` – unique, used for login & notifications
-- `leetcodeHandle` – required, used for verification
-- `codeforcesHandle` – optional
-- `totalPoints` – denormalized sum of all earned points
-- `currentStreak` / `longestStreak` – maintained by background jobs
-- `pausesUsedThisMonth` – resets monthly
-- `unexcusedMissCount` – rolling 30-day counter
-- `isSuspended` / `suspendedUntil` – suspension state
+  groupMemberships GroupMember[]
+  joinRequests     GroupJoinRequest[]
+  solves           UserSolve[]
+  pointsHistory    PointsHistory[]
+  userBadges       UserBadge[]
+  sessions         Session[]
+  accounts         Account[]
 
-**Indexes**
+  @@index([totalPoints])
+  @@index([currentStreak])
+}
 
-- `username` → fast profile lookup
-- `totalPoints`, `currentStreak` → leaderboard sorting
+model Group {
+  id              String    @id @default(cuid())
+  name            String
+  description     String?
+  type            GroupType
+  creatorId       String
+  maxMembers      Int       @default(30)
+  inviteCode      String?   @unique
+  inviteExpiresAt DateTime?
+  isActive        Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 
-### `group`
+  members       GroupMember[]
+  joinRequests  GroupJoinRequest[]
+  dailyProblems DailyProblem[]
 
-Container for users participating in the same daily challenge.
+  @@index([type, isActive])
+}
 
-**Fields**
+enum GroupType {
+  PUBLIC
+  PRIVATE
+}
 
-- `type`: `public` | `private`
-- `platform`: `leetcode` | `codeforces` (future multi-platform support)
-- `maxMembers`: usually 30 (50 for premium groups)
-- `currentMemberCount`: denormalized count (updated via triggers or jobs)
-- `banned` / `banReason` / `banExpires`: group-level banning
+model GroupMember {
+  id       String     @id @default(cuid())
+  groupId  String
+  userId   String
+  role     MemberRole @default(MEMBER)
+  joinedAt DateTime   @default(now())
 
-### `group_member`
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-Junction table + role.
+  @@unique([groupId, userId])
+  @@index([userId])
+}
 
-**Unique constraint**
+enum MemberRole {
+  ADMIN
+  MEMBER
+}
 
-```sql
-(group_id, user_id)
+model GroupJoinRequest {
+  id        String            @id @default(cuid())
+  groupId   String
+  userId    String
+  status    JoinRequestStatus @default(PENDING)
+  expiresAt DateTime
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, userId])
+  @@index([status, expiresAt])
+}
+
+enum JoinRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  EXPIRED
+}
+
+model Problem {
+  id           String     @id @default(cuid())
+  slug         String     @unique
+  title        String
+  difficulty   Difficulty
+  topics       String[]
+  roadmapIndex Int        @unique
+  leetcodeId   Int?
+  codeforcesId String?
+
+  dailyProblems DailyProblem[]
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+model DailyProblem {
+  id             String    @id @default(cuid())
+  groupId        String
+  problemId      String
+  assignedDate   DateTime  @db.Date
+  firstSolverId  String?
+  firstSolveTime DateTime?
+
+  group   Group       @relation(fields: [groupId], references: [id])
+  problem Problem     @relation(fields: [problemId], references: [id])
+  solves  UserSolve[]
+
+  @@unique([groupId, assignedDate])
+  @@index([assignedDate])
+}
+
+model UserSolve {
+  id             String      @id @default(cuid())
+  userId         String
+  dailyProblemId String
+  status         SolveStatus @default(PENDING_VERIFICATION)
+  pointsEarned   Int         @default(0)
+  isFirstInGroup Boolean     @default(false)
+  verifiedAt     DateTime?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  dailyProblem DailyProblem @relation(fields: [dailyProblemId], references: [id])
+  pointsHistory PointsHistory[]
+
+  @@unique([userId, dailyProblemId])
+  @@index([userId])
+}
+
+enum SolveStatus {
+  PENDING_VERIFICATION
+  SOLVED
+  PAUSED
+  MISSED
+  VERIFICATION_FAILED
+}
+
+model PointsHistory {
+  id          String      @id @default(cuid())
+  userId      String
+  userSolveId String?
+  delta       Int
+  reason      PointReason
+  adminNote   String?
+  createdAt   DateTime    @default(now())
+
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userSolve UserSolve? @relation(fields: [userSolveId], references: [id])
+
+  @@index([userId, createdAt])
+}
+
+enum PointReason {
+  DAILY_SOLVE
+  FIRST_IN_GROUP
+  STREAK_MULTIPLIER_BONUS
+  MISSED_DAY
+  ADMIN_ADJUSTMENT
+}
+
+model Badge {
+  id          String @id @default(cuid())
+  key         String @unique
+  name        String
+  description String
+
+  userBadges UserBadge[]
+}
+
+model UserBadge {
+  id       String   @id @default(cuid())
+  userId   String
+  badgeId  String
+  earnedAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badge Badge @relation(fields: [badgeId], references: [id])
+
+  @@unique([userId, badgeId])
+}
+
+// Better Auth - do not modify
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String   @unique
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  accessToken           String?
+  refreshToken          String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
 ```
 
-Prevents a user from joining the same group twice.
+## Business Rules
 
-### `problem`
+| Rule | Enforced in |
+|---|---|
+| One solve per user per daily problem | `@@unique([userId, dailyProblemId])` on `UserSolve` |
+| One active join request per user per group | `@@unique([groupId, userId])` on `GroupJoinRequest` |
+| One problem per group per day | `@@unique([groupId, assignedDate])` on `DailyProblem` |
+| `pausesUsedThisMonth` resets on the 1st of each month | Trigger.dev `reset-monthly-pauses` cron |
+| Join requests expire after 1 day | `expiresAt` set on creation; hourly `expire-join-requests` cron marks EXPIRED |
+| Free groups: `maxMembers = 30` / Pro groups: `maxMembers = 50` | Set at group creation based on creator's `isPro` |
+| Username can change at most once per 30 days | `usernameChangedAt` checked in `PATCH /api/users/me`; UI disables the field and shows next available date |
+| Username must match `^[a-z0-9_-]{3,30}$` and not collide with reserved words | Enforced in `usersModel` (TypeBox) + reserved-words list in `users.constants.ts` |
+| Streak breaks on `MISSED`, preserved on `VERIFICATION_FAILED` | Application logic in `verify-submission` and `mark-missed` jobs |
+| Platform admin access gated on `User.isAdmin` (set manually in DB) | Elysia middleware on `/api/admin/*` |
 
-Evergreen problem metadata (not tied to any date/group).
+## Points Reference
 
-**Fields**
+| Action | Delta | `PointReason` |
+|---|---|---|
+| Solve daily problem | +10 | `DAILY_SOLVE` |
+| First in group to solve | +5 | `FIRST_IN_GROUP` |
+| Streak multiplier bonus (7d: +2, 30d: +5 per solve) | varies | `STREAK_MULTIPLIER_BONUS` |
+| Miss (no pause used) | -3 | `MISSED_DAY` |
+| Admin manual adjustment | varies | `ADMIN_ADJUSTMENT` |
 
-- `slug` – canonical identifier (usually leetcode slug)
-- `roadmapIndex` – position in NeetCode 250 / other roadmaps
-- `source` – `leetcode` | `codeforces`
+> Streak multipliers (1.2x at 7 days, 1.5x at 30 days) are applied to the base +10 solve points. The bonus delta is logged separately as `STREAK_MULTIPLIER_BONUS` so the base solve and the bonus are individually auditable.
 
-### `daily_problem`
+## Badge Keys (seeded)
 
-One row = **one problem assigned to one group on one day**.
+| Key | Condition |
+|---|---|
+| `STREAK_7` | Reach a 7-day streak |
+| `STREAK_30` | Reach a 30-day streak |
+| `STREAK_100` | Reach a 100-day streak |
+| `FIRST_SOLVER_10` | Be first in group 10 times |
+| `FIRST_SOLVER_50` | Be first in group 50 times |
+| `CONSISTENT_30` | 30 days solved with no misses |
 
-**Slot field**
+## Post-MVP Tables
 
-Allows future expansion to 2 problems per day.
+When community features ship, add:
 
-**Unique constraint**
-
-```sql
-(group_id, assigned_date, slot)
-```
-
-Ensures max 1 problem per slot per day per group.
-
-### `user_solve`
-
-Records that a user **marked a daily problem as solved** and whether it was verified.
-
-**Business rules enforced via application logic / jobs**
-
-- One `user_solve` per `(user, daily_problem)`
-- `pointsEarned` includes base + bonuses
-- `isFirstInGroup` / `isFirstOnPlatform` – set by verification job
-- `wasEarlySolver` – solved < 6 hours after assignment
-
-### `pause_request`
-
-User requests to skip a daily problem without penalty.
-
-**Lifecycle**
-
-1. User creates request → `status` = pending (not yet implemented)
-2. First 2 per month → `isAutoApproved = true`
-3. Others → admin review
-4. Final state: `approved` | `rejected`
-
-### `points_history`
-
-Immutable log of every point change.
-
-**Reasons (examples)**
-
-- "daily_solve"
-- "first_in_group"
-- "solution_upvote_received"
-- "missed_day_unexcused"
-- "shared_solution"
-- "approved_resource"
-- ...
-
-Used for:
-
-- Detailed user points breakdown
-- Audit / dispute resolution
-- Analytics
-
-## Relations (Drizzle ORM)
-
-All important relations are defined using the `relations` helper.
-
-Most important ones:
-
-```ts
-user → many(groupMember)          // user's groups
-group → many(groupMember)         // group's members
-group → many(dailyProblem)        // problems assigned to group
-dailyProblem → many(userSolve)    // who solved it
-dailyProblem → many(pauseRequest) // skip requests
-user → many(userSolve)            // all solves by user
-user → many(pointsHistory)        // point audit trail
-```
-
-## Important Constraints & Business Rules (enforced in code)
-
-- User can only have **one active solve** per `daily_problem`
-- Only one `firstSolver` per `daily_problem`
-- `pausesUsedThisMonth` resets monthly (handled in job)
-- `unexcusedMissCount` is rolling 30-day window
-- Suspension after **3 unexcused misses** in 30 days
-- `currentStreak` breaks on unexcused miss (unless paused)
-
-## Indexes Summary
-
-| Table          | Indexed fields                       | Purpose                      |
-| -------------- | ------------------------------------ | ---------------------------- |
-| user           | username, totalPoints, currentStreak | Profile lookup, leaderboards |
-| group          | platform, createdById, isActive      | Filtering active groups      |
-| group_member   | groupId, userId                      | Membership checks            |
-| daily_problem  | groupId, assignedDate                | Fetch today's problem        |
-| user_solve     | userId, dailyProblemId, solvedAt     | Leaderboard, history         |
-| pause_request  | userId, dailyProblemId, status       | Approval queue               |
-| points_history | userId, createdAt                    | History timeline             |
-
-## Future Considerations
-
-- Add **soft delete** column (`deleted_at`) on critical entities
-- Add **reported** / **moderation** status on user-generated content
-- Consider **partitioning** `points_history` and `user_solve` after ~1M rows
-- Add **materialized view** or **Redis cache** for weekly/monthly leaderboards
-- Add `solution` table when full solution sharing is implemented
-
----
-
-Last updated: 3 Feb 2026  
-Related file:
-
-- `packages/db/src/schema.ts`
+- `Solution` - shared solutions for a daily problem
+- `Comment` - comments on solutions
+- `Vote` - upvotes on solutions
+- `Resource` - community-submitted links
+- `Notification` - in-app inbox entries (requires Upstash Realtime)

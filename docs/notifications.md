@@ -1,92 +1,63 @@
-# Notification System
+# Notifications
 
-## Authentication & Onboarding
+## MVP: Email Only
 
-| Event                   | Channel        | Sent When                   | Template             |
-| ----------------------- | -------------- | --------------------------- | -------------------- |
-| **Welcome Email**       | Email          | User completes signup       | `welcome.tsx`        |
-| **Email Verification**  | Email          | User registers              | `verify-email.tsx`   |
-| **Group Join Approved** | Email + In-App | Admin approves join request | `group-approved.tsx` |
-| **Group Join Rejected** | Email + In-App | Admin rejects join request  | `group-rejected.tsx` |
+All notifications sent via **Resend** using **React Email** templates. No in-app inbox in v3 - that ships post-MVP alongside community features.
 
----
+## Events
+
+### Auth & Onboarding
+
+| Event | Trigger | Template |
+|---|---|---|
+| Welcome | User completes signup | `welcome.tsx` |
+| Email verification | User registers | `verify-email.tsx` |
+| Password reset | User requests reset | `reset-password.tsx` |
+| Password changed | User changes password | `password-changed.tsx` |
+
+### Groups
+
+| Event | Recipient | Trigger | Template |
+|---|---|---|---|
+| New join request | Group admin | User requests to join public group | `join-request.tsx` |
+| Join approved | User | Admin approves request | `join-approved.tsx` |
+| Join rejected | User | Admin rejects request | `join-rejected.tsx` |
+| Join request expired | User | Request not actioned in 1 day | `join-expired.tsx` |
+| Removed from group | User | Admin removes user | `removed-from-group.tsx` |
 
 ### Daily Problem
 
-| Event                    | Channel        | Sent When               | Template               |
-| ------------------------ | -------------- | ----------------------- | ---------------------- |
-| **Daily Problem Posted** | Email (digest) | New problem assigned    | `daily-problem.tsx`    |
-| **Reminder: Unsolved**   | Email          | 6 hours before deadline | `problem-reminder.tsx` |
-| **Streak at Risk**       | Email + In-App | 2 hours before deadline | `streak-warning.tsx`   |
-| **Problem Verified**     | In-App         | Submission verified     | N/A (in-app only)      |
-| **Verification Failed**  | In-App         | Submission not found    | N/A                    |
+| Event | Trigger | Template |
+|---|---|---|
+| Daily problem posted | Midnight, new problem assigned | `daily-problem.tsx` |
+| Solve verified | Submission confirmed | `solve-verified.tsx` |
+| Verification failed | No accepted submission found | `verification-failed.tsx` |
 
-**Email Digest Options** (User Settings):
+### Achievements
 
-- Daily (default)
-- None (in-app only)
+| Event | Trigger | Template |
+|---|---|---|
+| Streak milestone (7 / 30 / 100 days) | Streak threshold reached | `streak-milestone.tsx` |
+| Badge earned | Badge condition met | `badge-earned.tsx` |
 
----
+### System
 
-### Points & Achievements
+| Event | Trigger | Template |
+|---|---|---|
+| Security alert | Login from new device | `security-alert.tsx` |
+| Account deletion | User deletes account | `account-deletion.tsx` |
 
-| Event                       | Channel        | Sent When                      | Template               |
-| --------------------------- | -------------- | ------------------------------ | ---------------------- |
-| **First Solve in Group**    | In-App         | User solves before anyone else | N/A                    |
-| **First Solve on Platform** | In-App         | User solves globally first     | N/A                    |
-| **Streak Milestone**        | Email + In-App | 7/14/30/100 day streak         | `streak-milestone.tsx` |
-| **Badge Earned**            | In-App         | New badge unlocked             | N/A                    |
-| **Leaderboard Rank**        | Email (weekly) | User in top 10 (weekly recap)  | `weekly-recap.tsx`     |
+## User Preferences
 
----
+Users can disable individual email categories from `/settings/notifications`:
+- Daily problem digest
+- Achievement emails
+- Group activity emails
 
-### Community Interactions
+## Post-MVP: In-App Inbox
 
-| Event                   | Channel        | Sent When                         | Template                |
-| ----------------------- | -------------- | --------------------------------- | ----------------------- |
-| **Solution Upvoted**    | In-App         | Someone upvotes your solution     | N/A                     |
-| **Comment on Solution** | Email + In-App | Someone comments on your solution | `new-comment.tsx`       |
-| **Reply to Comment**    | Email + In-App | Someone replies to your comment   | `comment-reply.tsx`     |
-| **Resource Approved**   | Email + In-App | Admin approves submitted resource | `resource-approved.tsx` |
-| **Resource Rejected**   | Email + In-App | Admin rejects resource            | `resource-rejected.tsx` |
-
-**Email Frequency Options**:
-
-- Immediately
-- Daily digest (default)
-- Never
-
----
-
-### Pause & Moderation
-
-| Event                  | Channel        | Sent When                                   | Template                 |
-| ---------------------- | -------------- | ------------------------------------------- | ------------------------ |
-| **Pause Approved**     | In-App         | Admin approves pause request                | N/A                      |
-| **Pause Rejected**     | Email + In-App | Admin rejects pause request                 | `pause-rejected.tsx`     |
-| **Suspension Warning** | Email + In-App | 2 unexcused misses (1 away from suspension) | `suspension-warning.tsx` |
-| **Account Suspended**  | Email + In-App | 3rd unexcused miss                          | `suspended.tsx`          |
-| **Suspension Lifted**  | Email + In-App | 7-day suspension ends                       | `suspension-lifted.tsx`  |
-| **Content Removed**    | Email + In-App | Spam/violation flagged                      | `content-removed.tsx`    |
-
----
-
-### Group Management
-
-| Event                     | Channel        | Sent When                           | Template                    |
-| ------------------------- | -------------- | ----------------------------------- | --------------------------- |
-| **New Join Request**      | Email (admin)  | User requests to join private group | `join-request.tsx`          |
-| **Group Change Approved** | Email + In-App | Admin approves group change         | `group-change-approved.tsx` |
-| **Removed from Group**    | Email + In-App | Admin removes user from group       | `removed-from-group.tsx`    |
-| **Group Invitation**      | Email          | User receives invite link           | `group-invite.tsx`          |
-
----
-
-### System Notifications
-
-| Event                     | Channel | Sent When                      | Template               |
-| ------------------------- | ------- | ------------------------------ | ---------------------- |
-| **Maintenance Scheduled** | Email   | 24 hours before maintenance    | `maintenance.tsx`      |
-| **Password Changed**      | Email   | User changes password          | `password-changed.tsx` |
-| **Security Alert**        | Email   | Login from new device/location | `security-alert.tsx`   |
-| **Account Deletion**      | Email   | User requests account deletion | `account-deletion.tsx` |
+When community features ship, add:
+- Upstash Realtime (WebSocket) for real-time delivery
+- `Notification` table in DB for persistence
+- Bell icon with unread count in nav
+- New events: solution upvoted, comment received, new group member

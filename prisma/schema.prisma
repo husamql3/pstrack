@@ -1,0 +1,384 @@
+generator client {
+  provider   = "prisma-client"
+  output     = "../generated/prisma"
+  engineType = "client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id                            String             @id
+  name                          String
+  email                         String             @unique
+  emailVerified                 Boolean            @default(false)
+  image                         String?
+  createdAt                     DateTime           @default(now())
+  updatedAt                     DateTime           @updatedAt
+  role                          String?
+  banned                        Boolean?           @default(false)
+  banReason                     String?
+  banExpires                    DateTime?
+  username                      String?            @unique
+  leetcodeHandle                String?
+  codeforcesHandle              String?
+  bio                           String?
+  twitterHandle                 String?
+  linkedinHandle                String?
+  websiteUrl                    String?
+  isPublic                      Boolean            @default(true)
+  isPro                         Boolean            @default(false)
+  proSource                     ProSource?
+  proExpiresAt                  DateTime?
+  totalPoints                   Int                @default(0)
+  currentStreak                 Int                @default(0)
+  longestStreak                 Int                @default(0)
+  currentStreakStartedAt        DateTime?
+  pausesUsedThisMonth           Int                @default(0)
+  verificationFailuresThisMonth Int                @default(0)
+  notifyDailyProblem            Boolean            @default(true)
+  notifyAchievements            Boolean            @default(true)
+  notifyGroupActivity           Boolean            @default(true)
+  usernameChangedAt             DateTime?
+  groupMemberships              GroupMember[]
+  joinRequests                  GroupJoinRequest[]
+  solves                        UserSolve[]
+  pointsHistory                 PointsHistory[]
+  firstSolves                   DailyProblem[]     @relation("DailyProblemFirstSolver")
+  sessions                      Session[]
+  accounts                      Account[]
+  badges                        UserBadge[]
+  adminAuditLogs                AdminAuditLog[]    @relation("AdminAuditLogActor")
+
+  @@index([totalPoints])
+  @@index([currentStreak])
+  @@map("user")
+}
+
+enum ProSource {
+  POLAR_PURCHASE
+  POINTS_THRESHOLD
+  ADMIN_GRANT
+}
+
+model Group {
+  id              String    @id @default(cuid())
+  slug            String    @unique
+  type            GroupType @default(PUBLIC)
+  roadmap         Roadmap   @default(NC250)
+  creatorId       String
+  maxMembers      Int       @default(30)
+  inviteCode      String?   @unique
+  inviteExpiresAt DateTime?
+  isActive        Boolean   @default(true)
+  frozen          Boolean   @default(false)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  members       GroupMember[]
+  joinRequests  GroupJoinRequest[]
+  dailyProblems DailyProblem[]
+  pointsHistory PointsHistory[]
+
+  @@index([type, isActive])
+}
+
+enum GroupType {
+  PUBLIC
+  PRIVATE
+}
+
+enum Roadmap {
+  NC250
+  NC150
+  BLIND75
+}
+
+model GroupMember {
+  id       String     @id @default(cuid())
+  groupId  String
+  userId   String
+  role     MemberRole @default(MEMBER)
+  joinedAt DateTime   @default(now())
+
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, userId])
+  @@index([userId])
+}
+
+enum MemberRole {
+  ADMIN
+  MEMBER
+}
+
+model GroupJoinRequest {
+  id        String            @id @default(cuid())
+  groupId   String
+  userId    String
+  status    JoinRequestStatus @default(PENDING)
+  expiresAt DateTime
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, userId])
+  @@index([status, expiresAt])
+}
+
+enum JoinRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  EXPIRED
+}
+
+model Problem {
+  id           String        @id @default(cuid())
+  slug         String        @unique
+  title        String
+  difficulty   Difficulty
+  topic        String
+  roadmapIndex Int           @unique
+  leetcodeId   Int?
+  neetcode250  Boolean       @default(false)
+  neetcode150  Boolean       @default(false)
+  blind75      Boolean       @default(false)
+  source       ProblemSource @default(NEETCODE)
+
+  dailyProblems DailyProblem[]
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+enum ProblemSource {
+  NEETCODE
+  CUSTOM
+}
+
+model DailyProblem {
+  id             String    @id @default(cuid())
+  groupId        String
+  problemId      String
+  assignedDate   DateTime  @db.Date
+  firstSolverId  String?
+  firstSolveTime DateTime?
+
+  group       Group       @relation(fields: [groupId], references: [id])
+  problem     Problem     @relation(fields: [problemId], references: [id])
+  firstSolver User?       @relation("DailyProblemFirstSolver", fields: [firstSolverId], references: [id])
+  solves      UserSolve[]
+
+  @@unique([groupId, assignedDate])
+  @@index([assignedDate])
+}
+
+model UserSolve {
+  id             String      @id @default(cuid())
+  userId         String
+  dailyProblemId String
+  status         SolveStatus @default(MISSED)
+  pointsEarned   Int         @default(0)
+  isFirstInGroup Boolean     @default(false)
+  verifiedAt     DateTime?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  dailyProblem  DailyProblem    @relation(fields: [dailyProblemId], references: [id])
+  pointsHistory PointsHistory[]
+
+  @@unique([userId, dailyProblemId])
+  @@index([userId])
+}
+
+enum SolveStatus {
+  SOLVED
+  PAUSED
+  MISSED
+}
+
+model PointsHistory {
+  id          String      @id @default(cuid())
+  userId      String
+  userSolveId String?
+  groupId     String?
+  delta       Int
+  reason      PointReason
+  adminNote   String?
+  createdAt   DateTime    @default(now())
+
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userSolve UserSolve? @relation(fields: [userSolveId], references: [id])
+  group     Group?     @relation(fields: [groupId], references: [id])
+
+  @@index([userId, createdAt])
+  @@index([userId, groupId, reason])
+}
+
+model UserBadge {
+  id       String    @id @default(cuid())
+  userId   String
+  type     BadgeType
+  earnedAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, type])
+  @@index([userId])
+  @@map("user_badge")
+}
+
+enum BadgeType {
+  STREAK_7
+  STREAK_30
+  STREAK_100
+  STREAK_365
+  SOLVED_1
+  SOLVED_10
+  SOLVED_50
+  SOLVED_100
+  NC250_COMPLETE
+  NC150_COMPLETE
+  BLIND75_COMPLETE
+  FIRST_SOLVER_1
+  FIRST_SOLVER_10
+  FIRST_SOLVER_50
+  CONSISTENT_30
+}
+
+enum PointReason {
+  DAILY_SOLVE
+  FIRST_IN_GROUP
+  STREAK_MULTIPLIER_BONUS
+  MISSED_DAY
+  ADMIN_ADJUSTMENT
+  PAUSE
+  CLAWBACK
+  COMEBACK
+  EARLY_BIRD
+  JOIN_GROUP
+  VERIFICATION_FAILURE_GRACE
+}
+
+model Session {
+  id             String   @id
+  expiresAt      DateTime
+  token          String   @unique
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  ipAddress      String?
+  userAgent      String?
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  impersonatedBy String?
+
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
+}
+
+model AdminAuditLog {
+  id         String                @id @default(cuid())
+  adminId    String
+  action     AdminAuditAction
+  targetType AdminAuditTargetType?
+  targetId   String?
+  metadata   Json                  @default("{}")
+  createdAt  DateTime              @default(now())
+
+  admin User @relation("AdminAuditLogActor", fields: [adminId], references: [id], onDelete: Cascade)
+
+  @@index([adminId, createdAt])
+  @@index([targetType, targetId, createdAt])
+  @@index([action, createdAt])
+  @@map("admin_audit_log")
+}
+
+enum AdminAuditAction {
+  USER_BANNED
+  USER_UNBANNED
+  POINTS_ADJUSTED
+  PRO_GRANTED
+  PRO_REVOKED
+  USER_IMPERSONATED
+  USER_IMPERSONATION_ENDED
+  GROUP_DELETED
+  GROUP_FROZEN
+  GROUP_UNFROZEN
+  PROBLEM_CREATED
+  PROBLEM_UPDATED
+  PROBLEM_DELETED
+  PROBLEMS_RESEEDED
+  FEATURE_FLAG_TOGGLED
+  SYSTEM_CONFIG_UPDATED
+  EMAIL_SENT
+}
+
+enum AdminAuditTargetType {
+  USER
+  GROUP
+  PROBLEM
+  FEATURE_FLAG
+  SYSTEM_CONFIG
+  EMAIL
+}
+
+model FeatureFlag {
+  key         String   @id
+  enabled     Boolean  @default(false)
+  description String?
+  updatedAt   DateTime @updatedAt
+  createdAt   DateTime @default(now())
+
+  @@map("feature_flag")
+}
+
+model SystemConfig {
+  key         String   @id
+  value       Json
+  description String?
+  updatedAt   DateTime @updatedAt
+  createdAt   DateTime @default(now())
+
+  @@map("system_config")
+}
