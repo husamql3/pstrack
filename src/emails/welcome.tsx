@@ -19,22 +19,21 @@ export default function WelcomeEmail({ name }: WelcomeEmailProps) {
 	return (
 		<Html>
 			<Head />
-			<Preview>Welcome to PSTrack - your streak starts today</Preview>
+			<Preview>Welcome to PStrack - your streak starts today</Preview>
 			<Body style={body}>
 				<Container style={container}>
 					<Section style={logoSection}>
 						<Img
-							src="https://pstrack.app/logo-dark.png"
-							width="56"
-							height="56"
-							alt="PSTrack"
+							src="https://pstrack.app/logo-light.png"
+							width="150"
+							alt="PStrack"
 							style={logoImg}
 						/>
 					</Section>
 
 					<Text style={heading}>Hey {name}, you made it.</Text>
 					<Text style={para}>
-						We&apos;re glad you&apos;re here. PSTrack gives you one problem a day, a group
+						We&apos;re glad you&apos;re here. PStrack gives you one problem a day, a group
 						to stay accountable with, and a streak worth protecting. It&apos;s simple -
 						and it works.
 					</Text>
@@ -48,7 +47,7 @@ export default function WelcomeEmail({ name }: WelcomeEmailProps) {
 					<Hr style={rule} />
 
 					<Text style={note}>
-						You&apos;re receiving this because you just signed up for PSTrack. If this
+						You&apos;re receiving this because you just signed up for PStrack. If this
 						wasn&apos;t you, you can safely ignore this email.
 					</Text>
 
@@ -81,11 +80,10 @@ const container = {
 }
 
 const logoSection = {
-	marginBottom: "24px",
+	marginBottom: "32px",
 }
 
 const logoImg = {
-	borderRadius: "12px",
 	display: "block",
 	margin: "0 auto",
 }

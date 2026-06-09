@@ -77,7 +77,7 @@ export const auth = betterAuth({
 					await resend.emails.send({
 						from: env.EMAIL_FROM,
 						to: user.email,
-						subject: "Welcome to PSTrack",
+						subject: "Welcome to PStrack",
 						react: WelcomeEmail({ name: user.name }),
 					})
 				},
@@ -96,7 +96,7 @@ export const auth = betterAuth({
 				await resend.emails.send({
 					from: env.EMAIL_FROM,
 					to: email,
-					subject: "Sign in to PSTrack",
+					subject: "Sign in to PStrack",
 					react: MagicLinkEmail({ url: redirectUrl.toString() }),
 				})
 			},

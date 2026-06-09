@@ -17,7 +17,7 @@ const fontStack =
 export function EmailLayout({
 	preview,
 	children,
-	note = "You're receiving this because you have an account on PSTrack.",
+	note = "You're receiving this because you have an account on PStrack.",
 	footerText = "Show up. Solve. Repeat.",
 }: {
 	preview: string
@@ -33,10 +33,9 @@ export function EmailLayout({
 				<Container style={container}>
 					<Section style={logoSection}>
 						<Img
-							src="https://pstrack.app/logo-dark.png"
-							width="56"
-							height="56"
-							alt="PSTrack"
+							src="https://pstrack.app/logo-light.png"
+							width="150"
+							alt="PStrack"
 							style={logoImg}
 						/>
 					</Section>
@@ -152,11 +151,10 @@ const container = {
 }
 
 const logoSection = {
-	marginBottom: "24px",
+	marginBottom: "32px",
 }
 
 const logoImg = {
-	borderRadius: "12px",
 	display: "block",
 	margin: "0 auto",
 }

@@ -16,7 +16,7 @@ export default function JoinApprovedEmail({
 	return (
 		<EmailLayout
 			preview={`You're in - ${groupName} approved your request`}
-			note="You're receiving this because you requested to join a group on PSTrack."
+			note="You're receiving this because you requested to join a group on PStrack."
 		>
 			<Text style={s.heading}>You&apos;re in.</Text>
 			<Text style={s.para}>

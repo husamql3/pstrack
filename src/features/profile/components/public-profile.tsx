@@ -194,7 +194,7 @@ export const PublicProfileNotFound = ({ username }: { username: string }) => (
 	<main className="mx-auto flex w-full max-w-md flex-col items-center gap-3 px-6 py-24 text-center">
 		<h1 className="font-semibold text-xl">User not found</h1>
 		<p className="text-muted-foreground text-sm">
-			No PSTrack user with the username <span className="font-mono">{username}</span>.
+			No PStrack user with the username <span className="font-mono">{username}</span>.
 		</p>
 	</main>
 )

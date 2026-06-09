@@ -6,7 +6,7 @@ export const docs = new Elysia({ name: "docs" }).use(
 		provider: "scalar",
 		documentation: {
 			info: {
-				title: "PSTrack API",
+				title: "PStrack API",
 				version: "3.0.0",
 			},
 			tags: [

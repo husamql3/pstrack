@@ -67,7 +67,7 @@ Onboarding is considered complete when `username` and `leetcodeHandle` are prese
 After Step 2 (join request or skip):
 
 - Redirect to `/dashboard`
-- Show welcome toast: "Welcome to PSTrack!"
+- Show welcome toast: "Welcome to PStrack!"
 
 ---
 

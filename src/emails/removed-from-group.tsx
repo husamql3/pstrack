@@ -16,7 +16,7 @@ export default function RemovedFromGroupEmail({
 	return (
 		<EmailLayout
 			preview={`Removed from ${groupName} - your progress is safe`}
-			note="You're receiving this because you were a member of a PSTrack group."
+			note="You're receiving this because you were a member of a PStrack group."
 		>
 			<Text style={s.heading}>You&apos;ve been removed.</Text>
 			<Text style={s.para}>

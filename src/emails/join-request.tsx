@@ -18,7 +18,7 @@ export default function JoinRequestEmail({
 	return (
 		<EmailLayout
 			preview={`${requesterName} wants to join ${groupName}`}
-			note="You're receiving this because you're an admin of a PSTrack group."
+			note="You're receiving this because you're an admin of a PStrack group."
 			footerText="Requests auto-expire after 24 hours."
 		>
 			<Text style={s.heading}>New join request.</Text>

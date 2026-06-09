@@ -16,7 +16,7 @@ export default function JoinExpiredEmail({
 	return (
 		<EmailLayout
 			preview={`Your ${groupName} request timed out - try again`}
-			note="You're receiving this because you requested to join a group on PSTrack."
+			note="You're receiving this because you requested to join a group on PStrack."
 		>
 			<Text style={s.heading}>Request timed out.</Text>
 			<Text style={s.para}>

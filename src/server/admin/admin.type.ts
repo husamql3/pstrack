@@ -4,8 +4,10 @@ import type { Prisma } from "@/generated/prisma/client"
 import {
 	AdminAuditAction,
 	AdminAuditTargetType,
+	GroupType,
 	PointReason,
 	ProSource,
+	Roadmap,
 } from "@/generated/prisma/enums"
 
 // ─── Pagination (shared by every admin list endpoint) ─────────────────────────
@@ -272,6 +274,13 @@ export const adminBanUserSchema = z.object({
 })
 export type AdminBanUserInput = z.infer<typeof adminBanUserSchema>
 
+export const adminCreateGroupSchema = z.object({
+	type: z.enum(GroupType),
+	roadmap: z.enum(Roadmap),
+	maxMembers: z.number().int().min(2).max(50),
+})
+export type AdminCreateGroupInput = z.infer<typeof adminCreateGroupSchema>
+
 export const adminProblemFormSchema = z.object({
 	slug: z.string().trim().min(1, { error: "Slug is required" }).max(120),
 	title: z.string().trim().min(1, { error: "Title is required" }).max(200),
@@ -293,4 +302,11 @@ export type AdminEmailSendInput = z.infer<typeof adminEmailSendSchema>
 
 // ─── Re-exports ───────────────────────────────────────────────────────────────
 
-export { AdminAuditAction, AdminAuditTargetType, PointReason, ProSource }
+export {
+	AdminAuditAction,
+	AdminAuditTargetType,
+	GroupType,
+	PointReason,
+	ProSource,
+	Roadmap,
+}

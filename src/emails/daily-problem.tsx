@@ -24,7 +24,7 @@ export default function DailyProblemEmail({
 	return (
 		<EmailLayout
 			preview={`Today's problem: ${problemTitle} (${difficulty})`}
-			note={`You're receiving this because you're in ${groupName} on PSTrack.`}
+			note={`You're receiving this because you're in ${groupName} on PStrack.`}
 		>
 			<Text style={s.heading}>Today&apos;s problem is ready.</Text>
 			<Text style={s.para}>

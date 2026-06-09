@@ -58,7 +58,7 @@ export const EmailPrefsSection = ({ me }: { me: MeResponse }) => {
 	return (
 		<SectionCard
 			title="Email notifications"
-			description="Choose which emails PSTrack sends you. Security and account emails always send."
+			description="Choose which emails PStrack sends you. Security and account emails always send."
 		>
 			<form onSubmit={onSubmit} className="flex flex-col gap-4">
 				<div className="flex flex-col gap-2">

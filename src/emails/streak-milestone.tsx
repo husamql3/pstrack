@@ -24,7 +24,7 @@ export default function StreakMilestoneEmail({
 	return (
 		<EmailLayout
 			preview={`${streak}-day streak - don't stop now`}
-			note="You're receiving this because you hit a streak milestone on PSTrack."
+			note="You're receiving this because you hit a streak milestone on PStrack."
 		>
 			<Text style={s.heading}>{streak}-day streak.</Text>
 			<Text style={s.para}>

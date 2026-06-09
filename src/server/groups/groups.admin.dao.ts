@@ -1,3 +1,4 @@
+import slugsPool from "@/data/slugs.json"
 import type { Prisma } from "@/generated/prisma/client"
 import { PointReason } from "@/generated/prisma/enums"
 import {
@@ -31,7 +32,55 @@ type ListParams = {
 	sortDir?: "asc" | "desc"
 }
 
+async function pickSlug(): Promise<string> {
+	const used = await db.group.findMany({
+		where: { slug: { in: slugsPool as string[] } },
+		select: { slug: true },
+	})
+	const usedSet = new Set(used.map((g) => g.slug))
+	const available = (slugsPool as string[]).filter((s) => !usedSet.has(s))
+	if (available.length === 0) throw new Error("Slug pool exhausted - add more slugs.")
+	return available[Math.floor(Math.random() * available.length)]
+}
+
 export const groupsAdminDao = {
+	create: async (
+		adminId: string,
+		input: {
+			type: "PUBLIC" | "PRIVATE"
+			roadmap: "NC250" | "NC150" | "BLIND75"
+			maxMembers: number
+		}
+	): Promise<AdminGroupListItem> => {
+		const slug = await pickSlug()
+		return db.$transaction(async (tx) => {
+			const created = await tx.group.create({
+				data: {
+					slug,
+					type: input.type,
+					roadmap: input.roadmap,
+					maxMembers: input.maxMembers,
+					isActive: true,
+					creatorId: adminId,
+				},
+				select: { id: true, slug: true },
+			})
+			await adminAuditDao.log(
+				{
+					adminId,
+					action: "GROUP_CREATED",
+					target: { type: "GROUP", id: created.id },
+					metadata: { slug: created.slug, type: input.type, roadmap: input.roadmap },
+				},
+				tx
+			)
+			return tx.group.findUniqueOrThrow({
+				where: { id: created.id },
+				select: adminGroupListSelect,
+			})
+		})
+	},
+
 	list: async (params: ListParams): Promise<PaginatedResponse<AdminGroupListItem>> => {
 		const where: Prisma.GroupWhereInput = {}
 

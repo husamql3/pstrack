@@ -55,7 +55,7 @@ export default function BadgeEarnedEmail({
 	return (
 		<EmailLayout
 			preview={`New badge: ${label} - keep going`}
-			note="You're receiving this because you earned a badge on PSTrack."
+			note="You're receiving this because you earned a badge on PStrack."
 		>
 			<Text style={s.heading}>New badge: {label}</Text>
 			<Text style={s.para}>

@@ -5,7 +5,7 @@ export const WelcomeStep = ({ onContinue }: { onContinue: () => void }) => {
 	return (
 		<main className="flex flex-1 flex-col items-center justify-center gap-10 px-4 py-16">
 			<div className="max-w-lg text-center">
-				<h1 className="mb-3 font-bold text-3xl tracking-tight">Welcome to PSTrack</h1>
+				<h1 className="mb-3 font-bold text-3xl tracking-tight">Welcome to PStrack</h1>
 				<p className="text-base text-muted-foreground leading-relaxed">
 					One LeetCode problem a day, picked from the NeetCode 250 roadmap.
 					<br />

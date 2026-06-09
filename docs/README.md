@@ -1,4 +1,4 @@
-# PSTrack v3
+# PStrack v3
 
 A competitive programming accountability platform. Users join groups, solve one daily problem from the NeetCode 250 roadmap, get auto-verified against LeetCode/Codeforces APIs, and earn points to maintain streaks.
 

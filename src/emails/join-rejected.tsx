@@ -16,7 +16,7 @@ export default function JoinRejectedEmail({
 	return (
 		<EmailLayout
 			preview={`Your request to join ${groupName} - next steps`}
-			note="You're receiving this because you requested to join a group on PSTrack."
+			note="You're receiving this because you requested to join a group on PStrack."
 		>
 			<Text style={s.heading}>Not this time.</Text>
 			<Text style={s.para}>

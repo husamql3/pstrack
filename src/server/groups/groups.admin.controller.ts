@@ -11,6 +11,15 @@ export const groupsAdminController = new Elysia({
 	tags: ["Admin"],
 })
 	.use(adminModel)
+	.post(
+		"/",
+		async ({ request, body }) => {
+			const { user, response } = await requirePlatformAdmin(request)
+			if (!user) return response
+			return groupsAdminDao.create(user.id, body)
+		},
+		{ body: "admin.groups.create" }
+	)
 	.get(
 		"/",
 		async ({ request, query }) => {

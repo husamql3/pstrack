@@ -25,7 +25,7 @@ const searchSchema = z.object({
 })
 
 export const Route = createFileRoute("/groups")({
-	ssr: false,
+	ssr: true,
 	validateSearch: searchSchema,
 	component: GroupsPage,
 	head: () =>

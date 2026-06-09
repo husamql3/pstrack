@@ -4,7 +4,9 @@ import {
 	AdminAuditAction,
 	AdminAuditTargetType,
 	Difficulty,
+	GroupType,
 	ProblemSource,
+	Roadmap,
 } from "@/generated/prisma/enums"
 import { ADMIN_LIST_LIMIT_DEFAULT, ADMIN_LIST_LIMIT_MAX } from "./admin.type"
 
@@ -73,6 +75,11 @@ export const adminModel = new Elysia({ name: "model/admin" }).model({
 	}),
 	"admin.groups.joinRequestAction": t.Object({
 		action: t.Union([t.Literal("APPROVED"), t.Literal("REJECTED")]),
+	}),
+	"admin.groups.create": t.Object({
+		type: t.Enum(GroupType),
+		roadmap: t.Enum(Roadmap),
+		maxMembers: t.Integer({ minimum: 2, maximum: 50, default: 30 }),
 	}),
 	"admin.groups.generateInvite": t.Object({
 		expiresIn: t.Union([

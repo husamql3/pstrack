@@ -56,7 +56,7 @@ export const GroupStep = ({ onBack }: { onBack: () => void }) => {
 	)
 
 	const finish = () => {
-		sileo.success({ title: "Welcome to PSTrack!" })
+		sileo.success({ title: "Welcome to PStrack!" })
 		navigate({ to: "/dashboard" })
 	}
 

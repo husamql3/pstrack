@@ -9,7 +9,7 @@ import { usePublicProfile } from "@/features/profile/hooks/use-public-profile"
 import { createSeoHead, siteUrl } from "@/lib/seo"
 
 export const Route = createFileRoute("/$username")({
-	ssr: false,
+	ssr: true,
 	component: PublicProfileRoute,
 	head: ({ params }) =>
 		createSeoHead({

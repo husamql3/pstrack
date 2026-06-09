@@ -28,14 +28,14 @@ export const EMAIL_TEMPLATES: TemplateMeta[] = [
 	{
 		key: "welcome",
 		label: "Welcome",
-		subject: () => "Welcome to PSTrack",
+		subject: () => "Welcome to PStrack",
 		render: (props) => WelcomeEmail(cast(props)),
 		exampleProps: { name: "Alex" },
 	},
 	{
 		key: "magic-link",
 		label: "Magic link",
-		subject: () => "Your PSTrack sign-in link",
+		subject: () => "Your PStrack sign-in link",
 		render: (props) => MagicLinkEmail(cast(props)),
 		exampleProps: { url: "https://pstrack.app/api/v3/magic-link?token=test" },
 	},
@@ -79,7 +79,7 @@ export const EMAIL_TEMPLATES: TemplateMeta[] = [
 	{
 		key: "pro-unlocked-by-points",
 		label: "Pro unlocked (points)",
-		subject: () => "You unlocked PSTrack Pro",
+		subject: () => "You unlocked PStrack Pro",
 		render: (props) => ProUnlockedByPointsEmail(cast(props)),
 		exampleProps: { name: "Alex", dashboardUrl: "https://pstrack.app/dashboard" },
 	},

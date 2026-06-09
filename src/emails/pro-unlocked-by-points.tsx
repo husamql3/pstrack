@@ -14,7 +14,7 @@ export default function ProUnlockedByPointsEmail({
 	return (
 		<EmailLayout
 			preview="You solved your way to Pro - 3,000 points"
-			note="You're receiving this because you unlocked Pro on PSTrack."
+			note="You're receiving this because you unlocked Pro on PStrack."
 			footerText="You earned it."
 		>
 			<Text style={s.heading}>Pro unlocked.</Text>
