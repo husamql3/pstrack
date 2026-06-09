@@ -47,5 +47,5 @@ export const env = createEnv({
 	clientPrefix: "VITE_",
 	// Load environment variables from .env file if we are on the client
 	runtimeEnv: typeof window === "undefined" ? process.env : import.meta.env,
-	skipValidation: import.meta.env?.PROD,
+	skipValidation: !!process.env.SKIP_ENV_VALIDATION || import.meta.env?.PROD,
 })

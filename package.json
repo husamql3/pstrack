@@ -32,7 +32,9 @@
 		"check": "bun run biome check .",
 		"knip": "knip",
 		"typecheck": "prisma generate && tsc --noEmit",
-		"env:sync": "bun run scripts/sync-env.ts"
+		"env:sync": "bun run scripts/sync-env.ts",
+		"env:sync:trigger": "bun run scripts/sync-trigger.ts",
+		"env:sync:gh": "bun run scripts/sync-gh.ts"
 	},
 	"portless": {
 		"name": "pstrack",
