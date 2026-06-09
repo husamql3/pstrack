@@ -46,19 +46,26 @@ const normalizePath = (path: string) => {
 const buildTitle = (title: string) =>
 	title === META.titleSuffix ? title : `${title} | ${META.titleSuffix}`
 
-const defaultOgImage = `${META.url}${META.og.defaultImage}`
+const buildOgImageUrl = (title: string) => {
+	const params = new URLSearchParams({ title })
+	return `${META.url}/api/v3/og?${params.toString()}`
+}
 
 export const createSeoHead = ({
 	title,
 	description,
 	path,
-	image = defaultOgImage,
+	image,
 	noindex = false,
 	schema,
 }: SeoInput): SeoHead => {
+	const ogImage = image
+		? image.startsWith("http")
+			? image
+			: `${META.url}${normalizePath(image)}`
+		: buildOgImageUrl(title)
 	const fullTitle = buildTitle(title)
 	const canonical = `${META.url}${normalizePath(path)}`
-	const ogImage = image.startsWith("http") ? image : `${META.url}${normalizePath(image)}`
 
 	const meta: Array<HeadMeta> = [
 		{ title: fullTitle },

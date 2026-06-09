@@ -8,6 +8,7 @@ import WelcomeEmail from "@/emails/welcome"
 import { env } from "@/env"
 import { db } from "@/server/lib/db"
 import { resend } from "@/server/lib/email"
+import { logger } from "@/server/lib/logger"
 import { polarClient } from "@/server/lib/polar"
 
 export const auth = betterAuth({
@@ -92,7 +93,7 @@ export const auth = betterAuth({
 				// Gmail) don't execute JS so the one-time token isn't consumed early.
 				const redirectUrl = new URL(url)
 				redirectUrl.pathname = "/api/v3/magic-link"
-				console.info("redirectUrl", redirectUrl.toString())
+				logger.debug({ redirectUrl: redirectUrl.toString() }, "magic link redirect")
 				await resend.emails.send({
 					from: env.EMAIL_FROM,
 					to: email,

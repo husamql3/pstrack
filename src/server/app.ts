@@ -9,17 +9,19 @@ import { auth } from "@/server/lib/auth"
 import { captureServerException, initServerSentry } from "@/server/lib/sentry"
 import { docs } from "@/server/modules/docs"
 import { health } from "@/server/modules/health"
+import { og } from "@/server/modules/og"
 import { problemsAdminController } from "@/server/problems/problems.admin.controller"
 import { problemsController } from "@/server/problems/problems.controller"
 import { usersAdminController } from "@/server/users/users.admin.controller"
 import { usersController } from "@/server/users/users.controller"
-import { requestLogger } from "./lib/request-logger"
+import { requestLogger } from "./lib/logger"
 
 initServerSentry()
 
 const api = new Elysia({ prefix: "/api/v3" })
 	.use(health)
 	.use(docs)
+	.use(og)
 	.use(authController)
 	.use(usersController)
 	.use(groupsController)
