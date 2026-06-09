@@ -2737,5 +2737,16 @@
 		"neetcode150": true,
 		"blind75": false,
 		"topic": "Intervals"
+	},
+	{
+		"roadmapIndex": 250,
+		"slug": "find-in-mountain-array",
+		"title": "Find in Mountain Array",
+		"difficulty": "HARD",
+		"leetcodeId": 1095,
+		"neetcode250": true,
+		"neetcode150": false,
+		"blind75": false,
+		"topic": "Binary Search"
 	}
 ]

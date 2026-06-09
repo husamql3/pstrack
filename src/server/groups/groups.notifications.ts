@@ -4,7 +4,6 @@ import JoinRejectedEmail from "@/emails/join-rejected"
 import JoinRequestEmail from "@/emails/join-request"
 import RemovedFromGroupEmail from "@/emails/removed-from-group"
 import { env } from "@/env"
-import { MemberRole } from "@/generated/prisma/enums"
 import { db } from "@/server/lib/db"
 import { resend } from "@/server/lib/email"
 import { captureServerException } from "@/server/lib/sentry"
@@ -13,7 +12,7 @@ const BASE_URL = env.BETTER_AUTH_URL.replace(/\/$/, "")
 const groupName = (slug: string) => `@${slug}`
 const groupUrl = (groupId: string) => `${BASE_URL}/groups/${groupId}`
 const browseUrl = () => `${BASE_URL}/groups`
-const reviewUrl = (groupId: string) => `${BASE_URL}/groups/${groupId}/join-requests`
+const reviewUrl = (groupId: string) => `${BASE_URL}/admin/groups/${groupId}/join-requests`
 
 const safeSend = (label: string, send: () => Promise<unknown>) => {
 	send().catch((err) => captureServerException(err, { tag: `email:${label}` }))
@@ -34,39 +33,33 @@ const fetchGroupSlug = (groupId: string) =>
 export const groupNotifications = {
 	joinRequested: (groupId: string, requesterId: string) => {
 		safeSend("join-request", async () => {
-			const [requester, group, admins] = await Promise.all([
+			const [requester, group, siteAdmins] = await Promise.all([
 				db.user.findUniqueOrThrow({
 					where: { id: requesterId },
 					select: { name: true },
 				}),
 				fetchGroupSlug(groupId),
-				db.groupMember.findMany({
-					where: { groupId, role: MemberRole.ADMIN },
-					select: {
-						user: {
-							select: { email: true, name: true, notifyGroupActivity: true },
-						},
-					},
+				db.user.findMany({
+					where: { role: "admin" },
+					select: { email: true, name: true },
 				}),
 			])
 			if (!group) return
 
 			await Promise.all(
-				admins
-					.filter((m) => m.user.notifyGroupActivity)
-					.map((m) =>
-						resend.emails.send({
-							from: env.EMAIL_FROM,
-							to: m.user.email,
-							subject: `New join request for ${groupName(group.slug)}`,
-							react: JoinRequestEmail({
-								adminName: m.user.name,
-								requesterName: requester.name,
-								groupName: groupName(group.slug),
-								reviewUrl: reviewUrl(groupId),
-							}),
-						})
-					)
+				siteAdmins.map((admin) =>
+					resend.emails.send({
+						from: env.EMAIL_FROM,
+						to: admin.email,
+						subject: `New join request for ${groupName(group.slug)}`,
+						react: JoinRequestEmail({
+							adminName: admin.name,
+							requesterName: requester.name,
+							groupName: groupName(group.slug),
+							reviewUrl: reviewUrl(groupId),
+						}),
+					})
+				)
 			)
 		})
 	},

@@ -9,6 +9,7 @@ const groupSearchSchema = z.object({
 })
 
 export const Route = createFileRoute("/groups_/$groupId")({
+	ssr: false,
 	validateSearch: groupSearchSchema,
 	component: GroupPage,
 })

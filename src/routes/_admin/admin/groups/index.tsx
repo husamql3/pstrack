@@ -1,6 +1,6 @@
 import { IconDotsVertical } from "@tabler/icons-react"
 import { useQueryClient } from "@tanstack/react-query"
-import { createFileRoute, useNavigate } from "@tanstack/react-router"
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router"
 import { useCallback } from "react"
 import { sileo } from "sileo"
 import { z } from "zod"
@@ -35,7 +35,7 @@ const searchSchema = z.object({
 	frozen: z.boolean().optional(),
 })
 
-export const Route = createFileRoute("/_admin/admin/groups")({
+export const Route = createFileRoute("/_admin/admin/groups/")({
 	validateSearch: searchSchema,
 	component: AdminGroupsPage,
 })
@@ -120,7 +120,15 @@ function AdminGroupsPage() {
 						<TableBody>
 							{items.map((g) => (
 								<TableRow key={g.id}>
-									<TableCell className="font-medium">@{g.slug}</TableCell>
+									<TableCell className="font-medium">
+										<Link
+											className="hover:underline"
+											params={{ groupId: g.id }}
+											to="/admin/groups/$groupId"
+										>
+											@{g.slug}
+										</Link>
+									</TableCell>
 									<TableCell>
 										<Badge variant={g.type === "PUBLIC" ? "outline" : "secondary"}>
 											{g.type.toLowerCase()}

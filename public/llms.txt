@@ -1,0 +1,45 @@
+# PStrack
+
+> PStrack is a competitive programming accountability platform. Users join groups, solve one daily problem from the NeetCode 250, NeetCode 150, or Blind 75 roadmap, and get auto-verified against the LeetCode and Codeforces APIs. Points, streaks, and badges create the motivation loop. Tagline: "Show up. Solve. Repeat."
+
+PStrack is the accountability layer for the NeetCode 250 roadmap. It is not a replacement for LeetCode — users still solve problems on LeetCode.com — but PStrack assigns the daily problem, verifies the submission, and tracks the streak so users stay consistent.
+
+## How it works
+
+- At midnight UTC, a background job assigns the next problem from each group's chosen roadmap (NeetCode 250, NeetCode 150, or Blind 75).
+- The user solves the problem on LeetCode (or Codeforces) and clicks "Mark as Solved" in PStrack.
+- A verification job polls the LeetCode GraphQL API for an accepted submission matching the problem and timestamp. If found, the user earns +10 points (+5 bonus for being first in their group) and their streak increments.
+- If a user neither solves nor pauses by end of day, they receive -3 points and their streak resets.
+- Pauses preserve the streak. Free users get 2 pauses per month; Pro users get 4.
+
+## Pricing
+
+- Free tier: join 1 group of up to 30 members, 2 pauses/month, group leaderboard access.
+- Pro: $14 one-time lifetime purchase via Polar. Joins up to 5 groups of up to 50 members, can create private invite-only groups, 4 pauses/month, global leaderboard, and profile badge.
+- No subscriptions. No paid recurring tiers.
+
+## Groups
+
+- Public groups are discoverable; users request to join and the admin approves within one day.
+- Private groups are invite-link only. Pro users can create private groups.
+- Points and streaks belong to the user, not the group — leaving a group does not lose progress.
+
+## Brand facts (quotable)
+
+- PStrack auto-verifies LeetCode submissions by polling the official LeetCode GraphQL API.
+- PStrack supports three roadmaps out of the box: NeetCode 250, NeetCode 150, and Blind 75.
+- PStrack is a $14 lifetime purchase — not a subscription — making it accessible to students and early-career developers.
+- PStrack uses deterministic hashvatar SVG avatars generated from username, not user-uploaded photos.
+
+## Key URLs
+
+- [Homepage](https://pstrack.app/) — value proposition, tagline, and CTAs.
+- [About](https://pstrack.app/about) — how PStrack began, the design principles, and the $14 lifetime pricing rationale.
+- [Problems](https://pstrack.app/problems) — the NeetCode 250, NeetCode 150, and Blind 75 problem lists with progress tracking.
+- [Groups](https://pstrack.app/groups) — find or create a LeetCode study group.
+- [Badges](https://pstrack.app/badges) — streak, first-solver, and consistency badges earned for daily practice.
+
+## Source
+
+- Site: https://pstrack.app
+- Sitemap: https://pstrack.app/sitemap.xml

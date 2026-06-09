@@ -14,6 +14,7 @@ import type { DifficultyFilter, StatusFilter } from "@/features/problems/types"
 import { groupByTopic } from "@/features/problems/utils"
 import { Difficulty, Roadmap, SolveStatus } from "@/generated/prisma/enums"
 import { useSession } from "@/lib/auth-client"
+import { createSeoHead } from "@/lib/seo"
 import type { RoadmapKey } from "@/server/problems/problems.type"
 
 // ─── Search param schema ──────────────────────────────────────────────────────
@@ -32,8 +33,16 @@ const searchSchema = z.object({
 })
 
 export const Route = createFileRoute("/problems")({
+	ssr: false,
 	validateSearch: searchSchema,
 	component: ProblemsPage,
+	head: () =>
+		createSeoHead({
+			title: "NeetCode 250, NeetCode 150 & Blind 75 Problem List",
+			description:
+				"Browse the complete NeetCode 250, NeetCode 150, and Blind 75 problem lists on PStrack. Track your progress, see solve rates, and start solving with daily accountability.",
+			path: "/problems",
+		}),
 })
 
 // ─── Page ─────────────────────────────────────────────────────────────────────

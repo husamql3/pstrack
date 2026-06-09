@@ -70,6 +70,7 @@ export function Hero() {
 							Stay consistent with LeetCode, solve one problem a day, earn points, and
 							compete with your group.
 						</TextEffect>
+
 						<AnimatedGroup
 							variants={{
 								container: {

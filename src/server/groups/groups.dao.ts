@@ -20,8 +20,6 @@ import {
 	groupDetailSelect,
 	groupListSelect,
 	groupMemberSelect,
-	type JoinRequestResponse,
-	joinRequestSelect,
 } from "./groups.type"
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -266,211 +264,15 @@ export const groupsDao = {
 		})
 	},
 
-	removeMember: async (adminId: string, groupId: string, targetUserId: string) => {
-		const [adminMembership, targetMembership] = await Promise.all([
-			db.groupMember.findUnique({
-				where: { groupId_userId: { groupId, userId: adminId } },
-				select: { role: true },
-			}),
-			db.groupMember.findUnique({
-				where: { groupId_userId: { groupId, userId: targetUserId } },
-				select: {
-					id: true,
-					user: { select: { email: true, name: true } },
-				},
-			}),
-		])
-
-		if (!adminMembership || adminMembership.role !== "ADMIN") {
-			return { error: "FORBIDDEN" as const }
-		}
-		if (!targetMembership) return { error: "NOT_FOUND" as const }
-		if (targetUserId === adminId) return { error: "CANNOT_REMOVE_SELF" as const }
-
-		await db.groupMember.delete({ where: { id: targetMembership.id } })
-
-		return {
-			error: null,
-			email: targetMembership.user.email,
-			name: targetMembership.user.name,
-		}
-	},
-
 	leave: async (userId: string, groupId: string) => {
 		const membership = await db.groupMember.findUnique({
 			where: { groupId_userId: { groupId, userId } },
-			select: { id: true, role: true },
+			select: { id: true },
 		})
 
 		if (!membership) return { error: "NOT_MEMBER" as const }
 
-		if (membership.role === "ADMIN") {
-			const adminCount = await db.groupMember.count({
-				where: { groupId, role: "ADMIN" },
-			})
-			if (adminCount <= 1) {
-				const memberCount = await db.groupMember.count({ where: { groupId } })
-				if (memberCount > 1) return { error: "LAST_ADMIN" as const }
-			}
-		}
-
 		await db.groupMember.delete({ where: { id: membership.id } })
-		return { error: null }
-	},
-
-	listJoinRequests: async (
-		adminId: string,
-		groupId: string
-	): Promise<
-		| { error: "FORBIDDEN"; requests: null }
-		| { error: null; requests: JoinRequestResponse[] }
-	> => {
-		const membership = await db.groupMember.findUnique({
-			where: { groupId_userId: { groupId, userId: adminId } },
-			select: { role: true },
-		})
-
-		if (!membership || membership.role !== "ADMIN") {
-			return { error: "FORBIDDEN", requests: null }
-		}
-
-		const requests = await db.groupJoinRequest.findMany({
-			where: { groupId, status: "PENDING" },
-			orderBy: { createdAt: "asc" },
-			select: joinRequestSelect,
-		})
-
-		return { error: null, requests }
-	},
-
-	updateJoinRequest: async (
-		adminId: string,
-		groupId: string,
-		requestId: string,
-		action: "APPROVED" | "REJECTED"
-	) => {
-		const [adminMembership, request] = await Promise.all([
-			db.groupMember.findUnique({
-				where: { groupId_userId: { groupId, userId: adminId } },
-				select: { role: true },
-			}),
-			db.groupJoinRequest.findUnique({
-				where: { id: requestId },
-				select: {
-					id: true,
-					groupId: true,
-					userId: true,
-					status: true,
-					user: { select: { email: true, name: true } },
-				},
-			}),
-		])
-
-		if (!adminMembership || adminMembership.role !== "ADMIN") {
-			return { error: "FORBIDDEN" as const }
-		}
-		if (!request || request.groupId !== groupId) return { error: "NOT_FOUND" as const }
-		if (request.status !== "PENDING") return { error: "ALREADY_PROCESSED" as const }
-
-		if (action === "APPROVED") {
-			const group = await db.group.findUnique({
-				where: { id: groupId },
-				select: { maxMembers: true, _count: { select: { members: true } } },
-			})
-			if (!group) return { error: "NOT_FOUND" as const }
-			if (group._count.members >= group.maxMembers) return { error: "FULL" as const }
-
-			const user = await db.user.findUniqueOrThrow({
-				where: { id: request.userId },
-				select: { isPro: true },
-			})
-			const currentMemberships = await db.groupMember.count({
-				where: { userId: request.userId },
-			})
-			if (currentMemberships >= joinLimitFor(user)) {
-				return { error: "USER_GROUP_LIMIT" as const }
-			}
-
-			await db.$transaction(async (tx) => {
-				await tx.groupJoinRequest.update({
-					where: { id: requestId },
-					data: { status: "APPROVED" },
-				})
-				await tx.groupMember.create({
-					data: { groupId, userId: request.userId, role: "MEMBER" },
-				})
-				const hasJoinedBefore = await pointsDao.hasEverJoinedGroup(
-					tx,
-					request.userId,
-					groupId
-				)
-				if (!hasJoinedBefore) {
-					await pointsDao.applyPointsDelta(
-						request.userId,
-						JOIN_GROUP_BONUS,
-						PointReason.JOIN_GROUP,
-						{ tx, groupId }
-					)
-				}
-			})
-		} else {
-			await db.groupJoinRequest.update({
-				where: { id: requestId },
-				data: { status: "REJECTED" },
-			})
-		}
-
-		return {
-			error: null,
-			requesterId: request.userId,
-			email: request.user.email,
-			name: request.user.name,
-			action,
-		}
-	},
-
-	generateInvite: async (
-		adminId: string,
-		groupId: string,
-		expiresIn: "7d" | "30d" | "90d" | "never"
-	) => {
-		const membership = await db.groupMember.findUnique({
-			where: { groupId_userId: { groupId, userId: adminId } },
-			select: { role: true },
-		})
-		if (!membership || membership.role !== "ADMIN") {
-			return { error: "FORBIDDEN" as const, inviteCode: null }
-		}
-
-		const inviteCode = crypto.randomUUID().replace(/-/g, "")
-		const expiryDays = { "7d": 7, "30d": 30, "90d": 90 } as const
-		const inviteExpiresAt =
-			expiresIn === "never"
-				? null
-				: new Date(Date.now() + expiryDays[expiresIn] * 24 * 60 * 60 * 1000)
-
-		await db.group.update({
-			where: { id: groupId },
-			data: { inviteCode, inviteExpiresAt },
-		})
-
-		return { error: null, inviteCode }
-	},
-
-	revokeInvite: async (adminId: string, groupId: string) => {
-		const membership = await db.groupMember.findUnique({
-			where: { groupId_userId: { groupId, userId: adminId } },
-			select: { role: true },
-		})
-		if (!membership || membership.role !== "ADMIN") {
-			return { error: "FORBIDDEN" as const }
-		}
-
-		await db.group.update({
-			where: { id: groupId },
-			data: { inviteCode: null, inviteExpiresAt: null },
-		})
-
 		return { error: null }
 	},
 
@@ -707,30 +509,6 @@ export const groupsDao = {
 		})
 
 		return { expired: stale.length, requests: stale }
-	},
-
-	updateSettings: async (adminId: string, groupId: string) => {
-		const membership = await db.groupMember.findUnique({
-			where: { groupId_userId: { groupId, userId: adminId } },
-			select: { role: true },
-		})
-		if (!membership || membership.role !== "ADMIN") {
-			return { error: "FORBIDDEN" as const, group: null }
-		}
-
-		const group = await db.group.findUniqueOrThrow({
-			where: { id: groupId },
-			select: groupDetailSelect,
-		})
-
-		return {
-			error: null,
-			group: {
-				...group,
-				membershipStatus: "JOINED" as const,
-				userRole: "ADMIN" as const,
-			},
-		}
 	},
 
 	getTodayActivity: async (

@@ -108,7 +108,6 @@ export const useMarkTodaySolvedFromTable = (
 	return useMutation<SolveResult>({
 		mutationFn: async () => {
 			const { data, error } = await api.v3.problems.today.solve.post()
-			console.log(error)
 			if (error) throw new Error(error.value?.error ?? "Could not verify solve")
 			return data as SolveResult
 		},

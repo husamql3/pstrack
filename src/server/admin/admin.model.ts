@@ -63,6 +63,25 @@ export const adminModel = new Elysia({ name: "model/admin" }).model({
 	]),
 	"admin.groups.idParams": t.Object({ id: t.String({ minLength: 1 }) }),
 	"admin.groups.freeze": t.Object({ frozen: t.Boolean() }),
+	"admin.groups.memberParams": t.Object({
+		id: t.String({ minLength: 1 }),
+		userId: t.String({ minLength: 1 }),
+	}),
+	"admin.groups.joinRequestParams": t.Object({
+		id: t.String({ minLength: 1 }),
+		requestId: t.String({ minLength: 1 }),
+	}),
+	"admin.groups.joinRequestAction": t.Object({
+		action: t.Union([t.Literal("APPROVED"), t.Literal("REJECTED")]),
+	}),
+	"admin.groups.generateInvite": t.Object({
+		expiresIn: t.Union([
+			t.Literal("7d"),
+			t.Literal("30d"),
+			t.Literal("90d"),
+			t.Literal("never"),
+		]),
+	}),
 
 	"admin.problems.list": t.Composite([
 		paginationQuery,

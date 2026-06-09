@@ -92,12 +92,6 @@ export const createGroupSchema = z.object({})
 
 export type CreateGroupFormInput = z.infer<typeof createGroupSchema>
 
-export const generateInviteSchema = z.object({
-	expiresIn: z.enum(["7d", "30d", "90d", "never"]),
-})
-
-export type GenerateInviteInput = z.infer<typeof generateInviteSchema>
-
 // ─── Today's activity ─────────────────────────────────────────────────────────
 
 type ActivityBase = { userId: string; username: string | null; name: string; at: Date }

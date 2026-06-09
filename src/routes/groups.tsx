@@ -12,6 +12,7 @@ import { useGroups, useRequestJoinGroup } from "@/features/groups/hooks/use-grou
 import type { TypeFilter } from "@/features/groups/types"
 import { useSession } from "@/lib/auth-client"
 import { ProFeatureError } from "@/lib/errors"
+import { createSeoHead } from "@/lib/seo"
 
 // ─── Search params ─────────────────────────────────────────────────────────────
 
@@ -24,8 +25,16 @@ const searchSchema = z.object({
 })
 
 export const Route = createFileRoute("/groups")({
+	ssr: false,
 	validateSearch: searchSchema,
 	component: GroupsPage,
+	head: () =>
+		createSeoHead({
+			title: "LeetCode Study Groups — Join or Start One",
+			description:
+				"Find or create a LeetCode study group on PStrack. Solve one daily problem with accountability, build streaks, and compete on group leaderboards. Free tier available.",
+			path: "/groups",
+		}),
 })
 
 // ─── Skeleton card ─────────────────────────────────────────────────────────────

@@ -15,6 +15,9 @@ import appCss from "../styles.css?url"
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
 	beforeLoad: async () => {
+		if (typeof window === "undefined") {
+			return { session: null }
+		}
 		const { data: session } = await authClient.getSession()
 		return { session }
 	},
@@ -26,9 +29,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 			{
 				name: "viewport",
 				content: "width=device-width, initial-scale=1",
-			},
-			{
-				title: "pstrack",
 			},
 		],
 		links: [
@@ -56,7 +56,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 	),
 	errorComponent: () => <ErrorPage />,
 	shellComponent: RootDocument,
-	ssr: false,
+	ssr: true,
 })
 
 function RootDocument({ children }: { children: ReactNode }) {

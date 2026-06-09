@@ -138,6 +138,38 @@ export type AdminGroupListItem = Prisma.GroupGetPayload<{
 	select: typeof adminGroupListSelect
 }>
 
+export const adminGroupDetailSelect = {
+	id: true,
+	slug: true,
+	type: true,
+	roadmap: true,
+	creatorId: true,
+	maxMembers: true,
+	isActive: true,
+	frozen: true,
+	inviteCode: true,
+	inviteExpiresAt: true,
+	createdAt: true,
+	_count: { select: { members: true, joinRequests: true } },
+} satisfies Prisma.GroupSelect
+
+export type AdminGroupDetailResponse = Prisma.GroupGetPayload<{
+	select: typeof adminGroupDetailSelect
+}>
+
+export const adminPendingJoinRequestSelect = {
+	id: true,
+	groupId: true,
+	createdAt: true,
+	expiresAt: true,
+	user: { select: { id: true, username: true, name: true } },
+	group: { select: { id: true, slug: true } },
+} satisfies Prisma.GroupJoinRequestSelect
+
+export type AdminPendingJoinRequestResponse = Prisma.GroupJoinRequestGetPayload<{
+	select: typeof adminPendingJoinRequestSelect
+}>
+
 // ─── Problem admin ────────────────────────────────────────────────────────────
 
 export const adminProblemListSelect = {

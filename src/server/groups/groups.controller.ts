@@ -55,21 +55,6 @@ export const groupsController = new Elysia({ prefix: "/groups", tags: ["Groups"]
 		},
 		{ params: "groups.groupIdParams" }
 	)
-	.patch(
-		"/:id",
-		async ({ params, request }) => {
-			const { user, response } = await requireSessionUser(request)
-			if (!user) return response
-
-			const result = await groupsDao.updateSettings(user.id, params.id)
-			if (result.error === "FORBIDDEN") {
-				return status(403, { error: "You must be an admin to update this group." })
-			}
-
-			return result.group
-		},
-		{ params: "groups.groupIdParams", body: "groups.updateSettings" }
-	)
 	.post(
 		"/:id/join",
 		async ({ params, request }) => {
@@ -104,11 +89,6 @@ export const groupsController = new Elysia({ prefix: "/groups", tags: ["Groups"]
 			if (result.error === "NOT_MEMBER") {
 				return status(400, { error: "You are not a member of this group." })
 			}
-			if (result.error === "LAST_ADMIN") {
-				return status(400, {
-					error: "You are the last admin. Promote another member before leaving.",
-				})
-			}
 
 			return { success: true }
 		},
@@ -133,92 +113,6 @@ export const groupsController = new Elysia({ prefix: "/groups", tags: ["Groups"]
 		},
 		{ params: "groups.groupIdParams" }
 	)
-	.delete(
-		"/:id/members/:userId",
-		async ({ params, request }) => {
-			const { user, response } = await requireSessionUser(request)
-			if (!user) return response
-
-			const result = await groupsDao.removeMember(user.id, params.id, params.userId)
-			if (result.error === "FORBIDDEN") {
-				return status(403, { error: "You must be an admin to remove members." })
-			}
-			if (result.error === "NOT_FOUND") return status(404, { error: "Member not found." })
-			if (result.error === "CANNOT_REMOVE_SELF") {
-				return status(400, { error: "Use the leave endpoint to leave a group." })
-			}
-
-			groupNotifications.memberRemoved(params.id, params.userId)
-
-			return { success: true }
-		},
-		{ params: "groups.memberParams" }
-	)
-	.get(
-		"/:id/join-requests",
-		async ({ params, request }) => {
-			const { user, response } = await requireSessionUser(request)
-			if (!user) return response
-
-			const result = await groupsDao.listJoinRequests(user.id, params.id)
-			if (result.error === "FORBIDDEN") {
-				return status(403, { error: "You must be an admin to view join requests." })
-			}
-
-			return result.requests
-		},
-		{ params: "groups.groupIdParams" }
-	)
-	.patch(
-		"/:id/join-requests/:requestId",
-		async ({ params, body, request }) => {
-			const { user, response } = await requireSessionUser(request)
-			if (!user) return response
-
-			const result = await groupsDao.updateJoinRequest(
-				user.id,
-				params.id,
-				params.requestId,
-				body.action
-			)
-			if (result.error === "FORBIDDEN") {
-				return status(403, { error: "You must be an admin to process join requests." })
-			}
-			if (result.error === "NOT_FOUND")
-				return status(404, { error: "Join request not found." })
-			if (result.error === "ALREADY_PROCESSED") {
-				return status(409, { error: "This request has already been processed." })
-			}
-			if (result.error === "FULL") return status(409, { error: "The group is now full." })
-			if (result.error === "USER_GROUP_LIMIT") {
-				return status(409, { error: "The user has reached their group limit." })
-			}
-
-			if (body.action === "APPROVED") {
-				groupNotifications.joinApproved(params.id, result.requesterId)
-			} else {
-				groupNotifications.joinRejected(params.id, result.requesterId)
-			}
-
-			return { success: true }
-		},
-		{ params: "groups.joinRequestParams", body: "groups.joinRequestAction" }
-	)
-	.post(
-		"/:id/invite",
-		async ({ params, body, request }) => {
-			const { user, response } = await requireSessionUser(request)
-			if (!user) return response
-
-			const result = await groupsDao.generateInvite(user.id, params.id, body.expiresIn)
-			if (result.error === "FORBIDDEN") {
-				return status(403, { error: "You must be an admin to generate invite links." })
-			}
-
-			return { inviteCode: result.inviteCode }
-		},
-		{ params: "groups.groupIdParams", body: "groups.generateInvite" }
-	)
 	.get(
 		"/:id/problems",
 		async ({ params, query, request }) => {
@@ -237,19 +131,4 @@ export const groupsController = new Elysia({ prefix: "/groups", tags: ["Groups"]
 			return result.data
 		},
 		{ params: "groups.groupIdParams", query: "groups.problemsTableQuery" }
-	)
-	.delete(
-		"/:id/invite",
-		async ({ params, request }) => {
-			const { user, response } = await requireSessionUser(request)
-			if (!user) return response
-
-			const result = await groupsDao.revokeInvite(user.id, params.id)
-			if (result.error === "FORBIDDEN") {
-				return status(403, { error: "You must be an admin to revoke invite links." })
-			}
-
-			return { success: true }
-		},
-		{ params: "groups.groupIdParams" }
 	)

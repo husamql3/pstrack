@@ -3,6 +3,7 @@ import { createFileRoute, Outlet, redirect } from "@tanstack/react-router"
 import { AdminShell } from "@/components/admin/admin-shell"
 
 export const Route = createFileRoute("/_admin")({
+	ssr: false,
 	beforeLoad: ({ context, location }) => {
 		const { session } = context
 		if (!session) {
