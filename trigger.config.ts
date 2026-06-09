@@ -1,5 +1,16 @@
 import { syncEnvVars } from "@trigger.dev/build/extensions/core"
+import type { BuildExtension } from "@trigger.dev/core/v3/build"
 import { defineConfig } from "@trigger.dev/sdk/v3"
+
+const skipEnvValidationDuringIndex: BuildExtension = {
+	name: "skipEnvValidationDuringIndex",
+	onBuildComplete(context) {
+		context.addLayer({
+			id: "skip-env-validation",
+			build: { env: { SKIP_ENV_VALIDATION: "1" } },
+		})
+	},
+}
 
 const SYNCED_KEYS = [
 	"DATABASE_URL",
@@ -25,10 +36,8 @@ export default defineConfig({
 	runtime: "node",
 	logLevel: "log",
 	build: {
-		env: {
-			SKIP_ENV_VALIDATION: "1",
-		},
 		extensions: [
+			skipEnvValidationDuringIndex,
 			syncEnvVars(() =>
 				Object.fromEntries(
 					SYNCED_KEYS.flatMap((key) => {
