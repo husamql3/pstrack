@@ -2,6 +2,7 @@ import {
 	IconCheck,
 	IconDeviceDesktop,
 	IconLifebuoy,
+	IconLogin,
 	IconLogout,
 	IconMoon,
 	IconPalette,
@@ -10,7 +11,7 @@ import {
 	IconSun,
 	IconUserCircle,
 } from "@tabler/icons-react"
-import { useNavigate } from "@tanstack/react-router"
+import { Link, useNavigate } from "@tanstack/react-router"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -62,6 +63,17 @@ export function UserMenu() {
 
 	const goToHelp = () => {
 		navigate({ to: "/help" })
+	}
+
+	if (!isPending && !user) {
+		return (
+			<Button asChild variant="outline" size="sm">
+				<Link to="/login">
+					<IconLogin aria-hidden="true" />
+					Login
+				</Link>
+			</Button>
+		)
 	}
 
 	return (
