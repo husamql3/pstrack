@@ -67,7 +67,7 @@ export function Hero() {
 							as="p"
 							className="mt-8 max-w-2xl text-pretty rounded-md bg-black p-1 text-lg text-muted-foreground"
 						>
-							PStrack helps you stay consistent with LeetCode — solve one problem a day,
+							PStrack helps you stay consistent with LeetCode. Solve one problem a day,
 							earn points, and compete with your study group.
 						</TextEffect>
 

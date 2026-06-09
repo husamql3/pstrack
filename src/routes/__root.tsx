@@ -3,6 +3,7 @@ import { type QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools"
 import { createRootRouteWithContext, HeadContent, Scripts } from "@tanstack/react-router"
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools"
+import { Analytics } from "@vercel/analytics/react"
 import type { ReactNode } from "react"
 import { Toaster } from "sileo"
 
@@ -94,6 +95,7 @@ function RootDocument({ children }: { children: ReactNode }) {
 						]}
 					/>
 				</QueryClientProvider>
+				<Analytics debug={false} />
 				<Scripts />
 			</body>
 		</html>

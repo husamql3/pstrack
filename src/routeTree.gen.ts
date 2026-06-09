@@ -9,9 +9,11 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ProblemsRouteImport } from './routes/problems'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LeaderboardRouteImport } from './routes/leaderboard'
+import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as GroupsRouteImport } from './routes/groups'
 import { Route as BadgesRouteImport } from './routes/badges'
 import { Route as AboutRouteImport } from './routes/about'
@@ -49,6 +51,11 @@ import { Route as AdminAdminGroupsGroupIdSettingsRouteImport } from './routes/_a
 import { Route as AdminAdminGroupsGroupIdMembersRouteImport } from './routes/_admin/admin/groups/$groupId/members'
 import { Route as AdminAdminGroupsGroupIdJoinRequestsRouteImport } from './routes/_admin/admin/groups/$groupId/join-requests'
 
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProblemsRoute = ProblemsRouteImport.update({
   id: '/problems',
   path: '/problems',
@@ -62,6 +69,11 @@ const LoginRoute = LoginRouteImport.update({
 const LeaderboardRoute = LeaderboardRouteImport.update({
   id: '/leaderboard',
   path: '/leaderboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HowItWorksRoute = HowItWorksRouteImport.update({
+  id: '/how-it-works',
+  path: '/how-it-works',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GroupsRoute = GroupsRouteImport.update({
@@ -259,9 +271,11 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/badges': typeof BadgesRoute
   '/groups': typeof GroupsRoute
+  '/how-it-works': typeof HowItWorksRoute
   '/leaderboard': typeof LeaderboardRoute
   '/login': typeof LoginRoute
   '/problems': typeof ProblemsRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/api/$': typeof ApiSplatRoute
   '/groups/$groupId': typeof GroupsGroupIdRouteWithChildren
   '/admin/audit': typeof AdminAdminAuditRoute
@@ -296,9 +310,11 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/badges': typeof BadgesRoute
   '/groups': typeof GroupsRoute
+  '/how-it-works': typeof HowItWorksRoute
   '/leaderboard': typeof LeaderboardRoute
   '/login': typeof LoginRoute
   '/problems': typeof ProblemsRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/api/$': typeof ApiSplatRoute
   '/admin/audit': typeof AdminAdminAuditRoute
   '/admin/config': typeof AdminAdminConfigRoute
@@ -333,9 +349,11 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/badges': typeof BadgesRoute
   '/groups': typeof GroupsRoute
+  '/how-it-works': typeof HowItWorksRoute
   '/leaderboard': typeof LeaderboardRoute
   '/login': typeof LoginRoute
   '/problems': typeof ProblemsRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/_app': typeof AuthenticatedAppRouteWithChildren
   '/_authenticated/_onboarding': typeof AuthenticatedOnboardingRouteWithChildren
   '/api/$': typeof ApiSplatRoute
@@ -374,9 +392,11 @@ export interface FileRouteTypes {
     | '/about'
     | '/badges'
     | '/groups'
+    | '/how-it-works'
     | '/leaderboard'
     | '/login'
     | '/problems'
+    | '/sitemap.xml'
     | '/api/$'
     | '/groups/$groupId'
     | '/admin/audit'
@@ -411,9 +431,11 @@ export interface FileRouteTypes {
     | '/about'
     | '/badges'
     | '/groups'
+    | '/how-it-works'
     | '/leaderboard'
     | '/login'
     | '/problems'
+    | '/sitemap.xml'
     | '/api/$'
     | '/admin/audit'
     | '/admin/config'
@@ -447,9 +469,11 @@ export interface FileRouteTypes {
     | '/about'
     | '/badges'
     | '/groups'
+    | '/how-it-works'
     | '/leaderboard'
     | '/login'
     | '/problems'
+    | '/sitemap.xml'
     | '/_authenticated/_app'
     | '/_authenticated/_onboarding'
     | '/api/$'
@@ -489,15 +513,24 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   BadgesRoute: typeof BadgesRoute
   GroupsRoute: typeof GroupsRoute
+  HowItWorksRoute: typeof HowItWorksRoute
   LeaderboardRoute: typeof LeaderboardRoute
   LoginRoute: typeof LoginRoute
   ProblemsRoute: typeof ProblemsRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   ApiSplatRoute: typeof ApiSplatRoute
   GroupsGroupIdRoute: typeof GroupsGroupIdRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/problems': {
       id: '/problems'
       path: '/problems'
@@ -517,6 +550,13 @@ declare module '@tanstack/react-router' {
       path: '/leaderboard'
       fullPath: '/leaderboard'
       preLoaderRoute: typeof LeaderboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/how-it-works': {
+      id: '/how-it-works'
+      path: '/how-it-works'
+      fullPath: '/how-it-works'
+      preLoaderRoute: typeof HowItWorksRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/groups': {
@@ -913,9 +953,11 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   BadgesRoute: BadgesRoute,
   GroupsRoute: GroupsRoute,
+  HowItWorksRoute: HowItWorksRoute,
   LeaderboardRoute: LeaderboardRoute,
   LoginRoute: LoginRoute,
   ProblemsRoute: ProblemsRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   ApiSplatRoute: ApiSplatRoute,
   GroupsGroupIdRoute: GroupsGroupIdRouteWithChildren,
 }
