@@ -53,7 +53,7 @@
 		"@react-email/render": "^2.0.8",
 		"@react-three/fiber": "^9.3.0",
 		"@react-three/postprocessing": "^3.0.4",
-		"@sentry/bun": "^10.53.1",
+		"@sentry/node": "^10.57.0",
 		"@sentry/react": "^10.53.1",
 		"@t3-oss/env-core": "^0.13.11",
 		"@tabler/icons-react": "^3.44.0",
