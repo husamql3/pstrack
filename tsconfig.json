@@ -1,5 +1,5 @@
 {
-	"include": ["**/*.ts", "**/*.tsx", "vite.config.ts", "trigger.config.ts"],
+	"include": ["**/*.ts", "**/*.tsx", "**/*.mdx", "vite.config.ts", "trigger.config.ts"],
 	"compilerOptions": {
 		"target": "ES2022",
 		"jsx": "react-jsx",

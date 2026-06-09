@@ -13,6 +13,14 @@ const config = defineConfig({
 			clientPort: 443,
 		},
 	},
+	optimizeDeps: {
+		exclude: ["@resvg/resvg-js"],
+	},
+	build: {
+		rollupOptions: {
+			external: ["@resvg/resvg-js"],
+		},
+	},
 	plugins: [
 		devtools(),
 		nitro(),
@@ -21,8 +29,8 @@ const config = defineConfig({
 		}),
 		tailwindcss(),
 		tanstackStart(),
-		mdx({ jsxImportSource: "react" }),
-		viteReact({ include: /\.(jsx|tsx|mdx)$/ }),
+		{ enforce: "pre", ...mdx({ jsxImportSource: "react" }) },
+		viteReact({ include: /\.(jsx|tsx)$/ }),
 	],
 })
 
