@@ -3,6 +3,7 @@ import { type QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools"
 import { createRootRouteWithContext, HeadContent, Scripts } from "@tanstack/react-router"
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools"
+import { createIsomorphicFn } from "@tanstack/react-start"
 import { Analytics } from "@vercel/analytics/react"
 import type { ReactNode } from "react"
 import { Toaster } from "sileo"
@@ -14,12 +15,20 @@ import { authClient } from "@/lib/auth-client"
 import { getQueryClient } from "@/lib/query-client"
 import appCss from "../styles.css?url"
 
+const fetchSession = createIsomorphicFn()
+	.client(async () => {
+		const { data } = await authClient.getSession()
+		return data
+	})
+	.server(async () => {
+		const { auth } = await import("@/server/lib/auth")
+		const { getRequestHeaders } = await import("@tanstack/react-start/server")
+		return await auth.api.getSession({ headers: getRequestHeaders() })
+	})
+
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
 	beforeLoad: async () => {
-		if (typeof window === "undefined") {
-			return { session: null }
-		}
-		const { data: session } = await authClient.getSession()
+		const session = await fetchSession()
 		return { session }
 	},
 	head: () => ({
