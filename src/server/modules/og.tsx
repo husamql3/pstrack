@@ -1,28 +1,33 @@
-import { readFileSync } from "node:fs"
-import path from "node:path"
 import Elysia, { t } from "elysia"
 import satori from "satori"
-
-const geistFont = readFileSync(
-	path.join(
-		process.cwd(),
-		"node_modules/@fontsource/geist/files/geist-latin-600-normal.woff"
-	)
-)
-
-const geistFontRegular = readFileSync(
-	path.join(
-		process.cwd(),
-		"node_modules/@fontsource/geist/files/geist-latin-400-normal.woff"
-	)
-)
 
 const OG_WIDTH = 1200
 const OG_HEIGHT = 630
 
+let fontsPromise: Promise<{ regular: ArrayBuffer; bold: ArrayBuffer }> | null = null
+
+const loadFonts = (origin: string) => {
+	if (!fontsPromise) {
+		fontsPromise = Promise.all([
+			fetch(`${origin}/fonts/geist-400.woff`).then((r) => r.arrayBuffer()),
+			fetch(`${origin}/fonts/geist-600.woff`).then((r) => r.arrayBuffer()),
+		])
+			.then(([regular, bold]) => ({ regular, bold }))
+			.catch((err) => {
+				fontsPromise = null
+				throw err
+			})
+	}
+	return fontsPromise
+}
+
 export const og = new Elysia({ prefix: "/og" }).get(
 	"/",
-	async ({ query }) => {
+	async ({ query, request }) => {
+		const { regular: geistFontRegular, bold: geistFont } = await loadFonts(
+			new URL(request.url).origin
+		)
+
 		const title = query.title ?? "PStrack"
 		const subtitle = query.subtitle ?? "Show up. Solve. Repeat."
 
