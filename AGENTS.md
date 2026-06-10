@@ -39,6 +39,56 @@ PStrack is a competitive programming accountability platform. Users join groups,
 
 Pro is a **lifetime one-time purchase** via Polar ($14 standard, $9 sale). No subscriptions.
 
+## Commands
+
+Runtime is **Bun** (≥1.2.2).
+
+### Develop
+
+| Command | What it does |
+|---|---|
+| `bun run dev` | Starts the portless proxy + Vite dev server. App is served at **https://pstrack.localhost** (not `127.0.0.1:PORT`). |
+| `bun run dev:app` | Vite dev server only, bound to `127.0.0.1:${PORT:-3001}`. Use when you need a direct port. |
+| `bun run dev:trigger` | Trigger.dev local dev runner (background jobs). |
+| `bun run dev:email` | React Email preview server on port 3001 (`src/emails/`). |
+| `bun run preview` | Vite preview of the production build. |
+
+### Build & verify
+
+| Command | What it does |
+|---|---|
+| `bun run build` | `prisma generate && vite build`. The TanStack Start build. |
+| `bun run typecheck` | `prisma generate && tsc --noEmit`. Use this — never bare `tsc`, the generated Prisma client is required for types to resolve. |
+| `bun run check` | Biome lint/format check (read-only). |
+| `bun run format` | Biome write — applies fixes including unsafe ones. |
+| `bun run knip` | Detects unused exports/files. |
+| `bun run test` | Vitest, single run (no watch). |
+| `bun run test -- src/path/to/file.test.ts` | Run one test file. Append `-t "name"` to filter by test name. |
+
+### Database (Prisma → Neon)
+
+| Command | What it does |
+|---|---|
+| `bun run db:generate` | Regenerate the Prisma client into `generated/prisma/`. Required after schema edits. |
+| `bun run db:migrate` | `prisma migrate dev` — create + apply a dev migration. |
+| `bun run db:migrate:deploy` | Apply pending migrations (CI / prod). |
+| `bun run db:push` | Push schema without a migration (prototype use only). |
+| `bun run db:seed` | Run the master seed (`prisma/seed.ts`). Also `db:seed-problems`, `db:seed-groups`, `db:seed-daily-problems` for targeted seeds. |
+| `bun run db:reset` | `prisma migrate reset` — drops, re-migrates, re-seeds. Destructive; confirm before running. |
+| `bun run db:studio` | Opens Prisma Studio against `.env`. |
+
+### Env sync
+
+| Command | What it does |
+|---|---|
+| `bun run env:sync` | Sync `.env` to Vercel. |
+| `bun run env:sync:trigger` | Sync env vars to Trigger.dev. |
+| `bun run env:sync:gh` | Sync env vars to GitHub Actions secrets. |
+
+### Trigger.dev deploys
+
+`bun run deploy:trigger-prod` deploys background jobs to Trigger.dev production. `bun run dev:trigger` is the local equivalent.
+
 ## Groups
 
 - **Public** - request to join, admin approves/rejects within 1 day (auto-expires)
