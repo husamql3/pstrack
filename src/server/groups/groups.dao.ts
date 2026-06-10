@@ -9,6 +9,7 @@ import { PointReason, SolveStatus } from "@/generated/prisma/enums"
 import { db } from "@/server/lib/db"
 import { pointsDao } from "@/server/points/points.dao"
 import { JOIN_GROUP_BONUS } from "@/server/points/points.type"
+import { problemsDao } from "@/server/problems/problems.dao"
 import {
 	GROUP_PROBLEMS_PAGE_SIZE,
 	type GroupDetailResponse,
@@ -157,7 +158,8 @@ export const groupsDao = {
 				tx,
 				groupId: created.id,
 			})
-			return created
+			const dp = await problemsDao.assignNextProblemTx(tx, created.id, startOfTodayUtc())
+			return { ...created, roadmapIndex: dp ? 1 : 0 }
 		})
 
 		return {

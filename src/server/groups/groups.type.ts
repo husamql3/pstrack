@@ -10,6 +10,7 @@ export const groupListSelect = {
 	slug: true,
 	type: true,
 	roadmap: true,
+	roadmapIndex: true,
 	maxMembers: true,
 	createdAt: true,
 	_count: {

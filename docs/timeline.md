@@ -161,11 +161,16 @@ Stay consistent with LeetCode — solve one problem a day, earn points, and comp
 ## Phase 9 — Admin Dashboard · [#227](https://github.com/husamql3/pstrack/issues/227)
 
 - [x] Platform admin flag on `User` (Better Auth `role` column, enforced on `/admin/*` routes)
-- [ ] `GET /api/admin/users` + `/admin/users` page
-- [ ] `PATCH /api/admin/users/:id` — adjust points, ban
-- [ ] `GET /api/admin/groups` + `DELETE /api/admin/groups/:id`
-- [ ] `GET /api/admin/stats` + `/admin` overview page
-- [ ] Admin route guard (redirect non-admins)
+- [x] `GET /api/admin/users` + `/admin/users` page
+- [x] `PATCH /api/admin/users/:id` — adjust points, ban
+- [x] `GET /api/admin/groups` + `DELETE /api/admin/groups/:id`
+- [x] `GET /api/admin/stats` + `/admin` overview page
+- [x] Admin route guard (redirect non-admins via `requirePlatformAdmin` + `_admin.tsx` layout)
+- [x] Admin audit log (`/admin/audit`)
+- [x] Feature flags admin (`/admin/flags`)
+- [x] System config admin (`/admin/config`)
+- [x] Email template console (`/admin/emails`)
+- [x] Admin group create + manage (members, join-requests, settings)
 
 **Deliverable:** Platform admins can manage users, groups, and view stats
 
@@ -173,13 +178,14 @@ Stay consistent with LeetCode — solve one problem a day, earn points, and comp
 
 ## Phase 10 — Polish & Launch · [#228](https://github.com/husamql3/pstrack/issues/228)
 
-- [ ] `react-error-boundary` on all routes with useful fallback UIs
-- [ ] Error boundaries on all pages
-- [ ] Loading skeletons on all data-fetching routes
+- [x] Route-level `errorComponent` on dashboard, problems, groups, group detail (inline `RouteErrorFallback` + root `ErrorPage` for unhandled crashes)
+- [ ] Error boundaries on remaining pages (settings, profile, admin, leaderboard)
+- [x] Loading skeletons on dashboard, problems, groups, group detail
+- [ ] Loading skeletons on remaining data-fetching routes
 - [ ] Empty states (no group joined, no problems solved yet, etc.)
 - [ ] Mobile-responsive UI audit
 - [x] Sentry source map upload in CI
-- [ ] Environment variables documented in `.env.example`
+- [x] Environment variables documented in `.env.example`
 - [ ] Vercel project configured (env vars, domain)
 - [ ] Soft launch to beta testers (50 users)
 - [ ] Monitor error rates in Sentry

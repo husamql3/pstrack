@@ -8,7 +8,6 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { HashAvatar } from "@/features/onboarding/components/hash-avatar"
 import {
-	LAUNCH_DATE_UTC,
 	ROADMAP_SHORT,
 	ROADMAP_TONE,
 	ROADMAP_TOTALS,
@@ -48,14 +47,17 @@ const MemberAvatar = ({ username }: { username: string | null }) => {
 }
 
 // ─── Roadmap progress ──────────────────────────────────────────────────────────
-// Position within the group's roadmap, derived deterministically from
-// `daysSinceLaunch % total` to match how the server assigns daily problems.
 
-const RoadmapProgress = ({ roadmap }: { roadmap: GroupListResponse["roadmap"] }) => {
+const RoadmapProgress = ({
+	roadmap,
+	roadmapIndex,
+}: {
+	roadmap: GroupListResponse["roadmap"]
+	roadmapIndex: number
+}) => {
 	const total = ROADMAP_TOTALS[roadmap]
 	if (!total) return null
-	const days = Math.max(0, Math.floor((Date.now() - LAUNCH_DATE_UTC) / 86_400_000))
-	const current = (days % total) + 1
+	const current = Math.min(roadmapIndex, total)
 	const pct = Math.min(Math.round((current / total) * 100), 100)
 	return (
 		<div className="flex flex-col gap-1.5">
@@ -261,7 +263,7 @@ export const GroupCard = ({
 			</div>
 
 			{/* Roadmap progress */}
-			<RoadmapProgress roadmap={group.roadmap} />
+			<RoadmapProgress roadmap={group.roadmap} roadmapIndex={group.roadmapIndex} />
 
 			{/* Action row: only for non-members. Wrapped in `relative` so the Button
 			    paints above the absolute Link overlay and captures its own clicks. */}

@@ -62,8 +62,6 @@ const verifyLeetCodeSubmission = async (
 	}
 }
 
-const LAUNCH_DATE_UTC = Date.UTC(2026, 0, 1)
-
 const startOfTodayUtc = () => {
 	const now = new Date()
 	return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()))
@@ -85,55 +83,87 @@ const roadmapFilter = (roadmap: RoadmapKey): Prisma.ProblemWhereInput => {
 	}
 }
 
-const pickProblemForDate = async (assignedDate: Date, roadmap: RoadmapKey) => {
-	const filter = roadmapFilter(roadmap)
-	const count = await db.problem.count({ where: filter })
-	if (count === 0) return null
-
-	const daysSinceLaunch = Math.max(
-		0,
-		Math.floor((assignedDate.getTime() - LAUNCH_DATE_UTC) / 86_400_000)
-	)
-	const skip = daysSinceLaunch % count
-
-	return db.problem.findFirst({
-		where: filter,
-		orderBy: { roadmapIndex: "asc" },
-		skip,
-		select: { id: true },
-	})
-}
-
-const ensureDailyProblem = async (
-	groupId: string,
-	assignedDate: Date,
-	roadmap: RoadmapKey
-) => {
-	const problem = await pickProblemForDate(assignedDate, roadmap)
-	if (!problem) return null
-
-	return db.dailyProblem.upsert({
-		where: { groupId_assignedDate: { groupId, assignedDate } },
-		create: { groupId, assignedDate, problemId: problem.id },
-		update: {},
+const dailyProblemFullSelect = {
+	id: true,
+	assignedDate: true,
+	firstSolveTime: true,
+	group: { select: { id: true, slug: true, roadmap: true } },
+	problem: { select: problemSelect },
+	solves: {
 		select: {
 			id: true,
-			assignedDate: true,
-			firstSolveTime: true,
-			group: { select: { id: true, slug: true, roadmap: true } },
-			problem: { select: problemSelect },
-			solves: {
-				select: {
-					id: true,
-					status: true,
-					pointsEarned: true,
-					isFirstInGroup: true,
-					createdAt: true,
-					verifiedAt: true,
-				},
-			},
+			status: true,
+			pointsEarned: true,
+			isFirstInGroup: true,
+			createdAt: true,
+			verifiedAt: true,
 		},
+	},
+} satisfies Prisma.DailyProblemSelect
+
+const findExistingDailyProblem = (groupId: string, assignedDate: Date) =>
+	db.dailyProblem.findUnique({
+		where: { groupId_assignedDate: { groupId, assignedDate } },
+		select: dailyProblemFullSelect,
 	})
+
+type Tx = Prisma.TransactionClient
+
+const assignNextProblemTx = async (
+	tx: Tx,
+	groupId: string,
+	assignedDate: Date
+): Promise<Prisma.DailyProblemGetPayload<{
+	select: typeof dailyProblemFullSelect
+}> | null> => {
+	const group = await tx.group.findUniqueOrThrow({
+		where: { id: groupId },
+		select: { roadmap: true, roadmapIndex: true },
+	})
+
+	const filter = roadmapFilter(group.roadmap)
+	const count = await tx.problem.count({ where: filter })
+	const nextIndex = group.roadmapIndex + 1
+	if (nextIndex > count) return null
+
+	const problem = await tx.problem.findFirst({
+		where: filter,
+		orderBy: { roadmapIndex: "asc" },
+		skip: nextIndex - 1,
+		select: { id: true },
+	})
+	if (!problem) return null
+
+	const dailyProblem = await tx.dailyProblem.create({
+		data: { groupId, assignedDate, problemId: problem.id },
+		select: dailyProblemFullSelect,
+	})
+
+	await tx.group.update({
+		where: { id: groupId },
+		data: { roadmapIndex: nextIndex },
+	})
+
+	return dailyProblem
+}
+
+const ensureDailyProblem = async (groupId: string, assignedDate: Date) => {
+	const existing = await findExistingDailyProblem(groupId, assignedDate)
+	if (existing) return existing
+
+	try {
+		return await db.$transaction((tx) => assignNextProblemTx(tx, groupId, assignedDate))
+	} catch (err) {
+		if (
+			err &&
+			typeof err === "object" &&
+			"code" in err &&
+			(err as { code?: string }).code === "P2002"
+		) {
+			return findExistingDailyProblem(groupId, assignedDate)
+		}
+		throw err
+	}
 }
 
 const findPrimaryGroup = (userId: string) =>
@@ -191,7 +221,7 @@ export const problemsDao = {
 	assignDailyProblems: async (date: Date) => {
 		const groups = await db.group.findMany({
 			where: { isActive: true },
-			select: { id: true, roadmap: true },
+			select: { id: true },
 		})
 
 		let assigned = 0
@@ -199,7 +229,7 @@ export const problemsDao = {
 
 		await Promise.all(
 			groups.map(async (group) => {
-				const result = await ensureDailyProblem(group.id, date, group.roadmap)
+				const result = await ensureDailyProblem(group.id, date)
 				if (result) assigned++
 				else skipped++
 			})
@@ -207,6 +237,11 @@ export const problemsDao = {
 
 		return { total: groups.length, assigned, skipped }
 	},
+
+	ensureDailyProblemForGroup: (groupId: string, assignedDate: Date) =>
+		ensureDailyProblem(groupId, assignedDate),
+
+	assignNextProblemTx,
 
 	getDailyDigestRecipients: async (date: Date) => {
 		const day = startOfUtcDay(date)
@@ -261,7 +296,7 @@ export const problemsDao = {
 	},
 
 	seedStarterProblems: async () => {
-		const BATCH = 50
+		const BATCH = 20
 		let seeded = 0
 		let skipped = 0
 
@@ -283,7 +318,7 @@ export const problemsDao = {
 				}
 				return true
 			})
-			const results = await db.$transaction(
+			const results = await Promise.all(
 				writable.map((problem) =>
 					db.problem.upsert({
 						where: { slug: problem.slug },
@@ -319,11 +354,7 @@ export const problemsDao = {
 		}
 
 		const [dailyProblem, { groupRank, groupSize }] = await Promise.all([
-			ensureDailyProblem(
-				membership.group.id,
-				startOfTodayUtc(),
-				membership.group.roadmap
-			),
+			ensureDailyProblem(membership.group.id, startOfTodayUtc()),
 			getGroupRank(membership.group.id, userStats.totalPoints),
 		])
 

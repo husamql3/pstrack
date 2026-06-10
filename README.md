@@ -1,21 +1,24 @@
-# TanStack Start + shadcn/ui
+# PStrack
 
-This is a template for a new TanStack Start project with React, TypeScript, and shadcn/ui.
+**Show up. Solve. Repeat.**
 
-## Adding components
+Stay consistent with LeetCode — solve one problem a day, earn points, and compete with your group.
 
-To add components to your app, run the following command:
+## Stack
+
+TanStack Start · Elysia · Eden Treaty · Better Auth · Prisma + Neon · Trigger.dev · Resend · Polar · Bun
+
+## Develop
 
 ```bash
-npx shadcn@latest add button
+bun install
+cp .env.example .env   # fill in secrets
+bun run db:migrate
+bun run dev            # https://pstrack.localhost
 ```
 
-This will place the ui components in the `components` directory.
+See [`AGENTS.md`](./AGENTS.md) for commands, conventions, and architecture. Roadmap lives in [`docs/timeline.md`](./docs/timeline.md).
 
-## Using components
+## License
 
-To use the components in your app, import them as follows:
-
-```tsx
-import { Button } from "@/components/ui/button";
-```
+MIT — see [`LICENSE`](./LICENSE).

@@ -4,6 +4,7 @@ import { sileo } from "sileo"
 import { z } from "zod"
 
 import { AppHeader } from "@/components/app-header"
+import { RouteErrorFallback } from "@/components/route-error-fallback"
 import { Skeleton } from "@/components/ui/skeleton"
 import { GroupCard } from "@/features/groups/components/group-card"
 import { GroupFilterRow } from "@/features/groups/components/group-filter-row"
@@ -28,6 +29,14 @@ export const Route = createFileRoute("/groups")({
 	ssr: true,
 	validateSearch: searchSchema,
 	component: GroupsPage,
+	errorComponent: ({ error, reset }) => (
+		<div className="flex h-screen flex-col">
+			<AppHeader />
+			<main className="mx-auto min-h-0 w-full flex-1 overflow-y-auto px-8 pt-8 pb-4">
+				<RouteErrorFallback error={error} reset={reset} title="Could not load groups" />
+			</main>
+		</div>
+	),
 	head: () =>
 		createSeoHead({
 			title: "LeetCode Study Groups — Join or Start One",

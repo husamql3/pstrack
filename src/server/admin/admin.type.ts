@@ -145,6 +145,7 @@ export const adminGroupDetailSelect = {
 	slug: true,
 	type: true,
 	roadmap: true,
+	roadmapIndex: true,
 	creatorId: true,
 	maxMembers: true,
 	isActive: true,

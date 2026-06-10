@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { Skeleton } from "@/components/ui/skeleton"
 import { env } from "@/env"
+import { ROADMAP_TOTALS } from "@/features/problems/constants"
+import type { Roadmap } from "@/generated/prisma/enums"
 import {
 	useAdminGenerateInvite,
 	useAdminGroup,
@@ -39,6 +41,7 @@ export const AdminGroupSettings = () => {
 			<Separator />
 			<GroupMetadata
 				roadmap={data.roadmap}
+				roadmapIndex={data.roadmapIndex}
 				type={data.type}
 				maxMembers={data.maxMembers}
 				memberCount={data._count.members}
@@ -160,30 +163,39 @@ const InviteLinkSection = ({
 
 const GroupMetadata = ({
 	roadmap,
+	roadmapIndex,
 	type,
 	maxMembers,
 	memberCount,
 	createdAt,
 }: {
-	roadmap: string
+	roadmap: Roadmap
+	roadmapIndex: number
 	type: string
 	maxMembers: number
 	memberCount: number
 	createdAt: Date
-}) => (
-	<section>
-		<h2 className="font-semibold">Details</h2>
-		<dl className="mt-4 grid grid-cols-2 gap-x-6 gap-y-3 text-sm">
-			<dt className="text-muted-foreground">Roadmap</dt>
-			<dd className="font-medium">{roadmap}</dd>
-			<dt className="text-muted-foreground">Type</dt>
-			<dd className="font-medium">{type.toLowerCase()}</dd>
-			<dt className="text-muted-foreground">Capacity</dt>
-			<dd className="font-medium tabular-nums">
-				{memberCount} / {maxMembers}
-			</dd>
-			<dt className="text-muted-foreground">Created</dt>
-			<dd className="font-medium">{createdAt.toLocaleDateString()}</dd>
-		</dl>
-	</section>
-)
+}) => {
+	const total = ROADMAP_TOTALS[roadmap]
+	return (
+		<section>
+			<h2 className="font-semibold">Details</h2>
+			<dl className="mt-4 grid grid-cols-2 gap-x-6 gap-y-3 text-sm">
+				<dt className="text-muted-foreground">Roadmap</dt>
+				<dd className="font-medium">{roadmap}</dd>
+				<dt className="text-muted-foreground">Progress</dt>
+				<dd className="font-medium tabular-nums">
+					{roadmapIndex} / {total}
+				</dd>
+				<dt className="text-muted-foreground">Type</dt>
+				<dd className="font-medium">{type.toLowerCase()}</dd>
+				<dt className="text-muted-foreground">Capacity</dt>
+				<dd className="font-medium tabular-nums">
+					{memberCount} / {maxMembers}
+				</dd>
+				<dt className="text-muted-foreground">Created</dt>
+				<dd className="font-medium">{createdAt.toLocaleDateString()}</dd>
+			</dl>
+		</section>
+	)
+}

@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from "react"
 import { z } from "zod"
 
 import { AppHeader } from "@/components/app-header"
+import { RouteErrorFallback } from "@/components/route-error-fallback"
 import { useTodayProblem } from "@/features/dashboard/hooks/use-today-problem"
 import { FilterRow } from "@/features/problems/components/filter-row"
 import { ProblemList } from "@/features/problems/components/problem-list"
@@ -36,6 +37,14 @@ export const Route = createFileRoute("/problems")({
 	ssr: true,
 	validateSearch: searchSchema,
 	component: ProblemsPage,
+	errorComponent: ({ error, reset }) => (
+		<div className="flex h-screen flex-col">
+			<AppHeader />
+			<main className="mx-auto min-h-0 w-full flex-1 overflow-y-auto px-8 pt-8 pb-4">
+				<RouteErrorFallback error={error} reset={reset} title="Could not load problems" />
+			</main>
+		</div>
+	),
 	head: () =>
 		createSeoHead({
 			title: "NeetCode 250, NeetCode 150 & Blind 75 Problem List",
