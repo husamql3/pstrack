@@ -24,6 +24,7 @@ export const env = createEnv({
 		// auth
 		BETTER_AUTH_SECRET: z.string().min(32),
 		BETTER_AUTH_URL: z.url().default("https://pstrack.localhost"),
+		BETTER_AUTH_API_KEY: z.string().min(1),
 		GOOGLE_CLIENT_ID: z.string().min(1),
 		GOOGLE_CLIENT_SECRET: z.string().min(1),
 		GITHUB_CLIENT_ID: z.string().min(1),

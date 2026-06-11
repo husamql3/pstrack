@@ -1,4 +1,4 @@
-import { sentinelClient } from "@better-auth/infra/client"
+import { dashClient, sentinelClient } from "@better-auth/infra/client"
 import { polarClient } from "@polar-sh/better-auth"
 import {
 	adminClient,
@@ -18,6 +18,7 @@ export const authClient = createAuthClient({
 		adminClient(),
 		polarClient(),
 		inferAdditionalFields<Auth>(),
+		dashClient(),
 		sentinelClient(),
 	],
 })

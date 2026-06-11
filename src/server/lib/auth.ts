@@ -113,7 +113,10 @@ export const auth = betterAuth({
 			},
 		}),
 		admin(),
-		dash(),
+		dash({
+			apiKey: env.BETTER_AUTH_API_KEY,
+			activityTracking: { enabled: true },
+		}),
 		polar({
 			client: polarClient,
 			createCustomerOnSignUp: true,
