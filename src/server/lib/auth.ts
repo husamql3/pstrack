@@ -1,3 +1,4 @@
+import { dash } from "@better-auth/infra"
 import { checkout, polar } from "@polar-sh/better-auth"
 import { betterAuth } from "better-auth"
 import { prismaAdapter } from "better-auth/adapters/prisma"
@@ -103,6 +104,7 @@ export const auth = betterAuth({
 			},
 		}),
 		admin(),
+		dash(),
 		polar({
 			client: polarClient,
 			createCustomerOnSignUp: true,
