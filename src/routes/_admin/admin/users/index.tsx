@@ -115,11 +115,11 @@ function AdminUsersListPage() {
 						<TableHeader>
 							<TableRow>
 								<TableHead>User</TableHead>
-								<TableHead>Email</TableHead>
-								<TableHead>Role</TableHead>
+								<TableHead className="hidden sm:table-cell">Email</TableHead>
+								<TableHead className="hidden sm:table-cell">Role</TableHead>
 								<TableHead>Status</TableHead>
-								<TableHead className="text-right">Points</TableHead>
-								<TableHead className="text-right">Streak</TableHead>
+								<TableHead className="hidden text-right sm:table-cell">Points</TableHead>
+								<TableHead className="hidden text-right sm:table-cell">Streak</TableHead>
 								<TableHead className="w-10" />
 							</TableRow>
 						</TableHeader>
@@ -136,8 +136,10 @@ function AdminUsersListPage() {
 											<span className="text-muted-foreground text-xs">{u.name}</span>
 										</Link>
 									</TableCell>
-									<TableCell className="text-muted-foreground">{u.email}</TableCell>
-									<TableCell>
+									<TableCell className="hidden text-muted-foreground sm:table-cell">
+										{u.email}
+									</TableCell>
+									<TableCell className="hidden sm:table-cell">
 										{u.role === "admin" ? (
 											<Badge variant="secondary">admin</Badge>
 										) : (
@@ -150,10 +152,10 @@ function AdminUsersListPage() {
 											{u.isPro ? <Badge>pro</Badge> : null}
 										</div>
 									</TableCell>
-									<TableCell className="text-right tabular-nums">
+									<TableCell className="hidden text-right tabular-nums sm:table-cell">
 										{u.totalPoints.toLocaleString()}
 									</TableCell>
-									<TableCell className="text-right tabular-nums">
+									<TableCell className="hidden text-right tabular-nums sm:table-cell">
 										{u.currentStreak}
 									</TableCell>
 									<TableCell>

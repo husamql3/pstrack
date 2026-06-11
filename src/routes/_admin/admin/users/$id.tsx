@@ -207,7 +207,7 @@ function PointsHistoryTable({ userId }: { userId: string }) {
 								<TableHead>When</TableHead>
 								<TableHead>Reason</TableHead>
 								<TableHead className="text-right">Delta</TableHead>
-								<TableHead>Note</TableHead>
+								<TableHead className="hidden sm:table-cell">Note</TableHead>
 							</TableRow>
 						</TableHeader>
 						<TableBody>
@@ -223,7 +223,7 @@ function PointsHistoryTable({ userId }: { userId: string }) {
 										{row.delta > 0 ? "+" : ""}
 										{row.delta}
 									</TableCell>
-									<TableCell className="text-muted-foreground text-xs">
+									<TableCell className="hidden text-muted-foreground text-xs sm:table-cell">
 										{row.adminNote ?? "-"}
 									</TableCell>
 								</TableRow>

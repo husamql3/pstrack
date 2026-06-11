@@ -264,10 +264,12 @@ function AdminGroupsPage() {
 						<TableHeader>
 							<TableRow>
 								<TableHead>Slug</TableHead>
-								<TableHead>Type</TableHead>
-								<TableHead>Roadmap</TableHead>
-								<TableHead className="text-right">Members</TableHead>
-								<TableHead className="text-right">Daily problems</TableHead>
+								<TableHead className="hidden sm:table-cell">Type</TableHead>
+								<TableHead className="hidden sm:table-cell">Roadmap</TableHead>
+								<TableHead className="hidden text-right sm:table-cell">Members</TableHead>
+								<TableHead className="hidden text-right sm:table-cell">
+									Daily problems
+								</TableHead>
 								<TableHead>Status</TableHead>
 								<TableHead className="w-10" />
 							</TableRow>
@@ -284,16 +286,16 @@ function AdminGroupsPage() {
 											@{g.slug}
 										</Link>
 									</TableCell>
-									<TableCell>
+									<TableCell className="hidden sm:table-cell">
 										<Badge variant={g.type === "PUBLIC" ? "outline" : "secondary"}>
 											{g.type.toLowerCase()}
 										</Badge>
 									</TableCell>
-									<TableCell>{g.roadmap}</TableCell>
-									<TableCell className="text-right tabular-nums">
+									<TableCell className="hidden sm:table-cell">{g.roadmap}</TableCell>
+									<TableCell className="hidden text-right tabular-nums sm:table-cell">
 										{g._count.members} / {g.maxMembers}
 									</TableCell>
-									<TableCell className="text-right tabular-nums">
+									<TableCell className="hidden text-right tabular-nums sm:table-cell">
 										{g._count.dailyProblems}
 									</TableCell>
 									<TableCell>

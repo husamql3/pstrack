@@ -87,8 +87,8 @@ function AdminAuditPage() {
 								<TableHead className="whitespace-nowrap">When</TableHead>
 								<TableHead>Admin</TableHead>
 								<TableHead>Action</TableHead>
-								<TableHead>Target</TableHead>
-								<TableHead>Metadata</TableHead>
+								<TableHead className="hidden sm:table-cell">Target</TableHead>
+								<TableHead className="hidden sm:table-cell">Metadata</TableHead>
 							</TableRow>
 						</TableHeader>
 						<TableBody>
@@ -105,7 +105,7 @@ function AdminAuditPage() {
 											{row.action}
 										</Badge>
 									</TableCell>
-									<TableCell className="text-muted-foreground">
+									<TableCell className="hidden text-muted-foreground sm:table-cell">
 										{row.targetType ? (
 											<span>
 												{row.targetType.toLowerCase()}
@@ -115,7 +115,7 @@ function AdminAuditPage() {
 											"-"
 										)}
 									</TableCell>
-									<TableCell>
+									<TableCell className="hidden sm:table-cell">
 										<pre className="max-w-md overflow-x-auto whitespace-pre-wrap text-[10px] text-muted-foreground">
 											{JSON.stringify(row.metadata, null, 0)}
 										</pre>

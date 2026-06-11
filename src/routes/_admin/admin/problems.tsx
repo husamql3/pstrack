@@ -160,10 +160,10 @@ function AdminProblemsPage() {
 							<TableRow>
 								<TableHead className="w-12">#</TableHead>
 								<TableHead>Title</TableHead>
-								<TableHead>Topic</TableHead>
+								<TableHead className="hidden sm:table-cell">Topic</TableHead>
 								<TableHead>Difficulty</TableHead>
-								<TableHead>Roadmaps</TableHead>
-								<TableHead>Source</TableHead>
+								<TableHead className="hidden sm:table-cell">Roadmaps</TableHead>
+								<TableHead className="hidden sm:table-cell">Source</TableHead>
 							</TableRow>
 						</TableHeader>
 						<TableBody>
@@ -173,18 +173,20 @@ function AdminProblemsPage() {
 										{p.roadmapIndex}
 									</TableCell>
 									<TableCell className="font-medium">{p.title}</TableCell>
-									<TableCell className="text-muted-foreground">{p.topic}</TableCell>
+									<TableCell className="hidden text-muted-foreground sm:table-cell">
+										{p.topic}
+									</TableCell>
 									<TableCell className={`font-medium ${DIFFICULTY_COLOR[p.difficulty]}`}>
 										{p.difficulty}
 									</TableCell>
-									<TableCell>
+									<TableCell className="hidden sm:table-cell">
 										<div className="flex gap-1">
 											{p.neetcode250 ? <Badge variant="outline">NC250</Badge> : null}
 											{p.neetcode150 ? <Badge variant="outline">NC150</Badge> : null}
 											{p.blind75 ? <Badge variant="outline">Blind75</Badge> : null}
 										</div>
 									</TableCell>
-									<TableCell>
+									<TableCell className="hidden sm:table-cell">
 										<Badge variant={p.source === "CUSTOM" ? "secondary" : "outline"}>
 											{p.source.toLowerCase()}
 										</Badge>

@@ -57,8 +57,8 @@ export const AdminGroupJoinRequests = () => {
 				<TableHeader>
 					<TableRow>
 						<TableHead>User</TableHead>
-						<TableHead>Requested</TableHead>
-						<TableHead>Expires</TableHead>
+						<TableHead className="hidden sm:table-cell">Requested</TableHead>
+						<TableHead className="hidden sm:table-cell">Expires</TableHead>
 						<TableHead className="text-right">Actions</TableHead>
 					</TableRow>
 				</TableHeader>
@@ -68,10 +68,10 @@ export const AdminGroupJoinRequests = () => {
 							<TableCell className="font-medium">
 								{req.user.username ?? req.user.name}
 							</TableCell>
-							<TableCell className="text-muted-foreground">
+							<TableCell className="hidden text-muted-foreground sm:table-cell">
 								{new Date(req.createdAt).toLocaleDateString()}
 							</TableCell>
-							<TableCell className="text-muted-foreground">
+							<TableCell className="hidden text-muted-foreground sm:table-cell">
 								{new Date(req.expiresAt).toLocaleDateString()}
 							</TableCell>
 							<TableCell>

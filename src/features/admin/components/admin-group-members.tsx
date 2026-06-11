@@ -48,8 +48,8 @@ export const AdminGroupMembers = () => {
 					<TableRow>
 						<TableHead>User</TableHead>
 						<TableHead className="text-right">Points</TableHead>
-						<TableHead className="text-right">Streak</TableHead>
-						<TableHead>Joined</TableHead>
+						<TableHead className="hidden text-right sm:table-cell">Streak</TableHead>
+						<TableHead className="hidden sm:table-cell">Joined</TableHead>
 						<TableHead className="w-10" />
 					</TableRow>
 				</TableHeader>
@@ -70,10 +70,10 @@ export const AdminGroupMembers = () => {
 							<TableCell className="text-right tabular-nums">
 								{member.user.totalPoints}
 							</TableCell>
-							<TableCell className="text-right tabular-nums">
+							<TableCell className="hidden text-right tabular-nums sm:table-cell">
 								{member.user.currentStreak}d
 							</TableCell>
-							<TableCell className="text-muted-foreground">
+							<TableCell className="hidden text-muted-foreground sm:table-cell">
 								{new Date(member.joinedAt).toLocaleDateString()}
 							</TableCell>
 							<TableCell>
