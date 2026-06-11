@@ -3,7 +3,7 @@ import { Elysia, status } from "elysia"
 import { env } from "@/env"
 import type { Prisma } from "@/generated/prisma/client"
 import { db } from "@/server/lib/db"
-import { resend } from "@/server/lib/email"
+import { sendEmail } from "@/server/lib/email"
 import { captureServerException } from "@/server/lib/sentry"
 import { requirePlatformAdmin } from "@/server/lib/session"
 import { adminDao } from "./admin.dao"
@@ -123,7 +123,7 @@ export const adminController = new Elysia({ prefix: "/admin", tags: ["Admin"] })
 			const props = (body.props ?? {}) as Record<string, unknown>
 
 			try {
-				await resend.emails.send({
+				await sendEmail({
 					from: env.EMAIL_FROM,
 					to: target.email,
 					subject: template.subject(props),

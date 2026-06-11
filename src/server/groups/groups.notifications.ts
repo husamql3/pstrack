@@ -5,7 +5,7 @@ import JoinRequestEmail from "@/emails/join-request"
 import RemovedFromGroupEmail from "@/emails/removed-from-group"
 import { env } from "@/env"
 import { db } from "@/server/lib/db"
-import { resend } from "@/server/lib/email"
+import { sendEmail } from "@/server/lib/email"
 import { captureServerException } from "@/server/lib/sentry"
 
 const BASE_URL = env.BETTER_AUTH_URL.replace(/\/$/, "")
@@ -48,7 +48,7 @@ export const groupNotifications = {
 
 			await Promise.all(
 				siteAdmins.map((admin) =>
-					resend.emails.send({
+					sendEmail({
 						from: env.EMAIL_FROM,
 						to: admin.email,
 						subject: `New join request for ${groupName(group.slug)}`,
@@ -72,7 +72,7 @@ export const groupNotifications = {
 			])
 			if (!requester || !group || !requester.notifyGroupActivity) return
 
-			await resend.emails.send({
+			await sendEmail({
 				from: env.EMAIL_FROM,
 				to: requester.email,
 				subject: `You've been approved to join ${groupName(group.slug)}`,
@@ -93,7 +93,7 @@ export const groupNotifications = {
 			])
 			if (!requester || !group || !requester.notifyGroupActivity) return
 
-			await resend.emails.send({
+			await sendEmail({
 				from: env.EMAIL_FROM,
 				to: requester.email,
 				subject: `Your request to join ${groupName(group.slug)} was not approved`,
@@ -114,7 +114,7 @@ export const groupNotifications = {
 			])
 			if (!requester || !group || !requester.notifyGroupActivity) return
 
-			await resend.emails.send({
+			await sendEmail({
 				from: env.EMAIL_FROM,
 				to: requester.email,
 				subject: `Your request to join ${groupName(group.slug)} expired`,
@@ -137,7 +137,7 @@ export const groupNotifications = {
 			])
 			if (!user || !group || !user.notifyGroupActivity) return
 
-			await resend.emails.send({
+			await sendEmail({
 				from: env.EMAIL_FROM,
 				to: user.email,
 				subject: `You've been removed from ${groupName(group.slug)}`,

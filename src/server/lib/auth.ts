@@ -8,7 +8,7 @@ import MagicLinkEmail from "@/emails/magic-link"
 import WelcomeEmail from "@/emails/welcome"
 import { env } from "@/env"
 import { db } from "@/server/lib/db"
-import { resend } from "@/server/lib/email"
+import { sendEmail } from "@/server/lib/email"
 import { logger } from "@/server/lib/logger"
 import { polarClient } from "@/server/lib/polar"
 
@@ -76,12 +76,16 @@ export const auth = betterAuth({
 		user: {
 			create: {
 				after: async (user) => {
-					await resend.emails.send({
-						from: env.EMAIL_FROM,
-						to: user.email,
-						subject: "Welcome to PStrack",
-						react: WelcomeEmail({ name: user.name }),
-					})
+					try {
+						await sendEmail({
+							from: env.EMAIL_FROM,
+							to: user.email,
+							subject: "Welcome to PStrack",
+							react: WelcomeEmail({ name: user.name }),
+						})
+					} catch (err) {
+						logger.error({ err, userId: user.id }, "welcome email failed")
+					}
 				},
 			},
 		},
@@ -95,12 +99,17 @@ export const auth = betterAuth({
 				const redirectUrl = new URL(url)
 				redirectUrl.pathname = "/api/v3/magic-link"
 				logger.debug({ redirectUrl: redirectUrl.toString() }, "magic link redirect")
-				await resend.emails.send({
-					from: env.EMAIL_FROM,
-					to: email,
-					subject: "Sign in to PStrack",
-					react: MagicLinkEmail({ url: redirectUrl.toString() }),
-				})
+				try {
+					await sendEmail({
+						from: env.EMAIL_FROM,
+						to: email,
+						subject: "Sign in to PStrack",
+						react: MagicLinkEmail({ url: redirectUrl.toString() }),
+					})
+				} catch (err) {
+					logger.error({ err, email }, "magic link email failed")
+					throw err
+				}
 			},
 		}),
 		admin(),

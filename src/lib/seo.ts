@@ -46,11 +46,6 @@ const normalizePath = (path: string) => {
 const buildTitle = (title: string) =>
 	title === META.titleSuffix ? title : `${title} | ${META.titleSuffix}`
 
-const buildOgImageUrl = (title: string) => {
-	const params = new URLSearchParams({ title })
-	return `${META.url}/api/v3/og?${params.toString()}`
-}
-
 export const createSeoHead = ({
 	title,
 	description,
@@ -63,7 +58,7 @@ export const createSeoHead = ({
 		? image.startsWith("http")
 			? image
 			: `${META.url}${normalizePath(image)}`
-		: buildOgImageUrl(title)
+		: `${META.url}${META.og.defaultImage}`
 	const fullTitle = buildTitle(title)
 	const canonical = `${META.url}${normalizePath(path)}`
 

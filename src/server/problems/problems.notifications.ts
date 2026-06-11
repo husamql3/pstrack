@@ -3,7 +3,7 @@ import ProUnlockedByPointsEmail from "@/emails/pro-unlocked-by-points"
 import StreakMilestoneEmail from "@/emails/streak-milestone"
 import { env } from "@/env"
 import { db } from "@/server/lib/db"
-import { resend } from "@/server/lib/email"
+import { sendEmail } from "@/server/lib/email"
 import { captureServerException } from "@/server/lib/sentry"
 
 const BASE_URL = env.BETTER_AUTH_URL.replace(/\/$/, "")
@@ -36,34 +36,28 @@ export const problemNotifications = {
 
 		await Promise.all([
 			crossedProThreshold &&
-				resend.emails
-					.send({
-						from: env.EMAIL_FROM,
-						to: email,
-						subject: "You've unlocked Pro on PStrack",
-						react: ProUnlockedByPointsEmail({ name, dashboardUrl }),
-					})
-					.catch((err) => captureServerException(err, { tag: "email:pro-unlocked" })),
+				sendEmail({
+					from: env.EMAIL_FROM,
+					to: email,
+					subject: "You've unlocked Pro on PStrack",
+					react: ProUnlockedByPointsEmail({ name, dashboardUrl }),
+				}).catch((err) => captureServerException(err, { tag: "email:pro-unlocked" })),
 
 			isStreakMilestone &&
-				resend.emails
-					.send({
-						from: env.EMAIL_FROM,
-						to: email,
-						subject: `${newStreak}-day streak on PStrack`,
-						react: StreakMilestoneEmail({ name, streak: newStreak, dashboardUrl }),
-					})
-					.catch((err) => captureServerException(err, { tag: "email:streak-milestone" })),
+				sendEmail({
+					from: env.EMAIL_FROM,
+					to: email,
+					subject: `${newStreak}-day streak on PStrack`,
+					react: StreakMilestoneEmail({ name, streak: newStreak, dashboardUrl }),
+				}).catch((err) => captureServerException(err, { tag: "email:streak-milestone" })),
 
 			...newBadges.map((badgeType) =>
-				resend.emails
-					.send({
-						from: env.EMAIL_FROM,
-						to: email,
-						subject: `New badge on PStrack`,
-						react: BadgeEarnedEmail({ name, badgeType, dashboardUrl }),
-					})
-					.catch((err) => captureServerException(err, { tag: "email:badge-earned" }))
+				sendEmail({
+					from: env.EMAIL_FROM,
+					to: email,
+					subject: `New badge on PStrack`,
+					react: BadgeEarnedEmail({ name, badgeType, dashboardUrl }),
+				}).catch((err) => captureServerException(err, { tag: "email:badge-earned" }))
 			),
 		])
 	},
