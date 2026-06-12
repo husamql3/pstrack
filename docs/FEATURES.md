@@ -20,23 +20,21 @@
 
 **Verification Flow**
 1. User clicks "Mark as Solved"
-2. `UserSolve` created with status `PENDING_VERIFICATION`
-3. Trigger.dev job `verify-submission` fires
-4. Checks LeetCode GraphQL API (or Codeforces API) for accepted submission matching:
+2. The request synchronously checks LeetCode for an accepted submission matching:
    - Problem ID
    - Timestamp after problem assignment
    - Status = Accepted
-5. If verified: status → `SOLVED`, points awarded, streak incremented
-6. If not found after retry window (1 hour): status → `VERIFICATION_FAILED`
+3. If verified: `UserSolve` status → `SOLVED`, points awarded, streak incremented
+4. If not found: no solve row is created on the first monthly grace failure; later monthly failures are treated as a miss
 
 **Pause**
-- User clicks "Pause Today" - status → `PAUSED`, streak preserved, no points lost
+- User clicks "Pause Today" - status → `PAUSED`, streak preserved, -5 points
 - Consumes 1 pause from `pausesUsedThisMonth`
 - Allowed: Free 2/month, Pro 4/month
 - Auto-approved, no excuse needed
 
 **Miss**
-- If user does neither by end of day: status → `MISSED` via nightly job
+- If user does neither for their primary group by end of day: status → `MISSED` via nightly job
 - Streak breaks, -3 points
 
 ### 3. Groups

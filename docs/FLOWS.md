@@ -14,12 +14,8 @@ End-to-end lifecycles for the load-bearing user actions. Cross-references the re
 
 2. User clicks "Mark as Solved"
    POST /api/v3/problems/today/solve
-     → creates UserSolve { status: PENDING_VERIFICATION }
-     → triggers verify-submission Trigger.dev task
-
-3. verify-submission job
-   → polls LeetCode GraphQL / Codeforces API
-   → if accepted submission found after problem.assignedDate:
+     → synchronously checks LeetCode recent accepted submissions
+     → if accepted submission found after problem.assignedDate:
        db.$transaction([
          update UserSolve { status: SOLVED, verifiedAt, pointsEarned }
          if firstSolver: update DailyProblem.firstSolverId, award +10 bonus
@@ -36,15 +32,17 @@ End-to-end lifecycles for the load-bearing user actions. Cross-references the re
 
 5. End of day (midnight UTC, next run)
    mark-missed job
-     → finds UserSolves from yesterday still PENDING/null
-     → sets status MISSED
-     → applies −5 points, clawbacks same-day bonuses
+     → picks each user's primary active group (earliest joined group)
+     → skips users who joined that primary group on the swept date
+     → creates UserSolve { status: MISSED } when no SOLVED/PAUSED row exists
+     → applies −3 points, clawbacks streak bonuses
      → resets currentStreak = 0, clears currentStreakStartedAt
 ```
 
 ### Key invariants
 
-- `verify-submission` and `mark-missed` both write through `applyPointsDelta` - the floor (`totalPoints >= 0`) and the Pro auto-grant live in one place.
+- Solve verification and `mark-missed` both write through `applyPointsDelta` - the floor (`totalPoints >= 0`) and the Pro auto-grant live in one place.
+- `mark-missed` is intentionally primary-group only. A Pro user in multiple groups is responsible for one daily problem per day, not one per group.
 - The clawback sum must be computed *before* `currentStreakStartedAt` is cleared. Same transaction.
 - Streak multiplier bonus is written as a separate `PointsHistory` row (`reason = STREAK_MULTIPLIER_BONUS`) so clawback can find and reverse just the delta, not the base solve points.
 - `firstSolver` is awarded only if no `firstSolverId` is set on the `DailyProblem` yet - race-safe via the unique constraint.

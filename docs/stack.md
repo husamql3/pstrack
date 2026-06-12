@@ -91,7 +91,7 @@ pstrack/
 | Job | Trigger | Description |
 |---|---|---|
 | `assign-daily-problem` | Cron: midnight | Assigns next NeetCode 250 problem to all active groups |
-| `verify-submission` | Event: user marks solved | Polls LC/CF API, awards points, updates streak |
+| `mark-missed` | Cron: midnight | Marks users missing for their primary group's previous daily problem when no solve/pause row exists |
 | `expire-join-requests` | Cron: every hour | Marks PENDING requests older than 1 day as EXPIRED |
 | `reset-monthly-pauses` | Cron: 1st of month | Resets `pausesUsedThisMonth` to 0 for all users |
 | `send-email` | Event: various | Sends transactional email via Resend |

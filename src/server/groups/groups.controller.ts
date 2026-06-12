@@ -36,6 +36,10 @@ export const groupsController = new Elysia({ prefix: "/groups", tags: ["Groups"]
 			const { user, response } = await requireSessionUser(request)
 			if (!user) return response
 
+			if (!user.isPro && user.role !== "admin") {
+				return status(403, { error: "Creating a group requires a Pro account." })
+			}
+
 			const result = await groupsDao.createPublic(user.id)
 			if (result.error === "GROUP_LIMIT") {
 				return status(403, { error: "You have reached your group limit." })

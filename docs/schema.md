@@ -8,9 +8,9 @@ Database: **Neon (PostgreSQL)**
 - Points stored denormalized (`user.totalPoints`) and historically (`PointsHistory`) - denormalized for fast leaderboard queries
 - `DailyProblem` has `groupId` - keeps schema ready for per-group roadmap choice (Pro feature, post-MVP)
 - Cascade deletes on all membership and solve relations
-- `UserSolve.status` is the single source of truth for a day's outcome: `PENDING_VERIFICATION | SOLVED | PAUSED | MISSED | VERIFICATION_FAILED`
+- `UserSolve.status` is the single source of truth for terminal daily outcomes: `SOLVED | PAUSED | MISSED`
 - Better Auth manages `Session`, `Account`, `Verification` - do not add business logic to these tables
-- Streaks break on `MISSED`, not on `VERIFICATION_FAILED` - a failed verification gives a grace window
+- Streaks break on `MISSED`, never on `PAUSED`. The first monthly verification failure is tracked separately on `User.verificationFailuresThisMonth` and does not create a solve row.
 
 ## Tables
 
@@ -188,7 +188,7 @@ model UserSolve {
   id             String      @id @default(cuid())
   userId         String
   dailyProblemId String
-  status         SolveStatus @default(PENDING_VERIFICATION)
+  status         SolveStatus @default(MISSED)
   pointsEarned   Int         @default(0)
   isFirstInGroup Boolean     @default(false)
   verifiedAt     DateTime?
@@ -204,11 +204,9 @@ model UserSolve {
 }
 
 enum SolveStatus {
-  PENDING_VERIFICATION
   SOLVED
   PAUSED
   MISSED
-  VERIFICATION_FAILED
 }
 
 model PointsHistory {
@@ -306,7 +304,7 @@ model Verification {
 | Free groups: `maxMembers = 30` / Pro groups: `maxMembers = 50` | Set at group creation based on creator's `isPro` |
 | Username can change at most once per 30 days | `usernameChangedAt` checked in `PATCH /api/users/me`; UI disables the field and shows next available date |
 | Username must match `^[a-z0-9_-]{3,30}$` and not collide with reserved words | Enforced in `usersModel` (TypeBox) + reserved-words list in `users.constants.ts` |
-| Streak breaks on `MISSED`, preserved on `VERIFICATION_FAILED` | Application logic in `verify-submission` and `mark-missed` jobs |
+| Streak breaks on `MISSED`, preserved on `PAUSED` | Application logic in synchronous solve verification and the `mark-missed` job |
 | Platform admin access gated on `User.isAdmin` (set manually in DB) | Elysia middleware on `/api/admin/*` |
 
 ## Points Reference

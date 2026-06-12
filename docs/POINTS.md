@@ -30,7 +30,7 @@ Notes:
 
 | Event | Points |
 |---|---|
-| Miss | **-5 flat + clawback** of all multiplier-delta and first-solver bonuses accumulated during the now-broken streak |
+| Miss | **-3 flat + clawback** of all multiplier-delta and first-solver bonuses accumulated during the now-broken streak |
 | Pause | -5 flat (streak preserved) |
 | Verification failure - 1st in month | 0 (grace, audit-only) |
 | Verification failure - 2nd+ in month | Treated as MISS (full penalty + clawback + streak broken) |
@@ -49,10 +49,12 @@ WHERE userId = ?
   AND reason IN (STREAK_MULTIPLIER_BONUS, FIRST_IN_GROUP)
 ```
 
+The mark-missed job only evaluates each user's primary active group, defined as the earliest joined active group. A user in multiple groups has one required daily problem per day, not one per group.
+
 The mark-missed job:
 1. Sums the bonus rows (above)
 2. Writes a `CLAWBACK` row with `delta = -sum`
-3. Writes a `MISSED_DAY` row with `delta = -5`
+3. Writes a `MISSED_DAY` row with `delta = -3`
 4. Clears `User.currentStreakStartedAt`
 5. Resets `User.currentStreak` to 0
 6. Updates `User.totalPoints` (clamped to floor 0)
@@ -61,10 +63,10 @@ The mark-missed job:
 
 ### Pause as Streak Insurance
 
-Pause is positioned as paid streak insurance. The user trades -5 points to preserve their streak rather than take the clawback hit on a miss. The decision feels meaningful at every streak length:
+Pause is positioned as paid streak insurance. The user trades -5 points to preserve their streak rather than take the clawback hit on a miss. The decision becomes more valuable as the streak has more bonus history to protect:
 
-- New user, no streak: pause saves -5 (miss) by paying -5 (pause). Indifferent.
-- 30-day streaker with 150 bonus points: pause saves -155 by paying -5. Clearly worth it.
+- New user, no streak: pause costs -5 to avoid a -3 miss. Usually not worth it unless they care about keeping the streak alive.
+- 30-day streaker with 150 bonus points: pause saves -153 by paying -5. Clearly worth it.
 
 Pre-pause UI must show "Pausing costs -5 points" before the confirm. No surprise charges.
 
@@ -73,7 +75,7 @@ Pre-pause UI must show "Pausing costs -5 points" before the confirm. No surprise
 `SolveStatus` stays a clean terminal-state enum (`SOLVED | PAUSED | MISSED`). Verification failures are tracked separately via `User.verificationFailuresThisMonth`:
 
 - First failure this month: counter increments, no points lost, no streak break. Logged as `VERIFICATION_FAILURE_GRACE` with `delta = 0` for audit trail.
-- Second and beyond: treated as a full MISS (-5 + clawback + streak break).
+- Second and beyond: treated as a full MISS (-3 + clawback + streak break).
 
 Counter resets monthly via the existing Trigger.dev job (rename `reset-monthly-pauses` → `reset-monthly-counters` to cover both).
 
@@ -113,7 +115,7 @@ Tension fades after a user crosses 3,000 (Pro is permanent, points stop having t
 
 | Lever | Before redesign | After |
 |---|---|---|
-| Miss severity | Flat -3 | -5 flat + scaling clawback (proportional to streak length and bonus history) |
+| Miss severity | Flat -3 | -3 flat + scaling clawback (proportional to streak length and bonus history) |
 | Pause leak | Free unlimited until monthly cap | -5 cost per pause (still preserves streak) |
 | Verification leak | Unlimited free grace | One grace per month, then full miss penalty |
 | Stakes | Vanity only (leaderboard rank) | Currency (Pro unlock at 3,000) |
@@ -217,12 +219,12 @@ This function:
 
 Callers never compute new balances directly. The floor is enforced here and nowhere else.
 
-### Trigger.dev Job Changes
+### Job Changes
 
 | Job | Change |
 |---|---|
-| `verify-submission` | Add comeback/early-bird detection. Write `STREAK_MULTIPLIER_BONUS` and `FIRST_IN_GROUP` rows separately so clawback can find them. Set `currentStreakStartedAt` on the first solve of a new streak. |
-| `mark-missed` | Run the clawback sum, write CLAWBACK + MISSED_DAY rows, clear `currentStreakStartedAt`, reset streak. All in one transaction. |
+| Synchronous solve verification | Add comeback/early-bird detection. Write `STREAK_MULTIPLIER_BONUS` and `FIRST_IN_GROUP` rows separately so clawback can find them. Set `currentStreakStartedAt` on the first solve of a new streak. |
+| `mark-missed` | For each user's primary group only, create missing rows when no solve/pause exists. Run the clawback sum, write CLAWBACK + MISSED_DAY rows, clear `currentStreakStartedAt`, reset streak. All in one transaction. |
 | `reset-monthly-pauses` | Rename to `reset-monthly-counters`. Reset both `pausesUsedThisMonth` and `verificationFailuresThisMonth`. |
 
 ### Edge Cases

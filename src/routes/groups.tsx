@@ -9,7 +9,11 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { GroupCard } from "@/features/groups/components/group-card"
 import { GroupFilterRow } from "@/features/groups/components/group-filter-row"
 import { GroupsHeader } from "@/features/groups/components/groups-header"
-import { useGroups, useRequestJoinGroup } from "@/features/groups/hooks/use-groups"
+import {
+	useCreateGroup,
+	useGroups,
+	useRequestJoinGroup,
+} from "@/features/groups/hooks/use-groups"
 import type { TypeFilter } from "@/features/groups/types"
 import { useSession } from "@/lib/auth-client"
 import { ProFeatureError } from "@/lib/errors"
@@ -81,6 +85,9 @@ function GroupsPage() {
 
 	const groupsQuery = useGroups()
 	const requestJoin = useRequestJoinGroup()
+	const createGroup = useCreateGroup()
+
+	const canCreate = Boolean(session?.user?.isPro || session?.user?.role === "admin")
 
 	const [filterQuery, setFilterQuery] = useState(q ?? "")
 
@@ -96,6 +103,15 @@ function GroupsPage() {
 		},
 		[navigate]
 	)
+
+	const handleCreateGroup = useCallback(async () => {
+		const group = await sileo.promise(createGroup.mutateAsync({}), {
+			loading: { title: "Creating group..." },
+			success: { title: "Group created!" },
+			error: { title: "Could not create group", description: "Please try again." },
+		})
+		if (group) void navigate({ to: "/groups/$groupId", params: { groupId: group.id } })
+	}, [createGroup, navigate])
 
 	const handleJoin = useCallback(
 		async (groupId: string) => {
@@ -170,6 +186,8 @@ function GroupsPage() {
 						total={stats.total}
 						developers={stats.developers}
 						joined={stats.joined}
+						canCreate={canCreate}
+						onCreateGroup={handleCreateGroup}
 					/>
 
 					<GroupFilterRow
