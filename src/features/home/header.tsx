@@ -3,9 +3,12 @@ import { Menu, X } from "lucide-react"
 import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
+import { UserMenu } from "@/components/user-menu"
+import { useSession } from "@/lib/auth-client"
 
 export function Header() {
 	const [menuState, setMenuState] = useState(false)
+	const { data: session } = useSession()
 
 	return (
 		<header>
@@ -42,14 +45,18 @@ export function Header() {
 
 						<div className="mb-6 in-data-[state=active]:block hidden w-full flex-wrap items-center justify-end space-y-8 rounded-3xl border bg-background p-6 shadow-2xl shadow-zinc-300/20 md:flex-nowrap lg:m-0 lg:flex lg:in-data-[state=active]:flex lg:w-fit lg:gap-6 lg:space-y-0 lg:border-transparent lg:bg-transparent lg:p-0 lg:shadow-none dark:shadow-none dark:lg:bg-transparent">
 							<div className="flex w-full flex-col space-y-3 sm:flex-row sm:gap-3 sm:space-y-0 md:w-fit">
-								<Button
-									asChild
-									className="bg-zinc-100 text-black backdrop-blur-sm hover:bg-zinc-200"
-								>
-									<Link to="/login">
-										<span>Sign In</span>
-									</Link>
-								</Button>
+								{session ? (
+									<UserMenu />
+								) : (
+									<Button
+										asChild
+										className="bg-zinc-100 text-black backdrop-blur-sm hover:bg-zinc-200"
+									>
+										<Link to="/login">
+											<span>Sign In</span>
+										</Link>
+									</Button>
+								)}
 							</div>
 						</div>
 					</div>
