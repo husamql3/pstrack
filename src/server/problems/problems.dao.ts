@@ -719,21 +719,35 @@ export const problemsDao = {
 		)
 		if (toMiss.length === 0) return { missed: 0 }
 
-		await db.$transaction(async (tx) => {
-			for (const { userId, dailyProblemId } of toMiss) {
-				const solve = await tx.userSolve.create({
-					data: { userId, dailyProblemId, status: SolveStatus.MISSED, pointsEarned: 0 },
-					select: { id: true },
-				})
+		let missed = 0
+		for (const { userId, dailyProblemId } of toMiss) {
+			try {
+				await db.$transaction(async (tx) => {
+					const solve = await tx.userSolve.create({
+						data: {
+							userId,
+							dailyProblemId,
+							status: SolveStatus.MISSED,
+							pointsEarned: 0,
+						},
+						select: { id: true },
+					})
 
-				await pointsDao.applyMissPenalty(tx, userId, {
-					userSolveId: solve.id,
-					streakStartedAt: streakStartByUser.get(userId) ?? null,
+					await pointsDao.applyMissPenalty(tx, userId, {
+						userSolveId: solve.id,
+						streakStartedAt: streakStartByUser.get(userId) ?? null,
+					})
 				})
+				missed++
+			} catch (err) {
+				if (err && typeof err === "object" && "code" in err && err.code === "P2002") {
+					continue
+				}
+				throw err
 			}
-		})
+		}
 
-		return { missed: toMiss.length }
+		return { missed }
 	},
 
 	resetMonthlyCounters: async () => {

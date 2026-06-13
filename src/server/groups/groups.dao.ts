@@ -37,6 +37,9 @@ const startOfTodayUtc = () => {
 	return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()))
 }
 
+const startOfUtcDay = (date: Date) =>
+	new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()))
+
 const rangeStartUtc = (range: GroupProblemsRange, today: Date): Date | null => {
 	if (range === "all") return null
 	const days = range === "7d" ? 6 : 29
@@ -435,8 +438,9 @@ export const groupsDao = {
 		const effectiveStartFor = (userId: string) => {
 			const joinedAt = joinedAtByUser.get(userId)
 			if (!joinedAt) return null
-			if (!rangeStart) return joinedAt
-			return joinedAt.getTime() > rangeStart.getTime() ? joinedAt : rangeStart
+			const joinedDay = startOfUtcDay(joinedAt)
+			if (!rangeStart) return joinedDay
+			return joinedDay.getTime() > rangeStart.getTime() ? joinedDay : rangeStart
 		}
 
 		for (const dp of allDailyProblemsInWindow) {

@@ -1,16 +1,7 @@
 import { Elysia } from "elysia"
 import pino from "pino"
 
-export const logger = pino(
-	process.env.NODE_ENV !== "production"
-		? {
-				transport: {
-					target: "pino-pretty",
-					options: { colorize: true, ignore: "pid,hostname" },
-				},
-			}
-		: { base: null }
-)
+export const logger = pino({ base: null })
 
 const requestTimings = new WeakMap<Request, number>()
 
