@@ -6,7 +6,7 @@ import ws from "ws"
 import { env } from "@/env"
 import { PrismaClient } from "@/generated/prisma/client"
 
-neonConfig.webSocketConstructor = ws
+neonConfig.webSocketConstructor = globalThis.WebSocket ?? ws
 
 const globalForPrisma = globalThis as {
 	prisma?: PrismaClient
