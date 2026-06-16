@@ -59,6 +59,10 @@ export const usersController = new Elysia({ prefix: "/users", tags: ["Users"] })
 		},
 		{ body: "users.validateHandle" }
 	)
+	.get("/count", async () => {
+		const count = await usersDao.count()
+		return { count }
+	})
 	.get("/me", async ({ request }) => {
 		const { user, response } = await requireSessionUser(request)
 		if (!user) return response
