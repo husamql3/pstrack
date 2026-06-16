@@ -5,7 +5,13 @@ import {
 	JOIN_LIMIT_FOR_FREE_USER,
 	JOIN_LIMIT_FOR_PRO_USER,
 } from "@/features/groups/constants"
-import { PointReason, SolveStatus } from "@/generated/prisma/enums"
+import {
+	GroupMemberRemovalReason,
+	GroupMemberStatus,
+	PointReason,
+	SolveStatus,
+	WarningResolution,
+} from "@/generated/prisma/enums"
 import { db } from "@/server/lib/db"
 import { pointsDao } from "@/server/points/points.dao"
 import { JOIN_GROUP_BONUS } from "@/server/points/points.type"
@@ -29,6 +35,7 @@ const joinLimitFor = (user: { isPro: boolean }) =>
 	user.isPro ? JOIN_LIMIT_FOR_PRO_USER : JOIN_LIMIT_FOR_FREE_USER
 const capacityFor = (user: { isPro: boolean }) =>
 	user.isPro ? CAPACITY_FOR_PRO_USER : CAPACITY_FOR_FREE_USER
+const activeMemberWhere = { status: GroupMemberStatus.ACTIVE }
 
 const DAY_MS = 86_400_000
 
@@ -70,6 +77,7 @@ export const groupsDao = {
 			select: {
 				...groupListSelect,
 				members: {
+					where: activeMemberWhere,
 					orderBy: [{ role: "asc" }, { joinedAt: "desc" }],
 					take: 4,
 					select: { user: { select: { username: true } } },
@@ -110,7 +118,7 @@ export const groupsDao = {
 		const ids = groups.map((g) => g.id)
 		const [memberships, requests] = await Promise.all([
 			db.groupMember.findMany({
-				where: { userId, groupId: { in: ids } },
+				where: { userId, groupId: { in: ids }, status: GroupMemberStatus.ACTIVE },
 				select: { groupId: true },
 			}),
 			db.groupJoinRequest.findMany({
@@ -137,7 +145,9 @@ export const groupsDao = {
 			where: { id: userId },
 			select: { isPro: true },
 		})
-		const memberships = await db.groupMember.count({ where: { userId } })
+		const memberships = await db.groupMember.count({
+			where: { userId, status: GroupMemberStatus.ACTIVE },
+		})
 		if (memberships >= joinLimitFor(user)) {
 			return { error: "GROUP_LIMIT" as const, group: null }
 		}
@@ -185,23 +195,29 @@ export const groupsDao = {
 					id: true,
 					type: true,
 					maxMembers: true,
-					_count: { select: { members: true } },
+					_count: {
+						select: { members: { where: { status: GroupMemberStatus.ACTIVE } } },
+					},
 				},
 			}),
 			db.groupMember.findUnique({
 				where: { groupId_userId: { groupId, userId } },
-				select: { id: true },
+				select: { id: true, status: true },
 			}),
 		])
 
 		if (!group) return { error: "NOT_FOUND" as const, status: null }
-		if (existingMembership) return { error: null, status: "JOINED" as const }
+		if (existingMembership?.status === GroupMemberStatus.ACTIVE) {
+			return { error: null, status: "JOINED" as const }
+		}
 		if (group._count.members >= group.maxMembers) {
 			return { error: "FULL" as const, status: null }
 		}
 
 		const [memberships, pendingRequests] = await Promise.all([
-			db.groupMember.count({ where: { userId } }),
+			db.groupMember.count({
+				where: { userId, status: GroupMemberStatus.ACTIVE },
+			}),
 			db.groupJoinRequest.count({ where: { userId, status: "PENDING" } }),
 		])
 		if (memberships + pendingRequests >= joinLimitFor(user)) {
@@ -244,7 +260,7 @@ export const groupsDao = {
 		const [membership, request] = await Promise.all([
 			db.groupMember.findUnique({
 				where: { groupId_userId: { groupId, userId } },
-				select: { role: true },
+				select: { role: true, status: true },
 			}),
 			db.groupJoinRequest.findUnique({
 				where: { groupId_userId: { groupId, userId } },
@@ -252,7 +268,7 @@ export const groupsDao = {
 			}),
 		])
 
-		if (membership) {
+		if (membership?.status === GroupMemberStatus.ACTIVE) {
 			return { ...group, membershipStatus: "JOINED", userRole: membership.role }
 		}
 		if (request?.status === "PENDING") {
@@ -263,7 +279,7 @@ export const groupsDao = {
 
 	listMembers: async (groupId: string): Promise<GroupMemberResponse[]> => {
 		return db.groupMember.findMany({
-			where: { groupId },
+			where: { groupId, status: GroupMemberStatus.ACTIVE },
 			orderBy: [{ role: "asc" }, { joinedAt: "asc" }],
 			select: groupMemberSelect,
 		})
@@ -272,12 +288,27 @@ export const groupsDao = {
 	leave: async (userId: string, groupId: string) => {
 		const membership = await db.groupMember.findUnique({
 			where: { groupId_userId: { groupId, userId } },
-			select: { id: true },
+			select: { id: true, status: true },
 		})
 
-		if (!membership) return { error: "NOT_MEMBER" as const }
+		if (!membership || membership.status !== GroupMemberStatus.ACTIVE) {
+			return { error: "NOT_MEMBER" as const }
+		}
 
-		await db.groupMember.delete({ where: { id: membership.id } })
+		await db.$transaction(async (tx) => {
+			await tx.groupMember.update({
+				where: { id: membership.id },
+				data: {
+					status: GroupMemberStatus.REMOVED,
+					removedAt: new Date(),
+					removalReason: GroupMemberRemovalReason.LEFT_GROUP,
+				},
+			})
+			await tx.groupMemberWarning.updateMany({
+				where: { groupMemberId: membership.id, resolvedAt: null },
+				data: { resolvedAt: new Date(), resolution: WarningResolution.LEFT_GROUP },
+			})
+		})
 		return { error: null }
 	},
 
@@ -291,7 +322,9 @@ export const groupsDao = {
 			select: {
 				id: true,
 				maxMembers: true,
-				_count: { select: { members: true } },
+				_count: {
+					select: { members: { where: { status: GroupMemberStatus.ACTIVE } } },
+				},
 			},
 		})
 
@@ -301,7 +334,9 @@ export const groupsDao = {
 			where: { groupId_userId: { groupId: group.id, userId } },
 		})
 		if (existingMembership) {
-			return { error: null, status: "ALREADY_MEMBER" as const, groupId: group.id }
+			if (existingMembership.status === GroupMemberStatus.ACTIVE) {
+				return { error: null, status: "ALREADY_MEMBER" as const, groupId: group.id }
+			}
 		}
 
 		if (group._count.members >= group.maxMembers) {
@@ -312,14 +347,22 @@ export const groupsDao = {
 			where: { id: userId },
 			select: { isPro: true },
 		})
-		const memberships = await db.groupMember.count({ where: { userId } })
+		const memberships = await db.groupMember.count({
+			where: { userId, status: GroupMemberStatus.ACTIVE },
+		})
 		if (memberships >= joinLimitFor(user)) {
 			return { error: "GROUP_LIMIT" as const, groupId: null, status: null }
 		}
 
 		await db.$transaction(async (tx) => {
-			await tx.groupMember.create({
-				data: { groupId: group.id, userId, role: "MEMBER" },
+			await tx.groupMember.upsert({
+				where: { groupId_userId: { groupId: group.id, userId } },
+				create: { groupId: group.id, userId, role: "MEMBER" },
+				update: {
+					status: GroupMemberStatus.ACTIVE,
+					removedAt: null,
+					removalReason: null,
+				},
 			})
 			const hasJoinedBefore = await pointsDao.hasEverJoinedGroup(tx, userId, group.id)
 			if (!hasJoinedBefore) {
@@ -357,16 +400,18 @@ export const groupsDao = {
 			if (!viewerId) return { error: "FORBIDDEN", data: null }
 			const membership = await db.groupMember.findUnique({
 				where: { groupId_userId: { groupId, userId: viewerId } },
-				select: { id: true },
+				select: { id: true, status: true },
 			})
-			if (!membership) return { error: "FORBIDDEN", data: null }
+			if (!membership || membership.status !== GroupMemberStatus.ACTIVE) {
+				return { error: "FORBIDDEN", data: null }
+			}
 		}
 
 		const today = startOfTodayUtc()
 		const rangeStart = rangeStartUtc(range, today)
 
 		const memberships = await db.groupMember.findMany({
-			where: { groupId },
+			where: { groupId, status: GroupMemberStatus.ACTIVE },
 			orderBy: { joinedAt: "asc" },
 			select: {
 				joinedAt: true,
@@ -523,9 +568,9 @@ export const groupsDao = {
 	): Promise<GroupTodayActivityResponse | null> => {
 		const membership = await db.groupMember.findUnique({
 			where: { groupId_userId: { groupId, userId: requestingUserId } },
-			select: { id: true },
+			select: { id: true, status: true },
 		})
-		if (!membership) return null
+		if (!membership || membership.status !== GroupMemberStatus.ACTIVE) return null
 
 		const [solves, pauses, joins] = await Promise.all([
 			db.userSolve.findMany({
@@ -556,7 +601,7 @@ export const groupsDao = {
 				},
 			}),
 			db.groupMember.findMany({
-				where: { groupId },
+				where: { groupId, status: GroupMemberStatus.ACTIVE },
 				orderBy: { joinedAt: "desc" },
 				take: 4,
 				select: {

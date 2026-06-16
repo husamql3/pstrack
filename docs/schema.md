@@ -108,22 +108,61 @@ enum GroupType {
 }
 
 model GroupMember {
-  id       String     @id @default(cuid())
-  groupId  String
-  userId   String
-  role     MemberRole @default(MEMBER)
-  joinedAt DateTime   @default(now())
+  id            String                    @id @default(cuid())
+  groupId       String
+  userId        String
+  role          MemberRole                @default(MEMBER)
+  status        GroupMemberStatus         @default(ACTIVE)
+  joinedAt      DateTime                  @default(now())
+  removedAt     DateTime?
+  removalReason GroupMemberRemovalReason?
+
+  warnings GroupMemberWarning[]
 
   group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
   user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([groupId, userId])
+  @@index([groupId, status])
   @@index([userId])
 }
 
 enum MemberRole {
   ADMIN
   MEMBER
+}
+
+enum GroupMemberStatus {
+  ACTIVE
+  REMOVED
+}
+
+enum GroupMemberRemovalReason {
+  AUTO_INACTIVITY
+  ADMIN_REMOVED
+  LEFT_GROUP
+}
+
+model GroupMemberWarning {
+  id                 String             @id @default(cuid())
+  groupMemberId      String
+  warningMissedCount Int
+  warnedAt           DateTime           @default(now())
+  resolvedAt         DateTime?
+  resolution         WarningResolution?
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  groupMember GroupMember @relation(fields: [groupMemberId], references: [id], onDelete: Cascade)
+
+  @@index([groupMemberId, resolvedAt])
+}
+
+enum WarningResolution {
+  SOLVED_OR_PAUSED
+  AUTO_REMOVED
+  ADMIN_REMOVED
+  LEFT_GROUP
 }
 
 model GroupJoinRequest {
@@ -302,6 +341,8 @@ model Verification {
 | `pausesUsedThisMonth` resets on the 1st of each month | Trigger.dev `reset-monthly-pauses` cron |
 | Join requests expire after 1 day | `expiresAt` set on creation; hourly `expire-join-requests` cron marks EXPIRED |
 | Free groups: `maxMembers = 30` / Pro groups: `maxMembers = 50` | Set at group creation based on creator's `isPro` |
+| Removed members are hidden from normal app behavior | All member reads, counts, primary-group selection, and private access filter `GroupMember.status = ACTIVE` |
+| Public-group inactivity removal | `GroupMemberWarning` after 5+ current misses; a later miss soft-removes regular members with `removalReason = AUTO_INACTIVITY` |
 | Username can change at most once per 30 days | `usernameChangedAt` checked in `PATCH /api/users/me`; UI disables the field and shows next available date |
 | Username must match `^[a-z0-9_-]{3,30}$` and not collide with reserved words | Enforced in `usersModel` (TypeBox) + reserved-words list in `users.constants.ts` |
 | Streak breaks on `MISSED`, preserved on `PAUSED` | Application logic in synchronous solve verification and the `mark-missed` job |

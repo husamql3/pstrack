@@ -1,9 +1,11 @@
+import InactivityWarningEmail from "@/emails/inactivity-warning"
 import JoinApprovedEmail from "@/emails/join-approved"
 import JoinExpiredEmail from "@/emails/join-expired"
 import JoinRejectedEmail from "@/emails/join-rejected"
 import JoinRequestEmail from "@/emails/join-request"
 import RemovedFromGroupEmail from "@/emails/removed-from-group"
 import { env } from "@/env"
+import { GroupType } from "@/generated/prisma/enums"
 import { db } from "@/server/lib/db"
 import { sendEmail } from "@/server/lib/email"
 import { captureServerException } from "@/server/lib/sentry"
@@ -12,6 +14,7 @@ const BASE_URL = env.BETTER_AUTH_URL.replace(/\/$/, "")
 const groupName = (slug: string) => `@${slug}`
 const groupUrl = (groupId: string) => `${BASE_URL}/groups/${groupId}`
 const browseUrl = () => `${BASE_URL}/groups`
+const dashboardUrl = () => `${BASE_URL}/dashboard`
 const reviewUrl = (groupId: string) => `${BASE_URL}/admin/groups/${groupId}/join-requests`
 
 const safeSend = (label: string, send: () => Promise<unknown>) => {
@@ -145,6 +148,37 @@ export const groupNotifications = {
 					name: user.name,
 					groupName: groupName(group.slug),
 					browseUrl: browseUrl(),
+				}),
+			})
+		})
+	},
+
+	inactivityWarning: (
+		groupId: string,
+		userId: string,
+		missedCount: number,
+		groupType: GroupType
+	) => {
+		safeSend("inactivity-warning", async () => {
+			const [user, group] = await Promise.all([
+				fetchRequester(userId),
+				fetchGroupSlug(groupId),
+			])
+			if (!user || !group || !user.notifyGroupActivity) return
+
+			await sendEmail({
+				from: env.EMAIL_FROM,
+				to: user.email,
+				subject:
+					groupType === GroupType.PUBLIC
+						? `Solve or pause next to stay in ${groupName(group.slug)}`
+						: `${missedCount} missed days in ${groupName(group.slug)}`,
+				react: InactivityWarningEmail({
+					name: user.name,
+					groupName: groupName(group.slug),
+					missedCount,
+					groupType,
+					dashboardUrl: dashboardUrl(),
 				}),
 			})
 		})

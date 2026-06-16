@@ -1,6 +1,11 @@
 import slugsPool from "@/data/slugs.json"
 import type { Prisma } from "@/generated/prisma/client"
-import { PointReason } from "@/generated/prisma/enums"
+import {
+	GroupMemberRemovalReason,
+	GroupMemberStatus,
+	PointReason,
+	WarningResolution,
+} from "@/generated/prisma/enums"
 import {
 	type AdminGroupDetailResponse,
 	type AdminGroupListItem,
@@ -146,7 +151,12 @@ export const groupsAdminDao = {
 	): Promise<{ ok: true; slug: string } | { ok: false; error: "GROUP_NOT_FOUND" }> => {
 		const existing = await db.group.findUnique({
 			where: { id: groupId },
-			select: { slug: true, _count: { select: { members: true } } },
+			select: {
+				slug: true,
+				_count: {
+					select: { members: { where: { status: GroupMemberStatus.ACTIVE } } },
+				},
+			},
 		})
 		if (!existing) return { ok: false, error: "GROUP_NOT_FOUND" }
 
@@ -178,7 +188,7 @@ export const groupsAdminDao = {
 
 	listMembers: async (groupId: string): Promise<GroupMemberResponse[]> => {
 		return db.groupMember.findMany({
-			where: { groupId },
+			where: { groupId, status: GroupMemberStatus.ACTIVE },
 			orderBy: [{ role: "asc" }, { joinedAt: "asc" }],
 			select: groupMemberSelect,
 		})
@@ -187,11 +197,29 @@ export const groupsAdminDao = {
 	removeMember: async (groupId: string, targetUserId: string) => {
 		const target = await db.groupMember.findUnique({
 			where: { groupId_userId: { groupId, userId: targetUserId } },
-			select: { id: true },
+			select: { id: true, status: true },
 		})
-		if (!target) return { error: "NOT_FOUND" as const }
+		if (!target || target.status !== GroupMemberStatus.ACTIVE) {
+			return { error: "NOT_FOUND" as const }
+		}
 
-		await db.groupMember.delete({ where: { id: target.id } })
+		await db.$transaction(async (tx) => {
+			await tx.groupMember.update({
+				where: { id: target.id },
+				data: {
+					status: GroupMemberStatus.REMOVED,
+					removedAt: new Date(),
+					removalReason: GroupMemberRemovalReason.ADMIN_REMOVED,
+				},
+			})
+			await tx.groupMemberWarning.updateMany({
+				where: { groupMemberId: target.id, resolvedAt: null },
+				data: {
+					resolvedAt: new Date(),
+					resolution: WarningResolution.ADMIN_REMOVED,
+				},
+			})
+		})
 		return { error: null }
 	},
 
@@ -232,7 +260,12 @@ export const groupsAdminDao = {
 		if (action === "APPROVED") {
 			const group = await db.group.findUnique({
 				where: { id: groupId },
-				select: { maxMembers: true, _count: { select: { members: true } } },
+				select: {
+					maxMembers: true,
+					_count: {
+						select: { members: { where: { status: GroupMemberStatus.ACTIVE } } },
+					},
+				},
 			})
 			if (!group) return { error: "NOT_FOUND" as const }
 			if (group._count.members >= group.maxMembers) return { error: "FULL" as const }
@@ -242,8 +275,14 @@ export const groupsAdminDao = {
 					where: { id: requestId },
 					data: { status: "APPROVED" },
 				})
-				await tx.groupMember.create({
-					data: { groupId, userId: request.userId, role: "MEMBER" },
+				await tx.groupMember.upsert({
+					where: { groupId_userId: { groupId, userId: request.userId } },
+					create: { groupId, userId: request.userId, role: "MEMBER" },
+					update: {
+						status: GroupMemberStatus.ACTIVE,
+						removedAt: null,
+						removalReason: null,
+					},
 				})
 				const hasJoinedBefore = await pointsDao.hasEverJoinedGroup(
 					tx,

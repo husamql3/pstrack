@@ -4,6 +4,7 @@ import type { Prisma } from "@/generated/prisma/client"
 import {
 	AdminAuditAction,
 	AdminAuditTargetType,
+	GroupMemberStatus,
 	GroupType,
 	PointReason,
 	ProSource,
@@ -94,6 +95,7 @@ export const adminUserDetailSelect = {
 	notifyGroupActivity: true,
 	updatedAt: true,
 	groupMemberships: {
+		where: { status: GroupMemberStatus.ACTIVE },
 		select: {
 			id: true,
 			role: true,
@@ -133,7 +135,12 @@ export const adminGroupListSelect = {
 	isActive: true,
 	frozen: true,
 	createdAt: true,
-	_count: { select: { members: true, dailyProblems: true } },
+	_count: {
+		select: {
+			members: { where: { status: GroupMemberStatus.ACTIVE } },
+			dailyProblems: true,
+		},
+	},
 } satisfies Prisma.GroupSelect
 
 export type AdminGroupListItem = Prisma.GroupGetPayload<{
@@ -153,7 +160,12 @@ export const adminGroupDetailSelect = {
 	inviteCode: true,
 	inviteExpiresAt: true,
 	createdAt: true,
-	_count: { select: { members: true, joinRequests: true } },
+	_count: {
+		select: {
+			members: { where: { status: GroupMemberStatus.ACTIVE } },
+			joinRequests: true,
+		},
+	},
 } satisfies Prisma.GroupSelect
 
 export type AdminGroupDetailResponse = Prisma.GroupGetPayload<{

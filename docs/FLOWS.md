@@ -37,12 +37,15 @@ End-to-end lifecycles for the load-bearing user actions. Cross-references the re
      → creates UserSolve { status: MISSED } when no SOLVED/PAUSED row exists
      → applies −3 points, clawbacks streak bonuses
      → resets currentStreak = 0, clears currentStreakStartedAt
+     → warns 5+ current consecutive misses
+     → for public groups only: removes regular members who miss again after warning
 ```
 
 ### Key invariants
 
 - Solve verification and `mark-missed` both write through `applyPointsDelta` - the floor (`totalPoints >= 0`) and the Pro auto-grant live in one place.
 - `mark-missed` is intentionally primary-group only. A Pro user in multiple groups is responsible for one daily problem per day, not one per group.
+- Inactivity enforcement follows the same primary-group rule. Private groups receive warning nudges only; public groups may auto-remove regular members after the one-day grace window.
 - The clawback sum must be computed *before* `currentStreakStartedAt` is cleared. Same transaction.
 - Streak multiplier bonus is written as a separate `PointsHistory` row (`reason = STREAK_MULTIPLIER_BONUS`) so clawback can find and reverse just the delta, not the base solve points.
 - `firstSolver` is awarded only if no `firstSolverId` is set on the `DailyProblem` yet - race-safe via the unique constraint.

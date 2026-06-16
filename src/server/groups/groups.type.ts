@@ -2,6 +2,7 @@ import { z } from "zod"
 
 import type { Prisma } from "@/generated/prisma/client"
 import type { Difficulty, SolveStatus } from "@/generated/prisma/enums"
+import { GroupMemberStatus } from "@/generated/prisma/enums"
 
 // ─── List ─────────────────────────────────────────────────────────────────────
 
@@ -15,7 +16,7 @@ export const groupListSelect = {
 	createdAt: true,
 	_count: {
 		select: {
-			members: true,
+			members: { where: { status: GroupMemberStatus.ACTIVE } },
 		},
 	},
 } satisfies Prisma.GroupSelect
@@ -40,7 +41,9 @@ export const groupDetailSelect = {
 	inviteExpiresAt: true,
 	creatorId: true,
 	createdAt: true,
-	_count: { select: { members: true } },
+	_count: {
+		select: { members: { where: { status: GroupMemberStatus.ACTIVE } } },
+	},
 } satisfies Prisma.GroupSelect
 
 export type GroupDetailResponse = Prisma.GroupGetPayload<{

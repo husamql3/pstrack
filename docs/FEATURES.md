@@ -66,6 +66,13 @@
 **Leaving a Group**
 - User can leave at any time
 - Points and streak belong to the user, not the group
+- Membership exits are soft-removals: the member disappears from normal UI/capacity/access, but the row is retained for audit and rejoin handling
+
+**Inactivity Accountability**
+- 5 consecutive missed required days triggers one warning for the current miss streak
+- Public groups auto-remove regular members if the next required day is also missed
+- Private groups send the warning nudge only; they do not auto-remove
+- Solving or pausing resolves the warning immediately
 
 ### 4. Points & Gamification
 

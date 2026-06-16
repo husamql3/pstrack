@@ -1,6 +1,16 @@
 import type { Prisma } from "@/generated/prisma/client"
-import { Difficulty, PointReason, SolveStatus } from "@/generated/prisma/enums"
+import {
+	Difficulty,
+	GroupMemberRemovalReason,
+	GroupMemberStatus,
+	GroupType,
+	MemberRole,
+	PointReason,
+	SolveStatus,
+	WarningResolution,
+} from "@/generated/prisma/enums"
 import { badgesDao } from "@/server/badges/badges.dao"
+import { groupNotifications } from "@/server/groups/groups.notifications"
 import { db } from "@/server/lib/db"
 import { pointsDao } from "@/server/points/points.dao"
 import {
@@ -71,6 +81,7 @@ const startOfUtcDay = (d: Date) =>
 	new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()))
 
 const pauseLimitFor = (user: { isPro: boolean }) => (user.isPro ? 4 : 2)
+const INACTIVITY_WARNING_MISSES = 5
 
 const roadmapFilter = (roadmap: RoadmapKey): Prisma.ProblemWhereInput => {
 	switch (roadmap) {
@@ -168,7 +179,7 @@ const ensureDailyProblem = async (groupId: string, assignedDate: Date) => {
 
 const findPrimaryGroup = (userId: string) =>
 	db.groupMember.findFirst({
-		where: { userId, group: { isActive: true } },
+		where: { userId, status: GroupMemberStatus.ACTIVE, group: { isActive: true } },
 		orderBy: { joinedAt: "asc" },
 		select: {
 			group: {
@@ -210,11 +221,131 @@ const getUserDashboardContext = async (userId: string) => {
 const getGroupRank = async (groupId: string, userTotalPoints: number) => {
 	const [higherRanked, groupSize] = await Promise.all([
 		db.groupMember.count({
-			where: { groupId, user: { totalPoints: { gt: userTotalPoints } } },
+			where: {
+				groupId,
+				status: GroupMemberStatus.ACTIVE,
+				user: { totalPoints: { gt: userTotalPoints } },
+			},
 		}),
-		db.groupMember.count({ where: { groupId } }),
+		db.groupMember.count({ where: { groupId, status: GroupMemberStatus.ACTIVE } }),
 	])
 	return { groupRank: higherRanked + 1, groupSize }
+}
+
+const resolveActiveWarnings = async (
+	tx: Tx,
+	userId: string,
+	groupId: string,
+	resolution: WarningResolution
+) => {
+	const membership = await tx.groupMember.findUnique({
+		where: { groupId_userId: { groupId, userId } },
+		select: { id: true },
+	})
+	if (!membership) return
+	await tx.groupMemberWarning.updateMany({
+		where: { groupMemberId: membership.id, resolvedAt: null },
+		data: { resolvedAt: new Date(), resolution },
+	})
+}
+
+const countConsecutiveMisses = async (
+	userId: string,
+	groupId: string,
+	throughDay: Date
+) => {
+	const solves = await db.userSolve.findMany({
+		where: {
+			userId,
+			dailyProblem: { groupId, assignedDate: { lte: throughDay } },
+		},
+		orderBy: { dailyProblem: { assignedDate: "desc" } },
+		select: { status: true },
+	})
+
+	let count = 0
+	for (const solve of solves) {
+		if (solve.status !== SolveStatus.MISSED) break
+		count++
+	}
+	return count
+}
+
+const evaluateInactivityWarnings = async (
+	primaryMemberships: Array<{
+		id: string
+		groupId: string
+		userId: string
+		role: MemberRole
+		group: { type: GroupType }
+	}>,
+	throughDay: Date
+) => {
+	let warned = 0
+	let removed = 0
+
+	for (const membership of primaryMemberships) {
+		if (membership.role !== MemberRole.MEMBER) continue
+
+		const missedCount = await countConsecutiveMisses(
+			membership.userId,
+			membership.groupId,
+			throughDay
+		)
+		if (missedCount < INACTIVITY_WARNING_MISSES) continue
+
+		const activeWarning = await db.groupMemberWarning.findFirst({
+			where: { groupMemberId: membership.id, resolvedAt: null },
+			orderBy: { warnedAt: "desc" },
+			select: { id: true, warningMissedCount: true },
+		})
+
+		if (!activeWarning) {
+			await db.groupMemberWarning.create({
+				data: {
+					groupMemberId: membership.id,
+					warningMissedCount: missedCount,
+				},
+			})
+			groupNotifications.inactivityWarning(
+				membership.groupId,
+				membership.userId,
+				missedCount,
+				membership.group.type
+			)
+			warned++
+			continue
+		}
+
+		if (
+			membership.group.type !== GroupType.PUBLIC ||
+			missedCount <= activeWarning.warningMissedCount
+		) {
+			continue
+		}
+
+		await db.$transaction(async (tx) => {
+			await tx.groupMember.update({
+				where: { id: membership.id },
+				data: {
+					status: GroupMemberStatus.REMOVED,
+					removedAt: new Date(),
+					removalReason: GroupMemberRemovalReason.AUTO_INACTIVITY,
+				},
+			})
+			await tx.groupMemberWarning.update({
+				where: { id: activeWarning.id },
+				data: {
+					resolvedAt: new Date(),
+					resolution: WarningResolution.AUTO_REMOVED,
+				},
+			})
+		})
+		groupNotifications.memberRemoved(membership.groupId, membership.userId)
+		removed++
+	}
+
+	return { warned, removed }
 }
 
 export const problemsDao = {
@@ -247,7 +378,11 @@ export const problemsDao = {
 		const day = startOfUtcDay(date)
 
 		const memberships = await db.groupMember.findMany({
-			where: { joinedAt: { lt: day }, group: { isActive: true } },
+			where: {
+				joinedAt: { lt: day },
+				status: GroupMemberStatus.ACTIVE,
+				group: { isActive: true },
+			},
 			orderBy: [{ userId: "asc" }, { joinedAt: "asc" }],
 			select: { groupId: true, userId: true },
 		})
@@ -602,6 +737,12 @@ export const problemsDao = {
 					...(isNewStreak && { currentStreakStartedAt: now }),
 				},
 			})
+			await resolveActiveWarnings(
+				tx,
+				userId,
+				today.group.id,
+				WarningResolution.SOLVED_OR_PAUSED
+			)
 
 			const awarded = await badgesDao.evaluateAndAward(tx, userId, newStreak)
 
@@ -656,6 +797,12 @@ export const problemsDao = {
 				tx,
 				userSolveId: upserted.id,
 			})
+			await resolveActiveWarnings(
+				tx,
+				userId,
+				today.group.id,
+				WarningResolution.SOLVED_OR_PAUSED
+			)
 		})
 
 		return { error: null, today: await problemsDao.getTodayForUser(userId) }
@@ -667,19 +814,27 @@ export const problemsDao = {
 		const memberships = await db.groupMember.findMany({
 			where: {
 				joinedAt: { lt: day },
+				status: GroupMemberStatus.ACTIVE,
 				group: { isActive: true },
 			},
 			orderBy: [{ userId: "asc" }, { joinedAt: "asc" }],
-			select: { groupId: true, userId: true },
+			select: {
+				id: true,
+				groupId: true,
+				userId: true,
+				role: true,
+				group: { select: { type: true } },
+			},
 		})
 
-		const primaryByUser = new Map<string, string>()
+		const primaryByUser = new Map<string, (typeof memberships)[number]>()
 		for (const m of memberships) {
-			if (!primaryByUser.has(m.userId)) primaryByUser.set(m.userId, m.groupId)
+			if (!primaryByUser.has(m.userId)) primaryByUser.set(m.userId, m)
 		}
-		if (primaryByUser.size === 0) return { missed: 0 }
+		if (primaryByUser.size === 0) return { missed: 0, warned: 0, removed: 0 }
 
-		const groupIds = Array.from(new Set(primaryByUser.values()))
+		const primaryMemberships = Array.from(primaryByUser.values())
+		const groupIds = Array.from(new Set(primaryMemberships.map((m) => m.groupId)))
 		const dailyProblems = await db.dailyProblem.findMany({
 			where: { groupId: { in: groupIds }, assignedDate: day },
 			select: { id: true, groupId: true },
@@ -687,11 +842,11 @@ export const problemsDao = {
 		const dailyByGroup = new Map(dailyProblems.map((dp) => [dp.groupId, dp.id]))
 
 		const candidates: { userId: string; dailyProblemId: string }[] = []
-		for (const [userId, groupId] of primaryByUser) {
-			const dpId = dailyByGroup.get(groupId)
-			if (dpId) candidates.push({ userId, dailyProblemId: dpId })
+		for (const membership of primaryMemberships) {
+			const dpId = dailyByGroup.get(membership.groupId)
+			if (dpId) candidates.push({ userId: membership.userId, dailyProblemId: dpId })
 		}
-		if (candidates.length === 0) return { missed: 0 }
+		if (candidates.length === 0) return { missed: 0, warned: 0, removed: 0 }
 
 		const userIds = Array.from(new Set(candidates.map((c) => c.userId)))
 		const dailyProblemIds = Array.from(new Set(candidates.map((c) => c.dailyProblemId)))
@@ -717,7 +872,10 @@ export const problemsDao = {
 		const toMiss = candidates.filter(
 			(c) => !existingKey.has(`${c.userId}:${c.dailyProblemId}`)
 		)
-		if (toMiss.length === 0) return { missed: 0 }
+		if (toMiss.length === 0) {
+			const warningResult = await evaluateInactivityWarnings(primaryMemberships, day)
+			return { missed: 0, ...warningResult }
+		}
 
 		let missed = 0
 		for (const { userId, dailyProblemId } of toMiss) {
@@ -747,7 +905,8 @@ export const problemsDao = {
 			}
 		}
 
-		return { missed }
+		const warningResult = await evaluateInactivityWarnings(primaryMemberships, day)
+		return { missed, ...warningResult }
 	},
 
 	resetMonthlyCounters: async () => {

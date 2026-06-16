@@ -58,8 +58,19 @@ The mark-missed job:
 4. Clears `User.currentStreakStartedAt`
 5. Resets `User.currentStreak` to 0
 6. Updates `User.totalPoints` (clamped to floor 0)
+7. Evaluates the user's current consecutive-miss streak for accountability warnings
 
-**All five steps must run in a single database transaction.** If clearing `currentStreakStartedAt` happens before summing, the sum returns 0 and the user gets a free miss.
+**The point and streak updates must run in a single database transaction.** If clearing `currentStreakStartedAt` happens before summing, the sum returns 0 and the user gets a free miss.
+
+### Group Inactivity Warnings
+
+After `mark-missed` creates or observes a current streak of **5+ consecutive `MISSED` required days** in the user's primary active group, PStrack creates one active `GroupMemberWarning` for that miss streak.
+
+- Public groups: the warning tells regular members to solve or pause the next daily problem. If the next evaluated required day is also `MISSED`, the member is soft-removed from the group.
+- Private groups: the warning is a nudge only. Private groups never auto-remove for inactivity.
+- Admins are skipped. Only regular `MEMBER` rows are eligible.
+- `SOLVED` or `PAUSED` resolves the active warning immediately and resets the consecutive-miss pressure.
+- Historical data is considered, but users with an existing 5+ current miss streak receive a warning first; they are not removed until a later missed day after that warning.
 
 ### Pause as Streak Insurance
 
@@ -192,7 +203,7 @@ model Group {
 ### Unchanged
 
 - `SolveStatus` enum stays `SOLVED | PAUSED | MISSED`. Verification failures are tracked via the counter, not a status value.
-- `GroupMember` schema unchanged. Join bonus enforcement uses a `PointsHistory` existence check rather than a flag on `GroupMember` (whose cascade-delete on leave would silently break lifetime-per-group enforcement).
+- Join bonus enforcement uses a `PointsHistory` existence check rather than `GroupMember.status`; rejoining a group should not duplicate the lifetime-per-group join bonus.
 - `DAILY_SOLVE` reason is *not* split by difficulty. Difficulty is already discoverable via the existing `UserSolve → DailyProblem → Problem.difficulty` chain.
 
 ### `UserSolve.pointsEarned` semantics
@@ -224,7 +235,7 @@ Callers never compute new balances directly. The floor is enforced here and nowh
 | Job | Change |
 |---|---|
 | Synchronous solve verification | Add comeback/early-bird detection. Write `STREAK_MULTIPLIER_BONUS` and `FIRST_IN_GROUP` rows separately so clawback can find them. Set `currentStreakStartedAt` on the first solve of a new streak. |
-| `mark-missed` | For each user's primary group only, create missing rows when no solve/pause exists. Run the clawback sum, write CLAWBACK + MISSED_DAY rows, clear `currentStreakStartedAt`, reset streak. All in one transaction. |
+| `mark-missed` | For each user's primary active group only, create missing rows when no solve/pause exists. Run the clawback sum, write CLAWBACK + MISSED_DAY rows, clear `currentStreakStartedAt`, reset streak. Then warn 5+ current miss streaks and auto-remove public-group members who miss again after warning. |
 | `reset-monthly-pauses` | Rename to `reset-monthly-counters`. Reset both `pausesUsedThisMonth` and `verificationFailuresThisMonth`. |
 
 ### Edge Cases
