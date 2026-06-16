@@ -144,4 +144,6 @@ export const usersDao = {
 		if (!me) throw new Error("User vanished after notifications update")
 		return me
 	},
+
+	count: async (): Promise<number> => db.user.count(),
 }
