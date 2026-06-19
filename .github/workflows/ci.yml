@@ -75,6 +75,11 @@ jobs:
       - uses: ./.github/actions/setup
       - name: Pull Vercel environment
         run: bunx vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Run database migrations
+        env:
+          DIRECT_URL: ${{ secrets.DIRECT_URL }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: bunx prisma migrate deploy
       - name: Deploy production
         run: bunx vercel deploy --prod --yes --token=${{ secrets.VERCEL_TOKEN }}
 
