@@ -6,7 +6,11 @@ import { badgesController } from "@/server/badges/badges.controller"
 import { groupsAdminController } from "@/server/groups/groups.admin.controller"
 import { groupsController } from "@/server/groups/groups.controller"
 import { auth } from "@/server/lib/auth"
-import { captureServerException, initServerSentry } from "@/server/lib/sentry"
+import {
+	captureServerException,
+	initServerSentry,
+	ServerSentry,
+} from "@/server/lib/sentry"
 import { docs } from "@/server/modules/docs"
 import { health } from "@/server/modules/health"
 import { og } from "@/server/modules/og"
@@ -14,7 +18,7 @@ import { problemsAdminController } from "@/server/problems/problems.admin.contro
 import { problemsController } from "@/server/problems/problems.controller"
 import { usersAdminController } from "@/server/users/users.admin.controller"
 import { usersController } from "@/server/users/users.controller"
-import { requestLogger } from "./lib/logger"
+import { logger, requestLogger } from "./lib/logger"
 
 initServerSentry()
 
@@ -31,7 +35,13 @@ const api = new Elysia({ prefix: "/api/v3" })
 	.use(usersAdminController)
 	.use(groupsAdminController)
 	.use(problemsAdminController)
-	.onError(({ error }) => captureServerException(error))
+	.onError(async ({ error, request }) => {
+		const { pathname } = new URL(request.url)
+		logger.error({ err: error, path: pathname }, "[api-error]")
+		console.error("[api-error]", pathname, error)
+		captureServerException(error)
+		await ServerSentry.flush(2000)
+	})
 
 export const app = new Elysia()
 	.use(requestLogger)

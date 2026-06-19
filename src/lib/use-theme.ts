@@ -14,6 +14,7 @@ function applyTheme(theme: Theme) {
 
 export function useTheme() {
 	const [theme, setThemeState] = useState<Theme>(() => {
+		if (typeof window === "undefined") return "system"
 		return (localStorage.getItem("theme") as Theme) ?? "system"
 	})
 

@@ -73,7 +73,7 @@ function RootDocument({ children }: { children: ReactNode }) {
 	const queryClient = getQueryClient()
 
 	return (
-		<html lang="en" suppressHydrationWarning>
+		<html suppressHydrationWarning lang="en" className="scheme-only-dark">
 			<head>
 				<HeadContent />
 				{/* Runs before paint to prevent theme flash */}

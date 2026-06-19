@@ -9,7 +9,7 @@
 		"dev:trigger": "trigger dev",
 		"deploy:trigger-prod": "trigger deploy",
 		"dev:email": "bunx react-email dev --dir src/emails --port 3001",
-		"build": "prisma generate && vite build",
+		"build": "prisma migrate deploy && prisma generate && vite build",
 		"preview": "vite preview",
 		"prepare": "test -d .git && lefthook install || true",
 		"postinstall": "prisma generate",

@@ -1,14 +1,9 @@
 import {
-	IconCheck,
-	IconDeviceDesktop,
 	IconLifebuoy,
 	IconLogin,
 	IconLogout,
-	IconMoon,
-	IconPalette,
 	IconSelector,
 	IconSettings,
-	IconSun,
 	IconUserCircle,
 } from "@tabler/icons-react"
 import { Link, useNavigate } from "@tanstack/react-router"
@@ -20,20 +15,15 @@ import {
 	DropdownMenuGroup,
 	DropdownMenuItem,
 	DropdownMenuSeparator,
-	DropdownMenuSub,
-	DropdownMenuSubContent,
-	DropdownMenuSubTrigger,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Skeleton } from "@/components/ui/skeleton"
 import { HashAvatar } from "@/features/onboarding/components/hash-avatar"
 import { signOut, useSession } from "@/lib/auth-client"
-import { useTheme } from "@/lib/use-theme"
 
 export function UserMenu() {
 	const { data: session, isPending } = useSession()
 	const navigate = useNavigate()
-	const { theme, setTheme } = useTheme()
 
 	const user = session?.user
 	const displayName = user?.username ?? user?.name ?? user?.email ?? "User"
@@ -127,29 +117,6 @@ export function UserMenu() {
 						<IconSettings aria-hidden="true" />
 						Settings
 					</DropdownMenuItem>
-					<DropdownMenuSub>
-						<DropdownMenuSubTrigger>
-							<IconPalette aria-hidden="true" />
-							Appearance
-						</DropdownMenuSubTrigger>
-						<DropdownMenuSubContent>
-							<DropdownMenuItem onSelect={() => setTheme("light")}>
-								<IconSun aria-hidden="true" />
-								Light
-								{theme === "light" && <IconCheck className="ml-auto size-3.5" />}
-							</DropdownMenuItem>
-							<DropdownMenuItem onSelect={() => setTheme("dark")}>
-								<IconMoon aria-hidden="true" />
-								Dark
-								{theme === "dark" && <IconCheck className="ml-auto size-3.5" />}
-							</DropdownMenuItem>
-							<DropdownMenuItem onSelect={() => setTheme("system")}>
-								<IconDeviceDesktop aria-hidden="true" />
-								System
-								{theme === "system" && <IconCheck className="ml-auto size-3.5" />}
-							</DropdownMenuItem>
-						</DropdownMenuSubContent>
-					</DropdownMenuSub>
 					<DropdownMenuItem onSelect={goToHelp}>
 						<IconLifebuoy aria-hidden="true" />
 						Help &amp; FAQ
