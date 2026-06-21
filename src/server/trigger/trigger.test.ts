@@ -148,17 +148,37 @@ describe("trigger tasks", () => {
 		})
 	})
 
-	it("marks the previous UTC day as missed", async () => {
-		problemsDao.markMissedForDate.mockResolvedValue({ missed: 2, warned: 1, removed: 0 })
+	it("backfills missed solves and evaluates warnings for the previous UTC day", async () => {
+		problemsDao.markMissedForDate.mockImplementation(async (date, opts) => {
+			if (date.toISOString() === "2026-06-02T00:00:00.000Z") {
+				return { missed: 2, warned: 0, removed: 0 }
+			}
+			if (date.toISOString() === "2026-06-15T00:00:00.000Z") {
+				return {
+					missed: 1,
+					warned: opts.evaluateWarnings ? 1 : 0,
+					removed: 0,
+				}
+			}
+			return { missed: 0, warned: 0, removed: 0 }
+		})
 
 		const result = await markMissedTask.run({
 			timestamp: new Date("2026-06-16T00:00:00.000Z"),
 		})
 
-		expect(problemsDao.markMissedForDate).toHaveBeenCalledWith(
-			new Date("2026-06-15T00:00:00.000Z")
+		expect(problemsDao.markMissedForDate).toHaveBeenCalledTimes(14)
+		expect(problemsDao.markMissedForDate).toHaveBeenNthCalledWith(
+			1,
+			new Date("2026-06-02T00:00:00.000Z"),
+			{ evaluateWarnings: false }
 		)
-		expect(result).toEqual({ missed: 2, warned: 1, removed: 0 })
+		expect(problemsDao.markMissedForDate).toHaveBeenNthCalledWith(
+			14,
+			new Date("2026-06-15T00:00:00.000Z"),
+			{ evaluateWarnings: true }
+		)
+		expect(result).toEqual({ missed: 3, warned: 1, removed: 0 })
 	})
 
 	it("expires join requests and notifies affected users", async () => {

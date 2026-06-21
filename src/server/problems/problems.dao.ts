@@ -808,7 +808,11 @@ export const problemsDao = {
 		return { error: null, today: await problemsDao.getTodayForUser(userId) }
 	},
 
-	markMissedForDate: async (referenceDate: Date) => {
+	markMissedForDate: async (
+		referenceDate: Date,
+		opts: { evaluateWarnings?: boolean } = {}
+	) => {
+		const evaluateWarningsForDate = opts.evaluateWarnings ?? true
 		const day = startOfUtcDay(referenceDate)
 
 		const memberships = await db.groupMember.findMany({
@@ -873,7 +877,9 @@ export const problemsDao = {
 			(c) => !existingKey.has(`${c.userId}:${c.dailyProblemId}`)
 		)
 		if (toMiss.length === 0) {
-			const warningResult = await evaluateInactivityWarnings(primaryMemberships, day)
+			const warningResult = evaluateWarningsForDate
+				? await evaluateInactivityWarnings(primaryMemberships, day)
+				: { warned: 0, removed: 0 }
 			return { missed: 0, ...warningResult }
 		}
 
@@ -905,7 +911,9 @@ export const problemsDao = {
 			}
 		}
 
-		const warningResult = await evaluateInactivityWarnings(primaryMemberships, day)
+		const warningResult = evaluateWarningsForDate
+			? await evaluateInactivityWarnings(primaryMemberships, day)
+			: { warned: 0, removed: 0 }
 		return { missed, ...warningResult }
 	},
 

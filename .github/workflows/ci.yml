@@ -86,7 +86,7 @@ jobs:
   deploy-trigger:
     name: Deploy Trigger.dev
     runs-on: ubuntu-latest
-    needs: [typecheck, lint, test, build]
+    needs: [deploy-vercel]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     environment: production
     steps:
