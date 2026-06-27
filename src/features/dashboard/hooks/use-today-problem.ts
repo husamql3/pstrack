@@ -1,6 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
+import { userBadgesQueryKey } from "@/features/badges/hooks/use-user-badges"
 import { api } from "@/lib/api"
+import { authClient } from "@/lib/auth-client"
 import type { TodayProblemResponse } from "@/server/problems/problems.type"
 
 const todayProblemQueryKey = ["problems", "today"] as const
@@ -28,6 +30,9 @@ export const useMarkTodaySolved = () => {
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: todayProblemQueryKey })
+			queryClient.invalidateQueries({ queryKey: ["problems", "roadmap"] })
+			queryClient.invalidateQueries({ queryKey: userBadgesQueryKey })
+			authClient.getSession({ fetchOptions: { cache: "no-cache" } })
 		},
 	})
 }
