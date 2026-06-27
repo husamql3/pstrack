@@ -5,6 +5,7 @@ import { createRootRouteWithContext, HeadContent, Scripts } from "@tanstack/reac
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools"
 import { createIsomorphicFn } from "@tanstack/react-start"
 import { Analytics } from "@vercel/analytics/react"
+import { SpeedInsights } from "@vercel/speed-insights/react"
 import type { ReactNode } from "react"
 import { Toaster } from "sileo"
 
@@ -105,6 +106,7 @@ function RootDocument({ children }: { children: ReactNode }) {
 					/>
 				</QueryClientProvider>
 				<Analytics debug={false} />
+				<SpeedInsights />
 				<Scripts />
 			</body>
 		</html>

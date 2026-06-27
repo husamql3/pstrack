@@ -75,6 +75,7 @@
 		"@types/canvas-confetti": "^1.9.0",
 		"@upstash/redis": "^1.38.0",
 		"@vercel/analytics": "^2.0.1",
+		"@vercel/speed-insights": "^2.0.0",
 		"better-auth": "1.6.11",
 		"canvas-confetti": "^1.9.4",
 		"class-variance-authority": "^0.7.1",
