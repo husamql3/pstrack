@@ -1,6 +1,8 @@
+import { SolveStatus } from "@/generated/prisma/enums"
 import { db } from "@/server/lib/db"
 import { USERNAME_COOLDOWN_MS } from "./users.constants"
 import {
+	type HeatmapDay,
 	type MeResponse,
 	meSelect,
 	PRO_THRESHOLD,
@@ -146,4 +148,41 @@ export const usersDao = {
 	},
 
 	count: async (): Promise<number> => db.user.count(),
+
+	findHeatmap: async (username: string): Promise<HeatmapDay[] | null> => {
+		const user = await db.user.findUnique({
+			where: { username: username.toLowerCase() },
+			select: { id: true, isPublic: true },
+		})
+		if (!user?.isPublic) return null
+
+		const today = new Date()
+		today.setHours(0, 0, 0, 0)
+		const startDate = new Date(today)
+		startDate.setDate(today.getDate() - 363)
+
+		const solves = await db.userSolve.findMany({
+			where: {
+				userId: user.id,
+				status: SolveStatus.SOLVED,
+				dailyProblem: { assignedDate: { gte: startDate } },
+			},
+			select: { dailyProblem: { select: { assignedDate: true } } },
+		})
+
+		const solvedDates = new Set(
+			solves.map((s) => s.dailyProblem.assignedDate.toISOString().split("T")[0])
+		)
+
+		const days: HeatmapDay[] = []
+		for (let i = 363; i >= 0; i--) {
+			const d = new Date(today)
+			d.setDate(today.getDate() - i)
+			const dateStr = d.toISOString().split("T")[0] as string
+			const solved = solvedDates.has(dateStr)
+			days.push({ date: dateStr, count: solved ? 1 : 0, level: solved ? 1 : 0 })
+		}
+
+		return days
+	},
 }

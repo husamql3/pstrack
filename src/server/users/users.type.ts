@@ -88,6 +88,14 @@ export type PublicProfileResponse =
 			isPro: boolean
 	  }
 
+// ─── Heatmap (GET /users/:username/heatmap) ───────────────────────────────────
+
+export type HeatmapDay = {
+	date: string
+	count: number
+	level: number
+}
+
 // ─── Sessions ─────────────────────────────────────────────────────────────────
 
 export type SessionResponse = {

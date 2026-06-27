@@ -183,3 +183,12 @@ export const usersController = new Elysia({ prefix: "/users", tags: ["Users"] })
 		},
 		{ params: "users.usernameParams" }
 	)
+	.get(
+		"/:username/heatmap",
+		async ({ params }) => {
+			const days = await usersDao.findHeatmap(params.username.toLowerCase())
+			if (!days) return status(404, { error: "User not found." })
+			return days
+		},
+		{ params: "users.usernameParams" }
+	)

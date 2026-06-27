@@ -16,6 +16,10 @@ export const env = createEnv({
 		DATABASE_URL: z.string().min(1),
 		DIRECT_URL: z.string().min(1),
 
+		// redis
+		UPSTASH_REDIS_REST_URL: z.string().min(1).optional(),
+		UPSTASH_REDIS_REST_TOKEN: z.string().min(1).optional(),
+
 		// error tracking
 		SENTRY_DSN: z.url().optional(),
 		SENTRY_ENVIRONMENT: z.string().min(1).optional(),
