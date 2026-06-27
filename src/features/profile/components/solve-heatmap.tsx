@@ -1,4 +1,5 @@
 import { format, parseISO } from "date-fns"
+import { Component, type ReactNode } from "react"
 
 import {
 	ContributionGraph,
@@ -10,11 +11,25 @@ import {
 import { Skeleton } from "@/components/ui/skeleton"
 import { useProfileHeatmap } from "../hooks/use-profile-heatmap"
 
-export const SolveHeatmap = ({ username }: { username: string }) => {
-	const { data, isLoading } = useProfileHeatmap(username)
+class HeatmapErrorBoundary extends Component<
+	{ children: ReactNode },
+	{ failed: boolean }
+> {
+	state = { failed: false }
+	static getDerivedStateFromError() {
+		return { failed: true }
+	}
+	render() {
+		if (this.state.failed) return null
+		return this.props.children
+	}
+}
+
+const HeatmapInner = ({ username }: { username: string }) => {
+	const { data, isLoading, error } = useProfileHeatmap(username)
 
 	if (isLoading) return <Skeleton className="h-36 w-full rounded-lg" />
-	if (!data || data.length === 0) return null
+	if (error || !data || data.length === 0) return null
 
 	return (
 		<section className="flex flex-col gap-4 border-border border-t pt-8">
@@ -60,3 +75,9 @@ export const SolveHeatmap = ({ username }: { username: string }) => {
 		</section>
 	)
 }
+
+export const SolveHeatmap = ({ username }: { username: string }) => (
+	<HeatmapErrorBoundary>
+		<HeatmapInner username={username} />
+	</HeatmapErrorBoundary>
+)

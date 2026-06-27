@@ -160,17 +160,10 @@ const getMonthLabels = (
 	return weeks
 		.reduce<MonthLabel[]>((labels, week, weekIndex) => {
 			const firstActivity = week.find((activity) => activity !== undefined)
-			if (!firstActivity) {
-				throw new Error(`Unexpected error: Week ${weekIndex + 1} is empty: [${week}].`)
-			}
+			if (!firstActivity) return labels
 
 			const month = monthNames[getMonth(parseISO(firstActivity.date))]
-			if (!month) {
-				const monthName = new Date(firstActivity.date).toLocaleString("en-US", {
-					month: "short",
-				})
-				throw new Error(`Unexpected error: undefined month label for ${monthName}.`)
-			}
+			if (!month) return labels
 
 			const prevLabel = labels.at(-1)
 			if (weekIndex === 0 || !prevLabel || prevLabel.label !== month) {
@@ -280,18 +273,14 @@ export const ContributionGraphBlock = ({
 	const { blockSize, blockMargin, blockRadius, labelHeight, maxLevel } =
 		useContributionGraph()
 
-	if (activity.level < 0 || activity.level > maxLevel) {
-		throw new RangeError(
-			`Provided activity level ${activity.level} for ${activity.date} is out of range. It must be between 0 and ${maxLevel}.`
-		)
-	}
+	const clampedLevel = Math.min(Math.max(0, activity.level), maxLevel)
 
 	return (
 		<rect
 			className={cn(THEME, className)}
 			data-count={activity.count}
 			data-date={activity.date}
-			data-level={activity.level}
+			data-level={clampedLevel}
 			height={blockSize}
 			rx={blockRadius}
 			ry={blockRadius}

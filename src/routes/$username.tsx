@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router"
 
+import { RouteErrorFallback } from "@/components/route-error-fallback"
 import {
 	PublicProfile,
 	PublicProfileNotFound,
@@ -11,6 +12,9 @@ import { createSeoHead, siteUrl } from "@/lib/seo"
 export const Route = createFileRoute("/$username")({
 	ssr: true,
 	component: PublicProfileRoute,
+	errorComponent: ({ error, reset }) => (
+		<RouteErrorFallback error={error} reset={reset} title="Could not load profile" />
+	),
 	head: ({ params }) =>
 		createSeoHead({
 			title: `${params.username} — LeetCode Accountability Profile`,
