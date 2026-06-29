@@ -1,7 +1,9 @@
 import { Elysia, status } from "elysia"
 
+import { SystemEventTargetType, SystemEventType } from "@/generated/prisma/enums"
 import { auth } from "@/server/lib/auth"
 import { getSessionUser, requireSessionUser } from "@/server/lib/session"
+import { systemEventsDao } from "@/server/system-events/system-events.dao"
 import { isReservedUsername } from "./users.constants"
 import { usersDao } from "./users.dao"
 import { usersModel } from "./users.model"
@@ -90,6 +92,17 @@ export const usersController = new Elysia({ prefix: "/users", tags: ["Users"] })
 					error: `You can change your username again on ${result.nextChangeAt.toLocaleDateString()}.`,
 				})
 			}
+			systemEventsDao
+				.log({
+					actorId: user.id,
+					actorUsername: normalized,
+					actorName: user.name,
+					eventType: SystemEventType.USERNAME_CHANGED,
+					targetType: SystemEventTargetType.USER,
+					targetId: user.id,
+					metadata: { from: user.username ?? null, to: normalized },
+				})
+				.catch(() => {})
 			return result.me
 		},
 		{ body: "users.updateUsername" }
@@ -117,10 +130,25 @@ export const usersController = new Elysia({ prefix: "/users", tags: ["Users"] })
 			const { user, response } = await requireSessionUser(request)
 			if (!user) return response
 
-			return usersDao.updateHandles(user.id, {
+			const result = await usersDao.updateHandles(user.id, {
 				leetcodeHandle: body.leetcodeHandle,
 				codeforcesHandle: body.codeforcesHandle ?? null,
 			})
+			systemEventsDao
+				.log({
+					actorId: user.id,
+					actorUsername: user.username ?? undefined,
+					actorName: user.name,
+					eventType: SystemEventType.HANDLE_CHANGED,
+					targetType: SystemEventTargetType.USER,
+					targetId: user.id,
+					metadata: {
+						leetcodeHandle: body.leetcodeHandle,
+						codeforcesHandle: body.codeforcesHandle ?? null,
+					},
+				})
+				.catch(() => {})
+			return result
 		},
 		{ body: "users.updateHandles" }
 	)

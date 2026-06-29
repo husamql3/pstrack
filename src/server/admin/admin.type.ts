@@ -57,6 +57,30 @@ export type AdminAuditWriteInput = {
 	metadata?: Prisma.JsonObject
 }
 
+// ─── System event log ─────────────────────────────────────────────────────────
+
+export const systemEventLogSelect = {
+	id: true,
+	actorId: true,
+	actorUsername: true,
+	actorName: true,
+	eventType: true,
+	targetType: true,
+	targetId: true,
+	metadata: true,
+	createdAt: true,
+} satisfies Prisma.SystemEventLogSelect
+
+export type SystemEventLogResponse = Prisma.SystemEventLogGetPayload<{
+	select: typeof systemEventLogSelect
+}>
+
+export type UnifiedAuditEntry =
+	| ({ origin: "admin" } & AdminAuditLogResponse)
+	| ({ origin: "system" } & SystemEventLogResponse)
+
+export type UnifiedAuditResponse = PaginatedResponse<UnifiedAuditEntry>
+
 // ─── User admin ───────────────────────────────────────────────────────────────
 
 export const adminUserListSelect = {

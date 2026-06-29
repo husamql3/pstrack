@@ -1,21 +1,29 @@
 import type { Prisma, PrismaClient } from "@/generated/prisma/client"
-import type { AdminAuditAction, AdminAuditTargetType } from "@/generated/prisma/enums"
+import type {
+	AdminAuditAction,
+	AdminAuditTargetType,
+	SystemEventTargetType,
+	SystemEventType,
+} from "@/generated/prisma/enums"
 import { db } from "@/server/lib/db"
 import {
-	type AdminAuditLogResponse,
 	type AdminAuditWriteInput,
 	adminAuditLogSelect,
-	type PaginatedResponse,
+	systemEventLogSelect,
+	type UnifiedAuditEntry,
+	type UnifiedAuditResponse,
 } from "./admin.type"
 
 type Db = PrismaClient | Prisma.TransactionClient
 
-type AuditListParams = {
+type UnifiedListParams = {
 	actor?: string | null
 	action?: AdminAuditAction | null
-	targetType?: AdminAuditTargetType | null
+	eventType?: SystemEventType | null
+	targetType?: AdminAuditTargetType | SystemEventTargetType | null
 	targetId?: string | null
-	cursor?: string | null
+	origin?: "admin" | "system" | null
+	before?: string | null
 	limit: number
 }
 
@@ -32,28 +40,57 @@ export const adminAuditDao = {
 		})
 	},
 
-	list: async (
-		params: AuditListParams
-	): Promise<PaginatedResponse<AdminAuditLogResponse>> => {
-		const where: Prisma.AdminAuditLogWhereInput = {}
-		if (params.actor) where.adminId = params.actor
-		if (params.action) where.action = params.action
-		if (params.targetType) where.targetType = params.targetType
-		if (params.targetId) where.targetId = params.targetId
+	list: async (params: UnifiedListParams): Promise<UnifiedAuditResponse> => {
+		const before = params.before ? new Date(params.before) : new Date()
+		const take = params.limit + 1
 
-		const rows = await db.adminAuditLog.findMany({
-			where,
-			select: adminAuditLogSelect,
-			orderBy: { createdAt: "desc" },
-			take: params.limit + 1,
-			...(params.cursor ? { cursor: { id: params.cursor }, skip: 1 } : {}),
-		})
+		const [adminRows, systemRows] = await Promise.all([
+			params.origin === "system"
+				? []
+				: db.adminAuditLog.findMany({
+						where: {
+							...(params.actor ? { adminId: params.actor } : {}),
+							...(params.action ? { action: params.action } : {}),
+							...(params.targetType
+								? { targetType: params.targetType as AdminAuditTargetType }
+								: {}),
+							...(params.targetId ? { targetId: params.targetId } : {}),
+							createdAt: { lt: before },
+						},
+						select: adminAuditLogSelect,
+						orderBy: { createdAt: "desc" },
+						take,
+					}),
+			params.origin === "admin"
+				? []
+				: db.systemEventLog.findMany({
+						where: {
+							...(params.actor ? { actorId: params.actor } : {}),
+							...(params.eventType ? { eventType: params.eventType } : {}),
+							...(params.targetType
+								? { targetType: params.targetType as SystemEventTargetType }
+								: {}),
+							...(params.targetId ? { targetId: params.targetId } : {}),
+							createdAt: { lt: before },
+						},
+						select: systemEventLogSelect,
+						orderBy: { createdAt: "desc" },
+						take,
+					}),
+		])
 
-		const hasMore = rows.length > params.limit
-		const items = hasMore ? rows.slice(0, params.limit) : rows
+		const merged: UnifiedAuditEntry[] = [
+			...adminRows.map((r) => ({ origin: "admin" as const, ...r })),
+			...systemRows.map((r) => ({ origin: "system" as const, ...r })),
+		].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+
+		const hasMore = merged.length > params.limit
+		const items = hasMore ? merged.slice(0, params.limit) : merged
+		const last = items[items.length - 1]
+
 		return {
 			items,
-			nextCursor: hasMore ? (items[items.length - 1]?.id ?? null) : null,
+			nextCursor: hasMore && last ? last.createdAt.toISOString() : null,
 		}
 	},
 }

@@ -7,6 +7,8 @@ import {
 	GroupType,
 	ProblemSource,
 	Roadmap,
+	SystemEventTargetType,
+	SystemEventType,
 } from "@/generated/prisma/enums"
 import { ADMIN_LIST_LIMIT_DEFAULT, ADMIN_LIST_LIMIT_MAX } from "./admin.type"
 
@@ -126,8 +128,13 @@ export const adminModel = new Elysia({ name: "model/admin" }).model({
 		t.Object({
 			actor: t.Optional(t.String({ minLength: 1 })),
 			action: t.Optional(t.Enum(AdminAuditAction)),
-			targetType: t.Optional(t.Enum(AdminAuditTargetType)),
+			eventType: t.Optional(t.Enum(SystemEventType)),
+			targetType: t.Optional(
+				t.Union([t.Enum(AdminAuditTargetType), t.Enum(SystemEventTargetType)])
+			),
 			targetId: t.Optional(t.String({ minLength: 1 })),
+			origin: t.Optional(t.Union([t.Literal("admin"), t.Literal("system")])),
+			before: t.Optional(t.String({ minLength: 1 })),
 		}),
 	]),
 

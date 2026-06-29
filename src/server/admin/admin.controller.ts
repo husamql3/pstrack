@@ -29,9 +29,11 @@ export const adminController = new Elysia({ prefix: "/admin", tags: ["Admin"] })
 			return adminAuditDao.list({
 				actor: query.actor ?? null,
 				action: query.action ?? null,
+				eventType: query.eventType ?? null,
 				targetType: query.targetType ?? null,
 				targetId: query.targetId ?? null,
-				cursor: query.cursor ?? null,
+				origin: query.origin ?? null,
+				before: query.before ?? query.cursor ?? null,
 				limit: query.limit ?? ADMIN_LIST_LIMIT_DEFAULT,
 			})
 		},

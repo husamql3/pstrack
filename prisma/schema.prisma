@@ -405,6 +405,46 @@ enum AdminAuditTargetType {
   EMAIL
 }
 
+model SystemEventLog {
+  id            String                 @id @default(cuid())
+  actorId       String?
+  actorUsername String?
+  actorName     String?
+  eventType     SystemEventType
+  targetType    SystemEventTargetType?
+  targetId      String?
+  metadata      Json                   @default("{}")
+  createdAt     DateTime               @default(now())
+
+  @@index([actorId, createdAt])
+  @@index([eventType, createdAt])
+  @@index([targetType, targetId, createdAt])
+  @@index([createdAt])
+  @@map("system_event_log")
+}
+
+enum SystemEventType {
+  SOLVE_VERIFIED
+  SOLVE_FAILED
+  PAUSE_USED
+  MISS_BATCH
+  USERNAME_CHANGED
+  HANDLE_CHANGED
+  GROUP_CREATED
+  GROUP_JOINED
+  GROUP_LEFT
+  MEMBER_REMOVED
+  JOIN_REQUEST_SENT
+  JOIN_REQUEST_APPROVED
+  JOIN_REQUEST_REJECTED
+}
+
+enum SystemEventTargetType {
+  USER
+  GROUP
+  SOLVE
+}
+
 model FeatureFlag {
   key         String   @id
   enabled     Boolean  @default(false)

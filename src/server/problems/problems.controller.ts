@@ -1,10 +1,12 @@
 import { Elysia, status } from "elysia"
 
+import { SystemEventTargetType, SystemEventType } from "@/generated/prisma/enums"
 import {
 	getSessionUser,
 	requireRealSession,
 	requireSessionUser,
 } from "@/server/lib/session"
+import { systemEventsDao } from "@/server/system-events/system-events.dao"
 import { problemsDao } from "./problems.dao"
 import { problemsModel } from "./problems.model"
 import { problemNotifications } from "./problems.notifications"
@@ -41,12 +43,34 @@ export const problemsController = new Elysia({ tags: ["Problems"] })
 			})
 		}
 		if (result.error === "VERIFICATION_FAILED_PENALIZED") {
+			systemEventsDao
+				.log({
+					actorId: user.id,
+					actorUsername: user.username ?? undefined,
+					actorName: user.name,
+					eventType: SystemEventType.SOLVE_FAILED,
+					targetType: SystemEventTargetType.USER,
+					targetId: user.id,
+				})
+				.catch(() => {})
 			return status(409, {
 				error: "Solve not found on LeetCode. Streak broken and points deducted.",
 			})
 		}
 
 		if (result.error !== null) return result.today
+
+		systemEventsDao
+			.log({
+				actorId: user.id,
+				actorUsername: user.username ?? undefined,
+				actorName: user.name,
+				eventType: SystemEventType.SOLVE_VERIFIED,
+				targetType: SystemEventTargetType.USER,
+				targetId: user.id,
+				metadata: { newStreak: result.newStreak },
+			})
+			.catch(() => {})
 
 		problemNotifications
 			.sendSolveAchievementEmails(user.id, user.email, user.name, {
@@ -74,5 +98,15 @@ export const problemsController = new Elysia({ tags: ["Problems"] })
 			return status(409, { error: "You already started today's problem." })
 		}
 
+		systemEventsDao
+			.log({
+				actorId: user.id,
+				actorUsername: user.username ?? undefined,
+				actorName: user.name,
+				eventType: SystemEventType.PAUSE_USED,
+				targetType: SystemEventTargetType.USER,
+				targetId: user.id,
+			})
+			.catch(() => {})
 		return result.today
 	})

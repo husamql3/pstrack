@@ -1,6 +1,8 @@
 import { logger, schedules } from "@trigger.dev/sdk/v3"
 
+import { SystemEventType } from "@/generated/prisma/enums"
 import { problemsDao } from "@/server/problems/problems.dao"
+import { systemEventsDao } from "@/server/system-events/system-events.dao"
 
 const DAY_MS = 86_400_000
 const CATCH_UP_DAYS = 14
@@ -34,6 +36,18 @@ export const markMissedTask = schedules.task({
 			result.missed += dayResult.missed
 			result.warned += dayResult.warned
 			result.removed += dayResult.removed
+		}
+
+		if (result.missed > 0) {
+			await systemEventsDao
+				.log({
+					actorId: null,
+					actorUsername: "system",
+					actorName: "System",
+					eventType: SystemEventType.MISS_BATCH,
+					metadata: { count: result.missed, date: yesterday.toISOString() },
+				})
+				.catch(() => {})
 		}
 
 		logger.log("Done", result)

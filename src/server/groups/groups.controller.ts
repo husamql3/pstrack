@@ -1,6 +1,8 @@
 import { Elysia, status } from "elysia"
 
+import { SystemEventTargetType, SystemEventType } from "@/generated/prisma/enums"
 import { getSessionUser, requireSessionUser } from "@/server/lib/session"
+import { systemEventsDao } from "@/server/system-events/system-events.dao"
 import { groupsDao } from "./groups.dao"
 import { groupsModel } from "./groups.model"
 import { groupNotifications } from "./groups.notifications"
@@ -22,6 +24,16 @@ export const groupsController = new Elysia({ prefix: "/groups", tags: ["Groups"]
 				return status(403, { error: "You have reached your group limit." })
 			}
 
+			systemEventsDao
+				.log({
+					actorId: user.id,
+					actorUsername: user.username ?? undefined,
+					actorName: user.name,
+					eventType: SystemEventType.GROUP_JOINED,
+					targetType: SystemEventTargetType.GROUP,
+					targetId: result.groupId,
+				})
+				.catch(() => {})
 			return { status: result.status, groupId: result.groupId }
 		},
 		{ body: "groups.joinByInvite" }
@@ -45,6 +57,17 @@ export const groupsController = new Elysia({ prefix: "/groups", tags: ["Groups"]
 				return status(403, { error: "You have reached your group limit." })
 			}
 
+			systemEventsDao
+				.log({
+					actorId: user.id,
+					actorUsername: user.username ?? undefined,
+					actorName: user.name,
+					eventType: SystemEventType.GROUP_CREATED,
+					targetType: SystemEventTargetType.GROUP,
+					targetId: result.group?.id,
+					metadata: { slug: result.group?.slug ?? null },
+				})
+				.catch(() => {})
 			return result.group
 		},
 		{ body: "groups.create" }
@@ -77,6 +100,16 @@ export const groupsController = new Elysia({ prefix: "/groups", tags: ["Groups"]
 
 			if (result.status === "REQUESTED") {
 				groupNotifications.joinRequested(params.id, user.id)
+				systemEventsDao
+					.log({
+						actorId: user.id,
+						actorUsername: user.username ?? undefined,
+						actorName: user.name,
+						eventType: SystemEventType.JOIN_REQUEST_SENT,
+						targetType: SystemEventTargetType.GROUP,
+						targetId: params.id,
+					})
+					.catch(() => {})
 			}
 
 			return { status: result.status }
@@ -94,6 +127,16 @@ export const groupsController = new Elysia({ prefix: "/groups", tags: ["Groups"]
 				return status(400, { error: "You are not a member of this group." })
 			}
 
+			systemEventsDao
+				.log({
+					actorId: user.id,
+					actorUsername: user.username ?? undefined,
+					actorName: user.name,
+					eventType: SystemEventType.GROUP_LEFT,
+					targetType: SystemEventTargetType.GROUP,
+					targetId: params.id,
+				})
+				.catch(() => {})
 			return { success: true }
 		},
 		{ params: "groups.groupIdParams" }

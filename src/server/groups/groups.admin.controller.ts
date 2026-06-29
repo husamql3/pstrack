@@ -1,8 +1,10 @@
 import { Elysia, status } from "elysia"
 
+import { SystemEventTargetType, SystemEventType } from "@/generated/prisma/enums"
 import { adminModel } from "@/server/admin/admin.model"
 import { ADMIN_LIST_LIMIT_DEFAULT } from "@/server/admin/admin.type"
 import { requirePlatformAdmin } from "@/server/lib/session"
+import { systemEventsDao } from "@/server/system-events/system-events.dao"
 import { groupsAdminDao } from "./groups.admin.dao"
 import { groupNotifications } from "./groups.notifications"
 
@@ -73,6 +75,17 @@ export const groupsAdminController = new Elysia({
 			if (result.error === "NOT_FOUND") return status(404, { error: "Member not found." })
 
 			groupNotifications.memberRemoved(params.id, params.userId)
+			systemEventsDao
+				.log({
+					actorId: user.id,
+					actorUsername: user.username ?? undefined,
+					actorName: user.name,
+					eventType: SystemEventType.MEMBER_REMOVED,
+					targetType: SystemEventTargetType.GROUP,
+					targetId: params.id,
+					metadata: { removedUserId: params.userId },
+				})
+				.catch(() => {})
 			return { success: true }
 		},
 		{ params: "admin.groups.memberParams" }
@@ -107,8 +120,30 @@ export const groupsAdminController = new Elysia({
 
 			if (body.action === "APPROVED") {
 				groupNotifications.joinApproved(params.id, result.requesterId)
+				systemEventsDao
+					.log({
+						actorId: user.id,
+						actorUsername: user.username ?? undefined,
+						actorName: user.name,
+						eventType: SystemEventType.JOIN_REQUEST_APPROVED,
+						targetType: SystemEventTargetType.GROUP,
+						targetId: params.id,
+						metadata: { requesterId: result.requesterId },
+					})
+					.catch(() => {})
 			} else {
 				groupNotifications.joinRejected(params.id, result.requesterId)
+				systemEventsDao
+					.log({
+						actorId: user.id,
+						actorUsername: user.username ?? undefined,
+						actorName: user.name,
+						eventType: SystemEventType.JOIN_REQUEST_REJECTED,
+						targetType: SystemEventTargetType.GROUP,
+						targetId: params.id,
+						metadata: { requesterId: result.requesterId },
+					})
+					.catch(() => {})
 			}
 
 			return { success: true }
