@@ -51,6 +51,7 @@ model User {
   accounts                      Account[]
   badges                        UserBadge[]
   adminAuditLogs                AdminAuditLog[]    @relation("AdminAuditLogActor")
+  feedbacks                     Feedback[]
 
   @@index([totalPoints])
   @@index([currentStreak])
@@ -82,6 +83,7 @@ model Group {
   joinRequests  GroupJoinRequest[]
   dailyProblems DailyProblem[]
   pointsHistory PointsHistory[]
+  feedbacks     Feedback[]
 
   @@index([type, isActive])
 }
@@ -443,6 +445,29 @@ enum SystemEventTargetType {
   USER
   GROUP
   SOLVE
+}
+
+model Feedback {
+  id          String           @id @default(cuid())
+  userId      String
+  groupId     String
+  category    FeedbackCategory
+  description String?
+  reviewed    Boolean          @default(false)
+  createdAt   DateTime         @default(now())
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, groupId])
+  @@index([groupId, reviewed])
+  @@map("feedback")
+}
+
+enum FeedbackCategory {
+  BUG
+  SUGGESTION
+  GENERAL
 }
 
 model FeatureFlag {

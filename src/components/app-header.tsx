@@ -17,7 +17,7 @@ const NAV_LINKS = [
 	{ to: "/dashboard", label: "Dashboard", icon: IconHome },
 	{ to: "/problems", label: "Problems", icon: IconCode },
 	{ to: "/groups", label: "Groups", icon: IconUsers },
-	// { to: "/leaderboard", label: "Leaderboard", icon: IconTrophy },
+	{ to: "/leaderboard", label: "Leaderboard", icon: IconTrophy },
 	{ to: "/badges", label: "Badges", icon: IconMedal },
 ] as const
 

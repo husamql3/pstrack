@@ -34,6 +34,7 @@ import { Route as AuthenticatedAppDashboardRouteImport } from './routes/_authent
 import { Route as AdminAdminProblemsRouteImport } from './routes/_admin/admin/problems'
 import { Route as AdminAdminJoinRequestsRouteImport } from './routes/_admin/admin/join-requests'
 import { Route as AdminAdminFlagsRouteImport } from './routes/_admin/admin/flags'
+import { Route as AdminAdminFeedbacksRouteImport } from './routes/_admin/admin/feedbacks'
 import { Route as AdminAdminEmailsRouteImport } from './routes/_admin/admin/emails'
 import { Route as AdminAdminConfigRouteImport } from './routes/_admin/admin/config'
 import { Route as AdminAdminAuditRouteImport } from './routes/_admin/admin/audit'
@@ -175,6 +176,11 @@ const AdminAdminFlagsRoute = AdminAdminFlagsRouteImport.update({
   path: '/admin/flags',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminAdminFeedbacksRoute = AdminAdminFeedbacksRouteImport.update({
+  id: '/admin/feedbacks',
+  path: '/admin/feedbacks',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminAdminEmailsRoute = AdminAdminEmailsRouteImport.update({
   id: '/admin/emails',
   path: '/admin/emails',
@@ -281,6 +287,7 @@ export interface FileRoutesByFullPath {
   '/admin/audit': typeof AdminAdminAuditRoute
   '/admin/config': typeof AdminAdminConfigRoute
   '/admin/emails': typeof AdminAdminEmailsRoute
+  '/admin/feedbacks': typeof AdminAdminFeedbacksRoute
   '/admin/flags': typeof AdminAdminFlagsRoute
   '/admin/join-requests': typeof AdminAdminJoinRequestsRoute
   '/admin/problems': typeof AdminAdminProblemsRoute
@@ -319,6 +326,7 @@ export interface FileRoutesByTo {
   '/admin/audit': typeof AdminAdminAuditRoute
   '/admin/config': typeof AdminAdminConfigRoute
   '/admin/emails': typeof AdminAdminEmailsRoute
+  '/admin/feedbacks': typeof AdminAdminFeedbacksRoute
   '/admin/flags': typeof AdminAdminFlagsRoute
   '/admin/join-requests': typeof AdminAdminJoinRequestsRoute
   '/admin/problems': typeof AdminAdminProblemsRoute
@@ -361,6 +369,7 @@ export interface FileRoutesById {
   '/_admin/admin/audit': typeof AdminAdminAuditRoute
   '/_admin/admin/config': typeof AdminAdminConfigRoute
   '/_admin/admin/emails': typeof AdminAdminEmailsRoute
+  '/_admin/admin/feedbacks': typeof AdminAdminFeedbacksRoute
   '/_admin/admin/flags': typeof AdminAdminFlagsRoute
   '/_admin/admin/join-requests': typeof AdminAdminJoinRequestsRoute
   '/_admin/admin/problems': typeof AdminAdminProblemsRoute
@@ -402,6 +411,7 @@ export interface FileRouteTypes {
     | '/admin/audit'
     | '/admin/config'
     | '/admin/emails'
+    | '/admin/feedbacks'
     | '/admin/flags'
     | '/admin/join-requests'
     | '/admin/problems'
@@ -440,6 +450,7 @@ export interface FileRouteTypes {
     | '/admin/audit'
     | '/admin/config'
     | '/admin/emails'
+    | '/admin/feedbacks'
     | '/admin/flags'
     | '/admin/join-requests'
     | '/admin/problems'
@@ -481,6 +492,7 @@ export interface FileRouteTypes {
     | '/_admin/admin/audit'
     | '/_admin/admin/config'
     | '/_admin/admin/emails'
+    | '/_admin/admin/feedbacks'
     | '/_admin/admin/flags'
     | '/_admin/admin/join-requests'
     | '/_admin/admin/problems'
@@ -699,6 +711,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAdminFlagsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/_admin/admin/feedbacks': {
+      id: '/_admin/admin/feedbacks'
+      path: '/admin/feedbacks'
+      fullPath: '/admin/feedbacks'
+      preLoaderRoute: typeof AdminAdminFeedbacksRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/_admin/admin/emails': {
       id: '/_admin/admin/emails'
       path: '/admin/emails'
@@ -839,6 +858,7 @@ interface AdminRouteChildren {
   AdminAdminAuditRoute: typeof AdminAdminAuditRoute
   AdminAdminConfigRoute: typeof AdminAdminConfigRoute
   AdminAdminEmailsRoute: typeof AdminAdminEmailsRoute
+  AdminAdminFeedbacksRoute: typeof AdminAdminFeedbacksRoute
   AdminAdminFlagsRoute: typeof AdminAdminFlagsRoute
   AdminAdminJoinRequestsRoute: typeof AdminAdminJoinRequestsRoute
   AdminAdminProblemsRoute: typeof AdminAdminProblemsRoute
@@ -853,6 +873,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminAdminAuditRoute: AdminAdminAuditRoute,
   AdminAdminConfigRoute: AdminAdminConfigRoute,
   AdminAdminEmailsRoute: AdminAdminEmailsRoute,
+  AdminAdminFeedbacksRoute: AdminAdminFeedbacksRoute,
   AdminAdminFlagsRoute: AdminAdminFlagsRoute,
   AdminAdminJoinRequestsRoute: AdminAdminJoinRequestsRoute,
   AdminAdminProblemsRoute: AdminAdminProblemsRoute,

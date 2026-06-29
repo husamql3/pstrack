@@ -7,6 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Route as GroupRoute } from "@/routes/groups_/$groupId"
 import type { GroupProblemsRange } from "@/server/groups/groups.type"
 import { useGroup } from "../hooks/use-group"
+import { FeedbackDialog } from "./feedback-dialog"
 import { GroupProblemsTabs } from "./group-problems-tabs"
 
 export const GroupLayout = () => {
@@ -46,6 +47,7 @@ export const GroupLayout = () => {
 
 	return (
 		<div className="flex h-full flex-col gap-4">
+			<FeedbackDialog groupId={group.id} />
 			<div className="shrink-0">
 				<Link
 					className="flex w-fit items-center gap-1.5 text-muted-foreground text-sm transition-colors hover:text-foreground"

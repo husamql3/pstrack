@@ -3,8 +3,10 @@ import { Elysia } from "elysia"
 import { adminController } from "@/server/admin/admin.controller"
 import { authController } from "@/server/auth/auth.controller"
 import { badgesController } from "@/server/badges/badges.controller"
+import { feedbackController } from "@/server/feedback/feedback.controller"
 import { groupsAdminController } from "@/server/groups/groups.admin.controller"
 import { groupsController } from "@/server/groups/groups.controller"
+import { leaderboardController } from "@/server/leaderboard/leaderboard.controller"
 import { auth } from "@/server/lib/auth"
 import {
 	captureServerException,
@@ -31,6 +33,8 @@ const api = new Elysia({ prefix: "/api/v3" })
 	.use(groupsController)
 	.use(problemsController)
 	.use(badgesController)
+	.use(feedbackController)
+	.use(leaderboardController)
 	.use(adminController)
 	.use(usersAdminController)
 	.use(groupsAdminController)

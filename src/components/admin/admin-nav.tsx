@@ -6,6 +6,7 @@ import {
 	IconHistory,
 	IconInbox,
 	IconMail,
+	IconMessage,
 	IconSettings,
 	IconUsers,
 	IconUsersGroup,
@@ -20,6 +21,7 @@ export type AdminNavItem = {
 		| "/admin/groups"
 		| "/admin/join-requests"
 		| "/admin/problems"
+		| "/admin/feedbacks"
 		| "/admin/audit"
 		| "/admin/flags"
 		| "/admin/config"
@@ -62,6 +64,11 @@ export const ADMIN_NAV: AdminNavGroup[] = [
 				title: "Problems",
 				path: "/admin/problems",
 				icon: <IconBook className="size-4" />,
+			},
+			{
+				title: "Feedbacks",
+				path: "/admin/feedbacks",
+				icon: <IconMessage className="size-4" />,
 			},
 		],
 	},
