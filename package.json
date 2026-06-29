@@ -41,6 +41,7 @@
 		"script": "dev:app"
 	},
 	"dependencies": {
+		"@axiomhq/js": "^1.8.0",
 		"@better-auth/infra": "0.2.14",
 		"@elysiajs/eden": "^1.4.9",
 		"@elysiajs/openapi": "^1.4.15",

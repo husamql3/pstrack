@@ -1,6 +1,7 @@
 import { Elysia, status } from "elysia"
 
 import { SystemEventTargetType, SystemEventType } from "@/generated/prisma/enums"
+import { axiomLog } from "@/server/lib/axiom"
 import {
 	getSessionUser,
 	requireRealSession,
@@ -31,6 +32,9 @@ export const problemsController = new Elysia({ tags: ["Problems"] })
 		const { user, response } = await requireRealSession(request)
 		if (!user) return response
 
+		const sessionId = request.headers.get("x-session-id")
+		axiomLog("solve_attempted", { userId: user.id, sessionId })
+
 		const result = await problemsDao.verifyAndMarkSolved(user.id)
 		if (result.error === "NO_GROUP") return status(409, { error: "Join a group first." })
 		if (result.error === "NO_PROBLEMS")
@@ -38,11 +42,21 @@ export const problemsController = new Elysia({ tags: ["Problems"] })
 		if (result.error === "PAUSED")
 			return status(409, { error: "Today is already paused." })
 		if (result.error === "NOT_VERIFIED") {
+			axiomLog("verification_failed", {
+				userId: user.id,
+				sessionId,
+				reason: "NOT_VERIFIED",
+			})
 			return status(409, {
 				error: "No accepted submission found on LeetCode for today's problem.",
 			})
 		}
 		if (result.error === "VERIFICATION_FAILED_PENALIZED") {
+			axiomLog("verification_failed", {
+				userId: user.id,
+				sessionId,
+				reason: "VERIFICATION_FAILED_PENALIZED",
+			})
 			systemEventsDao
 				.log({
 					actorId: user.id,
@@ -59,6 +73,14 @@ export const problemsController = new Elysia({ tags: ["Problems"] })
 		}
 
 		if (result.error !== null) return result.today
+
+		axiomLog("verification_succeeded", {
+			userId: user.id,
+			sessionId,
+			newStreak: result.newStreak,
+			crossedProThreshold: result.crossedProThreshold,
+			newBadges: result.newBadges,
+		})
 
 		systemEventsDao
 			.log({

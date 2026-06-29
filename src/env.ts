@@ -41,6 +41,10 @@ export const env = createEnv({
 		// payments
 		POLAR_ACCESS_TOKEN: z.string().min(1),
 		POLAR_SUCCESS_URL: z.url(),
+
+		// observability
+		AXIOM_TOKEN: z.string().min(1).optional(),
+		AXIOM_DATASET: z.string().min(1).optional(),
 	},
 	client: {
 		VITE_BASE_URL: z.url().default("https://pstrack.localhost"),
