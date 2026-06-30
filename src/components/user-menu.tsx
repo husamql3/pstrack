@@ -6,7 +6,7 @@ import {
 	IconSettings,
 	IconUserCircle,
 } from "@tabler/icons-react"
-import { Link, useNavigate } from "@tanstack/react-router"
+import { Link, useNavigate, useRouter } from "@tanstack/react-router"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -24,6 +24,7 @@ import { signOut, useSession } from "@/lib/auth-client"
 export function UserMenu() {
 	const { data: session, isPending } = useSession()
 	const navigate = useNavigate()
+	const router = useRouter()
 
 	const user = session?.user
 	const displayName = user?.username ?? user?.name ?? user?.email ?? "User"
@@ -37,7 +38,10 @@ export function UserMenu() {
 	const handleLogout = () => {
 		signOut({
 			fetchOptions: {
-				onSuccess: () => navigate({ to: "/login" }),
+				onSuccess: async () => {
+					await router.invalidate()
+					await navigate({ to: "/login" })
+				},
 			},
 		})
 	}

@@ -51,27 +51,6 @@ export const problemsController = new Elysia({ tags: ["Problems"] })
 				error: "No accepted submission found on LeetCode for today's problem.",
 			})
 		}
-		if (result.error === "VERIFICATION_FAILED_PENALIZED") {
-			axiomLog("verification_failed", {
-				userId: user.id,
-				sessionId,
-				reason: "VERIFICATION_FAILED_PENALIZED",
-			})
-			systemEventsDao
-				.log({
-					actorId: user.id,
-					actorUsername: user.username ?? undefined,
-					actorName: user.name,
-					eventType: SystemEventType.SOLVE_FAILED,
-					targetType: SystemEventTargetType.USER,
-					targetId: user.id,
-				})
-				.catch(() => {})
-			return status(409, {
-				error: "Solve not found on LeetCode. Streak broken and points deducted.",
-			})
-		}
-
 		if (result.error !== null) return result.today
 
 		axiomLog("verification_succeeded", {

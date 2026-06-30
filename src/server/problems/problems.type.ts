@@ -101,12 +101,7 @@ export type RoadmapProblemResponse = ProblemResponse & {
 
 export type MarkSolvedResult =
 	| {
-			error:
-				| "NO_GROUP"
-				| "NO_PROBLEMS"
-				| "PAUSED"
-				| "NOT_VERIFIED"
-				| "VERIFICATION_FAILED_PENALIZED"
+			error: "NO_GROUP" | "NO_PROBLEMS" | "PAUSED" | "NOT_VERIFIED"
 			today: TodayProblemResponse
 	  }
 	| {

@@ -33,7 +33,7 @@ Notes:
 | Miss | **-3 flat + clawback** of all multiplier-delta and first-solver bonuses accumulated during the now-broken streak |
 | Pause | -5 flat (streak preserved) |
 | Verification failure - 1st in month | 0 (grace, audit-only) |
-| Verification failure - 2nd+ in month | Treated as MISS (full penalty + clawback + streak broken) |
+| Verification failure - 2nd+ in month | 0 points; counter-only abuse signal. The day is penalized only if `mark-missed` later marks it `MISSED`. |
 | Floor | 0 - scores cannot go negative |
 
 ### Clawback Mechanics
@@ -86,7 +86,7 @@ Pre-pause UI must show "Pausing costs -5 points" before the confirm. No surprise
 `SolveStatus` stays a clean terminal-state enum (`SOLVED | PAUSED | MISSED`). Verification failures are tracked separately via `User.verificationFailuresThisMonth`:
 
 - First failure this month: counter increments, no points lost, no streak break. Logged as `VERIFICATION_FAILURE_GRACE` with `delta = 0` for audit trail.
-- Second and beyond: treated as a full MISS (-3 + clawback + streak break).
+- Second and beyond: counter increments, no points lost, no streak break, and no `UserSolve` row is created. The failed click is not a terminal daily outcome.
 
 Counter resets monthly via the existing Trigger.dev job (rename `reset-monthly-pauses` → `reset-monthly-counters` to cover both).
 
@@ -128,7 +128,7 @@ Tension fades after a user crosses 3,000 (Pro is permanent, points stop having t
 |---|---|---|
 | Miss severity | Flat -3 | -3 flat + scaling clawback (proportional to streak length and bonus history) |
 | Pause leak | Free unlimited until monthly cap | -5 cost per pause (still preserves streak) |
-| Verification leak | Unlimited free grace | One grace per month, then full miss penalty |
+| Verification leak | Unlimited untracked failures | Monthly counter tracks repeated failures; actual penalties still require a `MISSED` day |
 | Stakes | Vanity only (leaderboard rank) | Currency (Pro unlock at 3,000) |
 | Per-day stakes | Flat regardless of difficulty | Hard days worth 3x Easy - non-uniform tension |
 | Onboarding push | None | +20 join + multiplier on first solves |

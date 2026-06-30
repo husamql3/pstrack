@@ -599,30 +599,10 @@ export const problemsDao = {
 						PointReason.VERIFICATION_FAILURE_GRACE,
 						{ tx }
 					)
-				} else {
-					const solve = await tx.userSolve.upsert({
-						where: { userId_dailyProblemId: { userId, dailyProblemId } },
-						create: {
-							userId,
-							dailyProblemId,
-							status: SolveStatus.MISSED,
-							pointsEarned: 0,
-						},
-						update: { status: SolveStatus.MISSED },
-						select: { id: true },
-					})
-					await pointsDao.applyMissPenalty(tx, userId, {
-						userSolveId: solve.id,
-						streakStartedAt: user.currentStreakStartedAt,
-					})
 				}
 			})
 
-			if (isGrace) return { error: "NOT_VERIFIED", today }
-			return {
-				error: "VERIFICATION_FAILED_PENALIZED",
-				today: await problemsDao.getTodayForUser(userId),
-			}
+			return { error: "NOT_VERIFIED", today }
 		}
 
 		const [existingSolvedCount, isComeback] = await Promise.all([

@@ -10,7 +10,7 @@ Database: **Neon (PostgreSQL)**
 - Cascade deletes on all membership and solve relations
 - `UserSolve.status` is the single source of truth for terminal daily outcomes: `SOLVED | PAUSED | MISSED`
 - Better Auth manages `Session`, `Account`, `Verification` - do not add business logic to these tables
-- Streaks break on `MISSED`, never on `PAUSED`. The first monthly verification failure is tracked separately on `User.verificationFailuresThisMonth` and does not create a solve row.
+- Streaks break on `MISSED`, never on `PAUSED` or failed verification clicks. Verification failures are tracked separately on `User.verificationFailuresThisMonth` and do not create solve rows.
 
 ## Tables
 

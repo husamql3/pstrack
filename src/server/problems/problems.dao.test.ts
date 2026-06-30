@@ -258,14 +258,8 @@ describe("problemsDao", () => {
 			expect(pointsDao.applyMissPenalty).not.toHaveBeenCalled()
 		})
 
-		it("penalizes repeated verification failures by marking the solve missed", async () => {
-			const penalizedToday = {
-				...readyToday,
-				solve: { id: "solve-1", status: SolveStatus.MISSED, pointsEarned: 0 },
-			}
-			vi.spyOn(problemsDao, "getTodayForUser")
-				.mockResolvedValueOnce(readyToday)
-				.mockResolvedValueOnce(penalizedToday)
+		it("tracks repeated verification failures without marking the solve missed", async () => {
+			vi.spyOn(problemsDao, "getTodayForUser").mockResolvedValue(readyToday)
 			db.user.findUniqueOrThrow.mockResolvedValue({
 				leetcodeHandle: "alice",
 				currentStreak: 4,
@@ -281,33 +275,17 @@ describe("problemsDao", () => {
 					}),
 				}))
 			)
-			tx.userSolve.upsert.mockResolvedValue({ id: "solve-1" })
 
 			const result = await problemsDao.verifyAndMarkSolved("user-1")
 
-			expect(result).toEqual({
-				error: "VERIFICATION_FAILED_PENALIZED",
-				today: penalizedToday,
-			})
+			expect(result).toEqual({ error: "NOT_VERIFIED", today: readyToday })
 			expect(tx.user.update).toHaveBeenCalledWith({
 				where: { id: "user-1" },
 				data: { verificationFailuresThisMonth: 2 },
 			})
-			expect(tx.userSolve.upsert).toHaveBeenCalledWith({
-				where: { userId_dailyProblemId: { userId: "user-1", dailyProblemId: "daily-1" } },
-				create: {
-					userId: "user-1",
-					dailyProblemId: "daily-1",
-					status: SolveStatus.MISSED,
-					pointsEarned: 0,
-				},
-				update: { status: SolveStatus.MISSED },
-				select: { id: true },
-			})
-			expect(pointsDao.applyMissPenalty).toHaveBeenCalledWith(tx, "user-1", {
-				userSolveId: "solve-1",
-				streakStartedAt: new Date("2026-06-12T00:00:00.000Z"),
-			})
+			expect(pointsDao.applyPointsDelta).not.toHaveBeenCalled()
+			expect(tx.userSolve.upsert).not.toHaveBeenCalled()
+			expect(pointsDao.applyMissPenalty).not.toHaveBeenCalled()
 		})
 	})
 

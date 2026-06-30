@@ -5,13 +5,15 @@ import { LeaderboardRow } from "./leaderboard-row"
 const ColumnHeaders = () => (
 	<div className="flex items-center gap-3 px-3 pb-2">
 		<span className="w-10 shrink-0 font-mono text-[10px] text-muted-foreground uppercase tracking-widest">
-			RNK
+			RANK
 		</span>
 		<span className="w-9 shrink-0" />
 		<span className="flex-1 font-mono text-[10px] text-muted-foreground uppercase tracking-widest">
-			User · Score
+			User
 		</span>
-		<span className="w-20 shrink-0 text-right font-mono text-[10px] text-muted-foreground uppercase tracking-widest" />
+		<span className="w-20 shrink-0 text-right font-mono text-[10px] text-muted-foreground uppercase tracking-widest">
+			Score
+		</span>
 		<span className="w-16 shrink-0 text-right font-mono text-[10px] text-muted-foreground uppercase tracking-widest">
 			Streak
 		</span>

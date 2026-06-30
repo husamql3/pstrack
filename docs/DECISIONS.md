@@ -16,9 +16,9 @@ Zero codegen. The server `App` type is imported directly by the client. Renaming
 
 `PointsHistory` is never mutated, only appended. `User.totalPoints` is a denormalized cache. This gives a complete audit trail and makes clawbacks trivial - add a negative row instead of deleting the original. It also means a future "show me my points history" feature is already paid for.
 
-## Verification failures get one monthly grace
+## Verification failures never break streaks
 
-LeetCode and Codeforces APIs are unreliable. A flaky API response should not break a user's streak. Only `MISSED` (end-of-day, no attempt) breaks the streak. Repeated verification failures escalate via `User.verificationFailuresThisMonth` (see `docs/POINTS.md`) so abuse is bounded without punishing flaky-API days.
+LeetCode and Codeforces APIs are unreliable. A flaky API response should not break a user's streak. Only `MISSED` (end-of-day, no solve or pause) breaks the streak. Repeated verification failures increment `User.verificationFailuresThisMonth` (see `docs/POINTS.md`) so abuse is visible without punishing flaky-API days.
 
 ## Pauses consume a slot but still cost points
 
