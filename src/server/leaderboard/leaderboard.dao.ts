@@ -123,7 +123,7 @@ export const leaderboardDao = {
 			const users = await db.user.findMany({
 				where: { banned: false },
 				orderBy: { totalPoints: "desc" },
-				take: 100,
+				take: 30,
 				select: {
 					id: true,
 					username: true,
@@ -155,7 +155,7 @@ export const leaderboardDao = {
 			},
 			_sum: { delta: true },
 			orderBy: { _sum: { delta: "desc" } },
-			take: 100,
+			take: 30,
 		})
 
 		const userIds = agg.map((r) => r.userId)
