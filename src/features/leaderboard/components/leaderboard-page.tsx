@@ -1,6 +1,6 @@
-import { IconLock, IconTrophy } from "@tabler/icons-react"
+import { IconTrophy } from "@tabler/icons-react"
 import { Link, useNavigate, useSearch } from "@tanstack/react-router"
-import { useCallback } from "react"
+import { useCallback, useTransition } from "react"
 
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -95,23 +95,24 @@ const GroupSelector = ({
 }
 
 // ─── Pro gate ─────────────────────────────────────────────────────────────────
+// TODO: re-enable when global leaderboard is restricted to Pro users
 
-const ProGate = () => (
-	<div className="flex flex-col items-center gap-4 rounded-xl border border-border bg-background p-12 text-center">
-		<div className="flex size-12 items-center justify-center rounded-full bg-muted">
-			<IconLock className="size-5 text-muted-foreground" />
-		</div>
-		<div>
-			<p className="font-semibold text-base">Global Leaderboard is Pro only</p>
-			<p className="mt-1 text-muted-foreground text-sm">
-				Upgrade to Pro to see the top 100 solvers worldwide.
-			</p>
-		</div>
-		<Button asChild size="sm">
-			<Link to="/settings/account">Upgrade to Pro</Link>
-		</Button>
-	</div>
-)
+// const ProGate = () => (
+// 	<div className="flex flex-col items-center gap-4 rounded-xl border border-border bg-background p-12 text-center">
+// 		<div className="flex size-12 items-center justify-center rounded-full bg-muted">
+// 			<IconLock className="size-5 text-muted-foreground" />
+// 		</div>
+// 		<div>
+// 			<p className="font-semibold text-base">Global Leaderboard is Pro only</p>
+// 			<p className="mt-1 text-muted-foreground text-sm">
+// 				Upgrade to Pro to see the top 100 solvers worldwide.
+// 			</p>
+// 		</div>
+// 		<Button asChild size="sm">
+// 			<Link to="/settings/account">Upgrade to Pro</Link>
+// 		</Button>
+// 	</div>
+// )
 
 // ─── No group state ───────────────────────────────────────────────────────────
 
@@ -167,16 +168,17 @@ const GroupLeaderboardSection = ({
 
 const GlobalLeaderboardSection = ({
 	period,
-	isPro,
+	// TODO: re-enable isPro gate when we want to restrict global leaderboard to Pro users
+	// isPro,
 	viewerUserId,
 }: {
 	period: LeaderboardPeriod
 	isPro: boolean
 	viewerUserId: string | null | undefined
 }) => {
-	const { data, isLoading } = useGlobalLeaderboard(period, isPro)
+	const { data, isLoading } = useGlobalLeaderboard(period, true)
 
-	if (!isPro) return <ProGate />
+	// if (!isPro) return <ProGate />
 
 	return (
 		<LeaderboardTable
@@ -202,6 +204,8 @@ export const LeaderboardPage = () => {
 	const mode: LeaderboardMode = search.mode ?? "group"
 	const period: LeaderboardPeriod = search.period ?? "week"
 
+	const [, startTransition] = useTransition()
+
 	const meQuery = useMe()
 	const groupsQuery = useMyGroups()
 
@@ -210,21 +214,27 @@ export const LeaderboardPage = () => {
 
 	const setMode = useCallback(
 		(m: LeaderboardMode) => {
-			navigate({ search: (prev: LeaderboardSearch) => ({ ...prev, mode: m }) })
+			startTransition(() => {
+				navigate({ search: (prev: LeaderboardSearch) => ({ ...prev, mode: m }) })
+			})
 		},
 		[navigate]
 	)
 
 	const setPeriod = useCallback(
 		(p: LeaderboardPeriod) => {
-			navigate({ search: (prev: LeaderboardSearch) => ({ ...prev, period: p }) })
+			startTransition(() => {
+				navigate({ search: (prev: LeaderboardSearch) => ({ ...prev, period: p }) })
+			})
 		},
 		[navigate]
 	)
 
 	const setGroupId = useCallback(
 		(id: string) => {
-			navigate({ search: (prev: LeaderboardSearch) => ({ ...prev, groupId: id }) })
+			startTransition(() => {
+				navigate({ search: (prev: LeaderboardSearch) => ({ ...prev, groupId: id }) })
+			})
 		},
 		[navigate]
 	)

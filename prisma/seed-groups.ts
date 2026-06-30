@@ -125,7 +125,7 @@ const SEED_USERS = [
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
-async function seedGroups() {
+export async function seedGroups() {
 	console.log("🌱 Seeding groups...")
 
 	// Upsert seed users (skip duplicates so re-running is safe)
@@ -198,5 +198,7 @@ async function seedGroups() {
 	console.log("✅ Groups seed complete")
 }
 
-await seedGroups()
-process.exit(0)
+if (import.meta.main) {
+	await seedGroups()
+	process.exit(0)
+}

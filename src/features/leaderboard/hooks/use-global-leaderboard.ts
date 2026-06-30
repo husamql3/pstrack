@@ -14,14 +14,15 @@ export const useGlobalLeaderboard = (period: LeaderboardPeriod, enabled: boolean
 				query: { period },
 			})
 			if (error) {
-				if (
-					typeof error === "object" &&
-					error !== null &&
-					"status" in error &&
-					error.status === 403
-				) {
-					throw Object.assign(new Error("Pro required"), { code: "PRO_REQUIRED" })
-				}
+				// TODO: re-enable 403 handling when Pro gate is restored
+				// if (
+				// 	typeof error === "object" &&
+				// 	error !== null &&
+				// 	"status" in error &&
+				// 	error.status === 403
+				// ) {
+				// 	throw Object.assign(new Error("Pro required"), { code: "PRO_REQUIRED" })
+				// }
 				throw new Error("Failed to load global leaderboard")
 			}
 			return data

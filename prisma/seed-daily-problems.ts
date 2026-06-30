@@ -10,7 +10,7 @@
 
 import groupsData from "@/data/groups.json"
 import type { Prisma } from "@/generated/prisma/client"
-import { SolveStatus } from "@/generated/prisma/enums"
+import { PointReason, SolveStatus } from "@/generated/prisma/enums"
 import { db } from "@/server/lib/db"
 
 const DAYS_OF_HISTORY = 35
@@ -55,7 +55,7 @@ const roadmapFilter = (roadmap: string): Prisma.ProblemWhereInput => {
 	return { neetcode250: true }
 }
 
-async function seedDailyProblems() {
+export async function seedDailyProblems() {
 	console.log("🌱 Seeding daily problems + solves...")
 
 	const seedSlugs = groupsData.map((g) => g.slug)
@@ -78,6 +78,19 @@ async function seedDailyProblems() {
 		...new Set(groups.flatMap((g) => g.members.map((m) => m.userId))),
 	]
 	console.log(`  ${groups.length} groups, ${allMemberUserIds.length} unique members`)
+
+	// Clear PointsHistory for seed users before wiping UserSolves (FK constraint).
+	// Also reset denormalized stats — they'll be recomputed at the end.
+	await db.pointsHistory.deleteMany({ where: { userId: { in: allMemberUserIds } } })
+	await db.user.updateMany({
+		where: { id: { in: allMemberUserIds } },
+		data: {
+			totalPoints: 0,
+			currentStreak: 0,
+			longestStreak: 0,
+			currentStreakStartedAt: null,
+		},
+	})
 
 	// Mark ~1/3 of seed users as Pro to exercise the gold highlight.
 	const proRand = mulberry32(7)
@@ -210,7 +223,131 @@ async function seedDailyProblems() {
 	}
 
 	console.log(`✅ ${totalDailyProblems} daily problems, ${totalSolves} user solves`)
+
+	// ─── PointsHistory + User stats ───────────────────────────────────────────────
+
+	console.log("\n📊 Computing user stats and writing points ledger...")
+
+	const allSolves = await db.userSolve.findMany({
+		where: { userId: { in: allMemberUserIds } },
+		select: {
+			id: true,
+			userId: true,
+			status: true,
+			pointsEarned: true,
+			isFirstInGroup: true,
+			dailyProblem: { select: { assignedDate: true, groupId: true } },
+			verifiedAt: true,
+		},
+	})
+
+	// Build PointsHistory rows — one (or two for first-solver) per non-zero-delta solve.
+	const historyRows: {
+		userId: string
+		userSolveId: string
+		groupId: string
+		delta: number
+		reason: PointReason
+		createdAt: Date
+	}[] = []
+
+	for (const solve of allSolves) {
+		const { assignedDate, groupId } = solve.dailyProblem
+		const createdAt = solve.verifiedAt ?? assignedDate
+
+		if (solve.status === SolveStatus.SOLVED) {
+			const basePoints = solve.isFirstInGroup
+				? solve.pointsEarned - 5
+				: solve.pointsEarned
+			historyRows.push({
+				userId: solve.userId,
+				userSolveId: solve.id,
+				groupId,
+				delta: basePoints,
+				reason: PointReason.DAILY_SOLVE,
+				createdAt,
+			})
+			if (solve.isFirstInGroup) {
+				historyRows.push({
+					userId: solve.userId,
+					userSolveId: solve.id,
+					groupId,
+					delta: 5,
+					reason: PointReason.FIRST_IN_GROUP,
+					createdAt,
+				})
+			}
+		} else if (solve.status === SolveStatus.MISSED) {
+			historyRows.push({
+				userId: solve.userId,
+				userSolveId: solve.id,
+				groupId,
+				delta: solve.pointsEarned,
+				reason: PointReason.MISSED_DAY,
+				createdAt,
+			})
+		}
+	}
+
+	await db.pointsHistory.createMany({ data: historyRows })
+	console.log(`  ✓ ${historyRows.length} points history entries`)
+
+	// Compute totalPoints, currentStreak, longestStreak per user.
+	const solvesByUser = new Map<string, typeof allSolves>()
+	for (const solve of allSolves) {
+		const list = solvesByUser.get(solve.userId) ?? []
+		list.push(solve)
+		solvesByUser.set(solve.userId, list)
+	}
+
+	let updatedUsers = 0
+
+	for (const [userId, solves] of solvesByUser) {
+		const totalPoints = solves.reduce((sum, s) => sum + s.pointsEarned, 0)
+
+		// Map of dayOffset → whether that day had a SOLVED solve
+		const solvedOffsets = new Set<number>()
+		for (const solve of solves) {
+			if (solve.status === SolveStatus.SOLVED) {
+				const diffMs = today.getTime() - solve.dailyProblem.assignedDate.getTime()
+				solvedOffsets.add(Math.round(diffMs / DAY_MS))
+			}
+		}
+
+		// Current streak: consecutive solved days ending at today (or yesterday)
+		let currentStreak = 0
+		const streakStart = solvedOffsets.has(0) ? 0 : 1
+		for (let d = streakStart; d <= DAYS_OF_HISTORY; d++) {
+			if (solvedOffsets.has(d)) currentStreak++
+			else break
+		}
+
+		// Longest streak: widest consecutive run across all history
+		let longestStreak = 0
+		let run = 0
+		for (let d = DAYS_OF_HISTORY; d >= 0; d--) {
+			if (solvedOffsets.has(d)) {
+				run++
+				if (run > longestStreak) longestStreak = run
+			} else {
+				run = 0
+			}
+		}
+
+		const currentStreakStartedAt =
+			currentStreak > 0 ? new Date(today.getTime() - (currentStreak - 1) * DAY_MS) : null
+
+		await db.user.update({
+			where: { id: userId },
+			data: { totalPoints, currentStreak, longestStreak, currentStreakStartedAt },
+		})
+		updatedUsers++
+	}
+
+	console.log(`  ✓ ${updatedUsers} user stat records updated`)
 }
 
-await seedDailyProblems()
-process.exit(0)
+if (import.meta.main) {
+	await seedDailyProblems()
+	process.exit(0)
+}

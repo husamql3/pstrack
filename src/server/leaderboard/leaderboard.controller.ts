@@ -18,9 +18,10 @@ export const leaderboardController = new Elysia({
 			const { user, response } = await requireSessionUser(request)
 			if (!user) return response
 
-			if (!user.isPro) {
-				return status(403, { error: "Global leaderboard requires a Pro account." })
-			}
+			// TODO: re-enable once we want to gate global leaderboard behind Pro
+			// if (!user.isPro) {
+			// 	return status(403, { error: "Global leaderboard requires a Pro account." })
+			// }
 
 			const period = (query.period ?? DEFAULT_PERIOD) as LeaderboardPeriod
 			return leaderboardDao.getGlobalLeaderboard(period)
