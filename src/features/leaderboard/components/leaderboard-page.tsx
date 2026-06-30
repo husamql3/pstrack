@@ -209,7 +209,7 @@ export const LeaderboardPage = () => {
 	const meQuery = useMe()
 	const groupsQuery = useMyGroups()
 
-	const groups = groupsQuery.data ?? []
+	const groups: { id: string; slug: string }[] = groupsQuery.data ?? []
 	const activeGroupId = search.groupId ?? (groups.length > 0 ? groups[0]?.id : undefined)
 
 	const setMode = useCallback(

@@ -1,4 +1,5 @@
 import { IconFlame } from "@tabler/icons-react"
+import { Link } from "@tanstack/react-router"
 
 import { HashAvatar } from "@/features/onboarding/components/hash-avatar"
 import { cn } from "@/lib/utils"
@@ -16,13 +17,13 @@ export const LeaderboardRow = ({
 	const barWidth = topScore > 0 ? Math.round((entry.periodPoints / topScore) * 100) : 0
 	const displayName = entry.username ?? entry.name
 
-	return (
-		<div
-			className={cn(
-				"group relative flex items-center gap-3 rounded-lg px-3 py-3 transition-colors",
-				isViewer ? "bg-primary/10 ring-1 ring-primary/30" : "hover:bg-muted/40"
-			)}
-		>
+	const rowClass = cn(
+		"group relative flex items-center gap-3 rounded-lg px-3 py-3 transition-colors",
+		isViewer ? "bg-primary/10 ring-1 ring-primary/30" : "hover:bg-muted/40"
+	)
+
+	const inner = (
+		<>
 			{/* Rank */}
 			<span className="w-10 shrink-0 font-mono text-muted-foreground text-sm tabular-nums">
 				#{String(entry.rank).padStart(2, "0")}
@@ -76,6 +77,16 @@ export const LeaderboardRow = ({
 					<span className="text-muted-foreground">—</span>
 				)}
 			</div>
-		</div>
+		</>
 	)
+
+	if (entry.username) {
+		return (
+			<Link to="/$username" params={{ username: entry.username }} className={rowClass}>
+				{inner}
+			</Link>
+		)
+	}
+
+	return <div className={rowClass}>{inner}</div>
 }
