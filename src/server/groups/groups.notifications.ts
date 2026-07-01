@@ -5,7 +5,6 @@ import JoinRejectedEmail from "@/emails/join-rejected"
 import RemovedFromGroupEmail from "@/emails/removed-from-group"
 import { env } from "@/env"
 import { GroupType } from "@/generated/prisma/enums"
-import { notifyAdmin } from "@/server/lib/bot"
 import { db } from "@/server/lib/db"
 import { sendEmail } from "@/server/lib/email"
 import { captureServerException } from "@/server/lib/sentry"
@@ -33,26 +32,6 @@ const fetchGroupSlug = (groupId: string) =>
 	})
 
 export const groupNotifications = {
-	joinRequested: (groupId: string, requesterId: string) => {
-		safeSend("join-request", async () => {
-			const [requester, group] = await Promise.all([
-				db.user.findUniqueOrThrow({
-					where: { id: requesterId },
-					select: { name: true, email: true },
-				}),
-				fetchGroupSlug(groupId),
-			])
-			if (!group) return
-
-			notifyAdmin("join.requested", {
-				groupName: groupName(group.slug),
-				userEmail: requester.email,
-				userName: requester.name,
-				requestedAt: new Date().toISOString(),
-			})
-		})
-	},
-
 	joinApproved: (groupId: string, requesterId: string) => {
 		safeSend("join-approved", async () => {
 			const [requester, group] = await Promise.all([

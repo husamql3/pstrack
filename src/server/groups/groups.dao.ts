@@ -193,6 +193,7 @@ export const groupsDao = {
 				where: { id: groupId },
 				select: {
 					id: true,
+					slug: true,
 					type: true,
 					maxMembers: true,
 					_count: {
@@ -242,7 +243,7 @@ export const groupsDao = {
 			},
 		})
 
-		return { error: null, status: "REQUESTED" as const }
+		return { error: null, status: "REQUESTED" as const, groupSlug: group.slug }
 	},
 
 	findById: async (

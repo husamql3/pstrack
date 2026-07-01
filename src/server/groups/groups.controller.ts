@@ -1,11 +1,11 @@
 import { Elysia, status } from "elysia"
 
 import { SystemEventTargetType, SystemEventType } from "@/generated/prisma/enums"
+import { notifyAdmin } from "@/server/lib/bot"
 import { getSessionUser, requireSessionUser } from "@/server/lib/session"
 import { systemEventsDao } from "@/server/system-events/system-events.dao"
 import { groupsDao } from "./groups.dao"
 import { groupsModel } from "./groups.model"
-import { groupNotifications } from "./groups.notifications"
 
 export const groupsController = new Elysia({ prefix: "/groups", tags: ["Groups"] })
 	.use(groupsModel)
@@ -99,7 +99,12 @@ export const groupsController = new Elysia({ prefix: "/groups", tags: ["Groups"]
 			}
 
 			if (result.status === "REQUESTED") {
-				groupNotifications.joinRequested(params.id, user.id)
+				notifyAdmin("join.requested", {
+					groupName: `@${result.groupSlug}`,
+					userEmail: user.email,
+					userName: user.name,
+					requestedAt: new Date().toISOString(),
+				})
 				systemEventsDao
 					.log({
 						actorId: user.id,
