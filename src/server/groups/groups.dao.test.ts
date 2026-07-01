@@ -142,6 +142,7 @@ describe("groupsDao", () => {
 			db.user.findUniqueOrThrow.mockResolvedValue({ isPro: false })
 			db.group.findUnique.mockResolvedValue({
 				id: "group-1",
+				slug: "quiet-array",
 				type: "PUBLIC",
 				maxMembers: 30,
 				_count: { members: 12 },
@@ -149,10 +150,16 @@ describe("groupsDao", () => {
 			db.groupMember.findUnique.mockResolvedValue(null)
 			db.groupMember.count.mockResolvedValue(0)
 			db.groupJoinRequest.count.mockResolvedValue(0)
+			db.groupJoinRequest.upsert.mockResolvedValue({ id: "request-1" })
 
 			const result = await groupsDao.requestToJoin("user-1", "group-1")
 
-			expect(result).toEqual({ error: null, status: "REQUESTED" })
+			expect(result).toEqual({
+				error: null,
+				status: "REQUESTED",
+				groupSlug: "quiet-array",
+				requestId: "request-1",
+			})
 			expect(db.groupJoinRequest.upsert).toHaveBeenCalledWith({
 				where: { groupId_userId: { groupId: "group-1", userId: "user-1" } },
 				create: {
@@ -165,6 +172,7 @@ describe("groupsDao", () => {
 					status: "PENDING",
 					expiresAt: new Date("2026-06-17T12:00:00.000Z"),
 				},
+				select: { id: true },
 			})
 		})
 
