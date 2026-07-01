@@ -2,10 +2,10 @@ import InactivityWarningEmail from "@/emails/inactivity-warning"
 import JoinApprovedEmail from "@/emails/join-approved"
 import JoinExpiredEmail from "@/emails/join-expired"
 import JoinRejectedEmail from "@/emails/join-rejected"
-import JoinRequestEmail from "@/emails/join-request"
 import RemovedFromGroupEmail from "@/emails/removed-from-group"
 import { env } from "@/env"
 import { GroupType } from "@/generated/prisma/enums"
+import { notifyAdmin } from "@/server/lib/bot"
 import { db } from "@/server/lib/db"
 import { sendEmail } from "@/server/lib/email"
 import { captureServerException } from "@/server/lib/sentry"
@@ -15,7 +15,6 @@ const groupName = (slug: string) => `@${slug}`
 const groupUrl = (groupId: string) => `${BASE_URL}/groups/${groupId}`
 const browseUrl = () => `${BASE_URL}/groups`
 const dashboardUrl = () => `${BASE_URL}/dashboard`
-const reviewUrl = (groupId: string) => `${BASE_URL}/admin/groups/${groupId}/join-requests`
 
 const safeSend = (label: string, send: () => Promise<unknown>) => {
 	send().catch((err) => captureServerException(err, { tag: `email:${label}` }))
@@ -36,34 +35,21 @@ const fetchGroupSlug = (groupId: string) =>
 export const groupNotifications = {
 	joinRequested: (groupId: string, requesterId: string) => {
 		safeSend("join-request", async () => {
-			const [requester, group, siteAdmins] = await Promise.all([
+			const [requester, group] = await Promise.all([
 				db.user.findUniqueOrThrow({
 					where: { id: requesterId },
-					select: { name: true },
+					select: { name: true, email: true },
 				}),
 				fetchGroupSlug(groupId),
-				db.user.findMany({
-					where: { role: "admin" },
-					select: { email: true, name: true },
-				}),
 			])
 			if (!group) return
 
-			await Promise.all(
-				siteAdmins.map((admin) =>
-					sendEmail({
-						from: env.EMAIL_FROM,
-						to: admin.email,
-						subject: `New join request for ${groupName(group.slug)}`,
-						react: JoinRequestEmail({
-							adminName: admin.name,
-							requesterName: requester.name,
-							groupName: groupName(group.slug),
-							reviewUrl: reviewUrl(groupId),
-						}),
-					})
-				)
-			)
+			notifyAdmin("join.requested", {
+				groupName: groupName(group.slug),
+				userEmail: requester.email,
+				userName: requester.name,
+				requestedAt: new Date().toISOString(),
+			})
 		})
 	},
 

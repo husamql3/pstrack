@@ -8,6 +8,9 @@ export const feedbackModel = new Elysia({ name: "model/feedback" }).model({
 		category: t.Enum(FeedbackCategory),
 		description: t.Optional(t.Union([t.String({ maxLength: 1000 }), t.Null()])),
 	}),
+	"feedback.submitGeneral": t.Object({
+		description: t.Optional(t.Union([t.String({ maxLength: 1000 }), t.Null()])),
+	}),
 	"feedback.promptQuery": t.Object({
 		groupId: t.String({ minLength: 1 }),
 	}),

@@ -8,6 +8,7 @@ import {
 } from "@tabler/icons-react"
 import { Link, useNavigate, useRouter } from "@tanstack/react-router"
 
+import { FeedbackMenuItem } from "@/components/feedback-menu-item"
 import { Button } from "@/components/ui/button"
 import {
 	DropdownMenu,
@@ -125,6 +126,7 @@ export function UserMenu() {
 						<IconLifebuoy aria-hidden="true" />
 						Help &amp; FAQ
 					</DropdownMenuItem>
+					<FeedbackMenuItem />
 				</DropdownMenuGroup>
 				<DropdownMenuSeparator />
 				<DropdownMenuItem variant="destructive" onClick={handleLogout}>

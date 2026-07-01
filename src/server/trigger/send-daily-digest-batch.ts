@@ -2,6 +2,7 @@ import { logger, task } from "@trigger.dev/sdk/v3"
 
 import DailyProblemEmail from "@/emails/daily-problem"
 import { env } from "@/env"
+import { notifyAdmin } from "@/server/lib/bot"
 import { resend } from "@/server/lib/email"
 import { captureServerException } from "@/server/lib/sentry"
 import type { DailyProblemRecipient } from "@/server/problems/problems.type"
@@ -22,6 +23,15 @@ export const sendDailyDigestBatchTask = task({
 		minTimeoutInMs: 1000,
 		maxTimeoutInMs: 30000,
 		randomize: true,
+	},
+	catchError: async ({ task, error, retryAt }) => {
+		if (!retryAt) {
+			notifyAdmin("job.failed", {
+				jobName: task,
+				error: error instanceof Error ? error.message : String(error),
+				failedAt: new Date().toISOString(),
+			})
+		}
 	},
 	run: async ({ recipients, dateKey, batchIndex }: Payload) => {
 		if (recipients.length === 0) return { sent: 0, failed: 0 }

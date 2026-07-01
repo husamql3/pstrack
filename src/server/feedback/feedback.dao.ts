@@ -1,4 +1,8 @@
-import { type FeedbackCategory, GroupMemberStatus } from "@/generated/prisma/enums"
+import {
+	type FeedbackCategory,
+	FeedbackSource,
+	GroupMemberStatus,
+} from "@/generated/prisma/enums"
 import { db } from "@/server/lib/db"
 import { feedbackSelect } from "./feedback.type"
 
@@ -33,7 +37,25 @@ export const feedbackDao = {
 		description?: string
 	) =>
 		db.feedback.create({
-			data: { userId, groupId, category, description: description ?? null },
+			data: {
+				userId,
+				groupId,
+				source: FeedbackSource.GROUP_PROMPT,
+				category,
+				description: description ?? null,
+			},
+			select: feedbackSelect,
+		}),
+
+	submitGeneral: async (userId: string, description?: string) =>
+		db.feedback.create({
+			data: {
+				userId,
+				groupId: null,
+				source: FeedbackSource.GENERAL,
+				category: null,
+				description: description ?? null,
+			},
 			select: feedbackSelect,
 		}),
 

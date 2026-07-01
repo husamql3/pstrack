@@ -1,6 +1,7 @@
 import { logger, schedules } from "@trigger.dev/sdk/v3"
 
 import { SystemEventType } from "@/generated/prisma/enums"
+import { notifyAdmin } from "@/server/lib/bot"
 import { problemsDao } from "@/server/problems/problems.dao"
 import { systemEventsDao } from "@/server/system-events/system-events.dao"
 
@@ -11,6 +12,15 @@ export const markMissedTask = schedules.task({
 	id: "mark-missed",
 	cron: "0 0 * * *", // midnight UTC - sweeps the day that just ended
 	maxDuration: 300,
+	catchError: async ({ task, error, retryAt }) => {
+		if (!retryAt) {
+			notifyAdmin("job.failed", {
+				jobName: task,
+				error: error instanceof Error ? error.message : String(error),
+				failedAt: new Date().toISOString(),
+			})
+		}
+	},
 	run: async (payload) => {
 		const today = new Date(
 			Date.UTC(

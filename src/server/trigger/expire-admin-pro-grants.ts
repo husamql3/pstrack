@@ -1,12 +1,22 @@
 import { logger, schedules } from "@trigger.dev/sdk/v3"
 
 import { ProSource } from "@/generated/prisma/enums"
+import { notifyAdmin } from "@/server/lib/bot"
 import { db } from "@/server/lib/db"
 
 export const expireAdminProGrantsTask = schedules.task({
 	id: "expire-admin-pro-grants",
 	cron: "10 0 * * *", // daily, just past midnight UTC
 	maxDuration: 120,
+	catchError: async ({ task, error, retryAt }) => {
+		if (!retryAt) {
+			notifyAdmin("job.failed", {
+				jobName: task,
+				error: error instanceof Error ? error.message : String(error),
+				failedAt: new Date().toISOString(),
+			})
+		}
+	},
 	run: async () => {
 		const now = new Date()
 

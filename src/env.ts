@@ -41,6 +41,11 @@ export const env = createEnv({
 		// payments
 		POLAR_ACCESS_TOKEN: z.string().min(1),
 		POLAR_SUCCESS_URL: z.url(),
+		POLAR_WEBHOOK_SECRET: z.string().min(1).optional(),
+
+		// husam-bot
+		BOT_URL: z.string().url().optional(),
+		BOT_NOTIFY_SECRET: z.string().min(1).optional(),
 
 		// observability
 		AXIOM_TOKEN: z.string().min(1).optional(),

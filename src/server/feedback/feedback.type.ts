@@ -1,10 +1,11 @@
 import { z } from "zod"
 
 import type { Prisma } from "@/generated/prisma/client"
-import { FeedbackCategory } from "@/generated/prisma/enums"
+import { FeedbackCategory, FeedbackSource } from "@/generated/prisma/enums"
 
 export const feedbackSelect = {
 	id: true,
+	source: true,
 	category: true,
 	description: true,
 	reviewed: true,
@@ -24,4 +25,9 @@ export const feedbackFormSchema = z.object({
 })
 export type FeedbackFormInput = z.infer<typeof feedbackFormSchema>
 
-export { FeedbackCategory }
+export const generalFeedbackFormSchema = z.object({
+	description: z.string().max(1000, { error: "Max 1000 characters" }).optional(),
+})
+export type GeneralFeedbackFormInput = z.infer<typeof generalFeedbackFormSchema>
+
+export { FeedbackCategory, FeedbackSource }

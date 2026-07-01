@@ -31,15 +31,15 @@ export const Route = createFileRoute("/_admin/admin/feedbacks")({
 })
 
 function githubIssueUrl(
-	category: string,
+	category: string | null,
 	description: string | null,
-	groupSlug: string,
+	groupSlug: string | null,
 	username: string | null
 ) {
-	const title = `Feedback [${category}] from @${username ?? "unknown"} in @${groupSlug}`
+	const title = `Feedback [${category ?? "general"}] from @${username ?? "unknown"}${groupSlug ? ` in @${groupSlug}` : ""}`
 	const body = [
-		`**Category:** ${category}`,
-		`**Group:** @${groupSlug}`,
+		category ? `**Category:** ${category}` : "",
+		groupSlug ? `**Group:** @${groupSlug}` : "",
 		`**User:** @${username ?? "unknown"}`,
 		description ? `\n**Description:**\n${description}` : "",
 	]
@@ -144,11 +144,15 @@ function AdminFeedbacksPage() {
 									<TableCell className="font-medium">
 										@{row.user.username ?? row.user.name}
 									</TableCell>
-									<TableCell>@{row.group.slug}</TableCell>
+									<TableCell>{row.group ? `@${row.group.slug}` : "—"}</TableCell>
 									<TableCell>
-										<Badge variant="secondary" className="capitalize">
-											{row.category.toLowerCase()}
-										</Badge>
+										{row.category ? (
+											<Badge variant="secondary" className="capitalize">
+												{row.category.toLowerCase()}
+											</Badge>
+										) : (
+											<Badge variant="outline">{row.source.toLowerCase()}</Badge>
+										)}
 									</TableCell>
 									<TableCell className="max-w-xs">
 										<p className="truncate text-muted-foreground text-sm">
@@ -177,9 +181,9 @@ function AdminFeedbacksPage() {
 											<Button variant="outline" size="sm" asChild>
 												<a
 													href={githubIssueUrl(
-														row.category,
+														row.category ?? null,
 														row.description ?? null,
-														row.group.slug,
+														row.group?.slug ?? null,
 														row.user.username ?? null
 													)}
 													target="_blank"

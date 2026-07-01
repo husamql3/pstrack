@@ -374,6 +374,24 @@ export const problemsDao = {
 
 	assignNextProblemTx,
 
+	getDailySolveStats: async (date: Date) => {
+		const yesterday = new Date(date.getTime() - 86_400_000)
+		const [totalSolves, solvers, newUsers] = await Promise.all([
+			db.userSolve.count({
+				where: { status: SolveStatus.SOLVED, dailyProblem: { assignedDate: yesterday } },
+			}),
+			db.userSolve.findMany({
+				where: { status: SolveStatus.SOLVED, dailyProblem: { assignedDate: yesterday } },
+				select: { userId: true },
+				distinct: ["userId"],
+			}),
+			db.user.count({
+				where: { createdAt: { gte: yesterday, lt: date } },
+			}),
+		])
+		return { totalSolves, activeUsers: solvers.length, newUsers }
+	},
+
 	getDailyDigestRecipients: async (date: Date) => {
 		const day = startOfUtcDay(date)
 

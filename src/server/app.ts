@@ -6,6 +6,7 @@ import { badgesController } from "@/server/badges/badges.controller"
 import { feedbackController } from "@/server/feedback/feedback.controller"
 import { groupsAdminController } from "@/server/groups/groups.admin.controller"
 import { groupsController } from "@/server/groups/groups.controller"
+import { internalController } from "@/server/internal/internal.controller"
 import { leaderboardController } from "@/server/leaderboard/leaderboard.controller"
 import { auth } from "@/server/lib/auth"
 import {
@@ -34,6 +35,7 @@ const api = new Elysia({ prefix: "/api/v3" })
 	.use(problemsController)
 	.use(badgesController)
 	.use(feedbackController)
+	.use(internalController)
 	.use(leaderboardController)
 	.use(adminController)
 	.use(usersAdminController)

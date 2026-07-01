@@ -1,5 +1,5 @@
 import { dash } from "@better-auth/infra"
-import { checkout, polar } from "@polar-sh/better-auth"
+import { checkout, polar, webhooks } from "@polar-sh/better-auth"
 import { betterAuth } from "better-auth"
 import { prismaAdapter } from "better-auth/adapters/prisma"
 import { admin, magicLink } from "better-auth/plugins"
@@ -7,6 +7,7 @@ import { admin, magicLink } from "better-auth/plugins"
 import MagicLinkEmail from "@/emails/magic-link"
 import WelcomeEmail from "@/emails/welcome"
 import { env } from "@/env"
+import { notifyAdmin } from "@/server/lib/bot"
 import { db } from "@/server/lib/db"
 import { sendEmail } from "@/server/lib/email"
 import { logger } from "@/server/lib/logger"
@@ -87,6 +88,11 @@ export const auth = betterAuth({
 					} catch (err) {
 						logger.error({ err, userId: user.id }, "welcome email failed")
 					}
+					notifyAdmin("user.created", {
+						email: user.email,
+						name: user.name ?? undefined,
+						createdAt: new Date().toISOString(),
+					})
 				},
 			},
 		},
@@ -132,6 +138,21 @@ export const auth = betterAuth({
 					successUrl: env.POLAR_SUCCESS_URL,
 					authenticatedUsersOnly: true,
 				}),
+				...(env.POLAR_WEBHOOK_SECRET
+					? [
+							webhooks({
+								secret: env.POLAR_WEBHOOK_SECRET,
+								onOrderPaid: async (payload) => {
+									notifyAdmin("purchase.pro", {
+										email: payload.data.customer.email ?? undefined,
+										plan: payload.data.product?.name ?? "Pro",
+										amount: payload.data.netAmount,
+										purchasedAt: new Date().toISOString(),
+									})
+								},
+							}),
+						]
+					: []),
 			],
 		}),
 	],

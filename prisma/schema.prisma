@@ -448,25 +448,32 @@ enum SystemEventTargetType {
 }
 
 model Feedback {
-  id          String           @id @default(cuid())
+  id          String            @id @default(cuid())
   userId      String
-  groupId     String
-  category    FeedbackCategory
+  groupId     String?
+  source      FeedbackSource    @default(GROUP_PROMPT)
+  category    FeedbackCategory?
   description String?
-  reviewed    Boolean          @default(false)
-  createdAt   DateTime         @default(now())
+  reviewed    Boolean           @default(false)
+  createdAt   DateTime          @default(now())
 
-  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
-  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  group Group? @relation(fields: [groupId], references: [id], onDelete: Cascade)
 
   @@unique([userId, groupId])
   @@index([groupId, reviewed])
+  @@index([source])
   @@map("feedback")
 }
 
 enum FeedbackCategory {
   BUG
   SUGGESTION
+  GENERAL
+}
+
+enum FeedbackSource {
+  GROUP_PROMPT
   GENERAL
 }
 

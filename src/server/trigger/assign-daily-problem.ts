@@ -1,5 +1,6 @@
 import { logger, schedules } from "@trigger.dev/sdk/v3"
 
+import { notifyAdmin } from "@/server/lib/bot"
 import { problemsDao } from "@/server/problems/problems.dao"
 import { sendDailyDigestBatchTask } from "./send-daily-digest-batch"
 
@@ -9,6 +10,15 @@ export const assignDailyProblemTask = schedules.task({
 	id: "assign-daily-problem",
 	cron: "0 0 * * *", // midnight UTC
 	maxDuration: 300,
+	catchError: async ({ task, error, retryAt }) => {
+		if (!retryAt) {
+			notifyAdmin("job.failed", {
+				jobName: task,
+				error: error instanceof Error ? error.message : String(error),
+				failedAt: new Date().toISOString(),
+			})
+		}
+	},
 	run: async (payload) => {
 		const date = new Date(
 			Date.UTC(
@@ -43,6 +53,14 @@ export const assignDailyProblemTask = schedules.task({
 				}))
 			)
 		}
+
+		const stats = await problemsDao.getDailySolveStats(date)
+		notifyAdmin("digest.daily", {
+			date: dateKey,
+			totalSolves: stats.totalSolves,
+			activeUsers: stats.activeUsers,
+			newUsers: stats.newUsers,
+		})
 
 		logger.log("Done", {
 			...result,

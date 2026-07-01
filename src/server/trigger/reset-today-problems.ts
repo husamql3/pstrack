@@ -1,10 +1,20 @@
 import { logger, task } from "@trigger.dev/sdk/v3"
 
+import { notifyAdmin } from "@/server/lib/bot"
 import { db } from "@/server/lib/db"
 
 export const resetTodayProblemsTask = task({
 	id: "reset-today-problems",
 	maxDuration: 60,
+	catchError: async ({ task, error, retryAt }) => {
+		if (!retryAt) {
+			notifyAdmin("job.failed", {
+				jobName: task,
+				error: error instanceof Error ? error.message : String(error),
+				failedAt: new Date().toISOString(),
+			})
+		}
+	},
 	run: async () => {
 		const today = new Date()
 		const date = new Date(

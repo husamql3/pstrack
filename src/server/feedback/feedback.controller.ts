@@ -1,5 +1,6 @@
 import { Elysia, status } from "elysia"
 
+import { notifyAdmin } from "@/server/lib/bot"
 import { requirePlatformAdmin, requireSessionUser } from "@/server/lib/session"
 import { feedbackDao } from "./feedback.dao"
 import { feedbackModel } from "./feedback.model"
@@ -21,17 +22,41 @@ export const feedbackController = new Elysia({ prefix: "/feedbacks", tags: ["Fee
 			const { user, response } = await requireSessionUser(request)
 			if (!user) return response
 			try {
-				return await feedbackDao.submit(
+				const feedback = await feedbackDao.submit(
 					user.id,
 					body.groupId,
 					body.category,
 					body.description ?? undefined
 				)
+				notifyAdmin("feedback.submitted", {
+					userEmail: user.email,
+					text: body.description ?? "",
+					submittedAt: new Date().toISOString(),
+				})
+				return feedback
 			} catch {
 				return status(409, { error: "Feedback already submitted for this group" })
 			}
 		},
 		{ body: "feedback.submit" }
+	)
+	.post(
+		"/general",
+		async ({ request, body }) => {
+			const { user, response } = await requireSessionUser(request)
+			if (!user) return response
+			const feedback = await feedbackDao.submitGeneral(
+				user.id,
+				body.description ?? undefined
+			)
+			notifyAdmin("feedback.submitted", {
+				userEmail: user.email,
+				text: body.description ?? "",
+				submittedAt: new Date().toISOString(),
+			})
+			return feedback
+		},
+		{ body: "feedback.submitGeneral" }
 	)
 	.get(
 		"/",
