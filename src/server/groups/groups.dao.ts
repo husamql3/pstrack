@@ -229,7 +229,7 @@ export const groupsDao = {
 			return { error: "INVITE_REQUIRED" as const, status: null }
 		}
 
-		await db.groupJoinRequest.upsert({
+		const joinRequest = await db.groupJoinRequest.upsert({
 			where: { groupId_userId: { groupId, userId } },
 			create: {
 				groupId,
@@ -241,9 +241,15 @@ export const groupsDao = {
 				status: "PENDING",
 				expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
 			},
+			select: { id: true },
 		})
 
-		return { error: null, status: "REQUESTED" as const, groupSlug: group.slug }
+		return {
+			error: null,
+			status: "REQUESTED" as const,
+			groupSlug: group.slug,
+			requestId: joinRequest.id,
+		}
 	},
 
 	findById: async (

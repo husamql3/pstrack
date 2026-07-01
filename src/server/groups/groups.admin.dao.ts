@@ -308,6 +308,57 @@ export const groupsAdminDao = {
 		return { error: null, requesterId: request.userId, action }
 	},
 
+	transferRequest: async (requestId: string, targetGroupId: string) => {
+		const request = await db.groupJoinRequest.findUnique({
+			where: { id: requestId },
+			select: { id: true, groupId: true, userId: true, status: true },
+		})
+
+		if (!request) return { error: "NOT_FOUND" as const }
+		if (request.status !== "PENDING") return { error: "ALREADY_PROCESSED" as const }
+
+		const target = await db.group.findUnique({
+			where: { id: targetGroupId },
+			select: {
+				maxMembers: true,
+				_count: { select: { members: { where: { status: GroupMemberStatus.ACTIVE } } } },
+			},
+		})
+		if (!target) return { error: "TARGET_NOT_FOUND" as const }
+		if (target._count.members >= target.maxMembers) return { error: "FULL" as const }
+
+		await db.$transaction(async (tx) => {
+			await tx.groupJoinRequest.update({
+				where: { id: requestId },
+				data: { status: "REJECTED" },
+			})
+			await tx.groupMember.upsert({
+				where: { groupId_userId: { groupId: targetGroupId, userId: request.userId } },
+				create: { groupId: targetGroupId, userId: request.userId, role: "MEMBER" },
+				update: {
+					status: GroupMemberStatus.ACTIVE,
+					removedAt: null,
+					removalReason: null,
+				},
+			})
+			const hasJoinedBefore = await pointsDao.hasEverJoinedGroup(
+				tx,
+				request.userId,
+				targetGroupId
+			)
+			if (!hasJoinedBefore) {
+				await pointsDao.applyPointsDelta(
+					request.userId,
+					JOIN_GROUP_BONUS,
+					PointReason.JOIN_GROUP,
+					{ tx, groupId: targetGroupId }
+				)
+			}
+		})
+
+		return { error: null, userId: request.userId, originalGroupId: request.groupId }
+	},
+
 	generateInvite: async (groupId: string, expiresIn: "7d" | "30d" | "90d" | "never") => {
 		const inviteCode = crypto.randomUUID().replace(/-/g, "")
 		const expiryDays = { "7d": 7, "30d": 30, "90d": 90 } as const
