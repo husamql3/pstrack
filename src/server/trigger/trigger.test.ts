@@ -65,9 +65,14 @@ vi.mock("@/server/problems/problems.dao", () => ({
 	problemsDao: {
 		assignDailyProblems: vi.fn(),
 		getDailyDigestRecipients: vi.fn(),
+		getDailySolveStats: vi.fn(),
 		markMissedForDate: vi.fn(),
 		resetMonthlyCounters: vi.fn(),
 	},
+}))
+
+vi.mock("@/server/lib/bot", () => ({
+	notifyAdmin: vi.fn(),
 }))
 
 import { ProSource } from "@/generated/prisma/enums"
@@ -112,6 +117,11 @@ describe("trigger tasks", () => {
 			skipped: 1,
 		})
 		problemsDao.getDailyDigestRecipients.mockResolvedValue(recipients)
+		problemsDao.getDailySolveStats.mockResolvedValue({
+			totalSolves: 0,
+			activeUsers: 0,
+			newUsers: 0,
+		})
 		sendDailyDigestBatchTask.batchTrigger = vi.fn()
 
 		const result = await assignDailyProblemTask.run({
