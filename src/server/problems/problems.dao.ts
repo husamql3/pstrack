@@ -7,6 +7,7 @@ import {
 	MemberRole,
 	PointReason,
 	SolveStatus,
+	SystemEventType,
 	WarningResolution,
 } from "@/generated/prisma/enums"
 import { badgesDao } from "@/server/badges/badges.dao"
@@ -376,20 +377,48 @@ export const problemsDao = {
 
 	getDailySolveStats: async (date: Date) => {
 		const yesterday = new Date(date.getTime() - 86_400_000)
-		const [totalSolves, solvers, newUsers] = await Promise.all([
-			db.userSolve.count({
-				where: { status: SolveStatus.SOLVED, dailyProblem: { assignedDate: yesterday } },
-			}),
-			db.userSolve.findMany({
-				where: { status: SolveStatus.SOLVED, dailyProblem: { assignedDate: yesterday } },
-				select: { userId: true },
-				distinct: ["userId"],
-			}),
-			db.user.count({
-				where: { createdAt: { gte: yesterday, lt: date } },
-			}),
-		])
-		return { totalSolves, activeUsers: solvers.length, newUsers }
+		const [totalSolves, solvers, newUsers, pausesUsed, handleChanges] = await Promise.all(
+			[
+				db.userSolve.count({
+					where: {
+						status: SolveStatus.SOLVED,
+						dailyProblem: { assignedDate: yesterday },
+					},
+				}),
+				db.userSolve.findMany({
+					where: {
+						status: SolveStatus.SOLVED,
+						dailyProblem: { assignedDate: yesterday },
+					},
+					select: { userId: true },
+					distinct: ["userId"],
+				}),
+				db.user.count({
+					where: { createdAt: { gte: yesterday, lt: date } },
+				}),
+				db.systemEventLog.count({
+					where: {
+						eventType: SystemEventType.PAUSE_USED,
+						createdAt: { gte: yesterday, lt: date },
+					},
+				}),
+				db.systemEventLog.count({
+					where: {
+						eventType: {
+							in: [SystemEventType.HANDLE_CHANGED, SystemEventType.USERNAME_CHANGED],
+						},
+						createdAt: { gte: yesterday, lt: date },
+					},
+				}),
+			]
+		)
+		return {
+			totalSolves,
+			activeUsers: solvers.length,
+			newUsers,
+			pausesUsed,
+			handleChanges,
+		}
 	},
 
 	getDailyDigestRecipients: async (date: Date) => {

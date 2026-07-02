@@ -55,11 +55,13 @@ export const assignDailyProblemTask = schedules.task({
 		}
 
 		const stats = await problemsDao.getDailySolveStats(date)
-		notifyAdmin("digest.daily", {
+		await notifyAdmin("digest.daily", {
 			date: dateKey,
 			totalSolves: stats.totalSolves,
 			activeUsers: stats.activeUsers,
 			newUsers: stats.newUsers,
+			pausesUsed: stats.pausesUsed,
+			handleChanges: stats.handleChanges,
 		})
 
 		logger.log("Done", {

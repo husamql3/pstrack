@@ -99,7 +99,7 @@ export const groupsController = new Elysia({ prefix: "/groups", tags: ["Groups"]
 			}
 
 			if (result.status === "REQUESTED") {
-				notifyAdmin("join.requested", {
+				await notifyAdmin("join.requested", {
 					requestId: result.requestId,
 					groupId: params.id,
 					groupName: `@${result.groupSlug}`,

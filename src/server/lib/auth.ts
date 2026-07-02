@@ -88,7 +88,7 @@ export const auth = betterAuth({
 					} catch (err) {
 						logger.error({ err, userId: user.id }, "welcome email failed")
 					}
-					notifyAdmin("user.created", {
+					await notifyAdmin("user.created", {
 						email: user.email,
 						name: user.name ?? undefined,
 						createdAt: new Date().toISOString(),
@@ -143,7 +143,7 @@ export const auth = betterAuth({
 							webhooks({
 								secret: env.POLAR_WEBHOOK_SECRET,
 								onOrderPaid: async (payload) => {
-									notifyAdmin("purchase.pro", {
+									await notifyAdmin("purchase.pro", {
 										email: payload.data.customer.email ?? undefined,
 										plan: payload.data.product?.name ?? "Pro",
 										amount: payload.data.netAmount,
