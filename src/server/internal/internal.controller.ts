@@ -132,6 +132,22 @@ export const internalController = new Elysia({ prefix: "/internal" })
 		{ detail: { hide: true } }
 	)
 	.get(
+		"/bot/join-requests",
+		async ({ request }) => {
+			if (!requireBotAuth(request)) return status(401, { error: "Unauthorized" })
+
+			const requests = await groupsAdminDao.listAllPendingRequests()
+			return requests.map((r) => ({
+				requestId: r.id,
+				groupName: `@${r.group.slug}`,
+				userName: r.user.name ?? undefined,
+				userHandle: r.user.username ?? undefined,
+				requestedAt: r.createdAt.toISOString(),
+			}))
+		},
+		{ detail: { hide: true } }
+	)
+	.get(
 		"/bot",
 		async ({ request }) => {
 			const auth = request.headers.get("Authorization") ?? ""
