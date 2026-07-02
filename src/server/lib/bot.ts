@@ -7,7 +7,12 @@ import { env } from "@/env"
  * dropped when the function freezes after the response returns. Callers in
  * request paths MUST `await` this; Trigger.dev tasks should too. Failures are
  * logged (never thrown) so a bot outage can't break the primary operation.
+ *
+ * Bounded by a 5s timeout so a hung bot can't add unbounded latency to the
+ * (now-awaited) request paths that call this.
  */
+const NOTIFY_TIMEOUT_MS = 5000
+
 export const notifyAdmin = async (
 	event: string,
 	payload: Record<string, unknown>
@@ -21,6 +26,7 @@ export const notifyAdmin = async (
 				Authorization: `Bearer ${env.BOT_NOTIFY_SECRET}`,
 			},
 			body: JSON.stringify({ event, payload }),
+			signal: AbortSignal.timeout(NOTIFY_TIMEOUT_MS),
 		})
 		if (!res.ok) {
 			const body = await res.text().catch(() => "")

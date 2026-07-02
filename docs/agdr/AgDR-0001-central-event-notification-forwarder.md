@@ -25,7 +25,9 @@ Chosen: **central forwarder in `systemEventsDao.log()` with a `SystemEventType �
 - New realtime events are added by editing one routing table, not by hunting call sites.
 - `system-events.dao.ts` imports the bot transport — an acceptable, contained coupling; the DAO already owns "record that this happened," and "tell the admin" is adjacent.
 - Forwarded events carry actor + target only; richer context (e.g. group slug) is resolved best-effort from `metadata`/`targetId`.
-- Low-signal events default to `ignore`/`digest`, keeping the realtime channel actionable.
+- Each realtime-classed GROUP event triggers one extra `group.findUnique` (to resolve the slug label) plus the bot round-trip, both bounded by a 5s fetch timeout. This is negligible at churn/membership volume, but must be revisited before promoting any high-frequency event (e.g. solves) into `REALTIME_EVENTS`.
+- The forward is fired inside `systemEventsDao.log()`, which most request-path callers invoke fire-and-forget — so a forwarded event can itself be dropped on a serverless freeze. Acceptable for best-effort churn/membership; the always-committed event row + daily digest are the backstop.
+- Low-signal events default to `ignore`/`digest`, keeping the realtime channel actionable. The implementation is currently a binary `Set` (`REALTIME_EVENTS`); promote it to the full `SystemEventType → policy` map when digest-classed forwarding lands.
 
 ## Artifacts
 
