@@ -28,7 +28,7 @@ export const feedbackController = new Elysia({ prefix: "/feedbacks", tags: ["Fee
 					body.category,
 					body.description ?? undefined
 				)
-				notifyAdmin("feedback.submitted", {
+				await notifyAdmin("feedback.submitted", {
 					userEmail: user.email,
 					text: body.description ?? "",
 					submittedAt: new Date().toISOString(),
@@ -49,7 +49,7 @@ export const feedbackController = new Elysia({ prefix: "/feedbacks", tags: ["Fee
 				user.id,
 				body.description ?? undefined
 			)
-			notifyAdmin("feedback.submitted", {
+			await notifyAdmin("feedback.submitted", {
 				userEmail: user.email,
 				text: body.description ?? "",
 				submittedAt: new Date().toISOString(),

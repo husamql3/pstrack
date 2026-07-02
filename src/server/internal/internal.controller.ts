@@ -139,23 +139,37 @@ export const internalController = new Elysia({ prefix: "/internal" })
 				return status(401, { error: "Unauthorized" })
 			}
 
-			const [totalUsers, pendingRequests, unreviewedFeedbacks, solveStats] =
-				await Promise.all([
-					db.user.count(),
-					db.groupJoinRequest.count({ where: { status: JoinRequestStatus.PENDING } }),
-					db.feedback.findMany({
-						where: { reviewed: false },
-						orderBy: { createdAt: "desc" },
-						take: 5,
-						select: {
-							id: true,
-							description: true,
-							createdAt: true,
-							user: { select: { email: true } },
-						},
-					}),
-					getTodaySolveStats(),
-				])
+			const now = new Date()
+			const today = new Date(
+				Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())
+			)
+			const twoDaysAgo = new Date(now.getTime() - 2 * 86_400_000)
+
+			const [
+				totalUsers,
+				pendingRequests,
+				unreviewedFeedbacks,
+				solveStats,
+				dailyProblemCount,
+				signups48h,
+			] = await Promise.all([
+				db.user.count(),
+				db.groupJoinRequest.count({ where: { status: JoinRequestStatus.PENDING } }),
+				db.feedback.findMany({
+					where: { reviewed: false },
+					orderBy: { createdAt: "desc" },
+					take: 5,
+					select: {
+						id: true,
+						description: true,
+						createdAt: true,
+						user: { select: { email: true } },
+					},
+				}),
+				getTodaySolveStats(),
+				db.dailyProblem.count({ where: { assignedDate: today } }),
+				db.user.count({ where: { createdAt: { gte: twoDaysAgo } } }),
+			])
 
 			return {
 				users: { total: totalUsers },
@@ -172,6 +186,8 @@ export const internalController = new Elysia({ prefix: "/internal" })
 					today: solveStats.totalSolves,
 					activeUsers: solveStats.activeUsers,
 				},
+				dailyProblem: { assignedForToday: dailyProblemCount > 0 },
+				signups48h,
 			}
 		},
 		{ detail: { hide: true } }

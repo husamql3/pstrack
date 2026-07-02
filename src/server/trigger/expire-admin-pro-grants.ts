@@ -45,6 +45,14 @@ export const expireAdminProGrantsTask = schedules.task({
 			count: expired.length,
 			usernames: expired.map((u) => u.username).filter(Boolean),
 		})
+
+		await notifyAdmin("pro.expired", {
+			count: expired.length,
+			username: expired.length === 1 ? (expired[0]?.username ?? undefined) : undefined,
+			source: "admin_grant",
+			expiredAt: new Date().toISOString(),
+		})
+
 		return { expired: expired.length }
 	},
 })
