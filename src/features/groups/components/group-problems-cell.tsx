@@ -37,6 +37,31 @@ const StatusIcon = ({ status }: { status: SolveStatus }) => {
 	}
 }
 
+const EmptyStatus = ({
+	isTodayRow,
+	isInteractive,
+	isSolvePending,
+	onSolve,
+}: {
+	isTodayRow: boolean
+	isInteractive: boolean
+	isSolvePending: boolean
+	onSolve: () => void
+}) => {
+	if (!isTodayRow) {
+		return <span className="text-muted-foreground/35">-</span>
+	}
+
+	return (
+		<Checkbox
+			checked={false}
+			disabled={!isInteractive || isSolvePending}
+			onCheckedChange={isInteractive ? onSolve : undefined}
+			aria-label={isInteractive ? "Mark today as solved" : "Not solved today"}
+		/>
+	)
+}
+
 export const GroupProblemsCell = ({
 	solve,
 	isTodayRow,
@@ -78,14 +103,12 @@ export const GroupProblemsCell = ({
 	const cellInner = (
 		<div className={baseClasses}>
 			{status === null ? (
-				canMarkSolved ? (
-					<Checkbox
-						checked={false}
-						disabled={isSolvePending}
-						onCheckedChange={handleClick}
-						aria-label="Mark today as solved"
-					/>
-				) : null
+				<EmptyStatus
+					isTodayRow={isTodayRow}
+					isInteractive={isInteractive}
+					isSolvePending={isSolvePending}
+					onSolve={handleClick}
+				/>
 			) : (
 				<StatusIcon status={status} />
 			)}
