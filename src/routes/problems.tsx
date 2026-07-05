@@ -127,8 +127,9 @@ function ProblemsPage() {
 
 	const progress = useMemo(() => {
 		const list = roadmapQuery.data ?? []
-		const total = list.length
-		const solved = list.filter((p) => p.status === SolveStatus.SOLVED).length
+		const assignable = list.filter((p) => !p.isPremium)
+		const total = assignable.length
+		const solved = assignable.filter((p) => p.status === SolveStatus.SOLVED).length
 		const percent = total > 0 ? Math.round((solved / total) * 100) : 0
 		return { total, solved, percent }
 	}, [roadmapQuery.data])

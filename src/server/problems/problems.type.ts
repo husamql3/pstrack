@@ -11,6 +11,7 @@ export const problemSelect = {
 	topic: true,
 	roadmapIndex: true,
 	leetcodeId: true,
+	isPremium: true,
 	neetcode250: true,
 	neetcode150: true,
 	blind75: true,
@@ -101,7 +102,7 @@ export type RoadmapProblemResponse = ProblemResponse & {
 
 export type MarkSolvedResult =
 	| {
-			error: "NO_GROUP" | "NO_PROBLEMS" | "PAUSED" | "NOT_VERIFIED"
+			error: "NO_GROUP" | "NO_PROBLEMS" | "PAUSED" | "NOT_VERIFIED" | "PREMIUM_SKIPPED"
 			today: TodayProblemResponse
 	  }
 	| {

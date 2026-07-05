@@ -41,6 +41,11 @@ export const problemsController = new Elysia({ tags: ["Problems"] })
 			return status(409, { error: "Seed problems before solving." })
 		if (result.error === "PAUSED")
 			return status(409, { error: "Today is already paused." })
+		if (result.error === "PREMIUM_SKIPPED") {
+			return status(409, {
+				error: "Premium problems are skipped until PStrack Judge is available.",
+			})
+		}
 		if (result.error === "NOT_VERIFIED") {
 			axiomLog("verification_failed", {
 				userId: user.id,

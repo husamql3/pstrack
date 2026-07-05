@@ -35,6 +35,7 @@ export const badgesDao = {
 									neetcode250: true,
 									neetcode150: true,
 									blind75: true,
+									isPremium: true,
 								},
 							},
 						},
@@ -45,9 +46,9 @@ export const badgesDao = {
 			tx.userSolve.count({
 				where: { userId, status: SolveStatus.SOLVED, verifiedAt: { gte: startOfMonth } },
 			}),
-			tx.problem.count({ where: { neetcode250: true } }),
-			tx.problem.count({ where: { neetcode150: true } }),
-			tx.problem.count({ where: { blind75: true } }),
+			tx.problem.count({ where: { neetcode250: true, isPremium: false } }),
+			tx.problem.count({ where: { neetcode150: true, isPremium: false } }),
+			tx.problem.count({ where: { blind75: true, isPremium: false } }),
 		])
 
 		// Compute unique solved problem sets
@@ -59,6 +60,7 @@ export const badgesDao = {
 		for (const solve of solves) {
 			const { problemId, problem } = solve.dailyProblem
 			seenProblemIds.add(problemId)
+			if (problem.isPremium) continue
 			if (problem.neetcode250) nc250Solved.add(problemId)
 			if (problem.neetcode150) nc150Solved.add(problemId)
 			if (problem.blind75) blind75Solved.add(problemId)
@@ -158,6 +160,7 @@ export const badgesDao = {
 									neetcode250: true,
 									neetcode150: true,
 									blind75: true,
+									isPremium: true,
 								},
 							},
 						},
@@ -178,6 +181,7 @@ export const badgesDao = {
 		for (const solve of solves) {
 			const { problemId, problem } = solve.dailyProblem
 			seenProblemIds.add(problemId)
+			if (problem.isPremium) continue
 			if (problem.neetcode250) nc250Solved.add(problemId)
 			if (problem.neetcode150) nc150Solved.add(problemId)
 			if (problem.blind75) blind75Solved.add(problemId)

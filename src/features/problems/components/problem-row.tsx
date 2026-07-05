@@ -10,14 +10,17 @@ import { DIFFICULTY_LABELS, DIFFICULTY_TONE } from "../constants"
 export const ProblemRow = ({ problem }: { problem: RoadmapProblemResponse }) => {
 	const isSolved = problem.status === SolveStatus.SOLVED
 	const idLabel = `#${String(problem.leetcodeId).padStart(4, "0")}`
+	const checkboxLabel = problem.isPremium
+		? `Skipped premium problem: ${problem.title}`
+		: isSolved
+			? `Solved: ${problem.title}`
+			: `Not solved: ${problem.title}`
 
 	return (
 		<li>
 			<div className="flex flex-wrap items-center gap-3 px-4 py-2.5 hover:bg-muted/40 sm:flex-nowrap sm:gap-4">
 				<Checkbox
-					aria-label={
-						isSolved ? `Solved: ${problem.title}` : `Not solved: ${problem.title}`
-					}
+					aria-label={checkboxLabel}
 					checked={isSolved}
 					className={cn(
 						isSolved
@@ -33,6 +36,14 @@ export const ProblemRow = ({ problem }: { problem: RoadmapProblemResponse }) => 
 					{problem.title}
 				</span>
 				<div className="flex shrink-0 items-center gap-2 sm:ml-auto">
+					{problem.isPremium && (
+						<Badge
+							className="border-slate-500/30 bg-slate-500/10 text-slate-700 dark:border-slate-500/35 dark:bg-slate-950/50 dark:text-slate-400"
+							variant="outline"
+						>
+							Skipped
+						</Badge>
+					)}
 					<Badge className={DIFFICULTY_TONE[problem.difficulty]} variant="outline">
 						{DIFFICULTY_LABELS[problem.difficulty]}
 					</Badge>

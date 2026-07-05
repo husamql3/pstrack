@@ -188,6 +188,7 @@ model Problem {
   topic        String
   roadmapIndex Int           @unique
   leetcodeId   Int?
+  isPremium    Boolean       @default(false)
   neetcode250  Boolean       @default(false)
   neetcode150  Boolean       @default(false)
   blind75      Boolean       @default(false)

@@ -2,6 +2,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
 const tx = {
+	group: {
+		findUniqueOrThrow: vi.fn(),
+		update: vi.fn(),
+	},
 	groupMember: {
 		findUnique: vi.fn(),
 		update: vi.fn(),
@@ -14,7 +18,11 @@ const tx = {
 		update: vi.fn(),
 	},
 	dailyProblem: {
+		create: vi.fn(),
 		update: vi.fn(),
+	},
+	problem: {
+		findFirst: vi.fn(),
 	},
 	userSolve: {
 		create: vi.fn(),
@@ -85,6 +93,7 @@ const readyToday = {
 			topic: "Arrays",
 			roadmapIndex: 1,
 			leetcodeId: 1,
+			isPremium: false,
 			neetcode250: true,
 			neetcode150: true,
 			blind75: true,
@@ -107,6 +116,55 @@ describe("problemsDao", () => {
 	afterEach(() => {
 		vi.restoreAllMocks()
 		vi.unstubAllGlobals()
+	})
+
+	describe("assignNextProblemTx", () => {
+		it("skips premium roadmap entries and advances to the assigned problem index", async () => {
+			tx.group.findUniqueOrThrow.mockResolvedValue({
+				roadmap: "NC250",
+				roadmapIndex: 242,
+			})
+			tx.problem.findFirst.mockResolvedValue({
+				id: "problem-250",
+				roadmapIndex: 250,
+			})
+			tx.dailyProblem.create.mockResolvedValue({
+				id: "daily-250",
+				problem: { roadmapIndex: 250 },
+			})
+
+			const result = await problemsDao.assignNextProblemTx(
+				tx,
+				"group-1",
+				new Date("2026-07-07T00:00:00.000Z")
+			)
+
+			expect(result).toEqual({
+				id: "daily-250",
+				problem: { roadmapIndex: 250 },
+			})
+			expect(tx.problem.findFirst).toHaveBeenCalledWith({
+				where: {
+					neetcode250: true,
+					roadmapIndex: { gt: 242 },
+					isPremium: false,
+				},
+				orderBy: { roadmapIndex: "asc" },
+				select: { id: true, roadmapIndex: true },
+			})
+			expect(tx.dailyProblem.create).toHaveBeenCalledWith({
+				data: {
+					groupId: "group-1",
+					assignedDate: new Date("2026-07-07T00:00:00.000Z"),
+					problemId: "problem-250",
+				},
+				select: expect.any(Object),
+			})
+			expect(tx.group.update).toHaveBeenCalledWith({
+				where: { id: "group-1" },
+				data: { roadmapIndex: 250 },
+			})
+		})
 	})
 
 	describe("verifyAndMarkSolved", () => {
@@ -221,6 +279,29 @@ describe("problemsDao", () => {
 				},
 			})
 			expect(badgesDao.evaluateAndAward).toHaveBeenCalledWith(tx, "user-1", 5)
+		})
+
+		it("rejects premium skipped problems before LeetCode verification", async () => {
+			const premiumToday = {
+				...readyToday,
+				dailyProblem: {
+					...readyToday.dailyProblem,
+					problem: {
+						...readyToday.dailyProblem.problem,
+						isPremium: true,
+					},
+				},
+			}
+			vi.spyOn(problemsDao, "getTodayForUser").mockResolvedValue(premiumToday)
+			vi.stubGlobal("fetch", vi.fn())
+
+			const result = await problemsDao.verifyAndMarkSolved("user-1")
+
+			expect(result).toEqual({ error: "PREMIUM_SKIPPED", today: premiumToday })
+			expect(fetch).not.toHaveBeenCalled()
+			expect(db.user.findUniqueOrThrow).not.toHaveBeenCalled()
+			expect(tx.userSolve.upsert).not.toHaveBeenCalled()
+			expect(pointsDao.applyPointsDelta).not.toHaveBeenCalled()
 		})
 
 		it("uses the first monthly verification failure as grace without marking the solve missed", async () => {

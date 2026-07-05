@@ -134,15 +134,14 @@ const assignNextProblemTx = async (
 	})
 
 	const filter = roadmapFilter(group.roadmap)
-	const count = await tx.problem.count({ where: filter })
-	const nextIndex = group.roadmapIndex + 1
-	if (nextIndex > count) return null
-
 	const problem = await tx.problem.findFirst({
-		where: filter,
+		where: {
+			...filter,
+			roadmapIndex: { gt: group.roadmapIndex },
+			isPremium: false,
+		},
 		orderBy: { roadmapIndex: "asc" },
-		skip: nextIndex - 1,
-		select: { id: true },
+		select: { id: true, roadmapIndex: true },
 	})
 	if (!problem) return null
 
@@ -153,7 +152,7 @@ const assignNextProblemTx = async (
 
 	await tx.group.update({
 		where: { id: groupId },
-		data: { roadmapIndex: nextIndex },
+		data: { roadmapIndex: problem.roadmapIndex },
 	})
 
 	return dailyProblem
@@ -609,6 +608,7 @@ export const problemsDao = {
 		}
 
 		const { id: dailyProblemId, assignedDate, problem } = today.dailyProblem
+		if (problem.isPremium) return { error: "PREMIUM_SKIPPED", today }
 
 		const user = await db.user.findUniqueOrThrow({
 			where: { id: userId },

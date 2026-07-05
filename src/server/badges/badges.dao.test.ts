@@ -147,6 +147,7 @@ describe("badgesDao", () => {
 									neetcode250: true,
 									neetcode150: true,
 									blind75: true,
+									isPremium: true,
 								},
 							},
 						},

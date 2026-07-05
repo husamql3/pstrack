@@ -14,8 +14,9 @@ export const TopicGroup = ({
 	topic: string
 	problems: RoadmapProblemResponse[]
 }) => {
-	const solved = problems.filter((p) => p.status === SolveStatus.SOLVED).length
-	const total = problems.length
+	const assignable = problems.filter((p) => !p.isPremium)
+	const solved = assignable.filter((p) => p.status === SolveStatus.SOLVED).length
+	const total = assignable.length
 	const ratio = total > 0 ? solved / total : 0
 
 	return (

@@ -172,7 +172,7 @@ export const groupsDao = {
 				groupId: created.id,
 			})
 			const dp = await problemsDao.assignNextProblemTx(tx, created.id, startOfTodayUtc())
-			return { ...created, roadmapIndex: dp ? 1 : 0 }
+			return { ...created, roadmapIndex: dp?.problem?.roadmapIndex ?? 0 }
 		})
 
 		return {

@@ -89,7 +89,10 @@ describe("groupsDao", () => {
 				createdAt: new Date("2026-06-16T12:00:00.000Z"),
 				_count: { members: 1 },
 			})
-			problemsDao.assignNextProblemTx.mockResolvedValue({ id: "daily-1" })
+			problemsDao.assignNextProblemTx.mockResolvedValue({
+				id: "daily-1",
+				problem: { roadmapIndex: 1 },
+			})
 
 			const result = await groupsDao.createPublic("user-1")
 
