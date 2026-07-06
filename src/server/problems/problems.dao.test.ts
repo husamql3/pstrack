@@ -19,6 +19,7 @@ const tx = {
 	},
 	dailyProblem: {
 		create: vi.fn(),
+		findFirst: vi.fn(),
 		update: vi.fn(),
 	},
 	problem: {
@@ -163,6 +164,53 @@ describe("problemsDao", () => {
 			expect(tx.group.update).toHaveBeenCalledWith({
 				where: { id: "group-1" },
 				data: { roadmapIndex: 250 },
+			})
+		})
+
+		it("uses the highest already-assigned problem when the group cursor is stale", async () => {
+			tx.group.findUniqueOrThrow.mockResolvedValue({
+				roadmap: "NC150",
+				roadmapIndex: 13,
+			})
+			tx.dailyProblem.findFirst.mockResolvedValue({
+				problem: { roadmapIndex: 17 },
+			})
+			tx.problem.findFirst.mockResolvedValue({
+				id: "problem-23",
+				roadmapIndex: 23,
+			})
+			tx.dailyProblem.create.mockResolvedValue({
+				id: "daily-23",
+				problem: { roadmapIndex: 23 },
+			})
+
+			const result = await problemsDao.assignNextProblemTx(
+				tx,
+				"group-1",
+				new Date("2026-07-07T00:00:00.000Z")
+			)
+
+			expect(result).toEqual({
+				id: "daily-23",
+				problem: { roadmapIndex: 23 },
+			})
+			expect(tx.dailyProblem.findFirst).toHaveBeenCalledWith({
+				where: { groupId: "group-1" },
+				orderBy: { problem: { roadmapIndex: "desc" } },
+				select: { problem: { select: { roadmapIndex: true } } },
+			})
+			expect(tx.problem.findFirst).toHaveBeenCalledWith({
+				where: {
+					neetcode150: true,
+					roadmapIndex: { gt: 17 },
+					isPremium: false,
+				},
+				orderBy: { roadmapIndex: "asc" },
+				select: { id: true, roadmapIndex: true },
+			})
+			expect(tx.group.update).toHaveBeenCalledWith({
+				where: { id: "group-1" },
+				data: { roadmapIndex: 23 },
 			})
 		})
 	})

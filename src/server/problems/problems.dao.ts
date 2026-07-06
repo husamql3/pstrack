@@ -134,10 +134,20 @@ const assignNextProblemTx = async (
 	})
 
 	const filter = roadmapFilter(group.roadmap)
+	const latestAssigned = await tx.dailyProblem.findFirst({
+		where: { groupId },
+		orderBy: { problem: { roadmapIndex: "desc" } },
+		select: { problem: { select: { roadmapIndex: true } } },
+	})
+	const lowerBound = Math.max(
+		group.roadmapIndex,
+		latestAssigned?.problem.roadmapIndex ?? 0
+	)
+
 	const problem = await tx.problem.findFirst({
 		where: {
 			...filter,
-			roadmapIndex: { gt: group.roadmapIndex },
+			roadmapIndex: { gt: lowerBound },
 			isPremium: false,
 		},
 		orderBy: { roadmapIndex: "asc" },
