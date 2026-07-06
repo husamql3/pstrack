@@ -9,7 +9,6 @@
  */
 
 import groupsData from "@/data/groups.json"
-import type { Prisma } from "@/generated/prisma/client"
 import { PointReason, SolveStatus } from "@/generated/prisma/enums"
 import { db } from "@/server/lib/db"
 
@@ -47,12 +46,6 @@ const pointsFor = (status: SolveStatus) => {
 	if (status === SolveStatus.SOLVED) return 10
 	if (status === SolveStatus.MISSED) return -3
 	return 0
-}
-
-const roadmapFilter = (roadmap: string): Prisma.ProblemWhereInput => {
-	if (roadmap === "BLIND75") return { blind75: true }
-	if (roadmap === "NC150") return { neetcode150: true }
-	return { neetcode250: true }
 }
 
 export async function seedDailyProblems() {
@@ -129,11 +122,11 @@ export async function seedDailyProblems() {
 		const group = groups[gi]
 		const rand = mulberry32((gi + 1) * 13)
 
-		const problems = await db.problem.findMany({
-			where: roadmapFilter(group.roadmap),
-			orderBy: { roadmapIndex: "asc" },
+		const problems = await db.roadmapProblem.findMany({
+			where: { roadmap: { key: group.roadmap }, problem: { isPremium: false } },
+			orderBy: { position: "asc" },
 			take: DAYS_OF_HISTORY,
-			select: { id: true },
+			select: { problemId: true },
 		})
 		if (problems.length === 0) continue
 
@@ -152,7 +145,7 @@ export async function seedDailyProblems() {
 
 		for (let dayOffset = 0; dayOffset < DAYS_OF_HISTORY; dayOffset++) {
 			const assignedDate = new Date(today.getTime() - dayOffset * DAY_MS)
-			const problemId = problems[dayOffset % problems.length].id
+			const problemId = problems[dayOffset % problems.length].problemId
 			const isToday = dayOffset === 0
 
 			const dp = await db.dailyProblem.create({

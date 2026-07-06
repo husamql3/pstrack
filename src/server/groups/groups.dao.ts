@@ -53,6 +53,9 @@ const rangeStartUtc = (range: GroupProblemsRange, today: Date): Date | null => {
 	return new Date(today.getTime() - days * DAY_MS)
 }
 
+const solveActivityType = (isFirstInGroup: boolean): "FIRST_SOLVE" | "SOLVED" =>
+	isFirstInGroup ? "FIRST_SOLVE" : "SOLVED"
+
 async function pickSlug(): Promise<string> {
 	const used = await db.group.findMany({
 		where: { slug: { in: slugsPool as string[] } },
@@ -399,7 +402,7 @@ export const groupsDao = {
 	> => {
 		const group = await db.group.findUnique({
 			where: { id: groupId, isActive: true },
-			select: { id: true, type: true },
+			select: { id: true, type: true, roadmap: true },
 		})
 		if (!group) return { error: "NOT_FOUND", data: null }
 
@@ -463,6 +466,16 @@ export const groupsDao = {
 				},
 			},
 		})
+		const roadmapMetadata = await db.roadmapProblem.findMany({
+			where: {
+				roadmap: { key: group.roadmap },
+				problemId: { in: dailyProblems.map((dp) => dp.problem.id) },
+			},
+			select: { problemId: true, position: true, topic: true },
+		})
+		const roadmapMetadataByProblemId = new Map(
+			roadmapMetadata.map((metadata) => [metadata.problemId, metadata])
+		)
 
 		const countDateFilter: { gte?: Date; lte: Date } = { lte: today }
 		if (rangeStart) countDateFilter.gte = rangeStart
@@ -522,6 +535,7 @@ export const groupsDao = {
 
 		const rows = dailyProblems.map((dp) => {
 			const solvesByUserId: GroupProblemsResponse["rows"][number]["solvesByUserId"] = {}
+			const roadmapProblem = roadmapMetadataByProblemId.get(dp.problem.id)
 			for (const s of dp.solves) {
 				solvesByUserId[s.userId] = {
 					status: s.status,
@@ -538,8 +552,8 @@ export const groupsDao = {
 				problemTitle: dp.problem.title,
 				problemLeetcodeId: dp.problem.leetcodeId,
 				problemDifficulty: dp.problem.difficulty,
-				problemTopic: dp.problem.topic,
-				problemRoadmapIndex: dp.problem.roadmapIndex,
+				problemTopic: roadmapProblem?.topic ?? dp.problem.topic,
+				problemRoadmapIndex: roadmapProblem?.position ?? dp.problem.roadmapIndex,
 				solvesByUserId,
 			}
 		})
@@ -575,7 +589,7 @@ export const groupsDao = {
 	): Promise<GroupTodayActivityResponse | null> => {
 		const membership = await db.groupMember.findUnique({
 			where: { groupId_userId: { groupId, userId: requestingUserId } },
-			select: { id: true, status: true },
+			select: { id: true, status: true, group: { select: { roadmap: true } } },
 		})
 		if (!membership || membership.status !== GroupMemberStatus.ACTIVE) return null
 
@@ -592,6 +606,7 @@ export const groupsDao = {
 					dailyProblem: {
 						select: {
 							problem: { select: { title: true, roadmapIndex: true } },
+							problemId: true,
 						},
 					},
 					user: { select: { id: true, username: true, name: true } },
@@ -618,17 +633,33 @@ export const groupsDao = {
 				},
 			}),
 		])
+		const solveRoadmapMetadata = await db.roadmapProblem.findMany({
+			where: {
+				roadmap: { key: membership.group.roadmap },
+				problemId: { in: solves.map((s) => s.dailyProblem.problemId) },
+			},
+			select: { problemId: true, position: true },
+		})
+		const solveRoadmapMetadataByProblemId = new Map(
+			solveRoadmapMetadata.map((metadata) => [metadata.problemId, metadata])
+		)
 
 		const events: GroupTodayActivityResponse["events"] = [
-			...solves.map((s) => ({
-				type: (s.isFirstInGroup ? "FIRST_SOLVE" : "SOLVED") as "FIRST_SOLVE" | "SOLVED",
-				userId: s.user.id,
-				username: s.user.username,
-				name: s.user.name,
-				problemTitle: s.dailyProblem.problem.title,
-				problemRoadmapIndex: s.dailyProblem.problem.roadmapIndex,
-				at: s.verifiedAt ?? s.createdAt,
-			})),
+			...solves.map((s) => {
+				const roadmapProblem = solveRoadmapMetadataByProblemId.get(
+					s.dailyProblem.problemId
+				)
+				return {
+					type: solveActivityType(s.isFirstInGroup),
+					userId: s.user.id,
+					username: s.user.username,
+					name: s.user.name,
+					problemTitle: s.dailyProblem.problem.title,
+					problemRoadmapIndex:
+						roadmapProblem?.position ?? s.dailyProblem.problem.roadmapIndex,
+					at: s.verifiedAt ?? s.createdAt,
+				}
+			}),
 			...pauses.map((p) => ({
 				type: "PAUSED" as const,
 				userId: p.user.id,

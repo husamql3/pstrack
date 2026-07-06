@@ -159,7 +159,7 @@ export async function seedGroups() {
 			create: {
 				slug: g.slug,
 				type: g.type as "PUBLIC" | "PRIVATE",
-				roadmap: g.roadmap as "NC250" | "NC150" | "BLIND75",
+				roadmap: g.roadmap,
 				maxMembers: g.maxMembers,
 				creatorId: adminUser.id,
 				isActive: true,

@@ -1,0 +1,37 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: pstrack-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: pstrack
+      POSTGRES_PASSWORD: pstrack
+      POSTGRES_DB: pstrack
+    ports:
+      - "127.0.0.1:5433:5432"
+    volumes:
+      - pstrack-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pstrack -d pstrack"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: pstrack-redis
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "127.0.0.1:6379:6379"
+    volumes:
+      - pstrack-redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  pstrack-postgres-data:
+  pstrack-redis-data:

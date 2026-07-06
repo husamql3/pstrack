@@ -6,7 +6,6 @@ import {
 	Difficulty,
 	GroupType,
 	ProblemSource,
-	Roadmap,
 	SystemEventTargetType,
 	SystemEventType,
 } from "@/generated/prisma/enums"
@@ -80,7 +79,7 @@ export const adminModel = new Elysia({ name: "model/admin" }).model({
 	}),
 	"admin.groups.create": t.Object({
 		type: t.Enum(GroupType),
-		roadmap: t.Enum(Roadmap),
+		roadmap: t.String({ minLength: 1 }),
 		maxMembers: t.Integer({ minimum: 2, maximum: 50, default: 30 }),
 	}),
 	"admin.groups.generateInvite": t.Object({
@@ -97,9 +96,7 @@ export const adminModel = new Elysia({ name: "model/admin" }).model({
 		t.Object({
 			difficulty: t.Optional(t.Enum(Difficulty)),
 			source: t.Optional(t.Enum(ProblemSource)),
-			roadmap: t.Optional(
-				t.Union([t.Literal("NC250"), t.Literal("NC150"), t.Literal("BLIND75")])
-			),
+			roadmap: t.Optional(t.String({ minLength: 1 })),
 		}),
 	]),
 	"admin.problems.idParams": t.Object({ id: t.String({ minLength: 1 }) }),

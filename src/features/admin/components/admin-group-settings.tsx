@@ -8,7 +8,6 @@ import { Separator } from "@/components/ui/separator"
 import { Skeleton } from "@/components/ui/skeleton"
 import { env } from "@/env"
 import { ROADMAP_TOTALS } from "@/features/problems/constants"
-import type { Roadmap } from "@/generated/prisma/enums"
 import {
 	useAdminGenerateInvite,
 	useAdminGroup,
@@ -169,7 +168,7 @@ const GroupMetadata = ({
 	memberCount,
 	createdAt,
 }: {
-	roadmap: Roadmap
+	roadmap: string
 	roadmapIndex: number
 	type: string
 	maxMembers: number

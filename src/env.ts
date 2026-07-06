@@ -19,6 +19,7 @@ export const env = createEnv({
 		// redis
 		UPSTASH_REDIS_REST_URL: z.string().min(1).optional(),
 		UPSTASH_REDIS_REST_TOKEN: z.string().min(1).optional(),
+		REDIS_URL: z.url().optional(),
 
 		// error tracking
 		SENTRY_DSN: z.url().optional(),

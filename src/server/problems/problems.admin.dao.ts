@@ -14,7 +14,7 @@ type ListParams = {
 	q?: string | null
 	difficulty?: "EASY" | "MEDIUM" | "HARD" | null
 	source?: "NEETCODE" | "CUSTOM" | null
-	roadmap?: "NC250" | "NC150" | "BLIND75" | null
+	roadmap?: string | null
 	sortBy?: string | null
 	sortDir?: "asc" | "desc"
 }
@@ -31,10 +31,70 @@ type CreateInput = {
 }
 
 type UpdateInput = Partial<Omit<CreateInput, "slug">>
+type Tx = Prisma.TransactionClient
+type RoadmapKey = "NC250" | "NC150" | "BLIND75"
+type RoadmapFlag = "neetcode250" | "neetcode150" | "blind75"
+
+const roadmapFlags: Array<{ key: RoadmapKey; flag: RoadmapFlag }> = [
+	{ key: "NC250", flag: "neetcode250" },
+	{ key: "NC150", flag: "neetcode150" },
+	{ key: "BLIND75", flag: "blind75" },
+]
 
 const nextRoadmapIndex = async (): Promise<number> => {
 	const max = await db.problem.aggregate({ _max: { roadmapIndex: true } })
 	return (max._max.roadmapIndex ?? 0) + 1
+}
+
+const nextPositionForRoadmap = async (tx: Tx, roadmapId: string): Promise<number> => {
+	const max = await tx.roadmapProblem.aggregate({
+		where: { roadmapId },
+		_max: { position: true },
+	})
+	return (max._max.position ?? 0) + 1
+}
+
+const syncProblemRoadmapMemberships = async (tx: Tx, problem: AdminProblemListItem) => {
+	for (const roadmap of roadmapFlags) {
+		const catalog = await tx.roadmapCatalog.findUnique({
+			where: { key: roadmap.key },
+			select: { id: true },
+		})
+		if (!catalog) continue
+
+		if (problem[roadmap.flag]) {
+			const existing = await tx.roadmapProblem.findUnique({
+				where: {
+					roadmapId_problemId: {
+						roadmapId: catalog.id,
+						problemId: problem.id,
+					},
+				},
+				select: { position: true },
+			})
+
+			await tx.roadmapProblem.upsert({
+				where: {
+					roadmapId_problemId: {
+						roadmapId: catalog.id,
+						problemId: problem.id,
+					},
+				},
+				create: {
+					roadmapId: catalog.id,
+					problemId: problem.id,
+					position: existing?.position ?? (await nextPositionForRoadmap(tx, catalog.id)),
+					topic: problem.topic,
+				},
+				update: { topic: problem.topic },
+			})
+			continue
+		}
+
+		await tx.roadmapProblem.deleteMany({
+			where: { roadmapId: catalog.id, problemId: problem.id },
+		})
+	}
 }
 
 export const problemsAdminDao = {
@@ -53,9 +113,9 @@ export const problemsAdminDao = {
 		}
 		if (params.difficulty) where.difficulty = params.difficulty
 		if (params.source) where.source = params.source
-		if (params.roadmap === "NC250") where.neetcode250 = true
-		if (params.roadmap === "NC150") where.neetcode150 = true
-		if (params.roadmap === "BLIND75") where.blind75 = true
+		if (params.roadmap) {
+			where.roadmapMemberships = { some: { roadmap: { key: params.roadmap } } }
+		}
 
 		const sortDir = params.sortDir ?? "asc"
 		const orderBy: Prisma.ProblemOrderByWithRelationInput =
@@ -110,6 +170,7 @@ export const problemsAdminDao = {
 				},
 				select: adminProblemListSelect,
 			})
+			await syncProblemRoadmapMemberships(tx, created)
 			await adminAuditDao.log(
 				{
 					adminId,
@@ -144,6 +205,7 @@ export const problemsAdminDao = {
 				data: input,
 				select: adminProblemListSelect,
 			})
+			await syncProblemRoadmapMemberships(tx, updated)
 			await adminAuditDao.log(
 				{
 					adminId,

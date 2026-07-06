@@ -25,6 +25,9 @@ const tx = {
 	problem: {
 		findFirst: vi.fn(),
 	},
+	roadmapProblem: {
+		findFirst: vi.fn(),
+	},
 	userSolve: {
 		create: vi.fn(),
 		upsert: vi.fn(),
@@ -123,15 +126,16 @@ describe("problemsDao", () => {
 		it("skips premium roadmap entries and advances to the assigned problem index", async () => {
 			tx.group.findUniqueOrThrow.mockResolvedValue({
 				roadmap: "NC250",
-				roadmapIndex: 242,
+				roadmapIndex: 149,
 			})
-			tx.problem.findFirst.mockResolvedValue({
-				id: "problem-250",
-				roadmapIndex: 250,
+			tx.roadmapProblem.findFirst.mockResolvedValueOnce(null).mockResolvedValueOnce({
+				problemId: "problem-250",
+				position: 150,
+				topic: "Graphs",
 			})
 			tx.dailyProblem.create.mockResolvedValue({
 				id: "daily-250",
-				problem: { roadmapIndex: 250 },
+				problem: { roadmapIndex: 250, topic: "Advanced Graphs" },
 			})
 
 			const result = await problemsDao.assignNextProblemTx(
@@ -142,16 +146,24 @@ describe("problemsDao", () => {
 
 			expect(result).toEqual({
 				id: "daily-250",
-				problem: { roadmapIndex: 250 },
+				problem: { roadmapIndex: 150, topic: "Graphs" },
 			})
-			expect(tx.problem.findFirst).toHaveBeenCalledWith({
+			expect(tx.roadmapProblem.findFirst).toHaveBeenNthCalledWith(1, {
 				where: {
-					neetcode250: true,
-					roadmapIndex: { gt: 242 },
-					isPremium: false,
+					roadmap: { key: "NC250" },
+					problem: { dailyProblems: { some: { groupId: "group-1" } } },
 				},
-				orderBy: { roadmapIndex: "asc" },
-				select: { id: true, roadmapIndex: true },
+				orderBy: { position: "desc" },
+				select: { position: true },
+			})
+			expect(tx.roadmapProblem.findFirst).toHaveBeenNthCalledWith(2, {
+				where: {
+					roadmap: { key: "NC250" },
+					position: { gt: 149 },
+					problem: { isPremium: false },
+				},
+				orderBy: { position: "asc" },
+				select: { problemId: true, position: true, topic: true },
 			})
 			expect(tx.dailyProblem.create).toHaveBeenCalledWith({
 				data: {
@@ -163,7 +175,7 @@ describe("problemsDao", () => {
 			})
 			expect(tx.group.update).toHaveBeenCalledWith({
 				where: { id: "group-1" },
-				data: { roadmapIndex: 250 },
+				data: { roadmapIndex: 150 },
 			})
 		})
 
@@ -172,16 +184,16 @@ describe("problemsDao", () => {
 				roadmap: "NC150",
 				roadmapIndex: 13,
 			})
-			tx.dailyProblem.findFirst.mockResolvedValue({
-				problem: { roadmapIndex: 17 },
-			})
-			tx.problem.findFirst.mockResolvedValue({
-				id: "problem-23",
-				roadmapIndex: 23,
-			})
+			tx.roadmapProblem.findFirst
+				.mockResolvedValueOnce({ position: 17 })
+				.mockResolvedValueOnce({
+					problemId: "problem-23",
+					position: 23,
+					topic: "Trees",
+				})
 			tx.dailyProblem.create.mockResolvedValue({
 				id: "daily-23",
-				problem: { roadmapIndex: 23 },
+				problem: { roadmapIndex: 23, topic: "Trees" },
 			})
 
 			const result = await problemsDao.assignNextProblemTx(
@@ -192,21 +204,24 @@ describe("problemsDao", () => {
 
 			expect(result).toEqual({
 				id: "daily-23",
-				problem: { roadmapIndex: 23 },
+				problem: { roadmapIndex: 23, topic: "Trees" },
 			})
-			expect(tx.dailyProblem.findFirst).toHaveBeenCalledWith({
-				where: { groupId: "group-1" },
-				orderBy: { problem: { roadmapIndex: "desc" } },
-				select: { problem: { select: { roadmapIndex: true } } },
-			})
-			expect(tx.problem.findFirst).toHaveBeenCalledWith({
+			expect(tx.roadmapProblem.findFirst).toHaveBeenNthCalledWith(1, {
 				where: {
-					neetcode150: true,
-					roadmapIndex: { gt: 17 },
-					isPremium: false,
+					roadmap: { key: "NC150" },
+					problem: { dailyProblems: { some: { groupId: "group-1" } } },
 				},
-				orderBy: { roadmapIndex: "asc" },
-				select: { id: true, roadmapIndex: true },
+				orderBy: { position: "desc" },
+				select: { position: true },
+			})
+			expect(tx.roadmapProblem.findFirst).toHaveBeenNthCalledWith(2, {
+				where: {
+					roadmap: { key: "NC150" },
+					position: { gt: 17 },
+					problem: { isPremium: false },
+				},
+				orderBy: { position: "asc" },
+				select: { problemId: true, position: true, topic: true },
 			})
 			expect(tx.group.update).toHaveBeenCalledWith({
 				where: { id: "group-1" },

@@ -4,6 +4,7 @@ import { afterEach, describe, expect, it, vi } from "vitest"
 vi.mock("@/server/lib/db", () => ({
 	db: {
 		pointsHistory: { count: vi.fn() },
+		roadmapProblem: { count: vi.fn() },
 		user: { findUnique: vi.fn() },
 		userSolve: { count: vi.fn(), findMany: vi.fn() },
 	},
@@ -18,6 +19,9 @@ const tx = {
 		count: vi.fn(),
 	},
 	problem: {
+		count: vi.fn(),
+	},
+	roadmapProblem: {
 		count: vi.fn(),
 	},
 	userBadge: {
@@ -40,25 +44,42 @@ describe("badgesDao", () => {
 				{
 					dailyProblem: {
 						problemId: "p1",
-						problem: { neetcode250: true, neetcode150: true, blind75: true },
+						problem: {
+							isPremium: false,
+							roadmapMemberships: [
+								{ roadmap: { key: "NC250" } },
+								{ roadmap: { key: "NC150" } },
+								{ roadmap: { key: "BLIND75" } },
+							],
+						},
 					},
 				},
 				{
 					dailyProblem: {
 						problemId: "p1",
-						problem: { neetcode250: true, neetcode150: true, blind75: true },
+						problem: {
+							isPremium: false,
+							roadmapMemberships: [
+								{ roadmap: { key: "NC250" } },
+								{ roadmap: { key: "NC150" } },
+								{ roadmap: { key: "BLIND75" } },
+							],
+						},
 					},
 				},
 				{
 					dailyProblem: {
 						problemId: "p2",
-						problem: { neetcode250: true, neetcode150: false, blind75: false },
+						problem: {
+							isPremium: false,
+							roadmapMemberships: [{ roadmap: { key: "NC250" } }],
+						},
 					},
 				},
 			])
 			tx.pointsHistory.count.mockResolvedValue(10)
 			tx.userSolve.count.mockResolvedValue(30)
-			tx.problem.count
+			tx.roadmapProblem.count
 				.mockResolvedValueOnce(2)
 				.mockResolvedValueOnce(1)
 				.mockResolvedValueOnce(1)
@@ -90,13 +111,16 @@ describe("badgesDao", () => {
 				{
 					dailyProblem: {
 						problemId: "p1",
-						problem: { neetcode250: true, neetcode150: false, blind75: false },
+						problem: {
+							isPremium: false,
+							roadmapMemberships: [{ roadmap: { key: "NC250" } }],
+						},
 					},
 				},
 			])
 			tx.pointsHistory.count.mockResolvedValue(0)
 			tx.userSolve.count.mockResolvedValue(0)
-			tx.problem.count
+			tx.roadmapProblem.count
 				.mockResolvedValueOnce(250)
 				.mockResolvedValueOnce(150)
 				.mockResolvedValueOnce(75)
@@ -115,19 +139,37 @@ describe("badgesDao", () => {
 				{
 					dailyProblem: {
 						problemId: "p1",
-						problem: { neetcode250: true, neetcode150: true, blind75: false },
+						problem: {
+							isPremium: false,
+							roadmapMemberships: [
+								{ roadmap: { key: "NC250" } },
+								{ roadmap: { key: "NC150" } },
+							],
+						},
 					},
 				},
 				{
 					dailyProblem: {
 						problemId: "p1",
-						problem: { neetcode250: true, neetcode150: true, blind75: false },
+						problem: {
+							isPremium: false,
+							roadmapMemberships: [
+								{ roadmap: { key: "NC250" } },
+								{ roadmap: { key: "NC150" } },
+							],
+						},
 					},
 				},
 				{
 					dailyProblem: {
 						problemId: "p2",
-						problem: { neetcode250: true, neetcode150: false, blind75: true },
+						problem: {
+							isPremium: false,
+							roadmapMemberships: [
+								{ roadmap: { key: "NC250" } },
+								{ roadmap: { key: "BLIND75" } },
+							],
+						},
 					},
 				},
 			])
@@ -144,10 +186,10 @@ describe("badgesDao", () => {
 							problemId: true,
 							problem: {
 								select: {
-									neetcode250: true,
-									neetcode150: true,
-									blind75: true,
 									isPremium: true,
+									roadmapMemberships: {
+										select: { roadmap: { select: { key: true } } },
+									},
 								},
 							},
 						},

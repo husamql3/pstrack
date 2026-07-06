@@ -4,6 +4,12 @@ import { db } from "@/server/lib/db"
 import type { BadgeProgress } from "./badges.type"
 
 type Tx = Prisma.TransactionClient
+type RoadmapBadgeKey = "NC250" | "NC150" | "BLIND75"
+
+const countRoadmapProblems = (tx: Tx, key: RoadmapBadgeKey) =>
+	tx.roadmapProblem.count({
+		where: { roadmap: { key }, problem: { isPremium: false } },
+	})
 
 export const badgesDao = {
 	evaluateAndAward: async (
@@ -32,10 +38,10 @@ export const badgesDao = {
 							problemId: true,
 							problem: {
 								select: {
-									neetcode250: true,
-									neetcode150: true,
-									blind75: true,
 									isPremium: true,
+									roadmapMemberships: {
+										select: { roadmap: { select: { key: true } } },
+									},
 								},
 							},
 						},
@@ -46,9 +52,9 @@ export const badgesDao = {
 			tx.userSolve.count({
 				where: { userId, status: SolveStatus.SOLVED, verifiedAt: { gte: startOfMonth } },
 			}),
-			tx.problem.count({ where: { neetcode250: true, isPremium: false } }),
-			tx.problem.count({ where: { neetcode150: true, isPremium: false } }),
-			tx.problem.count({ where: { blind75: true, isPremium: false } }),
+			countRoadmapProblems(tx, "NC250"),
+			countRoadmapProblems(tx, "NC150"),
+			countRoadmapProblems(tx, "BLIND75"),
 		])
 
 		// Compute unique solved problem sets
@@ -61,9 +67,11 @@ export const badgesDao = {
 			const { problemId, problem } = solve.dailyProblem
 			seenProblemIds.add(problemId)
 			if (problem.isPremium) continue
-			if (problem.neetcode250) nc250Solved.add(problemId)
-			if (problem.neetcode150) nc150Solved.add(problemId)
-			if (problem.blind75) blind75Solved.add(problemId)
+			for (const membership of problem.roadmapMemberships) {
+				if (membership.roadmap.key === "NC250") nc250Solved.add(problemId)
+				if (membership.roadmap.key === "NC150") nc150Solved.add(problemId)
+				if (membership.roadmap.key === "BLIND75") blind75Solved.add(problemId)
+			}
 		}
 
 		const uniqueSolveCount = seenProblemIds.size
@@ -157,10 +165,10 @@ export const badgesDao = {
 							problemId: true,
 							problem: {
 								select: {
-									neetcode250: true,
-									neetcode150: true,
-									blind75: true,
 									isPremium: true,
+									roadmapMemberships: {
+										select: { roadmap: { select: { key: true } } },
+									},
 								},
 							},
 						},
@@ -182,9 +190,11 @@ export const badgesDao = {
 			const { problemId, problem } = solve.dailyProblem
 			seenProblemIds.add(problemId)
 			if (problem.isPremium) continue
-			if (problem.neetcode250) nc250Solved.add(problemId)
-			if (problem.neetcode150) nc150Solved.add(problemId)
-			if (problem.blind75) blind75Solved.add(problemId)
+			for (const membership of problem.roadmapMemberships) {
+				if (membership.roadmap.key === "NC250") nc250Solved.add(problemId)
+				if (membership.roadmap.key === "NC150") nc150Solved.add(problemId)
+				if (membership.roadmap.key === "BLIND75") blind75Solved.add(problemId)
+			}
 		}
 
 		return {

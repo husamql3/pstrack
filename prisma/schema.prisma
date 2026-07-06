@@ -68,7 +68,7 @@ model Group {
   id              String    @id @default(cuid())
   slug            String    @unique
   type            GroupType @default(PUBLIC)
-  roadmap         Roadmap   @default(NC250)
+  roadmap         String    @default("NC250")
   creatorId       String
   maxMembers      Int       @default(30)
   inviteCode      String?   @unique
@@ -84,8 +84,10 @@ model Group {
   dailyProblems DailyProblem[]
   pointsHistory PointsHistory[]
   feedbacks     Feedback[]
+  roadmapCatalog RoadmapCatalog @relation(fields: [roadmap], references: [key])
 
   @@index([type, isActive])
+  @@index([roadmap])
 }
 
 enum GroupType {
@@ -194,7 +196,8 @@ model Problem {
   blind75      Boolean       @default(false)
   source       ProblemSource @default(NEETCODE)
 
-  dailyProblems DailyProblem[]
+  dailyProblems      DailyProblem[]
+  roadmapMemberships RoadmapProblem[]
 }
 
 enum Difficulty {
@@ -206,6 +209,40 @@ enum Difficulty {
 enum ProblemSource {
   NEETCODE
   CUSTOM
+}
+
+model RoadmapCatalog {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  slug        String   @unique
+  title       String
+  description String
+  source      String   @default("NEETCODE")
+  isActive    Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  problems RoadmapProblem[]
+  groups   Group[]
+
+  @@index([isActive, sortOrder])
+}
+
+model RoadmapProblem {
+  roadmapId String
+  problemId String
+  position  Int
+  topic     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  roadmap RoadmapCatalog @relation(fields: [roadmapId], references: [id], onDelete: Cascade)
+  problem Problem        @relation(fields: [problemId], references: [id], onDelete: Cascade)
+
+  @@id([roadmapId, problemId])
+  @@unique([roadmapId, position])
+  @@index([problemId])
 }
 
 model DailyProblem {

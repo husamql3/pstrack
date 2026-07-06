@@ -9,11 +9,15 @@ import { FilterRow } from "@/features/problems/components/filter-row"
 import { ProblemList } from "@/features/problems/components/problem-list"
 import { ProgressDisplay } from "@/features/problems/components/progress-display"
 import { RoadmapTabs } from "@/features/problems/components/roadmap-tabs"
-import { ROADMAP_DESCRIPTIONS, ROADMAP_LABELS } from "@/features/problems/constants"
+import {
+	DEFAULT_ROADMAP_KEY,
+	ROADMAP_DESCRIPTIONS,
+	ROADMAP_LABELS,
+} from "@/features/problems/constants"
 import { useRoadmap } from "@/features/problems/hooks/use-roadmap"
 import type { DifficultyFilter, StatusFilter } from "@/features/problems/types"
 import { groupByTopic } from "@/features/problems/utils"
-import { Difficulty, Roadmap, SolveStatus } from "@/generated/prisma/enums"
+import { Difficulty, SolveStatus } from "@/generated/prisma/enums"
 import { useSession } from "@/lib/auth-client"
 import { createSeoHead } from "@/lib/seo"
 import type { RoadmapKey } from "@/server/problems/problems.type"
@@ -21,7 +25,7 @@ import type { RoadmapKey } from "@/server/problems/problems.type"
 // ─── Search param schema ──────────────────────────────────────────────────────
 
 const searchSchema = z.object({
-	roadmap: z.enum(Roadmap).optional(),
+	roadmap: z.string().optional(),
 	difficulty: z
 		.union([z.literal("all"), z.enum(Difficulty)])
 		.optional()
@@ -66,7 +70,7 @@ function ProblemsPage() {
 	const groupRoadmap = today?.state === "READY" ? today.groupRoadmap : undefined
 
 	useEffect(() => {
-		if (!roadmapParam && groupRoadmap && groupRoadmap !== Roadmap.NC250) {
+		if (!roadmapParam && groupRoadmap && groupRoadmap !== DEFAULT_ROADMAP_KEY) {
 			void navigate({
 				search: (prev) => ({ ...prev, roadmap: groupRoadmap }),
 				replace: true,
@@ -74,7 +78,7 @@ function ProblemsPage() {
 		}
 	}, [roadmapParam, groupRoadmap, navigate])
 
-	const activeRoadmap: RoadmapKey = roadmapParam ?? groupRoadmap ?? Roadmap.NC250
+	const activeRoadmap: RoadmapKey = roadmapParam ?? groupRoadmap ?? DEFAULT_ROADMAP_KEY
 	const roadmapQuery = useRoadmap(activeRoadmap)
 
 	const [filterQuery, setFilterQuery] = useState(q ?? "")

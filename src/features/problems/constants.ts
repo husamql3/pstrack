@@ -1,40 +1,74 @@
-import { Difficulty, Roadmap } from "@/generated/prisma/enums"
+import { Difficulty } from "@/generated/prisma/enums"
 import type { RoadmapKey } from "@/server/problems/problems.type"
 import type { DifficultyFilter, StatusFilter } from "./types"
 
-export const ROADMAP_LABELS: Record<RoadmapKey, string> = {
-	[Roadmap.NC250]: "NeetCode 250",
-	[Roadmap.NC150]: "NeetCode 150",
-	[Roadmap.BLIND75]: "Blind 75",
+export const DEFAULT_ROADMAP_KEY: RoadmapKey = "NC250"
+
+export const ROADMAP_LABELS: Record<string, string> = {
+	NC250: "NeetCode 250",
+	NC150: "NeetCode 150",
+	BLIND75: "Blind 75",
+	TOP_INTERVIEW_150: "Top Interview 150",
+	TOP_SQL_50: "SQL 50",
+	DYNAMIC_PROGRAMMING: "Dynamic Programming",
+	JS_30: "30 Days of JavaScript",
 }
 
-export const ROADMAP_DESCRIPTIONS: Record<RoadmapKey, string> = {
-	[Roadmap.NC250]: "Full 250-problem roadmap",
-	[Roadmap.NC150]: "Core 150 problems",
-	[Roadmap.BLIND75]: "Classic 75 problems",
+export const ROADMAP_DESCRIPTIONS: Record<string, string> = {
+	NC250: "Full 250-problem roadmap",
+	NC150: "Core 150 problems",
+	BLIND75: "Classic 75 problems",
+	TOP_INTERVIEW_150: "Original and classic interview questions",
+	TOP_SQL_50: "Essential SQL interview questions",
+	DYNAMIC_PROGRAMMING: "Essential dynamic programming patterns",
+	JS_30: "JavaScript basics and fluency problems",
 }
 
-export const ROADMAP_KEYS: RoadmapKey[] = [Roadmap.NC250, Roadmap.NC150, Roadmap.BLIND75]
+export const ROADMAP_KEYS: RoadmapKey[] = [
+	"NC250",
+	"NC150",
+	"BLIND75",
+	"TOP_INTERVIEW_150",
+	"TOP_SQL_50",
+	"DYNAMIC_PROGRAMMING",
+	"JS_30",
+]
 
-export const ROADMAP_SHORT: Record<RoadmapKey, string> = {
-	[Roadmap.NC250]: "NC250",
-	[Roadmap.NC150]: "NC150",
-	[Roadmap.BLIND75]: "Blind75",
+export const ROADMAP_SHORT: Record<string, string> = {
+	NC250: "NC250",
+	NC150: "NC150",
+	BLIND75: "Blind75",
+	TOP_INTERVIEW_150: "TI150",
+	TOP_SQL_50: "SQL50",
+	DYNAMIC_PROGRAMMING: "DP",
+	JS_30: "JS30",
 }
 
-export const ROADMAP_TONE: Record<RoadmapKey, string> = {
-	[Roadmap.NC250]:
+export const ROADMAP_TONE: Record<string, string> = {
+	NC250:
 		"border-blue-500/30 bg-blue-500/10 text-blue-700 dark:border-blue-500/35 dark:bg-blue-950/50 dark:text-blue-400 dark:ring-blue-500/20",
-	[Roadmap.NC150]:
+	NC150:
 		"border-violet-500/30 bg-violet-500/10 text-violet-700 dark:border-violet-500/35 dark:bg-violet-950/50 dark:text-violet-400 dark:ring-violet-500/20",
-	[Roadmap.BLIND75]:
+	BLIND75:
 		"border-amber-500/30 bg-amber-500/10 text-amber-700 dark:border-amber-500/35 dark:bg-amber-950/50 dark:text-amber-400 dark:ring-amber-500/20",
+	TOP_INTERVIEW_150:
+		"border-cyan-500/30 bg-cyan-500/10 text-cyan-700 dark:border-cyan-500/35 dark:bg-cyan-950/50 dark:text-cyan-400 dark:ring-cyan-500/20",
+	TOP_SQL_50:
+		"border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:border-emerald-500/35 dark:bg-emerald-950/50 dark:text-emerald-400 dark:ring-emerald-500/20",
+	DYNAMIC_PROGRAMMING:
+		"border-rose-500/30 bg-rose-500/10 text-rose-700 dark:border-rose-500/35 dark:bg-rose-950/50 dark:text-rose-400 dark:ring-rose-500/20",
+	JS_30:
+		"border-yellow-500/30 bg-yellow-500/10 text-yellow-700 dark:border-yellow-500/35 dark:bg-yellow-950/50 dark:text-yellow-400 dark:ring-yellow-500/20",
 }
 
-export const ROADMAP_TOTALS: Record<RoadmapKey, number> = {
-	[Roadmap.NC250]: 250,
-	[Roadmap.NC150]: 150,
-	[Roadmap.BLIND75]: 75,
+export const ROADMAP_TOTALS: Record<string, number> = {
+	NC250: 250,
+	NC150: 150,
+	BLIND75: 75,
+	TOP_INTERVIEW_150: 150,
+	TOP_SQL_50: 50,
+	DYNAMIC_PROGRAMMING: 46,
+	JS_30: 30,
 }
 
 export const DIFFICULTY_FILTER_KEYS: DifficultyFilter[] = [

@@ -53,12 +53,17 @@ export const groupsAdminDao = {
 		adminId: string,
 		input: {
 			type: "PUBLIC" | "PRIVATE"
-			roadmap: "NC250" | "NC150" | "BLIND75"
+			roadmap: string
 			maxMembers: number
 		}
 	): Promise<AdminGroupListItem> => {
 		const slug = await pickSlug()
 		return db.$transaction(async (tx) => {
+			await tx.roadmapCatalog.findUniqueOrThrow({
+				where: { key: input.roadmap },
+				select: { id: true },
+			})
+
 			const created = await tx.group.create({
 				data: {
 					slug,

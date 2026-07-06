@@ -1,10 +1,10 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query"
 
-import { Roadmap } from "@/generated/prisma/enums"
 import { api } from "@/lib/api"
 import type { RoadmapKey, RoadmapProblemResponse } from "@/server/problems/problems.type"
+import { DEFAULT_ROADMAP_KEY } from "../constants"
 
-export const useRoadmap = (roadmap: RoadmapKey = Roadmap.NC250) =>
+export const useRoadmap = (roadmap: RoadmapKey = DEFAULT_ROADMAP_KEY) =>
 	useQuery<RoadmapProblemResponse[]>({
 		queryKey: ["problems", "roadmap", roadmap],
 		queryFn: async () => {

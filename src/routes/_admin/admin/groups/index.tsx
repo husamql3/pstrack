@@ -47,6 +47,7 @@ import {
 	useAdminCreateGroup,
 	useAdminGroups,
 } from "@/features/admin/hooks/use-admin-groups"
+import { ROADMAP_KEYS, ROADMAP_LABELS } from "@/features/problems/constants"
 import { api } from "@/lib/api"
 import { adminCreateGroupSchema } from "@/server/admin/admin.type"
 
@@ -72,12 +73,12 @@ function CreateGroupDialog({ open, onClose }: { open: boolean; onClose: () => vo
 		formState: { isSubmitting },
 	} = useForm({
 		resolver: zodResolver(adminCreateGroupSchema),
-		defaultValues: { type: "PUBLIC" as const, roadmap: "NC250" as const, maxMembers: 30 },
+		defaultValues: { type: "PUBLIC" as const, roadmap: "NC250", maxMembers: 30 },
 	})
 
 	const onSubmit = async (data: {
 		type: "PUBLIC" | "PRIVATE"
-		roadmap: "NC250" | "NC150" | "BLIND75"
+		roadmap: string
 		maxMembers: number
 	}) => {
 		await sileo.promise(createGroup.mutateAsync(data), {
@@ -134,9 +135,11 @@ function CreateGroupDialog({ open, onClose }: { open: boolean; onClose: () => vo
 										<SelectValue />
 									</SelectTrigger>
 									<SelectContent>
-										<SelectItem value="NC250">NeetCode 250</SelectItem>
-										<SelectItem value="NC150">NeetCode 150</SelectItem>
-										<SelectItem value="BLIND75">Blind 75</SelectItem>
+										{ROADMAP_KEYS.map((roadmap) => (
+											<SelectItem key={roadmap} value={roadmap}>
+												{ROADMAP_LABELS[roadmap]}
+											</SelectItem>
+										))}
 									</SelectContent>
 								</Select>
 							)}

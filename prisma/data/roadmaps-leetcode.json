@@ -1,0 +1,2526 @@
+[
+	{
+		"key": "TOP_INTERVIEW_150",
+		"slug": "top-interview-150",
+		"title": "Top Interview 150",
+		"description": "150 original and classic interview questions",
+		"source": "LEETCODE",
+		"sortOrder": 40,
+		"problems": [
+			{
+				"position": 1,
+				"topic": "Array / String",
+				"slug": "merge-sorted-array",
+				"title": "Merge Sorted Array",
+				"difficulty": "EASY",
+				"leetcodeId": 88,
+				"isPremium": false
+			},
+			{
+				"position": 2,
+				"topic": "Array / String",
+				"slug": "remove-element",
+				"title": "Remove Element",
+				"difficulty": "EASY",
+				"leetcodeId": 27,
+				"isPremium": false
+			},
+			{
+				"position": 3,
+				"topic": "Array / String",
+				"slug": "remove-duplicates-from-sorted-array",
+				"title": "Remove Duplicates from Sorted Array",
+				"difficulty": "EASY",
+				"leetcodeId": 26,
+				"isPremium": false
+			},
+			{
+				"position": 4,
+				"topic": "Array / String",
+				"slug": "remove-duplicates-from-sorted-array-ii",
+				"title": "Remove Duplicates from Sorted Array II",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 80,
+				"isPremium": false
+			},
+			{
+				"position": 5,
+				"topic": "Array / String",
+				"slug": "majority-element",
+				"title": "Majority Element",
+				"difficulty": "EASY",
+				"leetcodeId": 169,
+				"isPremium": false
+			},
+			{
+				"position": 6,
+				"topic": "Array / String",
+				"slug": "rotate-array",
+				"title": "Rotate Array",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 189,
+				"isPremium": false
+			},
+			{
+				"position": 7,
+				"topic": "Array / String",
+				"slug": "best-time-to-buy-and-sell-stock",
+				"title": "Best Time to Buy and Sell Stock",
+				"difficulty": "EASY",
+				"leetcodeId": 121,
+				"isPremium": false
+			},
+			{
+				"position": 8,
+				"topic": "Array / String",
+				"slug": "best-time-to-buy-and-sell-stock-ii",
+				"title": "Best Time to Buy and Sell Stock II",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 122,
+				"isPremium": false
+			},
+			{
+				"position": 9,
+				"topic": "Array / String",
+				"slug": "jump-game",
+				"title": "Jump Game",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 55,
+				"isPremium": false
+			},
+			{
+				"position": 10,
+				"topic": "Array / String",
+				"slug": "jump-game-ii",
+				"title": "Jump Game II",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 45,
+				"isPremium": false
+			},
+			{
+				"position": 11,
+				"topic": "Array / String",
+				"slug": "h-index",
+				"title": "H-Index",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 274,
+				"isPremium": false
+			},
+			{
+				"position": 12,
+				"topic": "Array / String",
+				"slug": "insert-delete-getrandom-o1",
+				"title": "Insert Delete GetRandom O(1)",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 380,
+				"isPremium": false
+			},
+			{
+				"position": 13,
+				"topic": "Array / String",
+				"slug": "product-of-array-except-self",
+				"title": "Product of Array Except Self",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 238,
+				"isPremium": false
+			},
+			{
+				"position": 14,
+				"topic": "Array / String",
+				"slug": "gas-station",
+				"title": "Gas Station",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 134,
+				"isPremium": false
+			},
+			{
+				"position": 15,
+				"topic": "Array / String",
+				"slug": "candy",
+				"title": "Candy",
+				"difficulty": "HARD",
+				"leetcodeId": 135,
+				"isPremium": false
+			},
+			{
+				"position": 16,
+				"topic": "Array / String",
+				"slug": "trapping-rain-water",
+				"title": "Trapping Rain Water",
+				"difficulty": "HARD",
+				"leetcodeId": 42,
+				"isPremium": false
+			},
+			{
+				"position": 17,
+				"topic": "Array / String",
+				"slug": "roman-to-integer",
+				"title": "Roman to Integer",
+				"difficulty": "EASY",
+				"leetcodeId": 13,
+				"isPremium": false
+			},
+			{
+				"position": 18,
+				"topic": "Array / String",
+				"slug": "integer-to-roman",
+				"title": "Integer to Roman",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 12,
+				"isPremium": false
+			},
+			{
+				"position": 19,
+				"topic": "Array / String",
+				"slug": "length-of-last-word",
+				"title": "Length of Last Word",
+				"difficulty": "EASY",
+				"leetcodeId": 58,
+				"isPremium": false
+			},
+			{
+				"position": 20,
+				"topic": "Array / String",
+				"slug": "longest-common-prefix",
+				"title": "Longest Common Prefix",
+				"difficulty": "EASY",
+				"leetcodeId": 14,
+				"isPremium": false
+			},
+			{
+				"position": 21,
+				"topic": "Array / String",
+				"slug": "reverse-words-in-a-string",
+				"title": "Reverse Words in a String",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 151,
+				"isPremium": false
+			},
+			{
+				"position": 22,
+				"topic": "Array / String",
+				"slug": "zigzag-conversion",
+				"title": "Zigzag Conversion",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 6,
+				"isPremium": false
+			},
+			{
+				"position": 23,
+				"topic": "Array / String",
+				"slug": "find-the-index-of-the-first-occurrence-in-a-string",
+				"title": "Find the Index of the First Occurrence in a String",
+				"difficulty": "EASY",
+				"leetcodeId": 28,
+				"isPremium": false
+			},
+			{
+				"position": 24,
+				"topic": "Array / String",
+				"slug": "text-justification",
+				"title": "Text Justification",
+				"difficulty": "HARD",
+				"leetcodeId": 68,
+				"isPremium": false
+			},
+			{
+				"position": 25,
+				"topic": "Two Pointers",
+				"slug": "valid-palindrome",
+				"title": "Valid Palindrome",
+				"difficulty": "EASY",
+				"leetcodeId": 125,
+				"isPremium": false
+			},
+			{
+				"position": 26,
+				"topic": "Two Pointers",
+				"slug": "is-subsequence",
+				"title": "Is Subsequence",
+				"difficulty": "EASY",
+				"leetcodeId": 392,
+				"isPremium": false
+			},
+			{
+				"position": 27,
+				"topic": "Two Pointers",
+				"slug": "two-sum-ii-input-array-is-sorted",
+				"title": "Two Sum II - Input Array Is Sorted",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 167,
+				"isPremium": false
+			},
+			{
+				"position": 28,
+				"topic": "Two Pointers",
+				"slug": "container-with-most-water",
+				"title": "Container With Most Water",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 11,
+				"isPremium": false
+			},
+			{
+				"position": 29,
+				"topic": "Two Pointers",
+				"slug": "3sum",
+				"title": "3Sum",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 15,
+				"isPremium": false
+			},
+			{
+				"position": 30,
+				"topic": "Sliding Window",
+				"slug": "minimum-size-subarray-sum",
+				"title": "Minimum Size Subarray Sum",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 209,
+				"isPremium": false
+			},
+			{
+				"position": 31,
+				"topic": "Sliding Window",
+				"slug": "longest-substring-without-repeating-characters",
+				"title": "Longest Substring Without Repeating Characters",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 3,
+				"isPremium": false
+			},
+			{
+				"position": 32,
+				"topic": "Sliding Window",
+				"slug": "substring-with-concatenation-of-all-words",
+				"title": "Substring with Concatenation of All Words",
+				"difficulty": "HARD",
+				"leetcodeId": 30,
+				"isPremium": false
+			},
+			{
+				"position": 33,
+				"topic": "Sliding Window",
+				"slug": "minimum-window-substring",
+				"title": "Minimum Window Substring",
+				"difficulty": "HARD",
+				"leetcodeId": 76,
+				"isPremium": false
+			},
+			{
+				"position": 34,
+				"topic": "Matrix",
+				"slug": "valid-sudoku",
+				"title": "Valid Sudoku",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 36,
+				"isPremium": false
+			},
+			{
+				"position": 35,
+				"topic": "Matrix",
+				"slug": "spiral-matrix",
+				"title": "Spiral Matrix",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 54,
+				"isPremium": false
+			},
+			{
+				"position": 36,
+				"topic": "Matrix",
+				"slug": "rotate-image",
+				"title": "Rotate Image",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 48,
+				"isPremium": false
+			},
+			{
+				"position": 37,
+				"topic": "Matrix",
+				"slug": "set-matrix-zeroes",
+				"title": "Set Matrix Zeroes",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 73,
+				"isPremium": false
+			},
+			{
+				"position": 38,
+				"topic": "Matrix",
+				"slug": "game-of-life",
+				"title": "Game of Life",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 289,
+				"isPremium": false
+			},
+			{
+				"position": 39,
+				"topic": "Hashmap",
+				"slug": "ransom-note",
+				"title": "Ransom Note",
+				"difficulty": "EASY",
+				"leetcodeId": 383,
+				"isPremium": false
+			},
+			{
+				"position": 40,
+				"topic": "Hashmap",
+				"slug": "isomorphic-strings",
+				"title": "Isomorphic Strings",
+				"difficulty": "EASY",
+				"leetcodeId": 205,
+				"isPremium": false
+			},
+			{
+				"position": 41,
+				"topic": "Hashmap",
+				"slug": "word-pattern",
+				"title": "Word Pattern",
+				"difficulty": "EASY",
+				"leetcodeId": 290,
+				"isPremium": false
+			},
+			{
+				"position": 42,
+				"topic": "Hashmap",
+				"slug": "valid-anagram",
+				"title": "Valid Anagram",
+				"difficulty": "EASY",
+				"leetcodeId": 242,
+				"isPremium": false
+			},
+			{
+				"position": 43,
+				"topic": "Hashmap",
+				"slug": "group-anagrams",
+				"title": "Group Anagrams",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 49,
+				"isPremium": false
+			},
+			{
+				"position": 44,
+				"topic": "Hashmap",
+				"slug": "two-sum",
+				"title": "Two Sum",
+				"difficulty": "EASY",
+				"leetcodeId": 1,
+				"isPremium": false
+			},
+			{
+				"position": 45,
+				"topic": "Hashmap",
+				"slug": "happy-number",
+				"title": "Happy Number",
+				"difficulty": "EASY",
+				"leetcodeId": 202,
+				"isPremium": false
+			},
+			{
+				"position": 46,
+				"topic": "Hashmap",
+				"slug": "contains-duplicate-ii",
+				"title": "Contains Duplicate II",
+				"difficulty": "EASY",
+				"leetcodeId": 219,
+				"isPremium": false
+			},
+			{
+				"position": 47,
+				"topic": "Hashmap",
+				"slug": "longest-consecutive-sequence",
+				"title": "Longest Consecutive Sequence",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 128,
+				"isPremium": false
+			},
+			{
+				"position": 48,
+				"topic": "Intervals",
+				"slug": "summary-ranges",
+				"title": "Summary Ranges",
+				"difficulty": "EASY",
+				"leetcodeId": 228,
+				"isPremium": false
+			},
+			{
+				"position": 49,
+				"topic": "Intervals",
+				"slug": "merge-intervals",
+				"title": "Merge Intervals",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 56,
+				"isPremium": false
+			},
+			{
+				"position": 50,
+				"topic": "Intervals",
+				"slug": "insert-interval",
+				"title": "Insert Interval",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 57,
+				"isPremium": false
+			},
+			{
+				"position": 51,
+				"topic": "Intervals",
+				"slug": "minimum-number-of-arrows-to-burst-balloons",
+				"title": "Minimum Number of Arrows to Burst Balloons",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 452,
+				"isPremium": false
+			},
+			{
+				"position": 52,
+				"topic": "Stack",
+				"slug": "valid-parentheses",
+				"title": "Valid Parentheses",
+				"difficulty": "EASY",
+				"leetcodeId": 20,
+				"isPremium": false
+			},
+			{
+				"position": 53,
+				"topic": "Stack",
+				"slug": "simplify-path",
+				"title": "Simplify Path",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 71,
+				"isPremium": false
+			},
+			{
+				"position": 54,
+				"topic": "Stack",
+				"slug": "min-stack",
+				"title": "Min Stack",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 155,
+				"isPremium": false
+			},
+			{
+				"position": 55,
+				"topic": "Stack",
+				"slug": "evaluate-reverse-polish-notation",
+				"title": "Evaluate Reverse Polish Notation",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 150,
+				"isPremium": false
+			},
+			{
+				"position": 56,
+				"topic": "Stack",
+				"slug": "basic-calculator",
+				"title": "Basic Calculator",
+				"difficulty": "HARD",
+				"leetcodeId": 224,
+				"isPremium": false
+			},
+			{
+				"position": 57,
+				"topic": "Linked List",
+				"slug": "linked-list-cycle",
+				"title": "Linked List Cycle",
+				"difficulty": "EASY",
+				"leetcodeId": 141,
+				"isPremium": false
+			},
+			{
+				"position": 58,
+				"topic": "Linked List",
+				"slug": "add-two-numbers",
+				"title": "Add Two Numbers",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 2,
+				"isPremium": false
+			},
+			{
+				"position": 59,
+				"topic": "Linked List",
+				"slug": "merge-two-sorted-lists",
+				"title": "Merge Two Sorted Lists",
+				"difficulty": "EASY",
+				"leetcodeId": 21,
+				"isPremium": false
+			},
+			{
+				"position": 60,
+				"topic": "Linked List",
+				"slug": "copy-list-with-random-pointer",
+				"title": "Copy List with Random Pointer",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 138,
+				"isPremium": false
+			},
+			{
+				"position": 61,
+				"topic": "Linked List",
+				"slug": "reverse-linked-list-ii",
+				"title": "Reverse Linked List II",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 92,
+				"isPremium": false
+			},
+			{
+				"position": 62,
+				"topic": "Linked List",
+				"slug": "reverse-nodes-in-k-group",
+				"title": "Reverse Nodes in k-Group",
+				"difficulty": "HARD",
+				"leetcodeId": 25,
+				"isPremium": false
+			},
+			{
+				"position": 63,
+				"topic": "Linked List",
+				"slug": "remove-nth-node-from-end-of-list",
+				"title": "Remove Nth Node From End of List",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 19,
+				"isPremium": false
+			},
+			{
+				"position": 64,
+				"topic": "Linked List",
+				"slug": "remove-duplicates-from-sorted-list-ii",
+				"title": "Remove Duplicates from Sorted List II",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 82,
+				"isPremium": false
+			},
+			{
+				"position": 65,
+				"topic": "Linked List",
+				"slug": "rotate-list",
+				"title": "Rotate List",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 61,
+				"isPremium": false
+			},
+			{
+				"position": 66,
+				"topic": "Linked List",
+				"slug": "partition-list",
+				"title": "Partition List",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 86,
+				"isPremium": false
+			},
+			{
+				"position": 67,
+				"topic": "Linked List",
+				"slug": "lru-cache",
+				"title": "LRU Cache",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 146,
+				"isPremium": false
+			},
+			{
+				"position": 68,
+				"topic": "Binary Tree General",
+				"slug": "maximum-depth-of-binary-tree",
+				"title": "Maximum Depth of Binary Tree",
+				"difficulty": "EASY",
+				"leetcodeId": 104,
+				"isPremium": false
+			},
+			{
+				"position": 69,
+				"topic": "Binary Tree General",
+				"slug": "same-tree",
+				"title": "Same Tree",
+				"difficulty": "EASY",
+				"leetcodeId": 100,
+				"isPremium": false
+			},
+			{
+				"position": 70,
+				"topic": "Binary Tree General",
+				"slug": "invert-binary-tree",
+				"title": "Invert Binary Tree",
+				"difficulty": "EASY",
+				"leetcodeId": 226,
+				"isPremium": false
+			},
+			{
+				"position": 71,
+				"topic": "Binary Tree General",
+				"slug": "symmetric-tree",
+				"title": "Symmetric Tree",
+				"difficulty": "EASY",
+				"leetcodeId": 101,
+				"isPremium": false
+			},
+			{
+				"position": 72,
+				"topic": "Binary Tree General",
+				"slug": "construct-binary-tree-from-preorder-and-inorder-traversal",
+				"title": "Construct Binary Tree from Preorder and Inorder Traversal",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 105,
+				"isPremium": false
+			},
+			{
+				"position": 73,
+				"topic": "Binary Tree General",
+				"slug": "construct-binary-tree-from-inorder-and-postorder-traversal",
+				"title": "Construct Binary Tree from Inorder and Postorder Traversal",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 106,
+				"isPremium": false
+			},
+			{
+				"position": 74,
+				"topic": "Binary Tree General",
+				"slug": "populating-next-right-pointers-in-each-node-ii",
+				"title": "Populating Next Right Pointers in Each Node II",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 117,
+				"isPremium": false
+			},
+			{
+				"position": 75,
+				"topic": "Binary Tree General",
+				"slug": "flatten-binary-tree-to-linked-list",
+				"title": "Flatten Binary Tree to Linked List",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 114,
+				"isPremium": false
+			},
+			{
+				"position": 76,
+				"topic": "Binary Tree General",
+				"slug": "path-sum",
+				"title": "Path Sum",
+				"difficulty": "EASY",
+				"leetcodeId": 112,
+				"isPremium": false
+			},
+			{
+				"position": 77,
+				"topic": "Binary Tree General",
+				"slug": "sum-root-to-leaf-numbers",
+				"title": "Sum Root to Leaf Numbers",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 129,
+				"isPremium": false
+			},
+			{
+				"position": 78,
+				"topic": "Binary Tree General",
+				"slug": "binary-tree-maximum-path-sum",
+				"title": "Binary Tree Maximum Path Sum",
+				"difficulty": "HARD",
+				"leetcodeId": 124,
+				"isPremium": false
+			},
+			{
+				"position": 79,
+				"topic": "Binary Tree General",
+				"slug": "binary-search-tree-iterator",
+				"title": "Binary Search Tree Iterator",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 173,
+				"isPremium": false
+			},
+			{
+				"position": 80,
+				"topic": "Binary Tree General",
+				"slug": "count-complete-tree-nodes",
+				"title": "Count Complete Tree Nodes",
+				"difficulty": "EASY",
+				"leetcodeId": 222,
+				"isPremium": false
+			},
+			{
+				"position": 81,
+				"topic": "Binary Tree General",
+				"slug": "lowest-common-ancestor-of-a-binary-tree",
+				"title": "Lowest Common Ancestor of a Binary Tree",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 236,
+				"isPremium": false
+			},
+			{
+				"position": 82,
+				"topic": "Binary Tree BFS",
+				"slug": "binary-tree-right-side-view",
+				"title": "Binary Tree Right Side View",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 199,
+				"isPremium": false
+			},
+			{
+				"position": 83,
+				"topic": "Binary Tree BFS",
+				"slug": "average-of-levels-in-binary-tree",
+				"title": "Average of Levels in Binary Tree",
+				"difficulty": "EASY",
+				"leetcodeId": 637,
+				"isPremium": false
+			},
+			{
+				"position": 84,
+				"topic": "Binary Tree BFS",
+				"slug": "binary-tree-level-order-traversal",
+				"title": "Binary Tree Level Order Traversal",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 102,
+				"isPremium": false
+			},
+			{
+				"position": 85,
+				"topic": "Binary Tree BFS",
+				"slug": "binary-tree-zigzag-level-order-traversal",
+				"title": "Binary Tree Zigzag Level Order Traversal",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 103,
+				"isPremium": false
+			},
+			{
+				"position": 86,
+				"topic": "Binary Search Tree",
+				"slug": "minimum-absolute-difference-in-bst",
+				"title": "Minimum Absolute Difference in BST",
+				"difficulty": "EASY",
+				"leetcodeId": 530,
+				"isPremium": false
+			},
+			{
+				"position": 87,
+				"topic": "Binary Search Tree",
+				"slug": "kth-smallest-element-in-a-bst",
+				"title": "Kth Smallest Element in a BST",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 230,
+				"isPremium": false
+			},
+			{
+				"position": 88,
+				"topic": "Binary Search Tree",
+				"slug": "validate-binary-search-tree",
+				"title": "Validate Binary Search Tree",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 98,
+				"isPremium": false
+			},
+			{
+				"position": 89,
+				"topic": "Graph General",
+				"slug": "number-of-islands",
+				"title": "Number of Islands",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 200,
+				"isPremium": false
+			},
+			{
+				"position": 90,
+				"topic": "Graph General",
+				"slug": "surrounded-regions",
+				"title": "Surrounded Regions",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 130,
+				"isPremium": false
+			},
+			{
+				"position": 91,
+				"topic": "Graph General",
+				"slug": "clone-graph",
+				"title": "Clone Graph",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 133,
+				"isPremium": false
+			},
+			{
+				"position": 92,
+				"topic": "Graph General",
+				"slug": "evaluate-division",
+				"title": "Evaluate Division",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 399,
+				"isPremium": false
+			},
+			{
+				"position": 93,
+				"topic": "Graph General",
+				"slug": "course-schedule",
+				"title": "Course Schedule",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 207,
+				"isPremium": false
+			},
+			{
+				"position": 94,
+				"topic": "Graph General",
+				"slug": "course-schedule-ii",
+				"title": "Course Schedule II",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 210,
+				"isPremium": false
+			},
+			{
+				"position": 95,
+				"topic": "Graph BFS",
+				"slug": "snakes-and-ladders",
+				"title": "Snakes and Ladders",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 909,
+				"isPremium": false
+			},
+			{
+				"position": 96,
+				"topic": "Graph BFS",
+				"slug": "minimum-genetic-mutation",
+				"title": "Minimum Genetic Mutation",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 433,
+				"isPremium": false
+			},
+			{
+				"position": 97,
+				"topic": "Graph BFS",
+				"slug": "word-ladder",
+				"title": "Word Ladder",
+				"difficulty": "HARD",
+				"leetcodeId": 127,
+				"isPremium": false
+			},
+			{
+				"position": 98,
+				"topic": "Trie",
+				"slug": "implement-trie-prefix-tree",
+				"title": "Implement Trie (Prefix Tree)",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 208,
+				"isPremium": false
+			},
+			{
+				"position": 99,
+				"topic": "Trie",
+				"slug": "design-add-and-search-words-data-structure",
+				"title": "Design Add and Search Words Data Structure",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 211,
+				"isPremium": false
+			},
+			{
+				"position": 100,
+				"topic": "Trie",
+				"slug": "word-search-ii",
+				"title": "Word Search II",
+				"difficulty": "HARD",
+				"leetcodeId": 212,
+				"isPremium": false
+			},
+			{
+				"position": 101,
+				"topic": "Backtracking",
+				"slug": "letter-combinations-of-a-phone-number",
+				"title": "Letter Combinations of a Phone Number",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 17,
+				"isPremium": false
+			},
+			{
+				"position": 102,
+				"topic": "Backtracking",
+				"slug": "combinations",
+				"title": "Combinations",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 77,
+				"isPremium": false
+			},
+			{
+				"position": 103,
+				"topic": "Backtracking",
+				"slug": "permutations",
+				"title": "Permutations",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 46,
+				"isPremium": false
+			},
+			{
+				"position": 104,
+				"topic": "Backtracking",
+				"slug": "combination-sum",
+				"title": "Combination Sum",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 39,
+				"isPremium": false
+			},
+			{
+				"position": 105,
+				"topic": "Backtracking",
+				"slug": "n-queens-ii",
+				"title": "N-Queens II",
+				"difficulty": "HARD",
+				"leetcodeId": 52,
+				"isPremium": false
+			},
+			{
+				"position": 106,
+				"topic": "Backtracking",
+				"slug": "generate-parentheses",
+				"title": "Generate Parentheses",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 22,
+				"isPremium": false
+			},
+			{
+				"position": 107,
+				"topic": "Backtracking",
+				"slug": "word-search",
+				"title": "Word Search",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 79,
+				"isPremium": false
+			},
+			{
+				"position": 108,
+				"topic": "Divide & Conquer",
+				"slug": "convert-sorted-array-to-binary-search-tree",
+				"title": "Convert Sorted Array to Binary Search Tree",
+				"difficulty": "EASY",
+				"leetcodeId": 108,
+				"isPremium": false
+			},
+			{
+				"position": 109,
+				"topic": "Divide & Conquer",
+				"slug": "sort-list",
+				"title": "Sort List",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 148,
+				"isPremium": false
+			},
+			{
+				"position": 110,
+				"topic": "Divide & Conquer",
+				"slug": "construct-quad-tree",
+				"title": "Construct Quad Tree",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 427,
+				"isPremium": false
+			},
+			{
+				"position": 111,
+				"topic": "Divide & Conquer",
+				"slug": "merge-k-sorted-lists",
+				"title": "Merge k Sorted Lists",
+				"difficulty": "HARD",
+				"leetcodeId": 23,
+				"isPremium": false
+			},
+			{
+				"position": 112,
+				"topic": "Kadane's Algorithm",
+				"slug": "maximum-subarray",
+				"title": "Maximum Subarray",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 53,
+				"isPremium": false
+			},
+			{
+				"position": 113,
+				"topic": "Kadane's Algorithm",
+				"slug": "maximum-sum-circular-subarray",
+				"title": "Maximum Sum Circular Subarray",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 918,
+				"isPremium": false
+			},
+			{
+				"position": 114,
+				"topic": "Binary Search",
+				"slug": "search-insert-position",
+				"title": "Search Insert Position",
+				"difficulty": "EASY",
+				"leetcodeId": 35,
+				"isPremium": false
+			},
+			{
+				"position": 115,
+				"topic": "Binary Search",
+				"slug": "search-a-2d-matrix",
+				"title": "Search a 2D Matrix",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 74,
+				"isPremium": false
+			},
+			{
+				"position": 116,
+				"topic": "Binary Search",
+				"slug": "find-peak-element",
+				"title": "Find Peak Element",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 162,
+				"isPremium": false
+			},
+			{
+				"position": 117,
+				"topic": "Binary Search",
+				"slug": "search-in-rotated-sorted-array",
+				"title": "Search in Rotated Sorted Array",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 33,
+				"isPremium": false
+			},
+			{
+				"position": 118,
+				"topic": "Binary Search",
+				"slug": "find-first-and-last-position-of-element-in-sorted-array",
+				"title": "Find First and Last Position of Element in Sorted Array",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 34,
+				"isPremium": false
+			},
+			{
+				"position": 119,
+				"topic": "Binary Search",
+				"slug": "find-minimum-in-rotated-sorted-array",
+				"title": "Find Minimum in Rotated Sorted Array",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 153,
+				"isPremium": false
+			},
+			{
+				"position": 120,
+				"topic": "Binary Search",
+				"slug": "median-of-two-sorted-arrays",
+				"title": "Median of Two Sorted Arrays",
+				"difficulty": "HARD",
+				"leetcodeId": 4,
+				"isPremium": false
+			},
+			{
+				"position": 121,
+				"topic": "Heap",
+				"slug": "kth-largest-element-in-an-array",
+				"title": "Kth Largest Element in an Array",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 215,
+				"isPremium": false
+			},
+			{
+				"position": 122,
+				"topic": "Heap",
+				"slug": "ipo",
+				"title": "IPO",
+				"difficulty": "HARD",
+				"leetcodeId": 502,
+				"isPremium": false
+			},
+			{
+				"position": 123,
+				"topic": "Heap",
+				"slug": "find-k-pairs-with-smallest-sums",
+				"title": "Find K Pairs with Smallest Sums",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 373,
+				"isPremium": false
+			},
+			{
+				"position": 124,
+				"topic": "Heap",
+				"slug": "find-median-from-data-stream",
+				"title": "Find Median from Data Stream",
+				"difficulty": "HARD",
+				"leetcodeId": 295,
+				"isPremium": false
+			},
+			{
+				"position": 125,
+				"topic": "Bit Manipulation",
+				"slug": "add-binary",
+				"title": "Add Binary",
+				"difficulty": "EASY",
+				"leetcodeId": 67,
+				"isPremium": false
+			},
+			{
+				"position": 126,
+				"topic": "Bit Manipulation",
+				"slug": "reverse-bits",
+				"title": "Reverse Bits",
+				"difficulty": "EASY",
+				"leetcodeId": 190,
+				"isPremium": false
+			},
+			{
+				"position": 127,
+				"topic": "Bit Manipulation",
+				"slug": "number-of-1-bits",
+				"title": "Number of 1 Bits",
+				"difficulty": "EASY",
+				"leetcodeId": 191,
+				"isPremium": false
+			},
+			{
+				"position": 128,
+				"topic": "Bit Manipulation",
+				"slug": "single-number",
+				"title": "Single Number",
+				"difficulty": "EASY",
+				"leetcodeId": 136,
+				"isPremium": false
+			},
+			{
+				"position": 129,
+				"topic": "Bit Manipulation",
+				"slug": "single-number-ii",
+				"title": "Single Number II",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 137,
+				"isPremium": false
+			},
+			{
+				"position": 130,
+				"topic": "Bit Manipulation",
+				"slug": "bitwise-and-of-numbers-range",
+				"title": "Bitwise AND of Numbers Range",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 201,
+				"isPremium": false
+			},
+			{
+				"position": 131,
+				"topic": "Math",
+				"slug": "palindrome-number",
+				"title": "Palindrome Number",
+				"difficulty": "EASY",
+				"leetcodeId": 9,
+				"isPremium": false
+			},
+			{
+				"position": 132,
+				"topic": "Math",
+				"slug": "plus-one",
+				"title": "Plus One",
+				"difficulty": "EASY",
+				"leetcodeId": 66,
+				"isPremium": false
+			},
+			{
+				"position": 133,
+				"topic": "Math",
+				"slug": "factorial-trailing-zeroes",
+				"title": "Factorial Trailing Zeroes",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 172,
+				"isPremium": false
+			},
+			{
+				"position": 134,
+				"topic": "Math",
+				"slug": "sqrtx",
+				"title": "Sqrt(x)",
+				"difficulty": "EASY",
+				"leetcodeId": 69,
+				"isPremium": false
+			},
+			{
+				"position": 135,
+				"topic": "Math",
+				"slug": "powx-n",
+				"title": "Pow(x, n)",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 50,
+				"isPremium": false
+			},
+			{
+				"position": 136,
+				"topic": "Math",
+				"slug": "max-points-on-a-line",
+				"title": "Max Points on a Line",
+				"difficulty": "HARD",
+				"leetcodeId": 149,
+				"isPremium": false
+			},
+			{
+				"position": 137,
+				"topic": "1D DP",
+				"slug": "climbing-stairs",
+				"title": "Climbing Stairs",
+				"difficulty": "EASY",
+				"leetcodeId": 70,
+				"isPremium": false
+			},
+			{
+				"position": 138,
+				"topic": "1D DP",
+				"slug": "house-robber",
+				"title": "House Robber",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 198,
+				"isPremium": false
+			},
+			{
+				"position": 139,
+				"topic": "1D DP",
+				"slug": "word-break",
+				"title": "Word Break",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 139,
+				"isPremium": false
+			},
+			{
+				"position": 140,
+				"topic": "1D DP",
+				"slug": "coin-change",
+				"title": "Coin Change",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 322,
+				"isPremium": false
+			},
+			{
+				"position": 141,
+				"topic": "1D DP",
+				"slug": "longest-increasing-subsequence",
+				"title": "Longest Increasing Subsequence",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 300,
+				"isPremium": false
+			},
+			{
+				"position": 142,
+				"topic": "Multidimensional DP",
+				"slug": "triangle",
+				"title": "Triangle",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 120,
+				"isPremium": false
+			},
+			{
+				"position": 143,
+				"topic": "Multidimensional DP",
+				"slug": "minimum-path-sum",
+				"title": "Minimum Path Sum",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 64,
+				"isPremium": false
+			},
+			{
+				"position": 144,
+				"topic": "Multidimensional DP",
+				"slug": "unique-paths-ii",
+				"title": "Unique Paths II",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 63,
+				"isPremium": false
+			},
+			{
+				"position": 145,
+				"topic": "Multidimensional DP",
+				"slug": "longest-palindromic-substring",
+				"title": "Longest Palindromic Substring",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 5,
+				"isPremium": false
+			},
+			{
+				"position": 146,
+				"topic": "Multidimensional DP",
+				"slug": "interleaving-string",
+				"title": "Interleaving String",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 97,
+				"isPremium": false
+			},
+			{
+				"position": 147,
+				"topic": "Multidimensional DP",
+				"slug": "edit-distance",
+				"title": "Edit Distance",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 72,
+				"isPremium": false
+			},
+			{
+				"position": 148,
+				"topic": "Multidimensional DP",
+				"slug": "best-time-to-buy-and-sell-stock-iii",
+				"title": "Best Time to Buy and Sell Stock III",
+				"difficulty": "HARD",
+				"leetcodeId": 123,
+				"isPremium": false
+			},
+			{
+				"position": 149,
+				"topic": "Multidimensional DP",
+				"slug": "best-time-to-buy-and-sell-stock-iv",
+				"title": "Best Time to Buy and Sell Stock IV",
+				"difficulty": "HARD",
+				"leetcodeId": 188,
+				"isPremium": false
+			},
+			{
+				"position": 150,
+				"topic": "Multidimensional DP",
+				"slug": "maximal-square",
+				"title": "Maximal Square",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 221,
+				"isPremium": false
+			}
+		]
+	},
+	{
+		"key": "TOP_SQL_50",
+		"slug": "top-sql-50",
+		"title": "SQL 50",
+		"description": "50 essential SQL interview questions",
+		"source": "LEETCODE",
+		"sortOrder": 50,
+		"problems": [
+			{
+				"position": 1,
+				"topic": "Select",
+				"slug": "recyclable-and-low-fat-products",
+				"title": "Recyclable and Low Fat Products",
+				"difficulty": "EASY",
+				"leetcodeId": 1757,
+				"isPremium": false
+			},
+			{
+				"position": 2,
+				"topic": "Select",
+				"slug": "find-customer-referee",
+				"title": "Find Customer Referee",
+				"difficulty": "EASY",
+				"leetcodeId": 584,
+				"isPremium": false
+			},
+			{
+				"position": 3,
+				"topic": "Select",
+				"slug": "big-countries",
+				"title": "Big Countries",
+				"difficulty": "EASY",
+				"leetcodeId": 595,
+				"isPremium": false
+			},
+			{
+				"position": 4,
+				"topic": "Select",
+				"slug": "article-views-i",
+				"title": "Article Views I",
+				"difficulty": "EASY",
+				"leetcodeId": 1148,
+				"isPremium": false
+			},
+			{
+				"position": 5,
+				"topic": "Select",
+				"slug": "invalid-tweets",
+				"title": "Invalid Tweets",
+				"difficulty": "EASY",
+				"leetcodeId": 1683,
+				"isPremium": false
+			},
+			{
+				"position": 6,
+				"topic": "Basic Joins",
+				"slug": "replace-employee-id-with-the-unique-identifier",
+				"title": "Replace Employee ID With The Unique Identifier",
+				"difficulty": "EASY",
+				"leetcodeId": 1378,
+				"isPremium": false
+			},
+			{
+				"position": 7,
+				"topic": "Basic Joins",
+				"slug": "product-sales-analysis-i",
+				"title": "Product Sales Analysis I",
+				"difficulty": "EASY",
+				"leetcodeId": 1068,
+				"isPremium": false
+			},
+			{
+				"position": 8,
+				"topic": "Basic Joins",
+				"slug": "customer-who-visited-but-did-not-make-any-transactions",
+				"title": "Customer Who Visited but Did Not Make Any Transactions",
+				"difficulty": "EASY",
+				"leetcodeId": 1581,
+				"isPremium": false
+			},
+			{
+				"position": 9,
+				"topic": "Basic Joins",
+				"slug": "rising-temperature",
+				"title": "Rising Temperature",
+				"difficulty": "EASY",
+				"leetcodeId": 197,
+				"isPremium": false
+			},
+			{
+				"position": 10,
+				"topic": "Basic Joins",
+				"slug": "average-time-of-process-per-machine",
+				"title": "Average Time of Process per Machine",
+				"difficulty": "EASY",
+				"leetcodeId": 1661,
+				"isPremium": false
+			},
+			{
+				"position": 11,
+				"topic": "Basic Joins",
+				"slug": "employee-bonus",
+				"title": "Employee Bonus",
+				"difficulty": "EASY",
+				"leetcodeId": 577,
+				"isPremium": false
+			},
+			{
+				"position": 12,
+				"topic": "Basic Joins",
+				"slug": "students-and-examinations",
+				"title": "Students and Examinations",
+				"difficulty": "EASY",
+				"leetcodeId": 1280,
+				"isPremium": false
+			},
+			{
+				"position": 13,
+				"topic": "Basic Joins",
+				"slug": "managers-with-at-least-5-direct-reports",
+				"title": "Managers with at Least 5 Direct Reports",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 570,
+				"isPremium": false
+			},
+			{
+				"position": 14,
+				"topic": "Basic Joins",
+				"slug": "confirmation-rate",
+				"title": "Confirmation Rate",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 1934,
+				"isPremium": false
+			},
+			{
+				"position": 15,
+				"topic": "Basic Aggregate Functions",
+				"slug": "not-boring-movies",
+				"title": "Not Boring Movies",
+				"difficulty": "EASY",
+				"leetcodeId": 620,
+				"isPremium": false
+			},
+			{
+				"position": 16,
+				"topic": "Basic Aggregate Functions",
+				"slug": "average-selling-price",
+				"title": "Average Selling Price",
+				"difficulty": "EASY",
+				"leetcodeId": 1251,
+				"isPremium": false
+			},
+			{
+				"position": 17,
+				"topic": "Basic Aggregate Functions",
+				"slug": "project-employees-i",
+				"title": "Project Employees I",
+				"difficulty": "EASY",
+				"leetcodeId": 1075,
+				"isPremium": false
+			},
+			{
+				"position": 18,
+				"topic": "Basic Aggregate Functions",
+				"slug": "percentage-of-users-attended-a-contest",
+				"title": "Percentage of Users Attended a Contest",
+				"difficulty": "EASY",
+				"leetcodeId": 1633,
+				"isPremium": false
+			},
+			{
+				"position": 19,
+				"topic": "Basic Aggregate Functions",
+				"slug": "queries-quality-and-percentage",
+				"title": "Queries Quality and Percentage",
+				"difficulty": "EASY",
+				"leetcodeId": 1211,
+				"isPremium": false
+			},
+			{
+				"position": 20,
+				"topic": "Basic Aggregate Functions",
+				"slug": "monthly-transactions-i",
+				"title": "Monthly Transactions I",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 1193,
+				"isPremium": false
+			},
+			{
+				"position": 21,
+				"topic": "Basic Aggregate Functions",
+				"slug": "immediate-food-delivery-ii",
+				"title": "Immediate Food Delivery II",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 1174,
+				"isPremium": false
+			},
+			{
+				"position": 22,
+				"topic": "Basic Aggregate Functions",
+				"slug": "game-play-analysis-iv",
+				"title": "Game Play Analysis IV",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 550,
+				"isPremium": false
+			},
+			{
+				"position": 23,
+				"topic": "Sorting and Grouping",
+				"slug": "number-of-unique-subjects-taught-by-each-teacher",
+				"title": "Number of Unique Subjects Taught by Each Teacher",
+				"difficulty": "EASY",
+				"leetcodeId": 2356,
+				"isPremium": false
+			},
+			{
+				"position": 24,
+				"topic": "Sorting and Grouping",
+				"slug": "user-activity-for-the-past-30-days-i",
+				"title": "User Activity for the Past 30 Days I",
+				"difficulty": "EASY",
+				"leetcodeId": 1141,
+				"isPremium": false
+			},
+			{
+				"position": 25,
+				"topic": "Sorting and Grouping",
+				"slug": "product-sales-analysis-iii",
+				"title": "Product Sales Analysis III",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 1070,
+				"isPremium": false
+			},
+			{
+				"position": 26,
+				"topic": "Sorting and Grouping",
+				"slug": "classes-with-at-least-5-students",
+				"title": "Classes With at Least 5 Students",
+				"difficulty": "EASY",
+				"leetcodeId": 596,
+				"isPremium": false
+			},
+			{
+				"position": 27,
+				"topic": "Sorting and Grouping",
+				"slug": "find-followers-count",
+				"title": "Find Followers Count",
+				"difficulty": "EASY",
+				"leetcodeId": 1729,
+				"isPremium": false
+			},
+			{
+				"position": 28,
+				"topic": "Sorting and Grouping",
+				"slug": "biggest-single-number",
+				"title": "Biggest Single Number",
+				"difficulty": "EASY",
+				"leetcodeId": 619,
+				"isPremium": false
+			},
+			{
+				"position": 29,
+				"topic": "Sorting and Grouping",
+				"slug": "customers-who-bought-all-products",
+				"title": "Customers Who Bought All Products",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 1045,
+				"isPremium": false
+			},
+			{
+				"position": 30,
+				"topic": "Advanced Select and Joins",
+				"slug": "the-number-of-employees-which-report-to-each-employee",
+				"title": "The Number of Employees Which Report to Each Employee",
+				"difficulty": "EASY",
+				"leetcodeId": 1731,
+				"isPremium": false
+			},
+			{
+				"position": 31,
+				"topic": "Advanced Select and Joins",
+				"slug": "primary-department-for-each-employee",
+				"title": "Primary Department for Each Employee",
+				"difficulty": "EASY",
+				"leetcodeId": 1789,
+				"isPremium": false
+			},
+			{
+				"position": 32,
+				"topic": "Advanced Select and Joins",
+				"slug": "triangle-judgement",
+				"title": "Triangle Judgement",
+				"difficulty": "EASY",
+				"leetcodeId": 610,
+				"isPremium": false
+			},
+			{
+				"position": 33,
+				"topic": "Advanced Select and Joins",
+				"slug": "consecutive-numbers",
+				"title": "Consecutive Numbers",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 180,
+				"isPremium": false
+			},
+			{
+				"position": 34,
+				"topic": "Advanced Select and Joins",
+				"slug": "product-price-at-a-given-date",
+				"title": "Product Price at a Given Date",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 1164,
+				"isPremium": false
+			},
+			{
+				"position": 35,
+				"topic": "Advanced Select and Joins",
+				"slug": "last-person-to-fit-in-the-bus",
+				"title": "Last Person to Fit in the Bus",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 1204,
+				"isPremium": false
+			},
+			{
+				"position": 36,
+				"topic": "Advanced Select and Joins",
+				"slug": "count-salary-categories",
+				"title": "Count Salary Categories",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 1907,
+				"isPremium": false
+			},
+			{
+				"position": 37,
+				"topic": "Subqueries",
+				"slug": "employees-whose-manager-left-the-company",
+				"title": "Employees Whose Manager Left the Company",
+				"difficulty": "EASY",
+				"leetcodeId": 1978,
+				"isPremium": false
+			},
+			{
+				"position": 38,
+				"topic": "Subqueries",
+				"slug": "exchange-seats",
+				"title": "Exchange Seats",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 626,
+				"isPremium": false
+			},
+			{
+				"position": 39,
+				"topic": "Subqueries",
+				"slug": "movie-rating",
+				"title": "Movie Rating",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 1341,
+				"isPremium": false
+			},
+			{
+				"position": 40,
+				"topic": "Subqueries",
+				"slug": "restaurant-growth",
+				"title": "Restaurant Growth",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 1321,
+				"isPremium": false
+			},
+			{
+				"position": 41,
+				"topic": "Subqueries",
+				"slug": "friend-requests-ii-who-has-the-most-friends",
+				"title": "Friend Requests II: Who Has the Most Friends",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 602,
+				"isPremium": false
+			},
+			{
+				"position": 42,
+				"topic": "Subqueries",
+				"slug": "investments-in-2016",
+				"title": "Investments in 2016",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 585,
+				"isPremium": false
+			},
+			{
+				"position": 43,
+				"topic": "Subqueries",
+				"slug": "department-top-three-salaries",
+				"title": "Department Top Three Salaries",
+				"difficulty": "HARD",
+				"leetcodeId": 185,
+				"isPremium": false
+			},
+			{
+				"position": 44,
+				"topic": "Advanced String Functions / Regex / Clause",
+				"slug": "fix-names-in-a-table",
+				"title": "Fix Names in a Table",
+				"difficulty": "EASY",
+				"leetcodeId": 1667,
+				"isPremium": false
+			},
+			{
+				"position": 45,
+				"topic": "Advanced String Functions / Regex / Clause",
+				"slug": "patients-with-a-condition",
+				"title": "Patients With a Condition",
+				"difficulty": "EASY",
+				"leetcodeId": 1527,
+				"isPremium": false
+			},
+			{
+				"position": 46,
+				"topic": "Advanced String Functions / Regex / Clause",
+				"slug": "delete-duplicate-emails",
+				"title": "Delete Duplicate Emails",
+				"difficulty": "EASY",
+				"leetcodeId": 196,
+				"isPremium": false
+			},
+			{
+				"position": 47,
+				"topic": "Advanced String Functions / Regex / Clause",
+				"slug": "second-highest-salary",
+				"title": "Second Highest Salary",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 176,
+				"isPremium": false
+			},
+			{
+				"position": 48,
+				"topic": "Advanced String Functions / Regex / Clause",
+				"slug": "group-sold-products-by-the-date",
+				"title": "Group Sold Products By The Date",
+				"difficulty": "EASY",
+				"leetcodeId": 1484,
+				"isPremium": false
+			},
+			{
+				"position": 49,
+				"topic": "Advanced String Functions / Regex / Clause",
+				"slug": "list-the-products-ordered-in-a-period",
+				"title": "List the Products Ordered in a Period",
+				"difficulty": "EASY",
+				"leetcodeId": 1327,
+				"isPremium": false
+			},
+			{
+				"position": 50,
+				"topic": "Advanced String Functions / Regex / Clause",
+				"slug": "find-users-with-valid-e-mails",
+				"title": "Find Users With Valid E-Mails",
+				"difficulty": "EASY",
+				"leetcodeId": 1517,
+				"isPremium": false
+			}
+		]
+	},
+	{
+		"key": "DYNAMIC_PROGRAMMING",
+		"slug": "dynamic-programming",
+		"title": "Dynamic Programming",
+		"description": "Essential dynamic programming patterns",
+		"source": "LEETCODE",
+		"sortOrder": 60,
+		"problems": [
+			{
+				"position": 1,
+				"topic": "Fibonacci style",
+				"slug": "climbing-stairs",
+				"title": "Climbing Stairs",
+				"difficulty": "EASY",
+				"leetcodeId": 70,
+				"isPremium": false
+			},
+			{
+				"position": 2,
+				"topic": "Fibonacci style",
+				"slug": "fibonacci-number",
+				"title": "Fibonacci Number",
+				"difficulty": "EASY",
+				"leetcodeId": 509,
+				"isPremium": false
+			},
+			{
+				"position": 3,
+				"topic": "Fibonacci style",
+				"slug": "n-th-tribonacci-number",
+				"title": "N-th Tribonacci Number",
+				"difficulty": "EASY",
+				"leetcodeId": 1137,
+				"isPremium": false
+			},
+			{
+				"position": 4,
+				"topic": "Fibonacci style",
+				"slug": "min-cost-climbing-stairs",
+				"title": "Min Cost Climbing Stairs",
+				"difficulty": "EASY",
+				"leetcodeId": 746,
+				"isPremium": false
+			},
+			{
+				"position": 5,
+				"topic": "Fibonacci style",
+				"slug": "house-robber",
+				"title": "House Robber",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 198,
+				"isPremium": false
+			},
+			{
+				"position": 6,
+				"topic": "Fibonacci style",
+				"slug": "delete-and-earn",
+				"title": "Delete and Earn",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 740,
+				"isPremium": false
+			},
+			{
+				"position": 7,
+				"topic": "Matrix",
+				"slug": "unique-paths",
+				"title": "Unique Paths",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 62,
+				"isPremium": false
+			},
+			{
+				"position": 8,
+				"topic": "Matrix",
+				"slug": "minimum-path-sum",
+				"title": "Minimum Path Sum",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 64,
+				"isPremium": false
+			},
+			{
+				"position": 9,
+				"topic": "Matrix",
+				"slug": "unique-paths-ii",
+				"title": "Unique Paths II",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 63,
+				"isPremium": false
+			},
+			{
+				"position": 10,
+				"topic": "Matrix",
+				"slug": "triangle",
+				"title": "Triangle",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 120,
+				"isPremium": false
+			},
+			{
+				"position": 11,
+				"topic": "Matrix",
+				"slug": "minimum-falling-path-sum",
+				"title": "Minimum Falling Path Sum",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 931,
+				"isPremium": false
+			},
+			{
+				"position": 12,
+				"topic": "Matrix",
+				"slug": "maximal-square",
+				"title": "Maximal Square",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 221,
+				"isPremium": false
+			},
+			{
+				"position": 13,
+				"topic": "On Strings",
+				"slug": "longest-palindromic-substring",
+				"title": "Longest Palindromic Substring",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 5,
+				"isPremium": false
+			},
+			{
+				"position": 14,
+				"topic": "On Strings",
+				"slug": "word-break",
+				"title": "Word Break",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 139,
+				"isPremium": false
+			},
+			{
+				"position": 15,
+				"topic": "On Strings",
+				"slug": "longest-palindromic-subsequence",
+				"title": "Longest Palindromic Subsequence",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 516,
+				"isPremium": false
+			},
+			{
+				"position": 16,
+				"topic": "On Strings",
+				"slug": "edit-distance",
+				"title": "Edit Distance",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 72,
+				"isPremium": false
+			},
+			{
+				"position": 17,
+				"topic": "On Strings",
+				"slug": "minimum-ascii-delete-sum-for-two-strings",
+				"title": "Minimum ASCII Delete Sum for Two Strings",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 712,
+				"isPremium": false
+			},
+			{
+				"position": 18,
+				"topic": "On Strings",
+				"slug": "distinct-subsequences",
+				"title": "Distinct Subsequences",
+				"difficulty": "HARD",
+				"leetcodeId": 115,
+				"isPremium": false
+			},
+			{
+				"position": 19,
+				"topic": "Longest Increasing Subsequence",
+				"slug": "longest-increasing-subsequence",
+				"title": "Longest Increasing Subsequence",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 300,
+				"isPremium": false
+			},
+			{
+				"position": 20,
+				"topic": "Longest Increasing Subsequence",
+				"slug": "number-of-longest-increasing-subsequence",
+				"title": "Number of Longest Increasing Subsequence",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 673,
+				"isPremium": false
+			},
+			{
+				"position": 21,
+				"topic": "Longest Increasing Subsequence",
+				"slug": "maximum-length-of-pair-chain",
+				"title": "Maximum Length of Pair Chain",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 646,
+				"isPremium": false
+			},
+			{
+				"position": 22,
+				"topic": "Longest Increasing Subsequence",
+				"slug": "longest-arithmetic-subsequence-of-given-difference",
+				"title": "Longest Arithmetic Subsequence of Given Difference",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 1218,
+				"isPremium": false
+			},
+			{
+				"position": 23,
+				"topic": "Longest Increasing Subsequence",
+				"slug": "longest-arithmetic-subsequence",
+				"title": "Longest Arithmetic Subsequence",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 1027,
+				"isPremium": false
+			},
+			{
+				"position": 24,
+				"topic": "Longest Increasing Subsequence",
+				"slug": "russian-doll-envelopes",
+				"title": "Russian Doll Envelopes",
+				"difficulty": "HARD",
+				"leetcodeId": 354,
+				"isPremium": false
+			},
+			{
+				"position": 25,
+				"topic": "Longest Increasing Subsequence",
+				"slug": "find-the-longest-valid-obstacle-course-at-each-position",
+				"title": "Find the Longest Valid Obstacle Course at Each Position",
+				"difficulty": "HARD",
+				"leetcodeId": 1964,
+				"isPremium": false
+			},
+			{
+				"position": 26,
+				"topic": "Longest Common Subsequence",
+				"slug": "longest-common-subsequence",
+				"title": "Longest Common Subsequence",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 1143,
+				"isPremium": false
+			},
+			{
+				"position": 27,
+				"topic": "Longest Common Subsequence",
+				"slug": "uncrossed-lines",
+				"title": "Uncrossed Lines",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 1035,
+				"isPremium": false
+			},
+			{
+				"position": 28,
+				"topic": "Longest Common Subsequence",
+				"slug": "minimum-insertion-steps-to-make-a-string-palindrome",
+				"title": "Minimum Insertion Steps to Make a String Palindrome",
+				"difficulty": "HARD",
+				"leetcodeId": 1312,
+				"isPremium": false
+			},
+			{
+				"position": 29,
+				"topic": "Best Time to Buy & Sell Stock / State Machine",
+				"slug": "best-time-to-buy-and-sell-stock-with-cooldown",
+				"title": "Best Time to Buy and Sell Stock with Cooldown",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 309,
+				"isPremium": false
+			},
+			{
+				"position": 30,
+				"topic": "Best Time to Buy & Sell Stock / State Machine",
+				"slug": "best-time-to-buy-and-sell-stock-with-transaction-fee",
+				"title": "Best Time to Buy and Sell Stock with Transaction Fee",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 714,
+				"isPremium": false
+			},
+			{
+				"position": 31,
+				"topic": "Best Time to Buy & Sell Stock / State Machine",
+				"slug": "best-time-to-buy-and-sell-stock-iii",
+				"title": "Best Time to Buy and Sell Stock III",
+				"difficulty": "HARD",
+				"leetcodeId": 123,
+				"isPremium": false
+			},
+			{
+				"position": 32,
+				"topic": "Best Time to Buy & Sell Stock / State Machine",
+				"slug": "best-time-to-buy-and-sell-stock-iv",
+				"title": "Best Time to Buy and Sell Stock IV",
+				"difficulty": "HARD",
+				"leetcodeId": 188,
+				"isPremium": false
+			},
+			{
+				"position": 33,
+				"topic": "On Trees",
+				"slug": "unique-binary-search-trees",
+				"title": "Unique Binary Search Trees",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 96,
+				"isPremium": false
+			},
+			{
+				"position": 34,
+				"topic": "On Trees",
+				"slug": "unique-binary-search-trees-ii",
+				"title": "Unique Binary Search Trees II",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 95,
+				"isPremium": false
+			},
+			{
+				"position": 35,
+				"topic": "On Trees",
+				"slug": "house-robber-iii",
+				"title": "House Robber III",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 337,
+				"isPremium": false
+			},
+			{
+				"position": 36,
+				"topic": "On Trees",
+				"slug": "binary-tree-maximum-path-sum",
+				"title": "Binary Tree Maximum Path Sum",
+				"difficulty": "HARD",
+				"leetcodeId": 124,
+				"isPremium": false
+			},
+			{
+				"position": 37,
+				"topic": "Knapsack",
+				"slug": "perfect-squares",
+				"title": "Perfect Squares",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 279,
+				"isPremium": false
+			},
+			{
+				"position": 38,
+				"topic": "Knapsack",
+				"slug": "coin-change-ii",
+				"title": "Coin Change II",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 518,
+				"isPremium": false
+			},
+			{
+				"position": 39,
+				"topic": "Knapsack",
+				"slug": "combination-sum-iv",
+				"title": "Combination Sum IV",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 377,
+				"isPremium": false
+			},
+			{
+				"position": 40,
+				"topic": "Knapsack",
+				"slug": "ones-and-zeroes",
+				"title": "Ones and Zeroes",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 474,
+				"isPremium": false
+			},
+			{
+				"position": 41,
+				"topic": "General 1D",
+				"slug": "solving-questions-with-brainpower",
+				"title": "Solving Questions With Brainpower",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 2140,
+				"isPremium": false
+			},
+			{
+				"position": 42,
+				"topic": "General 1D",
+				"slug": "coin-change",
+				"title": "Coin Change",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 322,
+				"isPremium": false
+			},
+			{
+				"position": 43,
+				"topic": "General 1D",
+				"slug": "count-ways-to-build-good-strings",
+				"title": "Count Ways To Build Good Strings",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 2466,
+				"isPremium": false
+			},
+			{
+				"position": 44,
+				"topic": "General 1D",
+				"slug": "decode-ways",
+				"title": "Decode Ways",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 91,
+				"isPremium": false
+			},
+			{
+				"position": 45,
+				"topic": "General 1D",
+				"slug": "minimum-cost-for-tickets",
+				"title": "Minimum Cost For Tickets",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 983,
+				"isPremium": false
+			},
+			{
+				"position": 46,
+				"topic": "General 1D",
+				"slug": "domino-and-tromino-tiling",
+				"title": "Domino and Tromino Tiling",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 790,
+				"isPremium": false
+			}
+		]
+	},
+	{
+		"key": "JS_30",
+		"slug": "30-days-of-javascript",
+		"title": "30 Days of JavaScript",
+		"description": "JavaScript basics and fluency problems",
+		"source": "LEETCODE",
+		"sortOrder": 70,
+		"problems": [
+			{
+				"position": 1,
+				"topic": "Closures",
+				"slug": "create-hello-world-function",
+				"title": "Create Hello World Function",
+				"difficulty": "EASY",
+				"leetcodeId": 2667,
+				"isPremium": false
+			},
+			{
+				"position": 2,
+				"topic": "Closures",
+				"slug": "counter",
+				"title": "Counter",
+				"difficulty": "EASY",
+				"leetcodeId": 2620,
+				"isPremium": false
+			},
+			{
+				"position": 3,
+				"topic": "Closures",
+				"slug": "to-be-or-not-to-be",
+				"title": "To Be Or Not To Be",
+				"difficulty": "EASY",
+				"leetcodeId": 2704,
+				"isPremium": false
+			},
+			{
+				"position": 4,
+				"topic": "Closures",
+				"slug": "counter-ii",
+				"title": "Counter II",
+				"difficulty": "EASY",
+				"leetcodeId": 2665,
+				"isPremium": false
+			},
+			{
+				"position": 5,
+				"topic": "Basic Array Transformations",
+				"slug": "apply-transform-over-each-element-in-array",
+				"title": "Apply Transform Over Each Element in Array",
+				"difficulty": "EASY",
+				"leetcodeId": 2635,
+				"isPremium": false
+			},
+			{
+				"position": 6,
+				"topic": "Basic Array Transformations",
+				"slug": "filter-elements-from-array",
+				"title": "Filter Elements from Array",
+				"difficulty": "EASY",
+				"leetcodeId": 2634,
+				"isPremium": false
+			},
+			{
+				"position": 7,
+				"topic": "Basic Array Transformations",
+				"slug": "array-reduce-transformation",
+				"title": "Array Reduce Transformation",
+				"difficulty": "EASY",
+				"leetcodeId": 2626,
+				"isPremium": false
+			},
+			{
+				"position": 8,
+				"topic": "Function Transformations",
+				"slug": "function-composition",
+				"title": "Function Composition",
+				"difficulty": "EASY",
+				"leetcodeId": 2629,
+				"isPremium": false
+			},
+			{
+				"position": 9,
+				"topic": "Function Transformations",
+				"slug": "return-length-of-arguments-passed",
+				"title": "Return Length of Arguments Passed",
+				"difficulty": "EASY",
+				"leetcodeId": 2703,
+				"isPremium": false
+			},
+			{
+				"position": 10,
+				"topic": "Function Transformations",
+				"slug": "allow-one-function-call",
+				"title": "Allow One Function Call",
+				"difficulty": "EASY",
+				"leetcodeId": 2666,
+				"isPremium": false
+			},
+			{
+				"position": 11,
+				"topic": "Function Transformations",
+				"slug": "memoize",
+				"title": "Memoize",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 2623,
+				"isPremium": false
+			},
+			{
+				"position": 12,
+				"topic": "Promises and Time",
+				"slug": "add-two-promises",
+				"title": "Add Two Promises",
+				"difficulty": "EASY",
+				"leetcodeId": 2723,
+				"isPremium": false
+			},
+			{
+				"position": 13,
+				"topic": "Promises and Time",
+				"slug": "sleep",
+				"title": "Sleep",
+				"difficulty": "EASY",
+				"leetcodeId": 2621,
+				"isPremium": false
+			},
+			{
+				"position": 14,
+				"topic": "Promises and Time",
+				"slug": "timeout-cancellation",
+				"title": "Timeout Cancellation",
+				"difficulty": "EASY",
+				"leetcodeId": 2715,
+				"isPremium": false
+			},
+			{
+				"position": 15,
+				"topic": "Promises and Time",
+				"slug": "interval-cancellation",
+				"title": "Interval Cancellation",
+				"difficulty": "EASY",
+				"leetcodeId": 2725,
+				"isPremium": false
+			},
+			{
+				"position": 16,
+				"topic": "Promises and Time",
+				"slug": "promise-time-limit",
+				"title": "Promise Time Limit",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 2637,
+				"isPremium": false
+			},
+			{
+				"position": 17,
+				"topic": "Promises and Time",
+				"slug": "cache-with-time-limit",
+				"title": "Cache With Time Limit",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 2622,
+				"isPremium": false
+			},
+			{
+				"position": 18,
+				"topic": "Promises and Time",
+				"slug": "debounce",
+				"title": "Debounce",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 2627,
+				"isPremium": false
+			},
+			{
+				"position": 19,
+				"topic": "Promises and Time",
+				"slug": "execute-asynchronous-functions-in-parallel",
+				"title": "Execute Asynchronous Functions in Parallel",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 2721,
+				"isPremium": false
+			},
+			{
+				"position": 20,
+				"topic": "JSON",
+				"slug": "is-object-empty",
+				"title": "Is Object Empty",
+				"difficulty": "EASY",
+				"leetcodeId": 2727,
+				"isPremium": false
+			},
+			{
+				"position": 21,
+				"topic": "JSON",
+				"slug": "chunk-array",
+				"title": "Chunk Array",
+				"difficulty": "EASY",
+				"leetcodeId": 2677,
+				"isPremium": false
+			},
+			{
+				"position": 22,
+				"topic": "JSON",
+				"slug": "array-prototype-last",
+				"title": "Array Prototype Last",
+				"difficulty": "EASY",
+				"leetcodeId": 2619,
+				"isPremium": false
+			},
+			{
+				"position": 23,
+				"topic": "JSON",
+				"slug": "group-by",
+				"title": "Group By",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 2631,
+				"isPremium": false
+			},
+			{
+				"position": 24,
+				"topic": "JSON",
+				"slug": "sort-by",
+				"title": "Sort By",
+				"difficulty": "EASY",
+				"leetcodeId": 2724,
+				"isPremium": false
+			},
+			{
+				"position": 25,
+				"topic": "JSON",
+				"slug": "join-two-arrays-by-id",
+				"title": "Join Two Arrays by ID",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 2722,
+				"isPremium": false
+			},
+			{
+				"position": 26,
+				"topic": "JSON",
+				"slug": "flatten-deeply-nested-array",
+				"title": "Flatten Deeply Nested Array",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 2625,
+				"isPremium": false
+			},
+			{
+				"position": 27,
+				"topic": "JSON",
+				"slug": "compact-object",
+				"title": "Compact Object",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 2705,
+				"isPremium": false
+			},
+			{
+				"position": 28,
+				"topic": "Classes",
+				"slug": "event-emitter",
+				"title": "Event Emitter",
+				"difficulty": "MEDIUM",
+				"leetcodeId": 2694,
+				"isPremium": false
+			},
+			{
+				"position": 29,
+				"topic": "Classes",
+				"slug": "array-wrapper",
+				"title": "Array Wrapper",
+				"difficulty": "EASY",
+				"leetcodeId": 2695,
+				"isPremium": false
+			},
+			{
+				"position": 30,
+				"topic": "Classes",
+				"slug": "calculator-with-method-chaining",
+				"title": "Calculator with Method Chaining",
+				"difficulty": "EASY",
+				"leetcodeId": 2726,
+				"isPremium": false
+			}
+		]
+	}
+]
