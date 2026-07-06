@@ -137,3 +137,19 @@ export const useAdminRevokeInvite = (groupId: string) => {
 		},
 	})
 }
+
+export const useAdminStartGroup = (groupId: string) => {
+	const queryClient = useQueryClient()
+
+	return useMutation({
+		mutationFn: async () => {
+			const { data, error } = await api.v3.admin.groups({ id: groupId }).start.patch()
+			if (error) throw new Error("Could not start group")
+			return data
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: adminGroupDetailKey(groupId) })
+			queryClient.invalidateQueries({ queryKey: ["admin", "groups"] })
+		},
+	})
+}

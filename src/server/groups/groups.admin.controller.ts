@@ -177,6 +177,22 @@ export const groupsAdminController = new Elysia({
 		{ params: "admin.groups.idParams" }
 	)
 	.patch(
+		"/:id/start",
+		async ({ request, params }) => {
+			const { user, response } = await requirePlatformAdmin(request)
+			if (!user) return response
+			const result = await groupsAdminDao.start(user.id, params.id)
+			if ("error" in result) {
+				if (result.error === "ALREADY_STARTED") {
+					return status(409, { error: "Group has already started" })
+				}
+				return status(404, { error: "Group not found" })
+			}
+			return result
+		},
+		{ params: "admin.groups.idParams" }
+	)
+	.patch(
 		"/:id/freeze",
 		async ({ request, params, body }) => {
 			const { user, response } = await requirePlatformAdmin(request)

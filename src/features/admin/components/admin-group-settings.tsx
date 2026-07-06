@@ -1,4 +1,10 @@
-import { IconCheck, IconClipboard, IconLink, IconLinkOff } from "@tabler/icons-react"
+import {
+	IconCheck,
+	IconClipboard,
+	IconLink,
+	IconLinkOff,
+	IconPlayerPlay,
+} from "@tabler/icons-react"
 import { useParams } from "@tanstack/react-router"
 import { useState } from "react"
 import { sileo } from "sileo"
@@ -12,6 +18,7 @@ import {
 	useAdminGenerateInvite,
 	useAdminGroup,
 	useAdminRevokeInvite,
+	useAdminStartGroup,
 } from "../hooks/use-admin-group"
 
 const errorDescription = (err: unknown) =>
@@ -32,6 +39,12 @@ export const AdminGroupSettings = () => {
 
 	return (
 		<div className="flex max-w-2xl flex-col gap-8">
+			<GroupStartSection
+				groupId={groupId}
+				isActive={data.isActive}
+				isStarted={data.isStarted}
+			/>
+			<Separator />
 			<InviteLinkSection
 				groupId={groupId}
 				inviteCode={data.inviteCode}
@@ -47,6 +60,51 @@ export const AdminGroupSettings = () => {
 				createdAt={new Date(data.createdAt)}
 			/>
 		</div>
+	)
+}
+
+const GroupStartSection = ({
+	groupId,
+	isActive,
+	isStarted,
+}: {
+	groupId: string
+	isActive: boolean
+	isStarted: boolean
+}) => {
+	const startGroup = useAdminStartGroup(groupId)
+
+	const handleStart = async () => {
+		await sileo.promise(startGroup.mutateAsync(), {
+			loading: { title: "Starting group..." },
+			success: { title: "Group started" },
+			error: (err: unknown) => ({
+				title: "Could not start group",
+				description: errorDescription(err),
+			}),
+		})
+	}
+
+	return (
+		<section>
+			<h2 className="font-semibold">Daily problems</h2>
+			<p className="mt-1 max-w-xl text-muted-foreground text-sm">
+				{isStarted
+					? "This group is eligible for the midnight UTC daily assignment."
+					: "This group is visible and joinable, but daily assignments have not started."}
+			</p>
+			{!isStarted ? (
+				<Button
+					className="mt-4"
+					disabled={!isActive || startGroup.isPending}
+					onClick={handleStart}
+					size="sm"
+				>
+					<IconPlayerPlay className="size-4" />
+					Start at next cron
+				</Button>
+			) : null}
+		</section>
 	)
 }
 

@@ -71,6 +71,7 @@ export const groupsAdminDao = {
 					roadmap: input.roadmap,
 					maxMembers: input.maxMembers,
 					isActive: true,
+					isStarted: false,
 					creatorId: adminId,
 				},
 				select: { id: true, slug: true },
@@ -141,6 +142,36 @@ export const groupsAdminDao = {
 				{
 					adminId,
 					action: frozen ? "GROUP_FROZEN" : "GROUP_UNFROZEN",
+					target: { type: "GROUP", id: groupId },
+					metadata: { slug: updated.slug },
+				},
+				tx
+			)
+			return updated
+		})
+	},
+
+	start: async (
+		adminId: string,
+		groupId: string
+	): Promise<AdminGroupDetailResponse | { error: "NOT_FOUND" | "ALREADY_STARTED" }> => {
+		const existing = await db.group.findUnique({
+			where: { id: groupId },
+			select: { id: true, slug: true, isStarted: true },
+		})
+		if (!existing) return { error: "NOT_FOUND" }
+		if (existing.isStarted) return { error: "ALREADY_STARTED" }
+
+		return db.$transaction(async (tx) => {
+			const updated = await tx.group.update({
+				where: { id: groupId },
+				data: { isStarted: true },
+				select: adminGroupDetailSelect,
+			})
+			await adminAuditDao.log(
+				{
+					adminId,
+					action: "GROUP_STARTED",
 					target: { type: "GROUP", id: groupId },
 					metadata: { slug: updated.slug },
 				},

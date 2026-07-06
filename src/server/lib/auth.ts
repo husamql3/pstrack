@@ -4,13 +4,13 @@ import { betterAuth } from "better-auth"
 import { prismaAdapter } from "better-auth/adapters/prisma"
 import { admin, magicLink } from "better-auth/plugins"
 
-import MagicLinkEmail from "@/emails/magic-link"
 import WelcomeEmail from "@/emails/welcome"
 import { env } from "@/env"
 import { notifyAdmin } from "@/server/lib/bot"
 import { db } from "@/server/lib/db"
 import { sendEmail } from "@/server/lib/email"
 import { logger } from "@/server/lib/logger"
+import { sendMagicLinkEmail } from "@/server/lib/magic-link-email"
 import { polarClient } from "@/server/lib/polar"
 
 export const auth = betterAuth({
@@ -100,23 +100,7 @@ export const auth = betterAuth({
 	plugins: [
 		magicLink({
 			sendMagicLink: async ({ email, url }) => {
-				// Rewrite the verify URL to /api/magic-link - a plain HTML endpoint that
-				// uses JS to redirect to the actual verify path. Email pre-fetchers (e.g.
-				// Gmail) don't execute JS so the one-time token isn't consumed early.
-				const redirectUrl = new URL(url)
-				redirectUrl.pathname = "/api/v3/magic-link"
-				logger.debug({ redirectUrl: redirectUrl.toString() }, "magic link redirect")
-				try {
-					await sendEmail({
-						from: env.EMAIL_FROM,
-						to: email,
-						subject: "Sign in to PStrack",
-						react: MagicLinkEmail({ url: redirectUrl.toString() }),
-					})
-				} catch (err) {
-					logger.error({ err, email }, "magic link email failed")
-					throw err
-				}
+				await sendMagicLinkEmail({ email, url })
 			},
 		}),
 		admin(),

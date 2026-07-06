@@ -75,7 +75,7 @@ describe("groupsDao", () => {
 	})
 
 	describe("createPublic", () => {
-		it("creates the group, admin membership, join bonus, and today's first problem", async () => {
+		it("creates an unstarted group, admin membership, and join bonus", async () => {
 			db.user.findUniqueOrThrow.mockResolvedValue({ isPro: false })
 			db.groupMember.count.mockResolvedValue(0)
 			db.group.findMany.mockResolvedValue([])
@@ -86,12 +86,9 @@ describe("groupsDao", () => {
 				roadmap: "NC250",
 				roadmapIndex: 0,
 				maxMembers: 30,
+				isStarted: false,
 				createdAt: new Date("2026-06-16T12:00:00.000Z"),
 				_count: { members: 1 },
-			})
-			problemsDao.assignNextProblemTx.mockResolvedValue({
-				id: "daily-1",
-				problem: { roadmapIndex: 1 },
 			})
 
 			const result = await groupsDao.createPublic("user-1")
@@ -103,6 +100,7 @@ describe("groupsDao", () => {
 					type: "PUBLIC",
 					creatorId: "user-1",
 					maxMembers: 30,
+					isStarted: false,
 				},
 				select: expect.any(Object),
 			})
@@ -115,14 +113,10 @@ describe("groupsDao", () => {
 				PointReason.JOIN_GROUP,
 				{ tx, groupId: "group-1" }
 			)
-			expect(problemsDao.assignNextProblemTx).toHaveBeenCalledWith(
-				tx,
-				"group-1",
-				new Date("2026-06-16T00:00:00.000Z")
-			)
+			expect(problemsDao.assignNextProblemTx).not.toHaveBeenCalled()
 			expect(result.group).toMatchObject({
 				id: "group-1",
-				roadmapIndex: 1,
+				roadmapIndex: 0,
 				membershipStatus: "JOINED",
 				memberPreview: [],
 				activeToday: 0,

@@ -28,6 +28,7 @@ export const AdminGroupDetailLayout = () => {
 					description={`${data.type.toLowerCase()} · ${data._count.members}/${data.maxMembers} members`}
 					actions={
 						<div className="flex gap-1">
+							{!data.isStarted ? <Badge variant="outline">not started</Badge> : null}
 							{data.frozen ? <Badge variant="destructive">frozen</Badge> : null}
 							{!data.isActive ? <Badge variant="outline">inactive</Badge> : null}
 						</div>

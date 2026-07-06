@@ -81,6 +81,21 @@ export const DashboardPage = () => {
 		)
 	}
 
+	if (today.state === "NOT_STARTED") {
+		return (
+			<div className="flex flex-col gap-6">
+				<DashboardHeader />
+				<section className="rounded-lg border border-border bg-background p-6">
+					<p className="font-medium text-sm">Your group has not started yet.</p>
+					<p className="mt-1 max-w-xl text-muted-foreground text-sm">
+						{today.group.slug} is open for members, but daily problems begin after a
+						platform admin starts it and the next midnight UTC assignment runs.
+					</p>
+				</section>
+			</div>
+		)
+	}
+
 	return (
 		<div className="flex flex-col gap-6">
 			<DashboardHeader />

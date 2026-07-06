@@ -156,6 +156,7 @@ export const adminGroupListSelect = {
 	creatorId: true,
 	maxMembers: true,
 	isActive: true,
+	isStarted: true,
 	frozen: true,
 	createdAt: true,
 	_count: {
@@ -179,6 +180,7 @@ export const adminGroupDetailSelect = {
 	creatorId: true,
 	maxMembers: true,
 	isActive: true,
+	isStarted: true,
 	frozen: true,
 	inviteCode: true,
 	inviteExpiresAt: true,

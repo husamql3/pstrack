@@ -81,6 +81,20 @@ export type TodayProblemResponse =
 			userStats: UserStats
 	  }
 	| {
+			state: "NOT_STARTED"
+			group: Prisma.GroupGetPayload<{
+				select: { id: true; slug: true; roadmap: true }
+			}>
+			groupRoadmap: RoadmapKey
+			dailyProblem: null
+			solve: null
+			pausesRemaining: number
+			pausesTotal: number
+			groupRank: number
+			groupSize: number
+			userStats: UserStats
+	  }
+	| {
 			state: "READY"
 			group: Prisma.GroupGetPayload<{
 				select: { id: true; slug: true; roadmap: true }
@@ -102,7 +116,13 @@ export type RoadmapProblemResponse = ProblemResponse & {
 
 export type MarkSolvedResult =
 	| {
-			error: "NO_GROUP" | "NO_PROBLEMS" | "PAUSED" | "NOT_VERIFIED" | "PREMIUM_SKIPPED"
+			error:
+				| "NO_GROUP"
+				| "NO_PROBLEMS"
+				| "PAUSED"
+				| "NOT_VERIFIED"
+				| "PREMIUM_SKIPPED"
+				| "NOT_STARTED"
 			today: TodayProblemResponse
 	  }
 	| {
@@ -115,7 +135,7 @@ export type MarkSolvedResult =
 
 export type PauseTodayResult =
 	| {
-			error: "NO_GROUP" | "NO_PROBLEMS" | "NO_PAUSES" | "ALREADY_STARTED"
+			error: "NO_GROUP" | "NO_PROBLEMS" | "NOT_STARTED" | "NO_PAUSES" | "ALREADY_STARTED"
 			today: TodayProblemResponse
 	  }
 	| { error: null; today: TodayProblemResponse }

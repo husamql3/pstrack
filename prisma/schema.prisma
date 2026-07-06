@@ -74,6 +74,7 @@ model Group {
   inviteCode      String?   @unique
   inviteExpiresAt DateTime?
   isActive        Boolean   @default(true)
+  isStarted       Boolean   @default(true)
   frozen          Boolean   @default(false)
   roadmapIndex    Int       @default(0)
   createdAt       DateTime  @default(now())
@@ -427,6 +428,7 @@ enum AdminAuditAction {
   GROUP_DELETED
   GROUP_FROZEN
   GROUP_UNFROZEN
+  GROUP_STARTED
   PROBLEM_CREATED
   PROBLEM_UPDATED
   PROBLEM_DELETED

@@ -172,6 +172,8 @@ const dailyProblemFullSelect = {
 	},
 } satisfies Prisma.DailyProblemSelect
 
+const startedActiveGroupWhere = { isActive: true, isStarted: true }
+
 type DailyProblemFull = Prisma.DailyProblemGetPayload<{
 	select: typeof dailyProblemFullSelect
 }>
@@ -411,6 +413,7 @@ const findPrimaryGroup = (userId: string) =>
 					id: true,
 					slug: true,
 					roadmap: true,
+					isStarted: true,
 				},
 			},
 		},
@@ -575,7 +578,7 @@ const evaluateInactivityWarnings = async (
 export const problemsDao = {
 	assignDailyProblems: async (date: Date) => {
 		const groups = await db.group.findMany({
-			where: { isActive: true },
+			where: startedActiveGroupWhere,
 			select: { id: true },
 		})
 
@@ -651,7 +654,7 @@ export const problemsDao = {
 			where: {
 				joinedAt: { lt: day },
 				status: GroupMemberStatus.ACTIVE,
-				group: { isActive: true },
+				group: startedActiveGroupWhere,
 			},
 			orderBy: [{ userId: "asc" }, { joinedAt: "asc" }],
 			select: { groupId: true, userId: true },
@@ -758,6 +761,29 @@ export const problemsDao = {
 				pausesTotal,
 				groupRank: null,
 				groupSize: null,
+				userStats,
+			}
+		}
+
+		if (!membership.group.isStarted) {
+			const { groupRank, groupSize } = await getGroupRank(
+				membership.group.id,
+				userStats.totalPoints
+			)
+			return {
+				state: "NOT_STARTED",
+				group: {
+					id: membership.group.id,
+					slug: membership.group.slug,
+					roadmap: membership.group.roadmap,
+				},
+				groupRoadmap: membership.group.roadmap,
+				dailyProblem: null,
+				solve: null,
+				pausesRemaining,
+				pausesTotal,
+				groupRank,
+				groupSize,
 				userStats,
 			}
 		}
@@ -1074,7 +1100,7 @@ export const problemsDao = {
 			where: {
 				joinedAt: { lt: day },
 				status: GroupMemberStatus.ACTIVE,
-				group: { isActive: true },
+				group: startedActiveGroupWhere,
 			},
 			orderBy: [{ userId: "asc" }, { joinedAt: "asc" }],
 			select: {

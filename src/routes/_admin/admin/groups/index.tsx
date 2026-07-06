@@ -303,6 +303,7 @@ function AdminGroupsPage() {
 									</TableCell>
 									<TableCell>
 										<div className="flex flex-wrap gap-1">
+											{!g.isStarted ? <Badge variant="outline">not started</Badge> : null}
 											{g.frozen ? <Badge variant="destructive">frozen</Badge> : null}
 											{!g.isActive ? <Badge variant="outline">inactive</Badge> : null}
 										</div>

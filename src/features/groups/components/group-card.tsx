@@ -235,6 +235,11 @@ export const GroupCard = ({
 							{group.currentProblem.topic}
 						</Badge>
 					)}
+					{!group.isStarted && (
+						<Badge variant="outline" className="bg-muted text-muted-foreground">
+							Not started
+						</Badge>
+					)}
 				</div>
 			</div>
 
