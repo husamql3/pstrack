@@ -1,6 +1,6 @@
 import { Elysia, status } from "elysia"
 
-import { getSessionUser, requireSessionUser } from "@/server/lib/session"
+import { getSessionUser, requirePro, requireSessionUser } from "@/server/lib/session"
 import { leaderboardDao } from "./leaderboard.dao"
 import { leaderboardModel } from "./leaderboard.model"
 import type { LeaderboardPeriod } from "./leaderboard.type"
@@ -14,7 +14,10 @@ export const leaderboardController = new Elysia({
 	.use(leaderboardModel)
 	.get(
 		"/global",
-		async ({ query }) => {
+		async ({ query, request }) => {
+			const { user, response } = await requirePro(request)
+			if (!user) return response
+
 			const period = (query.period ?? DEFAULT_PERIOD) as LeaderboardPeriod
 			return leaderboardDao.getGlobalLeaderboard(period)
 		},
