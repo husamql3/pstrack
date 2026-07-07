@@ -1,5 +1,6 @@
 import type { Prisma } from "@/generated/prisma/client"
 import {
+	type BadgeType,
 	Difficulty,
 	GroupMemberRemovalReason,
 	GroupMemberStatus,
@@ -906,12 +907,9 @@ export const problemsDao = {
 			return { error: "NOT_VERIFIED", today }
 		}
 
-		const [existingSolvedCount, isComeback] = await Promise.all([
-			db.userSolve.count({ where: { dailyProblemId, status: SolveStatus.SOLVED } }),
-			user.currentStreak === 0 ? pointsDao.hasEverMissed(userId) : Promise.resolve(false),
-		])
+		const isComeback =
+			user.currentStreak === 0 ? await pointsDao.hasEverMissed(userId) : false
 
-		const isFirstInGroup = existingSolvedCount === 0
 		const baseSolvePoints =
 			problem.difficulty === Difficulty.HARD
 				? SOLVE_POINTS.HARD
@@ -936,6 +934,16 @@ export const problemsDao = {
 		const newLongest = Math.max(newStreak, user.longestStreak)
 
 		const { crossedProThreshold, newBadges } = await db.$transaction(async (tx) => {
+			const current = await tx.userSolve.findUnique({
+				where: { userId_dailyProblemId: { userId, dailyProblemId } },
+				select: { status: true },
+			})
+			// A concurrent request already finished this solve — do nothing, award nothing.
+			if (current?.status === SolveStatus.SOLVED) {
+				const empty: BadgeType[] = []
+				return { crossedProThreshold: false, newBadges: empty }
+			}
+
 			const upserted = await tx.userSolve.upsert({
 				where: { userId_dailyProblemId: { userId, dailyProblemId } },
 				create: {
@@ -943,13 +951,11 @@ export const problemsDao = {
 					dailyProblemId,
 					status: SolveStatus.SOLVED,
 					pointsEarned: baseSolvePoints,
-					isFirstInGroup,
 					verifiedAt: now,
 				},
 				update: {
 					status: SolveStatus.SOLVED,
 					pointsEarned: baseSolvePoints,
-					isFirstInGroup,
 					verifiedAt: now,
 				},
 				select: { id: true },
@@ -976,6 +982,14 @@ export const problemsDao = {
 				crossedPro ||= r1.crossedProThreshold
 			}
 
+			// Atomically claim first-solver: only ONE concurrent transaction can move
+			// firstSolverId from null → this user. updateMany returns count 1 for the winner, 0 for losers.
+			const claim = await tx.dailyProblem.updateMany({
+				where: { id: dailyProblemId, firstSolverId: null },
+				data: { firstSolverId: userId, firstSolveTime: now },
+			})
+			const isFirstInGroup = claim.count === 1
+
 			if (isFirstInGroup) {
 				const r2 = await pointsDao.applyPointsDelta(
 					userId,
@@ -984,9 +998,9 @@ export const problemsDao = {
 					opts
 				)
 				crossedPro ||= r2.crossedProThreshold
-				await tx.dailyProblem.update({
-					where: { id: dailyProblemId },
-					data: { firstSolverId: userId, firstSolveTime: now },
+				await tx.userSolve.update({
+					where: { id: upserted.id },
+					data: { isFirstInGroup: true },
 				})
 			}
 

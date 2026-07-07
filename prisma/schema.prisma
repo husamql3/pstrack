@@ -302,6 +302,7 @@ model PointsHistory {
   userSolve UserSolve? @relation(fields: [userSolveId], references: [id])
   group     Group?     @relation(fields: [groupId], references: [id])
 
+  @@unique([userSolveId, reason])
   @@index([userId, createdAt])
   @@index([userId, groupId, reason])
 }
