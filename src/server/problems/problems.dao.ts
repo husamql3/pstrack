@@ -84,6 +84,7 @@ const startOfUtcDay = (d: Date) =>
 
 const pauseLimitFor = (user: { isPro: boolean }) => (user.isPro ? 4 : 2)
 const INACTIVITY_WARNING_MISSES = 5
+const BATCH_SIZE = 25
 const catalogIdFor = (key: string) => `roadmap_${key.toLowerCase()}`
 type LegacyRoadmapFlag = "neetcode250" | "neetcode150" | "blind75"
 
@@ -586,13 +587,16 @@ export const problemsDao = {
 		let assigned = 0
 		let skipped = 0
 
-		await Promise.all(
-			groups.map(async (group) => {
-				const result = await ensureDailyProblem(group.id, date)
+		for (let i = 0; i < groups.length; i += BATCH_SIZE) {
+			const batch = groups.slice(i, i + BATCH_SIZE)
+			const results = await Promise.all(
+				batch.map((group) => ensureDailyProblem(group.id, date))
+			)
+			for (const result of results) {
 				if (result) assigned++
 				else skipped++
-			})
-		)
+			}
+		}
 
 		return { total: groups.length, assigned, skipped }
 	},
