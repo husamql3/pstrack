@@ -12,6 +12,7 @@ import { sendEmail } from "@/server/lib/email"
 import { logger } from "@/server/lib/logger"
 import { sendMagicLinkEmail } from "@/server/lib/magic-link-email"
 import { polarClient } from "@/server/lib/polar"
+import { grantProFromPurchase, revokeProFromRefund } from "@/server/lib/pro"
 
 export const auth = betterAuth({
 	appName: "PStrack",
@@ -127,11 +128,31 @@ export const auth = betterAuth({
 							webhooks({
 								secret: env.POLAR_WEBHOOK_SECRET,
 								onOrderPaid: async (payload) => {
+									// Grant Pro FIRST (source of truth) — the Better Auth Polar
+									// plugin does NOT set isPro automatically. Then notify admin.
+									await grantProFromPurchase({
+										externalId: payload.data.customer.externalId,
+										email: payload.data.customer.email,
+									})
 									await notifyAdmin("purchase.pro", {
 										email: payload.data.customer.email ?? undefined,
 										plan: payload.data.product?.name ?? "Pro",
 										amount: payload.data.netAmount,
 										purchasedAt: new Date().toISOString(),
+									})
+								},
+								onOrderRefunded: async (payload) => {
+									// Lifetime Pro → a refund claws it back (only when the
+									// account's Pro came from a purchase).
+									await revokeProFromRefund({
+										externalId: payload.data.customer.externalId,
+										email: payload.data.customer.email,
+									})
+									await notifyAdmin("purchase.pro.refunded", {
+										email: payload.data.customer.email ?? undefined,
+										plan: payload.data.product?.name ?? "Pro",
+										amount: payload.data.netAmount,
+										refundedAt: new Date().toISOString(),
 									})
 								},
 							}),
