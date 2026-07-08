@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SuccessRouteImport } from './routes/success'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ProblemsRouteImport } from './routes/problems'
 import { Route as LoginRouteImport } from './routes/login'
@@ -52,6 +53,11 @@ import { Route as AdminAdminGroupsGroupIdSettingsRouteImport } from './routes/_a
 import { Route as AdminAdminGroupsGroupIdMembersRouteImport } from './routes/_admin/admin/groups/$groupId/members'
 import { Route as AdminAdminGroupsGroupIdJoinRequestsRouteImport } from './routes/_admin/admin/groups/$groupId/join-requests'
 
+const SuccessRoute = SuccessRouteImport.update({
+  id: '/success',
+  path: '/success',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
@@ -282,6 +288,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/problems': typeof ProblemsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/success': typeof SuccessRoute
   '/api/$': typeof ApiSplatRoute
   '/groups/$groupId': typeof GroupsGroupIdRouteWithChildren
   '/admin/audit': typeof AdminAdminAuditRoute
@@ -322,6 +329,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/problems': typeof ProblemsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/success': typeof SuccessRoute
   '/api/$': typeof ApiSplatRoute
   '/admin/audit': typeof AdminAdminAuditRoute
   '/admin/config': typeof AdminAdminConfigRoute
@@ -362,6 +370,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/problems': typeof ProblemsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/success': typeof SuccessRoute
   '/_authenticated/_app': typeof AuthenticatedAppRouteWithChildren
   '/_authenticated/_onboarding': typeof AuthenticatedOnboardingRouteWithChildren
   '/api/$': typeof ApiSplatRoute
@@ -406,6 +415,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/problems'
     | '/sitemap.xml'
+    | '/success'
     | '/api/$'
     | '/groups/$groupId'
     | '/admin/audit'
@@ -446,6 +456,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/problems'
     | '/sitemap.xml'
+    | '/success'
     | '/api/$'
     | '/admin/audit'
     | '/admin/config'
@@ -485,6 +496,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/problems'
     | '/sitemap.xml'
+    | '/success'
     | '/_authenticated/_app'
     | '/_authenticated/_onboarding'
     | '/api/$'
@@ -530,12 +542,20 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   ProblemsRoute: typeof ProblemsRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  SuccessRoute: typeof SuccessRoute
   ApiSplatRoute: typeof ApiSplatRoute
   GroupsGroupIdRoute: typeof GroupsGroupIdRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/success': {
+      id: '/success'
+      path: '/success'
+      fullPath: '/success'
+      preLoaderRoute: typeof SuccessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sitemap.xml': {
       id: '/sitemap.xml'
       path: '/sitemap.xml'
@@ -979,6 +999,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   ProblemsRoute: ProblemsRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  SuccessRoute: SuccessRoute,
   ApiSplatRoute: ApiSplatRoute,
   GroupsGroupIdRoute: GroupsGroupIdRouteWithChildren,
 }

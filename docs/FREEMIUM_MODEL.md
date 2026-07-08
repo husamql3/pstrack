@@ -19,14 +19,15 @@
 - Standard price: **$14**
 - Sale price: **$9**
 - Promo codes: supported natively in Polar dashboard
-- Integration: **Better Auth Polar plugin** - Pro status is tied directly to the auth session, no manual webhook handling required
+- Integration: **Better Auth Polar plugin** for checkout + webhook transport. NOTE: the plugin does **not** set `User.isPro` automatically — we handle that explicitly in the `onOrderPaid` webhook (`src/server/lib/pro.ts`). Requires `POLAR_WEBHOOK_SECRET`.
 
 ## How Pro Status Works
 
-1. User clicks "Upgrade to Pro" → redirected to Polar checkout
-2. On successful purchase, Polar fires webhook → Better Auth Polar plugin handles it
-3. `User.isPro` set to `true`
-4. Next session refresh picks up the updated Pro status automatically
+1. User clicks "Get Pro" → `authClient.checkout({ slug: "pstrack" })` → Polar checkout
+2. On successful purchase, Polar fires the `order.paid` webhook
+3. Our `onOrderPaid` handler maps the Polar customer → user (via `customer.externalId`, set to the user id on sign-up) and sets `isPro=true, proSource=POLAR_PURCHASE, proExpiresAt=null` (idempotent), then sends a confirmation email
+4. User is redirected to `/success`, which refetches the session + `me` query so Pro reflects immediately
+5. A refund fires `order.refunded` → Pro is revoked, but only when `proSource === POLAR_PURCHASE`
 
 ## Gating Logic
 

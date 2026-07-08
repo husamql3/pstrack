@@ -28,6 +28,8 @@ Pauses preserve streaks (a pause doesn't break the chain), but cost −5 points 
 
 Reduces churn anxiety and support burden. Pro can also be earned by grinding to 3,000 points - this keeps non-paying users engaged and the Pro gate feel achievable. The threshold is calibrated (~7 months of consistent play at average earn velocity) so a $14 buyer's mental math always favors paying.
 
+The purchase grant is an **explicit `onOrderPaid` webhook write** (`src/server/lib/pro.ts`), not something the Better Auth Polar plugin does automatically — an earlier assumption that it did is why paying briefly granted nothing. The webhook is the source of truth; `/success` just refetches. Refunds revoke Pro only when `proSource === POLAR_PURCHASE`.
+
 ## hashvatar for avatars
 
 Deterministic SVG generated from the username hash. No file uploads, no S3 bucket, no moderation pipeline. Avatars are always consistent and load instantly.
