@@ -17,7 +17,7 @@ PStrack is a competitive programming accountability platform. Users join groups,
 | Action | Outcome                                            |
 | ------ | -------------------------------------------------- |
 | Solve  | +10 pts, +5 if first in group, streak continues    |
-| Pause  | Streak preserved, no points lost, consumes 1 pause |
+| Pause  | Streak preserved, −5 pts, consumes 1 pause |
 | Miss   | -3 pts, streak resets                              |
 
 ## Points & Gamification
@@ -192,7 +192,7 @@ if (dbUser?.role !== "admin") return error(403, { error: "Admin access required"
 |---|---|---|
 | `assign-daily-problem` | `0 0 * * *` | Picks the next NeetCode 250 problem per group's roadmap position; creates `DailyProblem` rows; sends daily digest emails |
 | `verify-submission` | On solve | Polls LeetCode/Codeforces for an accepted submission matching the problem + timestamp; awards points/bonuses, updates streak, evaluates badges |
-| `mark-missed` | `0 0 * * *` | For every `UserSolve` from yesterday without a terminal status: sets `MISSED`, applies −5, breaks streak, clawbacks same-day bonuses |
+| `mark-missed` | `0 0 * * *` | For every `UserSolve` from yesterday without a terminal status: sets `MISSED`, applies −3, breaks streak, and claws back same-day/streak bonuses |
 | `expire-join-requests` | Every hour | Marks `GroupJoinRequest` rows older than 1 day with status `PENDING` as `EXPIRED` |
 | `reset-monthly-pauses` | `0 0 1 * *` | Resets `User.pausesUsedThisMonth = 0` |
 | `reset-monthly-counters` | `0 0 1 * *` | Resets `User.verificationFailuresThisMonth = 0` |

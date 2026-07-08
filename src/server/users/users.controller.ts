@@ -34,7 +34,8 @@ export const usersController = new Elysia({ prefix: "/users", tags: ["Users"] })
 					method: "POST",
 					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify({
-						query: `query { matchedUser(username: "${body.handle}") { username } }`,
+						query: "query ($u: String!) { matchedUser(username: $u) { username } }",
+						variables: { u: body.handle },
 					}),
 				})
 				const json = (await res.json()) as {

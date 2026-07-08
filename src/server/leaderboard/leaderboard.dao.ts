@@ -81,29 +81,29 @@ export const leaderboardDao = {
 
 		const start = periodStart(period)
 
-		const rows = await Promise.all(
-			members.map(async ({ user }) => {
-				let periodPoints: number
-
-				if (period === "alltime" || !start) {
-					// Use the denormalized total directly for all-time
-					periodPoints = user.totalPoints
-				} else {
-					// groupId is null on solve points — sum by userId + period only
-					const agg = await db.pointsHistory.aggregate({
-						where: {
-							userId: user.id,
-							reason: { in: EARN_REASONS },
-							createdAt: { gte: start },
-						},
-						_sum: { delta: true },
-					})
-					periodPoints = agg._sum.delta ?? 0
-				}
-
-				return { userId: user.id, ...user, periodPoints }
+		let periodByUser: Map<string, number> | null = null
+		if (period !== "alltime" && start) {
+			const userIds = members.map((m) => m.user.id)
+			const agg = await db.pointsHistory.groupBy({
+				by: ["userId"],
+				where: {
+					userId: { in: userIds },
+					reason: { in: EARN_REASONS },
+					createdAt: { gte: start },
+				},
+				_sum: { delta: true },
 			})
-		)
+			periodByUser = new Map(agg.map((r) => [r.userId, r._sum.delta ?? 0]))
+		}
+
+		const rows = members.map(({ user }) => ({
+			userId: user.id,
+			...user,
+			periodPoints:
+				period === "alltime" || !periodByUser
+					? user.totalPoints
+					: (periodByUser.get(user.id) ?? 0),
+		}))
 
 		return {
 			groupId: group.id,

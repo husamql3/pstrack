@@ -21,6 +21,7 @@ const tx = {
 		create: vi.fn(),
 		findFirst: vi.fn(),
 		update: vi.fn(),
+		updateMany: vi.fn(),
 	},
 	problem: {
 		findFirst: vi.fn(),
@@ -31,6 +32,8 @@ const tx = {
 	userSolve: {
 		create: vi.fn(),
 		upsert: vi.fn(),
+		findUnique: vi.fn(),
+		update: vi.fn(),
 	},
 }
 
@@ -231,7 +234,12 @@ describe("problemsDao", () => {
 	})
 
 	describe("verifyAndMarkSolved", () => {
-		it("awards solve points, first-in-group, early-bird, updates streaks, and evaluates badges when LeetCode verifies", async () => {
+		it("awards solve points, first-in-group (atomic claim), early-bird, updates streaks, and evaluates badges when LeetCode verifies", async () => {
+			// Changed from old test: removed db.userSolve.count mock (no longer used);
+			// isFirstInGroup now comes from atomic tx.dailyProblem.updateMany (count=1 = winner);
+			// isFirstInGroup no longer in upsert payload — set via separate tx.userSolve.update;
+			// tx.dailyProblem.update replaced with tx.dailyProblem.updateMany for atomic claim;
+			// tx.userSolve.findUnique returns null (not already solved) to pass the re-check.
 			const updatedToday = {
 				...readyToday,
 				solve: { id: "solve-1", status: SolveStatus.SOLVED, pointsEarned: 5 },
@@ -265,9 +273,10 @@ describe("problemsDao", () => {
 					}),
 				}))
 			)
-			db.userSolve.count.mockResolvedValue(0)
 			pointsDao.hasEverMissed.mockResolvedValue(false)
+			tx.userSolve.findUnique.mockResolvedValue(null) // not already solved
 			tx.userSolve.upsert.mockResolvedValue({ id: "solve-1" })
+			tx.dailyProblem.updateMany.mockResolvedValue({ count: 1 }) // winner of first-solver claim
 			pointsDao.applyPointsDelta.mockResolvedValue({
 				newTotal: 137,
 				crossedProThreshold: false,
@@ -291,6 +300,7 @@ describe("problemsDao", () => {
 					headers: { "Content-Type": "application/json" },
 				})
 			)
+			// upsert no longer includes isFirstInGroup — it is set separately after the atomic claim
 			expect(tx.userSolve.upsert).toHaveBeenCalledWith({
 				where: { userId_dailyProblemId: { userId: "user-1", dailyProblemId: "daily-1" } },
 				create: {
@@ -298,13 +308,11 @@ describe("problemsDao", () => {
 					dailyProblemId: "daily-1",
 					status: SolveStatus.SOLVED,
 					pointsEarned: 5,
-					isFirstInGroup: true,
 					verifiedAt: expect.any(Date),
 				},
 				update: {
 					status: SolveStatus.SOLVED,
 					pointsEarned: 5,
-					isFirstInGroup: true,
 					verifiedAt: expect.any(Date),
 				},
 				select: { id: true },
@@ -316,6 +324,11 @@ describe("problemsDao", () => {
 				PointReason.DAILY_SOLVE,
 				{ tx, userSolveId: "solve-1" }
 			)
+			// atomic claim won (count=1), so FIRST_IN_GROUP is awarded
+			expect(tx.dailyProblem.updateMany).toHaveBeenCalledWith({
+				where: { id: "daily-1", firstSolverId: null },
+				data: { firstSolverId: "user-1", firstSolveTime: expect.any(Date) },
+			})
 			expect(pointsDao.applyPointsDelta).toHaveBeenNthCalledWith(
 				2,
 				"user-1",
@@ -330,10 +343,6 @@ describe("problemsDao", () => {
 				PointReason.EARLY_BIRD,
 				{ tx, userSolveId: "solve-1" }
 			)
-			expect(tx.dailyProblem.update).toHaveBeenCalledWith({
-				where: { id: "daily-1" },
-				data: { firstSolverId: "user-1", firstSolveTime: expect.any(Date) },
-			})
 			expect(tx.user.update).toHaveBeenCalledWith({
 				where: { id: "user-1" },
 				data: {
@@ -430,6 +439,113 @@ describe("problemsDao", () => {
 			expect(pointsDao.applyPointsDelta).not.toHaveBeenCalled()
 			expect(tx.userSolve.upsert).not.toHaveBeenCalled()
 			expect(pointsDao.applyMissPenalty).not.toHaveBeenCalled()
+		})
+
+		it("first-solver loser (atomic claim count=0) does not award FIRST_IN_GROUP", async () => {
+			const updatedToday = {
+				...readyToday,
+				solve: { id: "solve-1", status: SolveStatus.SOLVED, pointsEarned: 5 },
+				groupSolvedCount: 1,
+				userStats: { currentStreak: 5, longestStreak: 8, totalPoints: 127 },
+			}
+			vi.spyOn(problemsDao, "getTodayForUser")
+				.mockResolvedValueOnce(readyToday)
+				.mockResolvedValueOnce(updatedToday)
+			db.user.findUniqueOrThrow.mockResolvedValue({
+				leetcodeHandle: "alice",
+				currentStreak: 4,
+				longestStreak: 8,
+				currentStreakStartedAt: new Date("2026-06-12T00:00:00.000Z"),
+				verificationFailuresThisMonth: 0,
+			})
+			vi.stubGlobal(
+				"fetch",
+				vi.fn(async () => ({
+					json: async () => ({
+						data: {
+							recentAcSubmissionList: [
+								{
+									titleSlug: "two-sum",
+									timestamp: String(
+										new Date("2026-06-16T02:00:00.000Z").getTime() / 1000
+									),
+								},
+							],
+						},
+					}),
+				}))
+			)
+			pointsDao.hasEverMissed.mockResolvedValue(false)
+			tx.userSolve.findUnique.mockResolvedValue(null) // not already solved
+			tx.userSolve.upsert.mockResolvedValue({ id: "solve-1" })
+			tx.dailyProblem.updateMany.mockResolvedValue({ count: 0 }) // loser — someone else already claimed
+			pointsDao.applyPointsDelta.mockResolvedValue({
+				newTotal: 127,
+				crossedProThreshold: false,
+			})
+			tx.groupMember.findUnique.mockResolvedValue({ id: "member-1" })
+			badgesDao.evaluateAndAward.mockResolvedValue([])
+
+			await problemsDao.verifyAndMarkSolved("user-1")
+
+			// FIRST_IN_GROUP must NOT be awarded when the atomic claim returns count=0
+			const firstInGroupCall = (
+				pointsDao.applyPointsDelta as ReturnType<typeof vi.fn>
+			).mock.calls.find((c) => c[2] === PointReason.FIRST_IN_GROUP)
+			expect(firstInGroupCall).toBeUndefined()
+			// DAILY_SOLVE is still awarded
+			expect(pointsDao.applyPointsDelta).toHaveBeenCalledWith(
+				"user-1",
+				5,
+				PointReason.DAILY_SOLVE,
+				{ tx, userSolveId: "solve-1" }
+			)
+		})
+
+		it("already-solved re-entry short-circuits: no upsert, no DAILY_SOLVE award", async () => {
+			const updatedToday = {
+				...readyToday,
+				solve: { id: "solve-1", status: SolveStatus.SOLVED, pointsEarned: 5 },
+				groupSolvedCount: 1,
+				userStats: { currentStreak: 5, longestStreak: 8, totalPoints: 137 },
+			}
+			vi.spyOn(problemsDao, "getTodayForUser")
+				.mockResolvedValueOnce(readyToday)
+				.mockResolvedValueOnce(updatedToday)
+			db.user.findUniqueOrThrow.mockResolvedValue({
+				leetcodeHandle: "alice",
+				currentStreak: 4,
+				longestStreak: 8,
+				currentStreakStartedAt: new Date("2026-06-12T00:00:00.000Z"),
+				verificationFailuresThisMonth: 0,
+			})
+			vi.stubGlobal(
+				"fetch",
+				vi.fn(async () => ({
+					json: async () => ({
+						data: {
+							recentAcSubmissionList: [
+								{
+									titleSlug: "two-sum",
+									timestamp: String(
+										new Date("2026-06-16T02:00:00.000Z").getTime() / 1000
+									),
+								},
+							],
+						},
+					}),
+				}))
+			)
+			pointsDao.hasEverMissed.mockResolvedValue(false)
+			// in-transaction re-check finds the solve already SOLVED → short-circuit
+			tx.userSolve.findUnique.mockResolvedValue({ status: SolveStatus.SOLVED })
+
+			await problemsDao.verifyAndMarkSolved("user-1")
+
+			// upsert must not be called — the transaction bails early
+			expect(tx.userSolve.upsert).not.toHaveBeenCalled()
+			// no points awarded
+			expect(pointsDao.applyPointsDelta).not.toHaveBeenCalled()
 		})
 	})
 

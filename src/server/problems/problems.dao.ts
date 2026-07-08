@@ -1,5 +1,6 @@
 import type { Prisma } from "@/generated/prisma/client"
 import {
+	type BadgeType,
 	Difficulty,
 	GroupMemberRemovalReason,
 	GroupMemberStatus,
@@ -24,7 +25,8 @@ import {
 	STREAK_MULTIPLIER_7,
 	STREAK_MULTIPLIER_30,
 } from "@/server/points/points.type"
-import { LEETCODE_STUDY_PLAN_ROADMAPS, NEETCODE_250_PROBLEMS } from "./problems.seed"
+import { syncRoadmapCatalog } from "./problems.roadmap"
+import { NEETCODE_250_PROBLEMS } from "./problems.seed"
 import {
 	type MarkSolvedResult,
 	type PauseTodayResult,
@@ -83,76 +85,7 @@ const startOfUtcDay = (d: Date) =>
 
 const pauseLimitFor = (user: { isPro: boolean }) => (user.isPro ? 4 : 2)
 const INACTIVITY_WARNING_MISSES = 5
-const catalogIdFor = (key: string) => `roadmap_${key.toLowerCase()}`
-type LegacyRoadmapFlag = "neetcode250" | "neetcode150" | "blind75"
-
-type RoadmapCatalogSeed = Omit<
-	Prisma.RoadmapCatalogUncheckedCreateInput,
-	"id" | "key"
-> & {
-	id: string
-	key: RoadmapKey
-}
-
-const legacyRoadmapCatalogSeed: RoadmapCatalogSeed[] = [
-	{
-		id: "roadmap_nc250",
-		key: "NC250",
-		slug: "neetcode-250",
-		title: "NeetCode 250",
-		description: "Full 250-problem roadmap",
-		source: "NEETCODE",
-		sortOrder: 10,
-	},
-	{
-		id: "roadmap_nc150",
-		key: "NC150",
-		slug: "neetcode-150",
-		title: "NeetCode 150",
-		description: "Core 150 problems",
-		source: "NEETCODE",
-		sortOrder: 20,
-	},
-	{
-		id: "roadmap_blind75",
-		key: "BLIND75",
-		slug: "blind-75",
-		title: "Blind 75",
-		description: "Classic 75 problems",
-		source: "NEETCODE",
-		sortOrder: 30,
-	},
-]
-
-const leetcodeRoadmapCatalogSeed: RoadmapCatalogSeed[] = LEETCODE_STUDY_PLAN_ROADMAPS.map(
-	({ key, slug, title, description, source, sortOrder }) => ({
-		id: catalogIdFor(key),
-		key,
-		slug,
-		title,
-		description,
-		source,
-		sortOrder,
-	})
-)
-
-const roadmapCatalogSeed: RoadmapCatalogSeed[] = [
-	...legacyRoadmapCatalogSeed,
-	...leetcodeRoadmapCatalogSeed,
-]
-
-const legacyRoadmapFlag = (roadmap: RoadmapKey): LegacyRoadmapFlag | null => {
-	switch (roadmap) {
-		case "NC250":
-			return "neetcode250"
-		case "NC150":
-			return "neetcode150"
-		case "BLIND75":
-			return "blind75"
-		default:
-			return null
-	}
-}
+const BATCH_SIZE = 25
 
 const dailyProblemFullSelect = {
 	id: true,
@@ -215,130 +148,6 @@ const findExistingDailyProblem = async (groupId: string, assignedDate: Date) =>
 			select: dailyProblemFullSelect,
 		})
 	)
-
-const seedLeetCodeStudyPlanProblems = async (tx: Tx) => {
-	const maxRoadmapIndex = await tx.problem.aggregate({
-		_max: { roadmapIndex: true },
-	})
-	let nextRoadmapIndex = (maxRoadmapIndex._max.roadmapIndex ?? 0) + 1
-	const seen = new Set<string>()
-
-	for (const roadmap of LEETCODE_STUDY_PLAN_ROADMAPS) {
-		for (const problem of roadmap.problems) {
-			if (seen.has(problem.slug)) continue
-			seen.add(problem.slug)
-
-			const existing = await tx.problem.findUnique({
-				where: { slug: problem.slug },
-				select: { id: true },
-			})
-
-			if (existing) {
-				await tx.problem.update({
-					where: { id: existing.id },
-					data: {
-						title: problem.title,
-						difficulty: problem.difficulty,
-						leetcodeId: problem.leetcodeId,
-						isPremium: problem.isPremium,
-					},
-				})
-				continue
-			}
-
-			await tx.problem.create({
-				data: {
-					slug: problem.slug,
-					title: problem.title,
-					difficulty: problem.difficulty,
-					topic: problem.topic,
-					roadmapIndex: nextRoadmapIndex,
-					leetcodeId: problem.leetcodeId,
-					isPremium: problem.isPremium,
-					source: "NEETCODE",
-				},
-			})
-			nextRoadmapIndex++
-		}
-	}
-}
-
-const syncLegacyRoadmapMemberships = async (tx: Tx) => {
-	for (const roadmap of legacyRoadmapCatalogSeed) {
-		const flag = legacyRoadmapFlag(roadmap.key)
-		if (!flag) continue
-
-		const problems = await tx.problem.findMany({
-			where: { [flag]: true },
-			orderBy: { roadmapIndex: "asc" },
-			select: { id: true, topic: true },
-		})
-
-		await tx.roadmapProblem.deleteMany({ where: { roadmapId: roadmap.id } })
-		await tx.roadmapProblem.createMany({
-			data: problems.map((problem, index) => ({
-				roadmapId: roadmap.id,
-				problemId: problem.id,
-				position: index + 1,
-				topic: problem.topic,
-			})),
-			skipDuplicates: true,
-		})
-	}
-}
-
-const syncLeetCodeStudyPlanMemberships = async (tx: Tx) => {
-	for (const roadmap of LEETCODE_STUDY_PLAN_ROADMAPS) {
-		const slugs = roadmap.problems.map((problem) => problem.slug)
-		const problems = await tx.problem.findMany({
-			where: { slug: { in: slugs } },
-			select: { id: true, slug: true },
-		})
-		const problemIdBySlug = new Map(problems.map((problem) => [problem.slug, problem.id]))
-		const data: Prisma.RoadmapProblemCreateManyInput[] = []
-
-		for (const problem of roadmap.problems) {
-			const problemId = problemIdBySlug.get(problem.slug)
-			if (!problemId) continue
-			data.push({
-				roadmapId: catalogIdFor(roadmap.key),
-				problemId,
-				position: problem.position,
-				topic: problem.topic,
-			})
-		}
-
-		if (data.length !== roadmap.problems.length) {
-			throw new Error(`Could not sync all problems for roadmap ${roadmap.key}`)
-		}
-
-		await tx.roadmapProblem.deleteMany({
-			where: { roadmapId: catalogIdFor(roadmap.key) },
-		})
-		await tx.roadmapProblem.createMany({ data, skipDuplicates: true })
-	}
-}
-
-const syncRoadmapCatalog = async (tx: Tx) => {
-	for (const roadmap of roadmapCatalogSeed) {
-		await tx.roadmapCatalog.upsert({
-			where: { key: roadmap.key },
-			create: roadmap,
-			update: {
-				slug: roadmap.slug,
-				title: roadmap.title,
-				description: roadmap.description,
-				source: roadmap.source,
-				sortOrder: roadmap.sortOrder,
-				isActive: true,
-			},
-		})
-	}
-
-	await seedLeetCodeStudyPlanProblems(tx)
-	await syncLegacyRoadmapMemberships(tx)
-	await syncLeetCodeStudyPlanMemberships(tx)
-}
 
 const assignNextProblemTx = async (
 	tx: Tx,
@@ -585,13 +394,16 @@ export const problemsDao = {
 		let assigned = 0
 		let skipped = 0
 
-		await Promise.all(
-			groups.map(async (group) => {
-				const result = await ensureDailyProblem(group.id, date)
+		for (let i = 0; i < groups.length; i += BATCH_SIZE) {
+			const batch = groups.slice(i, i + BATCH_SIZE)
+			const results = await Promise.all(
+				batch.map((group) => ensureDailyProblem(group.id, date))
+			)
+			for (const result of results) {
 				if (result) assigned++
 				else skipped++
-			})
-		)
+			}
+		}
 
 		return { total: groups.length, assigned, skipped }
 	},
@@ -906,12 +718,9 @@ export const problemsDao = {
 			return { error: "NOT_VERIFIED", today }
 		}
 
-		const [existingSolvedCount, isComeback] = await Promise.all([
-			db.userSolve.count({ where: { dailyProblemId, status: SolveStatus.SOLVED } }),
-			user.currentStreak === 0 ? pointsDao.hasEverMissed(userId) : Promise.resolve(false),
-		])
+		const isComeback =
+			user.currentStreak === 0 ? await pointsDao.hasEverMissed(userId) : false
 
-		const isFirstInGroup = existingSolvedCount === 0
 		const baseSolvePoints =
 			problem.difficulty === Difficulty.HARD
 				? SOLVE_POINTS.HARD
@@ -936,6 +745,16 @@ export const problemsDao = {
 		const newLongest = Math.max(newStreak, user.longestStreak)
 
 		const { crossedProThreshold, newBadges } = await db.$transaction(async (tx) => {
+			const current = await tx.userSolve.findUnique({
+				where: { userId_dailyProblemId: { userId, dailyProblemId } },
+				select: { status: true },
+			})
+			// A concurrent request already finished this solve — do nothing, award nothing.
+			if (current?.status === SolveStatus.SOLVED) {
+				const empty: BadgeType[] = []
+				return { crossedProThreshold: false, newBadges: empty }
+			}
+
 			const upserted = await tx.userSolve.upsert({
 				where: { userId_dailyProblemId: { userId, dailyProblemId } },
 				create: {
@@ -943,13 +762,11 @@ export const problemsDao = {
 					dailyProblemId,
 					status: SolveStatus.SOLVED,
 					pointsEarned: baseSolvePoints,
-					isFirstInGroup,
 					verifiedAt: now,
 				},
 				update: {
 					status: SolveStatus.SOLVED,
 					pointsEarned: baseSolvePoints,
-					isFirstInGroup,
 					verifiedAt: now,
 				},
 				select: { id: true },
@@ -976,6 +793,14 @@ export const problemsDao = {
 				crossedPro ||= r1.crossedProThreshold
 			}
 
+			// Atomically claim first-solver: only ONE concurrent transaction can move
+			// firstSolverId from null → this user. updateMany returns count 1 for the winner, 0 for losers.
+			const claim = await tx.dailyProblem.updateMany({
+				where: { id: dailyProblemId, firstSolverId: null },
+				data: { firstSolverId: userId, firstSolveTime: now },
+			})
+			const isFirstInGroup = claim.count === 1
+
 			if (isFirstInGroup) {
 				const r2 = await pointsDao.applyPointsDelta(
 					userId,
@@ -984,9 +809,9 @@ export const problemsDao = {
 					opts
 				)
 				crossedPro ||= r2.crossedProThreshold
-				await tx.dailyProblem.update({
-					where: { id: dailyProblemId },
-					data: { firstSolverId: userId, firstSolveTime: now },
+				await tx.userSolve.update({
+					where: { id: upserted.id },
+					data: { isFirstInGroup: true },
 				})
 			}
 

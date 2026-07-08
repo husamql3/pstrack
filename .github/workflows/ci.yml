@@ -39,9 +39,32 @@ jobs:
   test:
     name: Vitest
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: pstrack
+          POSTGRES_PASSWORD: pstrack
+          POSTGRES_DB: pstrack
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5433:5432
+    env:
+      DATABASE_URL: postgresql://pstrack:pstrack@127.0.0.1:5433/pstrack?schema=public
+      DIRECT_URL: postgresql://pstrack:pstrack@127.0.0.1:5433/pstrack?schema=public
+      TEST_DATABASE_URL: postgresql://pstrack:pstrack@127.0.0.1:5433/pstrack?schema=public
+      # Skip t3-env validation so unit tests don't need every secret; the real DB
+      # connection via TEST_DATABASE_URL provides the actual connectivity check.
+      SKIP_ENV_VALIDATION: "1"
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
+      - name: Apply migrations to test DB
+        run: bunx prisma migrate deploy
       - run: bun run test
 
   build:

@@ -65,3 +65,22 @@ export const requirePlatformAdmin = async (request: Request) => {
 
 	return { user, response: null }
 }
+
+export const requirePro = async (request: Request) => {
+	const { user, response } = await requireSessionUser(request)
+	if (!user) return { user: null, response }
+
+	const dbUser = await db.user.findUnique({
+		where: { id: user.id },
+		select: { isPro: true },
+	})
+
+	if (!dbUser?.isPro) {
+		return {
+			user: null,
+			response: status(403, { error: "Pro required" }),
+		}
+	}
+
+	return { user, response: null }
+}
