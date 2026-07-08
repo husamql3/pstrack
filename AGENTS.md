@@ -29,7 +29,7 @@ PStrack is a competitive programming accountability platform. Users join groups,
 
 ## Tiers
 
-|                    | Free                    | Pro ($14 one-time)            |
+|                    | Free                    | Pro ($5 one-time)             |
 | ------------------ | ----------------------- | ----------------------------- |
 | Groups             | Join 1 (max 30 members) | Join up to 5 (max 50 members) |
 | Private groups     | No                      | Yes (creator perk)            |
@@ -37,7 +37,7 @@ PStrack is a competitive programming accountability platform. Users join groups,
 | Global leaderboard | No                      | Yes                           |
 | Profile badge      | No                      | Yes                           |
 
-Pro is a **lifetime one-time purchase** via Polar ($14 standard, $9 sale). No subscriptions.
+Pro is a **lifetime one-time purchase** via Polar ($5). No subscriptions.
 
 ## Commands
 
