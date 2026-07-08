@@ -108,7 +108,7 @@ const ProGate = () => (
 			</p>
 		</div>
 		<Button asChild size="sm">
-			<Link to="/settings/account">Upgrade to Pro</Link>
+			<Link to="/settings/plan">Upgrade to Pro</Link>
 		</Button>
 	</div>
 )

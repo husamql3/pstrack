@@ -43,6 +43,7 @@ import { Route as AuthenticatedAppSettingsIndexRouteImport } from './routes/_aut
 import { Route as AdminAdminUsersIndexRouteImport } from './routes/_admin/admin/users/index'
 import { Route as AdminAdminGroupsIndexRouteImport } from './routes/_admin/admin/groups/index'
 import { Route as AuthenticatedAppSettingsProfileRouteImport } from './routes/_authenticated/_app/settings/profile'
+import { Route as AuthenticatedAppSettingsPlanRouteImport } from './routes/_authenticated/_app/settings/plan'
 import { Route as AuthenticatedAppSettingsNotificationsRouteImport } from './routes/_authenticated/_app/settings/notifications'
 import { Route as AuthenticatedAppSettingsAccountRouteImport } from './routes/_authenticated/_app/settings/account'
 import { Route as AdminAdminUsersIdRouteImport } from './routes/_admin/admin/users/$id'
@@ -224,6 +225,12 @@ const AuthenticatedAppSettingsProfileRoute =
     path: '/profile',
     getParentRoute: () => AuthenticatedAppSettingsRoute,
   } as any)
+const AuthenticatedAppSettingsPlanRoute =
+  AuthenticatedAppSettingsPlanRouteImport.update({
+    id: '/plan',
+    path: '/plan',
+    getParentRoute: () => AuthenticatedAppSettingsRoute,
+  } as any)
 const AuthenticatedAppSettingsNotificationsRoute =
   AuthenticatedAppSettingsNotificationsRouteImport.update({
     id: '/notifications',
@@ -308,6 +315,7 @@ export interface FileRoutesByFullPath {
   '/admin/users/$id': typeof AdminAdminUsersIdRoute
   '/settings/account': typeof AuthenticatedAppSettingsAccountRoute
   '/settings/notifications': typeof AuthenticatedAppSettingsNotificationsRoute
+  '/settings/plan': typeof AuthenticatedAppSettingsPlanRoute
   '/settings/profile': typeof AuthenticatedAppSettingsProfileRoute
   '/admin/groups/': typeof AdminAdminGroupsIndexRoute
   '/admin/users/': typeof AdminAdminUsersIndexRoute
@@ -346,6 +354,7 @@ export interface FileRoutesByTo {
   '/admin/users/$id': typeof AdminAdminUsersIdRoute
   '/settings/account': typeof AuthenticatedAppSettingsAccountRoute
   '/settings/notifications': typeof AuthenticatedAppSettingsNotificationsRoute
+  '/settings/plan': typeof AuthenticatedAppSettingsPlanRoute
   '/settings/profile': typeof AuthenticatedAppSettingsProfileRoute
   '/admin/groups': typeof AdminAdminGroupsIndexRoute
   '/admin/users': typeof AdminAdminUsersIndexRoute
@@ -392,6 +401,7 @@ export interface FileRoutesById {
   '/_admin/admin/users/$id': typeof AdminAdminUsersIdRoute
   '/_authenticated/_app/settings/account': typeof AuthenticatedAppSettingsAccountRoute
   '/_authenticated/_app/settings/notifications': typeof AuthenticatedAppSettingsNotificationsRoute
+  '/_authenticated/_app/settings/plan': typeof AuthenticatedAppSettingsPlanRoute
   '/_authenticated/_app/settings/profile': typeof AuthenticatedAppSettingsProfileRoute
   '/_admin/admin/groups/': typeof AdminAdminGroupsIndexRoute
   '/_admin/admin/users/': typeof AdminAdminUsersIndexRoute
@@ -435,6 +445,7 @@ export interface FileRouteTypes {
     | '/admin/users/$id'
     | '/settings/account'
     | '/settings/notifications'
+    | '/settings/plan'
     | '/settings/profile'
     | '/admin/groups/'
     | '/admin/users/'
@@ -473,6 +484,7 @@ export interface FileRouteTypes {
     | '/admin/users/$id'
     | '/settings/account'
     | '/settings/notifications'
+    | '/settings/plan'
     | '/settings/profile'
     | '/admin/groups'
     | '/admin/users'
@@ -518,6 +530,7 @@ export interface FileRouteTypes {
     | '/_admin/admin/users/$id'
     | '/_authenticated/_app/settings/account'
     | '/_authenticated/_app/settings/notifications'
+    | '/_authenticated/_app/settings/plan'
     | '/_authenticated/_app/settings/profile'
     | '/_admin/admin/groups/'
     | '/_admin/admin/users/'
@@ -787,6 +800,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppSettingsProfileRouteImport
       parentRoute: typeof AuthenticatedAppSettingsRoute
     }
+    '/_authenticated/_app/settings/plan': {
+      id: '/_authenticated/_app/settings/plan'
+      path: '/plan'
+      fullPath: '/settings/plan'
+      preLoaderRoute: typeof AuthenticatedAppSettingsPlanRouteImport
+      parentRoute: typeof AuthenticatedAppSettingsRoute
+    }
     '/_authenticated/_app/settings/notifications': {
       id: '/_authenticated/_app/settings/notifications'
       path: '/notifications'
@@ -909,6 +929,7 @@ const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 interface AuthenticatedAppSettingsRouteChildren {
   AuthenticatedAppSettingsAccountRoute: typeof AuthenticatedAppSettingsAccountRoute
   AuthenticatedAppSettingsNotificationsRoute: typeof AuthenticatedAppSettingsNotificationsRoute
+  AuthenticatedAppSettingsPlanRoute: typeof AuthenticatedAppSettingsPlanRoute
   AuthenticatedAppSettingsProfileRoute: typeof AuthenticatedAppSettingsProfileRoute
   AuthenticatedAppSettingsIndexRoute: typeof AuthenticatedAppSettingsIndexRoute
 }
@@ -918,6 +939,7 @@ const AuthenticatedAppSettingsRouteChildren: AuthenticatedAppSettingsRouteChildr
     AuthenticatedAppSettingsAccountRoute: AuthenticatedAppSettingsAccountRoute,
     AuthenticatedAppSettingsNotificationsRoute:
       AuthenticatedAppSettingsNotificationsRoute,
+    AuthenticatedAppSettingsPlanRoute: AuthenticatedAppSettingsPlanRoute,
     AuthenticatedAppSettingsProfileRoute: AuthenticatedAppSettingsProfileRoute,
     AuthenticatedAppSettingsIndexRoute: AuthenticatedAppSettingsIndexRoute,
   }

@@ -4,7 +4,7 @@
 
 | | Free | Pro |
 |---|---|---|
-| Price | $0 | **$14 one-time** (sale: $9) |
+| Price | $0 | **$5 one-time** |
 | Groups joined | 1 | Up to 5 |
 | Group capacity | 30 members | 50 members (Pro-created groups) |
 | Create private groups | No | Yes |
@@ -16,8 +16,7 @@
 
 - Provider: **Polar**
 - Model: one-time purchase (lifetime Pro access)
-- Standard price: **$14**
-- Sale price: **$9**
+- Price: **$5**
 - Promo codes: supported natively in Polar dashboard
 - Integration: **Better Auth Polar plugin** for checkout + webhook transport. NOTE: the plugin does **not** set `User.isPro` automatically — we handle that explicitly in the `onOrderPaid` webhook (`src/server/lib/pro.ts`). Requires `POLAR_WEBHOOK_SECRET`.
 
