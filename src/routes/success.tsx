@@ -80,7 +80,7 @@ const PRO_FEATURES = [
 	{ emoji: "🗂️", label: "Solution archive" },
 	{ emoji: "👥", label: "Up to 5 groups (50 members each)" },
 	{ emoji: "🔒", label: "Create private groups" },
-	{ emoji: "⏸️", label: "5 pauses per month" },
+	{ emoji: "⏸️", label: "4 pauses per month" },
 	{ emoji: "👑", label: "Pro gold identity badge" },
 ]
 
