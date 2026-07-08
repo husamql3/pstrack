@@ -1,4 +1,12 @@
-import { IconCircleCheckFilled } from "@tabler/icons-react"
+import {
+	IconArchive,
+	IconCircleCheckFilled,
+	IconCrown,
+	IconLock,
+	IconPlayerPause,
+	IconUsers,
+	IconWorld,
+} from "@tabler/icons-react"
 import { useQueryClient } from "@tanstack/react-query"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import confetti from "canvas-confetti"
@@ -76,12 +84,12 @@ function fireFireworks(): () => void {
 }
 
 const PRO_FEATURES = [
-	{ emoji: "🌍", label: "Global leaderboard (top 100)" },
-	{ emoji: "🗂️", label: "Solution archive" },
-	{ emoji: "👥", label: "Up to 5 groups (50 members each)" },
-	{ emoji: "🔒", label: "Create private groups" },
-	{ emoji: "⏸️", label: "4 pauses per month" },
-	{ emoji: "👑", label: "Pro gold identity badge" },
+	{ Icon: IconWorld, label: "Global leaderboard (top 100)" },
+	{ Icon: IconArchive, label: "Solution archive" },
+	{ Icon: IconUsers, label: "Up to 5 groups (50 members each)" },
+	{ Icon: IconLock, label: "Create private groups" },
+	{ Icon: IconPlayerPause, label: "4 pauses per month" },
+	{ Icon: IconCrown, label: "Pro gold identity badge" },
 ]
 
 function SuccessPage() {
@@ -125,14 +133,12 @@ function SuccessPage() {
 
 				{/* Pro feature list */}
 				<ul className="w-full space-y-2 text-left" aria-label="Pro features">
-					{PRO_FEATURES.map(({ emoji, label }) => (
+					{PRO_FEATURES.map(({ Icon, label }) => (
 						<li
 							key={label}
 							className="flex items-center gap-3 rounded-lg bg-muted px-4 py-2.5 text-sm"
 						>
-							<span aria-hidden="true" className="text-base leading-none">
-								{emoji}
-							</span>
+							<Icon className="size-5 text-primary" aria-hidden="true" />
 							<span>{label}</span>
 						</li>
 					))}
