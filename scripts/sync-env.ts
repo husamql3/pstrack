@@ -1,42 +1,11 @@
 #!/usr/bin/env bun
-import { readFileSync } from "node:fs"
-import { resolve } from "node:path"
-
-const ENV_FILE = resolve(import.meta.dirname, "../.env.prod")
+import { readProdEnv } from "./env-sync"
 
 // These are Vercel meta-credentials, not app env vars
 const SKIP_KEYS = new Set(["VERCEL_TOKEN", "VERCEL_ORG_ID", "VERCEL_PROJECT_ID"])
 
-function parseEnvFile(content: string): Record<string, string> {
-	const vars: Record<string, string> = {}
-
-	for (const line of content.split("\n")) {
-		const trimmed = line.trim()
-		if (!trimmed || trimmed.startsWith("#")) continue
-
-		const eqIdx = trimmed.indexOf("=")
-		if (eqIdx === -1) continue
-
-		const key = trimmed.slice(0, eqIdx).trim()
-		let value = trimmed.slice(eqIdx + 1).trim()
-
-		// Strip surrounding quotes (single or double)
-		if (
-			(value.startsWith('"') && value.endsWith('"')) ||
-			(value.startsWith("'") && value.endsWith("'"))
-		) {
-			value = value.slice(1, -1)
-		}
-
-		if (key) vars[key] = value
-	}
-
-	return vars
-}
-
 async function main() {
-	const content = readFileSync(ENV_FILE, "utf-8")
-	const vars = parseEnvFile(content)
+	const vars = readProdEnv()
 
 	const token = vars.VERCEL_TOKEN
 	const teamId = vars.VERCEL_ORG_ID

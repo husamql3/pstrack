@@ -1,44 +1,40 @@
 #!/usr/bin/env bun
 import { spawnSync } from "node:child_process"
-import { readFileSync } from "node:fs"
-import { resolve } from "node:path"
 
-const ENV_FILE = resolve(import.meta.dirname, "../.env.prod")
+import { readProdEnv } from "./env-sync"
+
 const GH_ENVIRONMENT = "production"
 
-// Local-only and meta-credentials don't belong in GitHub secrets
-const SKIP_KEYS = new Set(["VERCEL_TOKEN", "VERCEL_ORG_ID", "VERCEL_PROJECT_ID"])
-
-// GitHub rejects secret names with the GITHUB_ prefix; rename on push
+// GitHub rejects secret/variable names with the GITHUB_ prefix; rename on push.
 const KEY_RENAMES: Record<string, string> = {
 	GITHUB_CLIENT_ID: "GH_CLIENT_ID",
 	GITHUB_CLIENT_SECRET: "GH_CLIENT_SECRET",
 }
 
-function parseEnvFile(content: string): Record<string, string> {
-	const vars: Record<string, string> = {}
+// These are referenced as ${{ vars.* }} in GitHub Actions.
+// VITE_* values are client-exposed by design, so they belong in variables too.
+const GITHUB_VARIABLE_KEYS = new Set([
+	"EMAIL_FROM",
+	"POLAR_SUCCESS_URL",
+	"SENTRY_TRACES_SAMPLE_RATE",
+])
 
-	for (const line of content.split("\n")) {
-		const trimmed = line.trim()
-		if (!trimmed || trimmed.startsWith("#")) continue
+type GithubEnvEntry = {
+	name: string
+	sourceKey: string
+	value: string
+}
 
-		const eqIdx = trimmed.indexOf("=")
-		if (eqIdx === -1) continue
-
-		const key = trimmed.slice(0, eqIdx).trim()
-		let value = trimmed.slice(eqIdx + 1).trim()
-
-		if (
-			(value.startsWith('"') && value.endsWith('"')) ||
-			(value.startsWith("'") && value.endsWith("'"))
-		) {
-			value = value.slice(1, -1)
-		}
-
-		if (key) vars[key] = value
+function toGithubEntry([sourceKey, value]: [string, string]): GithubEnvEntry {
+	return {
+		name: KEY_RENAMES[sourceKey] ?? sourceKey,
+		sourceKey,
+		value,
 	}
+}
 
-	return vars
+function isGithubVariable(sourceKey: string): boolean {
+	return sourceKey.startsWith("VITE_") || GITHUB_VARIABLE_KEYS.has(sourceKey)
 }
 
 function ghAvailable(): boolean {
@@ -59,35 +55,59 @@ function setSecret(name: string, value: string): boolean {
 	return true
 }
 
+function setVariable(name: string, value: string): boolean {
+	const r = spawnSync("gh", ["variable", "set", name, "--body", value], {
+		stdio: ["ignore", "ignore", "pipe"],
+	})
+	if (r.status !== 0) {
+		console.error(`  ✗ failed   ${name}: ${r.stderr.toString().trim()}`)
+		return false
+	}
+	return true
+}
+
 async function main() {
 	if (!ghAvailable()) {
 		console.error("gh CLI not found. Install: https://cli.github.com/")
 		process.exit(1)
 	}
 
-	const content = readFileSync(ENV_FILE, "utf-8")
-	const vars = parseEnvFile(content)
+	const entries = Object.entries(readProdEnv()).map(toGithubEntry)
+	const variables = entries.filter(({ sourceKey }) => isGithubVariable(sourceKey))
+	const secrets = entries.filter(({ sourceKey }) => !isGithubVariable(sourceKey))
 
-	const toSync = Object.entries(vars)
-		.filter(([key]) => !SKIP_KEYS.has(key))
-		.filter(([key]) => !key.startsWith("VITE_"))
-		.map(([key, value]) => [KEY_RENAMES[key] ?? key, value] as const)
+	console.log(`\nSyncing ${variables.length} variables → GitHub repository\n`)
 
-	console.log(`\nSyncing ${toSync.length} secrets → GitHub env "${GH_ENVIRONMENT}"\n`)
+	let syncedVariables = 0
+	let failedVariables = 0
 
-	let synced = 0
-	let failed = 0
-
-	for (const [name, value] of toSync) {
-		if (setSecret(name, value)) {
+	for (const { name, value } of variables) {
+		if (setVariable(name, value)) {
 			console.log(`  ~ synced   ${name}`)
-			synced++
+			syncedVariables++
 		} else {
-			failed++
+			failedVariables++
 		}
 	}
 
-	console.log(`\nDone - ${synced} synced, ${failed} failed\n`)
+	console.log(`\nSyncing ${secrets.length} secrets → GitHub env "${GH_ENVIRONMENT}"\n`)
+
+	let syncedSecrets = 0
+	let failedSecrets = 0
+
+	for (const { name, value } of secrets) {
+		if (setSecret(name, value)) {
+			console.log(`  ~ synced   ${name}`)
+			syncedSecrets++
+		} else {
+			failedSecrets++
+		}
+	}
+
+	const failed = failedVariables + failedSecrets
+	console.log(
+		`\nDone - ${syncedVariables} variables synced, ${syncedSecrets} secrets synced, ${failed} failed\n`
+	)
 	if (failed > 0) process.exit(1)
 }
 

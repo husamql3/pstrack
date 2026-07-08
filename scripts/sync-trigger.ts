@@ -1,8 +1,6 @@
 #!/usr/bin/env bun
-import { readFileSync } from "node:fs"
-import { resolve } from "node:path"
+import { readProdEnv } from "./env-sync"
 
-const ENV_FILE = resolve(import.meta.dirname, "../.env.prod")
 const TRIGGER_API = process.env.TRIGGER_API_URL ?? "https://api.trigger.dev"
 const PROJECT_REF = "proj_nhquzeoumjpzigemrkxj"
 const SLUG = "prod"
@@ -16,35 +14,8 @@ const SKIP_KEYS = new Set([
 	"TRIGGER_API_URL",
 ])
 
-function parseEnvFile(content: string): Record<string, string> {
-	const vars: Record<string, string> = {}
-
-	for (const line of content.split("\n")) {
-		const trimmed = line.trim()
-		if (!trimmed || trimmed.startsWith("#")) continue
-
-		const eqIdx = trimmed.indexOf("=")
-		if (eqIdx === -1) continue
-
-		const key = trimmed.slice(0, eqIdx).trim()
-		let value = trimmed.slice(eqIdx + 1).trim()
-
-		if (
-			(value.startsWith('"') && value.endsWith('"')) ||
-			(value.startsWith("'") && value.endsWith("'"))
-		) {
-			value = value.slice(1, -1)
-		}
-
-		if (key) vars[key] = value
-	}
-
-	return vars
-}
-
 async function main() {
-	const content = readFileSync(ENV_FILE, "utf-8")
-	const vars = parseEnvFile(content)
+	const vars = readProdEnv()
 
 	const token = vars.TRIGGER_ACCESS_TOKEN ?? process.env.TRIGGER_ACCESS_TOKEN
 	if (!token) {
