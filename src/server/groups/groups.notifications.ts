@@ -9,7 +9,10 @@ import { db } from "@/server/lib/db"
 import { sendEmail } from "@/server/lib/email"
 import { captureServerException } from "@/server/lib/sentry"
 
-const BASE_URL = env.BETTER_AUTH_URL.replace(/\/$/, "")
+// BETTER_AUTH_URL carries a schema default, but SKIP_ENV_VALIDATION (used by the
+// CI test job) bypasses zod defaults — fall back so importing this module, which
+// happens transitively in tests, never throws on an undefined value.
+const BASE_URL = (env.BETTER_AUTH_URL ?? "https://pstrack.localhost").replace(/\/$/, "")
 const groupName = (slug: string) => `@${slug}`
 const groupUrl = (groupId: string) => `${BASE_URL}/groups/${groupId}`
 const browseUrl = () => `${BASE_URL}/groups`
