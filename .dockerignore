@@ -1,0 +1,24 @@
+# Build artefacts and caches
+node_modules
+.tanstack
+dist
+coverage
+
+# Secrets — never in the image
+.env
+.env.*
+!.env.example
+
+# VCS and editor
+.git
+.gitignore
+.vscode
+.idea
+
+# CI and tooling
+.github
+.claude
+*.log
+
+# Vercel / deployment
+.vercel
