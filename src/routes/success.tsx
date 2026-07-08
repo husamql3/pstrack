@@ -52,7 +52,7 @@ function fireFireworks(): () => void {
 		const timeLeft = end - Date.now()
 		if (timeLeft <= 0) return
 
-		const particleCount = Math.floor(50 * (timeLeft / 4000))
+		const particleCount = Math.floor(10 * (timeLeft / 4000))
 
 		void confetti({
 			particleCount,
@@ -136,7 +136,7 @@ function SuccessPage() {
 					{PRO_FEATURES.map(({ Icon, label }) => (
 						<li
 							key={label}
-							className="flex items-center gap-3 rounded-lg bg-muted px-4 py-2.5 text-sm"
+							className="flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm"
 						>
 							<Icon className="size-5 text-primary" aria-hidden="true" />
 							<span>{label}</span>
