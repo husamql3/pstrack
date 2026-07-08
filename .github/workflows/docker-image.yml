@@ -89,8 +89,7 @@ jobs:
         run: bunx prisma migrate deploy
 
       - name: Verify schema matches migrations
-        run: bunx prisma migrate diff --from-config-datasource --to-schema-datamodel prisma/schema.prisma --exit-code
-        continue-on-error: true
+        run: bunx prisma migrate diff --from-config-datasource --to-schema prisma/schema.prisma --exit-code
 
   build-and-push:
     name: Build and push image
