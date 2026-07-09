@@ -1,14 +1,12 @@
-# Superseded: Auto-PR workflow for stage → main
+# Auto-PR workflow: stage → main
 
-> Superseded by the manual promotion workflow in `docs/BRANCHING.md`.
+> In the context of pstrack's `stage → main` release flow, facing the toil of hand-opening a release PR every time `stage` advances, I decided to keep a GitHub Actions workflow that auto-opens/updates the PR, built on the `gh` CLI, to achieve a single, CI-gated, reviewable prod gate.
 
-## Superseded Decision
+## Correction
 
-The previous decision added a GitHub Actions workflow that auto-opened or updated a `stage` to `main` pull request on every push to `stage`, authenticated with `secrets.PAT_TOKEN`.
+The first implementation depended only on `secrets.PAT_TOKEN` and failed when that token could not create pull requests. The workflow now uses `github.token` with explicit workflow permissions and supports `workflow_dispatch` for manual runs.
 
-This was removed because the workflow failed when the token could not create pull requests and because automatic pull requests conflict with the standing repo rule: do not push or open pull requests unless the user explicitly asks.
-
-`stage` is now verified directly by CI on push. Promotion to `main` remains an intentional, human-requested pull request.
+The automatic `push: stage` trigger remains enabled.
 
 ## Context
 
@@ -35,12 +33,13 @@ Chosen: **`gh`-CLI workflow, `push: stage` trigger, `PAT_TOKEN` auth, changelog 
 
 ## Consequences
 
-- The auto-PR workflow was deleted.
-- CI runs on `push` to `stage`, `push` to `main`, and pull requests targeting `stage` or `main`.
-- `PAT_TOKEN` is no longer required for branch promotion automation.
-- `stage` to `main` pull requests are created only when explicitly requested.
+- Every push to `stage` opens or refreshes one `Auto PR: stage -> main`; pstrack CI runs on it.
+- The workflow uses `GITHUB_TOKEN` with explicit `pull-requests: write` permission.
+- The workflow can be run manually from GitHub Actions.
+- The `stage → main` PR is never auto-merged; merge still requires human review.
 
 ## Artifacts
 
+- `.github/workflows/auto-pr.yml`
 - `.github/workflows/ci.yml`
 - Ticket husamql3/pstrack#265
