@@ -15,7 +15,7 @@ PStrack is the accountability layer for the NeetCode 250 roadmap. It is not a re
 ## Pricing
 
 - Free tier: join 1 group of up to 30 members, 2 pauses/month, group leaderboard access.
-- Pro: $14 one-time lifetime purchase via Polar. Joins up to 5 groups of up to 50 members, can create private invite-only groups, 4 pauses/month, global leaderboard, and profile badge.
+- Pro: $5 one-time lifetime purchase via Polar. Joins up to 5 groups of up to 50 members, can create private invite-only groups, 4 pauses/month, global leaderboard, and profile badge.
 - No subscriptions. No paid recurring tiers.
 
 ## Groups
@@ -28,13 +28,13 @@ PStrack is the accountability layer for the NeetCode 250 roadmap. It is not a re
 
 - PStrack auto-verifies LeetCode submissions by polling the official LeetCode GraphQL API.
 - PStrack supports three roadmaps out of the box: NeetCode 250, NeetCode 150, and Blind 75.
-- PStrack is a $14 lifetime purchase — not a subscription — making it accessible to students and early-career developers.
+- PStrack is a $5 lifetime purchase — not a subscription — making it accessible to students and early-career developers.
 - PStrack uses deterministic hashvatar SVG avatars generated from username, not user-uploaded photos.
 
 ## Key URLs
 
 - [Homepage](https://pstrack.app/) — value proposition, tagline, and CTAs.
-- [About](https://pstrack.app/about) — how PStrack began, the design principles, and the $14 lifetime pricing rationale.
+- [About](https://pstrack.app/about) — how PStrack began, the design principles, and the $5 lifetime pricing rationale.
 - [Problems](https://pstrack.app/problems) — the NeetCode 250, NeetCode 150, and Blind 75 problem lists with progress tracking.
 - [Groups](https://pstrack.app/groups) — find or create a LeetCode study group.
 - [Badges](https://pstrack.app/badges) — streak, first-solver, and consistency badges earned for daily practice.

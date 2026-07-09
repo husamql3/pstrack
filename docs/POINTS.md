@@ -98,14 +98,14 @@ Pro is unlockable two ways:
 
 | Path | Cost |
 |---|---|
-| Polar purchase | $14 standard, $9 sale |
+| Polar purchase | $5 standard |
 | Points threshold | 3,000 points earned in-app |
 
-**Pro is permanent once unlocked**, by either path. There is no revocation - a user who reaches 3,000, gets Pro, then clawback drops them below 3,000 keeps Pro. Matches the lifetime promise of the $14 purchase.
+**Pro is permanent once unlocked**, by either path. There is no revocation - a user who reaches 3,000, gets Pro, then clawback drops them below 3,000 keeps Pro. Matches the lifetime promise of the $5 purchase.
 
 ### Why 3,000?
 
-Working from average earn velocity of ~14 points/day (mix of difficulty, with comeback and early-bird factored in), 3,000 points is roughly 7 months of consistent play. The threshold is deliberately set high enough that **a $14 buyer's mental math always favors paying** - 7 months of grinding to save $14 is irrational for anyone with disposable income. This protects revenue while still offering a legitimate free path for highly committed users.
+Working from average earn velocity of ~14 points/day (mix of difficulty, with comeback and early-bird factored in), 3,000 points is roughly 7 months of consistent play. The threshold is deliberately set high enough that **a $5 buyer's mental math always favors paying** - 7 months of grinding to save $5 is irrational for anyone with disposable income. This protects revenue while still offering a legitimate free path for highly committed users.
 
 ### Auto-Grant
 
@@ -242,7 +242,7 @@ Callers never compute new balances directly. The floor is enforced here and nowh
 
 - **Negative balance**: impossible by design. The floor lives in `applyPointsDelta`, not the UI.
 - **Clawback exceeds current balance**: balance clamps to 0; the "excess" is not stored anywhere. Pro threshold remains an absolute 3,000.
-- **Pro user who reaches 3,000 via points after already purchasing $14**: no-op. `isPro` is already true; `proSource` stays `POLAR_PURCHASE`.
+- **Pro user who reaches 3,000 via points after already purchasing $5**: no-op. `isPro` is already true; `proSource` stays `POLAR_PURCHASE`.
 - **First solve of a new streak**: `currentStreakStartedAt` is set to the solve's `createdAt`. Clawback uses `>=` comparison so this row's bonuses (if any) are included.
 - **Verification job retries**: only the *final* failure increments `verificationFailuresThisMonth`. Intermediate retries within the same Trigger.dev run don't count.
 - **Pause used on the same day as a previously-verified solve**: not allowed; UserSolve unique constraint `(userId, dailyProblemId)` prevents double-state.

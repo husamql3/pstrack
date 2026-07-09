@@ -3,9 +3,9 @@ import { createFileRoute } from "@tanstack/react-router"
 import { Header } from "@/features/home/header"
 import { createSeoHead, siteUrl } from "@/lib/seo"
 
-const ABOUT_TITLE = "How It Began — The Story Behind a $14 LeetCode Accountability Tool"
+const ABOUT_TITLE = "How It Began — The Story Behind a $5 LeetCode Accountability Tool"
 const ABOUT_DESCRIPTION =
-	"The story behind PStrack: why a $14 lifetime LeetCode accountability tool exists, what it's trying to fix about coding interview prep, and who built it."
+	"The story behind PStrack: why a $5 lifetime LeetCode accountability tool exists, what it's trying to fix about coding interview prep, and who built it."
 
 const aboutSchema = {
 	"@context": "https://schema.org",
@@ -78,8 +78,8 @@ function AboutPage() {
 						<p>[Story section 3 — design principles]</p>
 					</Section>
 
-					<Section title="Why $14, once">
-						{/* TODO: 120-180 words. The pricing decision. Why a one-time $14 instead
+					<Section title="Why $5, once">
+						{/* TODO: 120-180 words. The pricing decision. Why a one-time $5 instead
 						    of $9/mo or $99/yr. Who $99/yr is unaffordable for (students, early-
 						    career devs, anyone in a non-US market). The anti-subscription stance. */}
 						<p>[Story section 4 — pricing rationale]</p>

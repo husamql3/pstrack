@@ -28,7 +28,7 @@ Three constraints shape this entire plan. Solve these before chasing rankings.
 |---|---|---|
 | **LeetCode.com** | The source of truth, has its own streaks/contests | Curated roadmap + groups + accountability — LC's UX is firehose, not guided |
 | **NeetCode.io** | The roadmap PStrack uses (NC250) | NeetCode has no streak/group/verification layer — PStrack is *the* social layer on his roadmap |
-| **AlgoExpert** ($99+/yr) | Paid course | PStrack is $14 lifetime + free tier; different price point, different value |
+| **AlgoExpert** ($99+/yr) | Paid course | PStrack is $5 lifetime + free tier; different price point, different value |
 | **Codewars** | Gamified katas | Different problem set; no interview prep focus |
 
 ### Keyword gap (opportunities)
@@ -71,7 +71,7 @@ Marketing site (SEO-critical, must be SSR) is **separate concern** from the app 
 **No blog. No comparison pages.** Organic footprint relies on:
 
 1. **SSR'd public pages** — `/groups`, `/problems`, `/$username` all render server-side so crawlers read real content.
-2. **Community seeding** — Reddit r/leetcode, HN Show HN, NeetCode Discord/subreddit. Primary acquisition channel for a $14 product with a tight dev niche.
+2. **Community seeding** — Reddit r/leetcode, HN Show HN, NeetCode Discord/subreddit. Primary acquisition channel for a $5 product with a tight dev niche.
 3. **MDX content pages** — `/about` and `/how-it-works` authored in markdown. Content is written in third-person where appropriate to be quotable by AI search.
 
 **Falsifiability**: if 90 days after public launch `leetcode accountability` and `leetcode study group` aren't on page 2 for their primary keyword, the SSR + community thesis is wrong — revisit a lightweight content strategy.
@@ -214,7 +214,7 @@ One safe template. Apply the quality gate.
 | Indexed pages | 8 | 30 | 100 | 300 |
 | AI citation count (manual checks) | 0 | 1 | 3 | 10 |
 | Signup conversion (organic → signup) | — | 3% | 4% | 5% |
-| Pro conversion (signup → $14) | — | 1% | 2% | 3% |
+| Pro conversion (signup → $5) | — | 1% | 2% | 3% |
 
 ---
 
