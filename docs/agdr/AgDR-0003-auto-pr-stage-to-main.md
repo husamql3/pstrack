@@ -1,6 +1,14 @@
-# Auto-PR workflow: stage → main
+# Superseded: Auto-PR workflow for stage → main
 
-> In the context of pstrack's `stage → main` release flow, facing the toil of hand-opening a release PR every time `stage` advances, I decided to add a GitHub Actions workflow that auto-opens/updates the PR — authed with a PAT and built on the `gh` CLI — to achieve a single, CI-gated, reviewable prod gate, accepting a dependency on the `PAT_TOKEN` secret.
+> Superseded by the manual promotion workflow in `docs/BRANCHING.md`.
+
+## Superseded Decision
+
+The previous decision added a GitHub Actions workflow that auto-opened or updated a `stage` to `main` pull request on every push to `stage`, authenticated with `secrets.PAT_TOKEN`.
+
+This was removed because the workflow failed when the token could not create pull requests and because automatic pull requests conflict with the standing repo rule: do not push or open pull requests unless the user explicitly asks.
+
+`stage` is now verified directly by CI on push. Promotion to `main` remains an intentional, human-requested pull request.
 
 ## Context
 
@@ -27,12 +35,12 @@ Chosen: **`gh`-CLI workflow, `push: stage` trigger, `PAT_TOKEN` auth, changelog 
 
 ## Consequences
 
-- Every push to `stage` opens or refreshes one `🎯 Auto PR: stage → main`; pstrack CI runs on it via `PAT_TOKEN`.
-- `PAT_TOKEN` must keep `contents: read` + `pull-requests: write` on pstrack; if it lapses, the workflow fails loudly.
-- The bootstrap: merging *this* file into `stage` is itself a push to `stage`, so the first auto-PR appears immediately.
-- No third-party actions in this workflow; the `stage → main` PR is never auto-merged — merge still requires human review + approval.
+- The auto-PR workflow was deleted.
+- CI runs on `push` to `stage`, `push` to `main`, and pull requests targeting `stage` or `main`.
+- `PAT_TOKEN` is no longer required for branch promotion automation.
+- `stage` to `main` pull requests are created only when explicitly requested.
 
 ## Artifacts
 
-- `.github/workflows/auto-pr.yml`
+- `.github/workflows/ci.yml`
 - Ticket husamql3/pstrack#265
