@@ -134,8 +134,8 @@ Stay consistent with LeetCode — solve one problem a day, earn points, and comp
 
 ## Phase 7 — Freemium (Polar) · [#225](https://github.com/husamql3/pstrack/issues/225)
 
-- [x] Create Polar product ($14, one-time)
-- [ ] Set up sale pricing ($9) and promo codes in Polar dashboard
+- [x] Create Polar product ($5, one-time)
+- [ ] Set up promo codes in Polar dashboard
 - [x] Configure Better Auth Polar plugin (webhook handler, `isPro` sync)
 - [ ] Build billing settings page (`/settings/billing`) — Pro status, upgrade CTA (stub exists)
 - [ ] Add Pro gates in UI: group limits, global leaderboard, private group creation

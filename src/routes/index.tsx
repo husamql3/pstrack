@@ -8,7 +8,7 @@ import { createSeoHead, siteUrl } from "@/lib/seo"
 
 const HOME_TITLE = "LeetCode Accountability with Daily Problems & Study Groups"
 const HOME_DESCRIPTION =
-	"PStrack is the accountability layer for the NeetCode 250, NeetCode 150, and Blind 75 roadmaps. Solve one LeetCode problem a day, auto-verified against the LeetCode API, build streaks, and compete with study groups. Free tier; $14 lifetime Pro."
+	"PStrack is the accountability layer for the NeetCode 250, NeetCode 150, and Blind 75 roadmaps. Solve one LeetCode problem a day, auto-verified against the LeetCode API, build streaks, and compete with study groups. Free tier; $5 lifetime Pro."
 
 const homeSchema = {
 	"@context": "https://schema.org",
@@ -49,7 +49,7 @@ const homeSchema = {
 				{
 					"@type": "Offer",
 					name: "Pro (Lifetime)",
-					price: "14",
+					price: "5",
 					priceCurrency: "USD",
 					category: "OneTime",
 				},

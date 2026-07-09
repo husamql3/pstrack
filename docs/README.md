@@ -25,13 +25,13 @@ A competitive programming accountability platform. Users join groups, solve one 
 | Deployment | Vercel |
 | Email | Resend |
 | Background Jobs | Trigger.dev |
-| Payments | Polar ($14 one-time) |
+| Payments | Polar ($5 one-time) |
 | Error Tracking | Sentry |
 | Avatars | hashvatar (deterministic, no uploads) |
 
 ## Tiers
 
-| | Free | Pro ($14 one-time) |
+| | Free | Pro ($5 one-time) |
 |---|---|---|
 | Groups | Join 1 (max 30 members) | Join up to 5 (max 50 members) |
 | Create private groups | No | Yes |

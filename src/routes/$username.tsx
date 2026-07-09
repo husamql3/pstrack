@@ -10,7 +10,9 @@ import { usePublicProfile } from "@/features/profile/hooks/use-public-profile"
 import { createSeoHead, siteUrl } from "@/lib/seo"
 
 export const Route = createFileRoute("/$username")({
-	ssr: true,
+	// Keep profile navigation in the client app to avoid mixed SSR/SPA reconciliation
+	// crashes when users click through from the leaderboard.
+	ssr: false,
 	component: PublicProfileRoute,
 	errorComponent: ({ error, reset }) => (
 		<RouteErrorFallback error={error} reset={reset} title="Could not load profile" />
