@@ -4,6 +4,10 @@
 
 PStrack is a competitive programming accountability platform. Users join groups, solve one daily problem from the NeetCode 250 roadmap, and get auto-verified against LeetCode/Codeforces APIs. Points, streaks, and badges create the motivation loop. The tagline: **Show up. Solve. Repeat.**
 
+## Branching
+
+See `docs/BRANCHING.md`. `stage` is the default working branch; `main` is the stable release branch. Start feature and fix branches from `stage`, and do not push or open pull requests unless explicitly asked.
+
 ## Core Loop
 
 1. Midnight - Trigger.dev cron assigns the next NeetCode 250 problem to all active groups
