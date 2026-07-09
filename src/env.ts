@@ -41,6 +41,9 @@ export const env = createEnv({
 
 		// payments
 		POLAR_ACCESS_TOKEN: z.string().min(1),
+		// Environment-specific: Polar sandbox and production are separate catalogs
+		// with DIFFERENT product UUIDs. Must match the env POLAR_ACCESS_TOKEN targets.
+		POLAR_PRODUCT_ID: z.string().min(1),
 		POLAR_SUCCESS_URL: z.url(),
 		POLAR_WEBHOOK_SECRET: z.string().min(1).optional(),
 

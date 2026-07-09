@@ -116,7 +116,7 @@ export const auth = betterAuth({
 				checkout({
 					products: [
 						{
-							productId: "8b656c17-a416-4ef8-865a-a45a02ea7735",
+							productId: env.POLAR_PRODUCT_ID,
 							slug: "pstrack",
 						},
 					],
