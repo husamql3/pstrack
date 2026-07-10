@@ -19,6 +19,7 @@ export const auth = betterAuth({
 	database: prismaAdapter(db, { provider: "postgresql" }),
 	secret: env.BETTER_AUTH_SECRET,
 	baseURL: env.BETTER_AUTH_URL,
+	trustedOrigins: [env.BETTER_AUTH_URL, "https://www.pstrack.app"],
 	basePath: "/api/v3/auth",
 	socialProviders: {
 		google: {
