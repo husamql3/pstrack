@@ -32,7 +32,7 @@
 		"check": "bun run biome check .",
 		"knip": "knip",
 		"typecheck": "prisma generate && tsc --noEmit",
-		"env:sync": "bun run scripts/sync-env.ts",
+		"env:sync": "bun run scripts/sync-coolify.ts",
 		"env:sync:trigger": "bun run scripts/sync-trigger.ts",
 		"env:sync:gh": "bun run scripts/sync-gh.ts"
 	},
@@ -76,8 +76,6 @@
 		"@trigger.dev/sdk": "4.4.6",
 		"@types/canvas-confetti": "^1.9.0",
 		"@upstash/redis": "^1.38.0",
-		"@vercel/analytics": "^2.0.1",
-		"@vercel/speed-insights": "^2.0.0",
 		"better-auth": "1.6.13",
 		"canvas-confetti": "^1.9.4",
 		"class-variance-authority": "^0.7.1",

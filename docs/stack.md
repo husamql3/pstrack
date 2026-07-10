@@ -2,10 +2,10 @@
 
 ## Architecture
 
-TanStack Start (SPA, no SSR) deployed on Vercel. Elysia is mounted inside TanStack Start's server to catch all `/api/*` routes. Eden Treaty provides end-to-end type safety between client and server with zero codegen.
+TanStack Start (SPA, no SSR) deployed as a Docker image on Coolify. Elysia is mounted inside TanStack Start's server to catch all `/api/*` routes. Eden Treaty provides end-to-end type safety between client and server with zero codegen.
 
 ```
-TanStack Start (Vercel)
+TanStack Start (Coolify)
 ├── client: TanStack Router - SPA, no SSR
 └── server: Elysia (via TanStack Start middleware)
     ├── /api/auth/*  → Better Auth (+ Polar plugin)
@@ -68,8 +68,8 @@ pstrack/
 | API contract | Eden Treaty |
 | Auth | Better Auth + Polar plugin |
 | ORM | Prisma |
-| DB driver | @prisma/adapter-neon + @neondatabase/serverless |
-| Database | Neon (PostgreSQL) |
+| DB driver | @prisma/adapter-pg + pg |
+| Database | PostgreSQL on Coolify |
 | Schema validation | TypeBox (Elysia native) |
 | Background jobs | Trigger.dev |
 | Email | Resend |
