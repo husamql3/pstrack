@@ -15,7 +15,13 @@ export const GroupProblemsHeaderCell = ({
 	const inner = (
 		<>
 			<div className="relative">
-				<HashAvatar username={label} size={28} shape="circle" />
+				<HashAvatar
+					username={label}
+					size={28}
+					shape="circle"
+					isPro={member.isPro}
+					proStar={member.isPro}
+				/>
 			</div>
 			<div
 				className="grow text-center font-medium text-[11px] tracking-wide"

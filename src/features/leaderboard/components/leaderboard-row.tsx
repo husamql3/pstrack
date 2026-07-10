@@ -1,6 +1,7 @@
 import { IconFlame } from "@tabler/icons-react"
 import { Link } from "@tanstack/react-router"
 
+import { ProBadge } from "@/components/ui/pro-badge"
 import { HashAvatar } from "@/features/onboarding/components/hash-avatar"
 import { cn } from "@/lib/utils"
 import type { LeaderboardEntry } from "@/server/leaderboard/leaderboard.type"
@@ -31,18 +32,14 @@ export const LeaderboardRow = ({
 
 			{/* Avatar */}
 			<div className="shrink-0">
-				<HashAvatar username={displayName} size={36} />
+				<HashAvatar username={displayName} size={36} isPro={entry.isPro} />
 			</div>
 
 			{/* Name + score bar */}
 			<div className="min-w-0 flex-1">
 				<div className="flex items-center gap-1.5">
 					<span className="truncate font-medium text-sm leading-none">{displayName}</span>
-					{entry.isPro && (
-						<span className="rounded bg-primary/15 px-1 py-0.5 font-mono text-[10px] text-primary leading-none">
-							pro
-						</span>
-					)}
+					{entry.isPro && <ProBadge />}
 					{isViewer && (
 						<span className="text-[10px] text-muted-foreground leading-none">(you)</span>
 					)}

@@ -9,6 +9,7 @@ import {
 } from "@tabler/icons-react"
 import { format } from "date-fns"
 
+import { ProBadge } from "@/components/ui/pro-badge"
 import { Skeleton } from "@/components/ui/skeleton"
 import { HashAvatar } from "@/features/onboarding/components/hash-avatar"
 import { SolveHeatmap } from "@/features/profile/components/solve-heatmap"
@@ -55,12 +56,6 @@ const Stat = ({
 		<Icon className="size-4 text-muted-foreground" aria-hidden="true" />
 		<span className="truncate">{label}</span>
 	</a>
-)
-
-const ProChip = () => (
-	<span className="inline-flex items-center rounded-full border border-warning/30 bg-warning/5 px-2 py-0.5 font-mono font-semibold text-[10px] text-warning uppercase tracking-[0.18em]">
-		Pro
-	</span>
 )
 
 const BadgeMedal = ({
@@ -204,11 +199,11 @@ export const PublicProfile = ({ profile }: { profile: PublicProfileResponse }) =
 	if (profile.visibility === "PRIVATE") {
 		return (
 			<main className="mx-auto flex w-full max-w-md flex-col items-center gap-4 px-6 py-24 text-center">
-				<HashAvatar username={profile.username} size={80} />
+				<HashAvatar username={profile.username} size={80} isPro={profile.isPro} />
 				<div className="flex flex-col items-center gap-1">
 					<div className="flex items-center gap-2">
 						<h1 className="font-semibold text-xl">{profile.name}</h1>
-						{profile.isPro && <ProChip />}
+						{profile.isPro && <ProBadge />}
 					</div>
 					<p className="font-mono text-muted-foreground text-sm">@{profile.username}</p>
 				</div>
@@ -260,11 +255,11 @@ export const PublicProfile = ({ profile }: { profile: PublicProfileResponse }) =
 	return (
 		<main className="mx-auto flex w-full max-w-3xl flex-col gap-8 px-6 py-16">
 			<header className="flex flex-col items-center gap-5 text-center sm:flex-row sm:items-start sm:text-left">
-				<HashAvatar username={username} size={96} />
+				<HashAvatar username={username} size={96} isPro={profile.isPro} />
 				<div className="flex min-w-0 flex-1 flex-col gap-1">
 					<div className="flex flex-wrap items-center justify-center gap-2 sm:justify-start">
 						<h1 className="font-semibold text-2xl tracking-tight">{profile.name}</h1>
-						{profile.isPro && <ProChip />}
+						{profile.isPro && <ProBadge />}
 					</div>
 					<p className="font-mono text-muted-foreground text-sm">@{username}</p>
 					{profile.bio && <p className="mt-2 text-sm leading-relaxed">{profile.bio}</p>}
