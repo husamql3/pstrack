@@ -72,7 +72,7 @@ pstrack/
 | Database | PostgreSQL on Coolify |
 | Schema validation | TypeBox (Elysia native) |
 | Background jobs | Trigger.dev |
-| Email | Postal (self-hosted) — see ADR 0013 |
+| Email | Stalwart (self-hosted SMTP) — see ADR 0013 |
 | Error tracking | Sentry |
 | Payments | Polar (via Better Auth plugin) |
 | Logging | pino |
@@ -94,7 +94,7 @@ pstrack/
 | `mark-missed` | Cron: midnight | Marks users missing for their primary group's previous daily problem when no solve/pause row exists |
 | `expire-join-requests` | Cron: every hour | Marks PENDING requests older than 1 day as EXPIRED |
 | `reset-monthly-pauses` | Cron: 1st of month | Resets `pausesUsedThisMonth` to 0 for all users |
-| `send-email` | Event: various | Sends transactional email via Postal (self-hosted) |
+| `send-email` | Event: various | Sends transactional email via self-hosted Stalwart (SMTP) |
 
 ## Post-MVP Services (not in v3)
 

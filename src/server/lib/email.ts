@@ -1,4 +1,5 @@
 import { render } from "@react-email/render"
+import nodemailer, { type Transporter } from "nodemailer"
 import type { ReactElement } from "react"
 import { Resend } from "resend"
 
@@ -6,8 +7,9 @@ import { env } from "@/env"
 import { logger } from "@/server/lib/logger"
 
 /**
- * Every email type carries a tag. It surfaces in Postal's UI for filtering and
- * doubles as the canary router key (see EMAIL_RESEND_TAGS).
+ * Every email type carries a tag. It rides along as an `X-Mail-Tag` header (so the
+ * self-hosted mail server can filter/log by type) and doubles as the canary router
+ * key (see EMAIL_RESEND_TAGS).
  */
 export type EmailTag =
 	| "magic-link"
@@ -33,12 +35,12 @@ type SendEmailInput = {
 	replyTo?: string
 }
 
-type Provider = "postal" | "resend" | "log"
+type Provider = "smtp" | "resend" | "log"
 
 /**
  * Resolve which transport handles this email. "log" (dev + staging) short-circuits
- * everything; otherwise the configured default provider is used, except for tags
- * explicitly pinned to Resend during the Postal cutover canary.
+ * everything; otherwise the configured default provider (self-hosted SMTP) is used,
+ * except for tags explicitly pinned to Resend during the cutover canary.
  */
 const resolveProvider = (tag: EmailTag): Provider => {
 	const base = env.EMAIL_TRANSPORT ?? "log"
@@ -55,6 +57,67 @@ const resolveProvider = (tag: EmailTag): Provider => {
 
 const toRecipients = (to: string | string[]): string[] => (Array.isArray(to) ? to : [to])
 
+// --- Self-hosted SMTP (Stalwart) ------------------------------------------
+
+let transporter: Transporter | null = null
+
+/**
+ * Build the SMTP transporter lazily. Deferring construction keeps the module
+ * import-safe: it never throws at import time when SMTP env is absent (CI/tests,
+ * or the `log` transport in dev/staging).
+ */
+const getTransporter = (): Transporter => {
+	if (!env.SMTP_HOST || !env.SMTP_USER || !env.SMTP_PASS) {
+		throw new Error("SMTP is not configured (SMTP_HOST / SMTP_USER / SMTP_PASS)")
+	}
+	if (!transporter) {
+		// Prod skips env validation, so SMTP_PORT can arrive as a raw string — coerce.
+		const port = Number(env.SMTP_PORT) || 587
+		transporter = nodemailer.createTransport({
+			host: env.SMTP_HOST,
+			port,
+			secure: port === 465, // implicit TLS on 465, STARTTLS on submission ports
+			requireTLS: port !== 465,
+			auth: { user: env.SMTP_USER, pass: env.SMTP_PASS },
+		})
+	}
+	return transporter
+}
+
+const sendViaSmtp = async (args: {
+	from: string
+	to: string[]
+	subject: string
+	html: string
+	text: string
+	tag: EmailTag
+	replyTo?: string
+}) => {
+	const info = await getTransporter().sendMail({
+		from: args.from,
+		to: args.to,
+		subject: args.subject,
+		html: args.html,
+		text: args.text,
+		headers: { "X-Mail-Tag": args.tag },
+		...(args.replyTo ? { replyTo: args.replyTo } : {}),
+	})
+
+	if (info.rejected && info.rejected.length > 0) {
+		logger.error(
+			{ rejected: info.rejected, to: args.to, subject: args.subject, tag: args.tag },
+			"smtp send rejected"
+		)
+		throw new Error(`SMTP rejected: ${info.rejected.join(", ")}`)
+	}
+
+	logger.debug(
+		{ id: info.messageId, to: args.to, subject: args.subject, tag: args.tag },
+		"smtp send ok"
+	)
+	return { id: info.messageId }
+}
+
 // --- Resend (retained for the canary only) --------------------------------
 
 let resendClient: Resend | null = null
@@ -62,7 +125,8 @@ let resendClient: Resend | null = null
 /**
  * Build the Resend client lazily. Eager construction throws ("Missing API key")
  * whenever RESEND_API_KEY is absent — e.g. CI/test runs or once we've fully cut
- * over to Postal — which would crash any module that merely imports this file.
+ * over to self-hosted SMTP — which would crash any module that merely imports this
+ * file.
  */
 const getResend = (): Resend => {
 	if (!env.RESEND_API_KEY) throw new Error("Resend is not configured (RESEND_API_KEY)")
@@ -96,73 +160,12 @@ const sendViaResend = async (args: {
 	return { id: result.data?.id }
 }
 
-// --- Postal (self-hosted, HTTP API) ---------------------------------------
-
-const sendViaPostal = async (args: {
-	from: string
-	to: string[]
-	subject: string
-	html: string
-	text: string
-	tag: EmailTag
-	replyTo?: string
-}) => {
-	if (!env.POSTAL_API_URL || !env.POSTAL_API_KEY) {
-		throw new Error("Postal is not configured (POSTAL_API_URL / POSTAL_API_KEY)")
-	}
-
-	const url = `${env.POSTAL_API_URL.replace(/\/$/, "")}/api/v1/send/message`
-	const res = await fetch(url, {
-		method: "POST",
-		headers: {
-			"Content-Type": "application/json",
-			"X-Server-API-Key": env.POSTAL_API_KEY,
-		},
-		body: JSON.stringify({
-			to: args.to,
-			from: args.from,
-			subject: args.subject,
-			html_body: args.html,
-			plain_body: args.text,
-			tag: args.tag,
-			...(args.replyTo ? { reply_to: args.replyTo } : {}),
-		}),
-	})
-
-	const payload = (await res.json().catch(() => null)) as {
-		status?: string
-		data?: { message_id?: string; code?: string; message?: string }
-	} | null
-
-	if (!res.ok || payload?.status !== "success") {
-		const message = payload?.data?.message ?? payload?.status ?? `HTTP ${res.status}`
-		logger.error(
-			{
-				status: res.status,
-				code: payload?.data?.code,
-				to: args.to,
-				subject: args.subject,
-				tag: args.tag,
-			},
-			"postal send failed"
-		)
-		throw new Error(`Postal: ${message}`)
-	}
-
-	const id = payload.data?.message_id
-	logger.debug(
-		{ id, to: args.to, subject: args.subject, tag: args.tag },
-		"postal send ok"
-	)
-	return { id }
-}
-
 // --- Public API ------------------------------------------------------------
 
 /**
  * Send a transactional email. React Email templates are rendered to HTML + text
- * in-app, then handed to the resolved transport (Postal / Resend / log). The
- * signature is unchanged from the Resend-only era apart from the required `tag`.
+ * in-app, then handed to the resolved transport (self-hosted SMTP / Resend / log).
+ * The signature is unchanged from the Resend-only era apart from the required `tag`.
  */
 export const sendEmail = async ({
 	to,
@@ -197,7 +200,7 @@ export const sendEmail = async ({
 			replyTo,
 		})
 	}
-	return sendViaPostal({
+	return sendViaSmtp({
 		from: fromAddress,
 		to: recipients,
 		subject,

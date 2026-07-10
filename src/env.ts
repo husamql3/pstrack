@@ -37,19 +37,22 @@ export const env = createEnv({
 
 		// email
 		// EMAIL_TRANSPORT is the default provider. "log" (dev + staging) renders and
-		// logs without sending; "postal" sends via self-hosted Postal; "resend" is
-		// kept only for the migration canary. Note: in production env validation is
-		// skipped, so the zod default does NOT apply — set it explicitly in prod.
-		EMAIL_TRANSPORT: z.enum(["postal", "resend", "log"]).default("log"),
-		// Comma-separated email tags force-routed to Resend during the Postal cutover
-		// canary (e.g. "magic-link"). Empty once fully on Postal.
+		// logs without sending; "smtp" sends via the self-hosted mail server
+		// (Stalwart); "resend" is kept only for the migration canary. Note: in
+		// production env validation is skipped, so the zod default does NOT apply —
+		// set it explicitly in prod.
+		EMAIL_TRANSPORT: z.enum(["smtp", "resend", "log"]).default("log"),
+		// Comma-separated email tags force-routed to Resend during the cutover canary
+		// (e.g. "magic-link"). Empty once fully on self-hosted SMTP.
 		EMAIL_RESEND_TAGS: z.string().default(""),
 		EMAIL_FROM: z.string().default("PStrack <info@pstrack.app>"),
-		// Self-hosted Postal (HTTP API). Optional so dev/staging (log transport) and
-		// CI need no mail secrets.
-		POSTAL_API_URL: z.url().optional(),
-		POSTAL_API_KEY: z.string().min(1).optional(),
-		// Resend — retained through the canary, removed once Postal is proven.
+		// Self-hosted SMTP submission (Stalwart). Optional so dev/staging (log
+		// transport) and CI need no mail secrets. Port 465 = implicit TLS, else STARTTLS.
+		SMTP_HOST: z.string().min(1).optional(),
+		SMTP_PORT: z.coerce.number().int().positive().default(587),
+		SMTP_USER: z.string().min(1).optional(),
+		SMTP_PASS: z.string().min(1).optional(),
+		// Resend — retained through the canary, removed once self-hosted SMTP is proven.
 		RESEND_API_KEY: z.string().min(1).optional(),
 
 		// payments
