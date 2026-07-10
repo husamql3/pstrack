@@ -43,4 +43,10 @@ ENV PORT=3000
 
 EXPOSE 3000
 
+# Lets Coolify gate the rolling swap on real readiness: it waits for the new
+# container to report healthy before routing traffic to it and stopping the old
+# one. Without this, Coolify falls back to stop-then-start (= downtime).
+HEALTHCHECK --interval=10s --timeout=5s --start-period=30s --retries=3 \
+    CMD curl -fsS http://localhost:3000/api/v3/health || exit 1
+
 CMD ["node", ".output/server/index.mjs"]
