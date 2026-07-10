@@ -241,15 +241,30 @@ jobs:
     steps:
       - name: Trigger Coolify redeploy
         env:
-          COOLIFY_WEBHOOK_URL: ${{ secrets.COOLIFY_WEBHOOK_URL }}
+          COOLIFY_API_URL: ${{ secrets.COOLIFY_API_URL }}
+          COOLIFY_API_TOKEN: ${{ secrets.COOLIFY_API_TOKEN }}
+          COOLIFY_APP_UUID: ${{ secrets.COOLIFY_APP_UUID }}
         run: |
-          test -n "$COOLIFY_WEBHOOK_URL" || {
-            echo "COOLIFY_WEBHOOK_URL is not set" >&2
+          test -n "$COOLIFY_API_URL" || {
+            echo "COOLIFY_API_URL is not set" >&2
             exit 1
           }
+          test -n "$COOLIFY_API_TOKEN" || {
+            echo "COOLIFY_API_TOKEN is not set" >&2
+            exit 1
+          }
+          test -n "$COOLIFY_APP_UUID" || {
+            echo "COOLIFY_APP_UUID is not set" >&2
+            exit 1
+          }
+
+          api_url="${COOLIFY_API_URL%/}"
+
           curl --silent --fail-with-body --show-error \
             --request GET \
-            "$COOLIFY_WEBHOOK_URL"
+            --header "Authorization: Bearer $COOLIFY_API_TOKEN" \
+            --header "Accept: application/json" \
+            "$api_url/api/v1/deploy?uuid=$COOLIFY_APP_UUID&force=false"
 
   # Trigger.dev production deployment is intentionally paused while production
   # Postgres is private to Coolify. Re-enable after Trigger.dev tasks are
