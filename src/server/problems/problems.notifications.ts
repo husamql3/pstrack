@@ -43,6 +43,7 @@ export const problemNotifications = {
 					from: env.EMAIL_FROM,
 					to: email,
 					subject: "You've unlocked Pro on PStrack",
+					tag: "pro-unlocked-points",
 					react: ProUnlockedByPointsEmail({ name, dashboardUrl }),
 				}).catch((err) => captureServerException(err, { tag: "email:pro-unlocked" })),
 
@@ -51,6 +52,7 @@ export const problemNotifications = {
 					from: env.EMAIL_FROM,
 					to: email,
 					subject: `${newStreak}-day streak on PStrack`,
+					tag: "streak-milestone",
 					react: StreakMilestoneEmail({ name, streak: newStreak, dashboardUrl }),
 				}).catch((err) => captureServerException(err, { tag: "email:streak-milestone" })),
 
@@ -59,6 +61,7 @@ export const problemNotifications = {
 					from: env.EMAIL_FROM,
 					to: email,
 					subject: `New badge on PStrack`,
+					tag: "badge-earned",
 					react: BadgeEarnedEmail({ name, badgeType, dashboardUrl }),
 				}).catch((err) => captureServerException(err, { tag: "email:badge-earned" }))
 			),

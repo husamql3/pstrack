@@ -36,8 +36,21 @@ export const env = createEnv({
 		GITHUB_CLIENT_SECRET: z.string().min(1),
 
 		// email
-		RESEND_API_KEY: z.string().min(1),
+		// EMAIL_TRANSPORT is the default provider. "log" (dev + staging) renders and
+		// logs without sending; "postal" sends via self-hosted Postal; "resend" is
+		// kept only for the migration canary. Note: in production env validation is
+		// skipped, so the zod default does NOT apply — set it explicitly in prod.
+		EMAIL_TRANSPORT: z.enum(["postal", "resend", "log"]).default("log"),
+		// Comma-separated email tags force-routed to Resend during the Postal cutover
+		// canary (e.g. "magic-link"). Empty once fully on Postal.
+		EMAIL_RESEND_TAGS: z.string().default(""),
 		EMAIL_FROM: z.string().default("PStrack <info@pstrack.app>"),
+		// Self-hosted Postal (HTTP API). Optional so dev/staging (log transport) and
+		// CI need no mail secrets.
+		POSTAL_API_URL: z.url().optional(),
+		POSTAL_API_KEY: z.string().min(1).optional(),
+		// Resend — retained through the canary, removed once Postal is proven.
+		RESEND_API_KEY: z.string().min(1).optional(),
 
 		// payments
 		POLAR_ACCESS_TOKEN: z.string().min(1),

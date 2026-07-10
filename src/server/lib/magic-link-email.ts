@@ -22,6 +22,7 @@ export const sendMagicLinkEmail = async ({
 			from: env.EMAIL_FROM,
 			to: email,
 			subject: "Sign in to PStrack",
+			tag: "magic-link",
 			react: MagicLinkEmail({ url: redirectUrl.toString() }),
 		})
 	} catch (err) {

@@ -129,11 +129,12 @@ export const adminController = new Elysia({ prefix: "/admin", tags: ["Admin"] })
 					from: env.EMAIL_FROM,
 					to: target.email,
 					subject: template.subject(props),
+					tag: "admin",
 					react: template.render(props),
 				})
 			} catch (err) {
 				captureServerException(err, { tag: "admin:email-send" })
-				return status(502, { error: "Failed to send email via Resend" })
+				return status(502, { error: "Failed to send email" })
 			}
 
 			await adminAuditDao.log({

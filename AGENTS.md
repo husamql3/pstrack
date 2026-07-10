@@ -112,7 +112,7 @@ Runtime is **Bun** (≥1.2.2).
 | Validation      | TypeBox (server) + Zod (client forms)               |
 | UI              | ShadCN + Tailwind + Motion                          |
 | Background jobs | Trigger.dev                                         |
-| Email           | Resend + React Email                                |
+| Email           | Postal (self-hosted, HTTP API) + React Email        |
 | Error tracking  | Sentry                                              |
 | Avatars         | hashvatar (deterministic from username, no uploads) |
 | Runtime         | Bun                                                 |
@@ -205,9 +205,9 @@ if (dbUser?.role !== "admin") return error(403, { error: "Admin access required"
 
 See `docs/FLOWS.md` for the full Daily Solve lifecycle, and `docs/POINTS.md` for clawback mechanics.
 
-## Email Notifications (Resend)
+## Email Notifications (Postal)
 
-Transactional emails use **Resend** with **React Email** templates. Templates live in `src/emails/`.
+Transactional emails are sent through **self-hosted Postal** (HTTP API) with **React Email** templates rendered to HTML/text in-app. Templates live in `src/emails/`. All sends go through `sendEmail({ ..., tag })` in `src/server/lib/email.ts`, which routes by `EMAIL_TRANSPORT` (`log` in dev/staging) and a per-`tag` canary override (`EMAIL_RESEND_TAGS`) while Resend is being retired. See [ADR 0013](docs/adr/0013-self-hosted-email-postal.md).
 
 Notification triggers are co-located with the resource that owns the event:
 - `src/server/groups/groups.notifications.ts` - join request, approval, rejection, expiry, removal

@@ -47,6 +47,7 @@ export const groupNotifications = {
 				from: env.EMAIL_FROM,
 				to: requester.email,
 				subject: `You've been approved to join ${groupName(group.slug)}`,
+				tag: "join-approved",
 				react: JoinApprovedEmail({
 					name: requester.name,
 					groupName: groupName(group.slug),
@@ -68,6 +69,7 @@ export const groupNotifications = {
 				from: env.EMAIL_FROM,
 				to: requester.email,
 				subject: `Your request to join ${groupName(group.slug)} was not approved`,
+				tag: "join-rejected",
 				react: JoinRejectedEmail({
 					name: requester.name,
 					groupName: groupName(group.slug),
@@ -89,6 +91,7 @@ export const groupNotifications = {
 				from: env.EMAIL_FROM,
 				to: requester.email,
 				subject: `Your request to join ${groupName(group.slug)} expired`,
+				tag: "join-expired",
 				react: JoinExpiredEmail({
 					name: requester.name,
 					groupName: groupName(group.slug),
@@ -112,6 +115,7 @@ export const groupNotifications = {
 				from: env.EMAIL_FROM,
 				to: user.email,
 				subject: `You've been removed from ${groupName(group.slug)}`,
+				tag: "removed-from-group",
 				react: RemovedFromGroupEmail({
 					name: user.name,
 					groupName: groupName(group.slug),
@@ -141,6 +145,7 @@ export const groupNotifications = {
 					groupType === GroupType.PUBLIC
 						? `Solve or pause next to stay in ${groupName(group.slug)}`
 						: `${missedCount} missed days in ${groupName(group.slug)}`,
+				tag: "inactivity-warning",
 				react: InactivityWarningEmail({
 					name: user.name,
 					groupName: groupName(group.slug),

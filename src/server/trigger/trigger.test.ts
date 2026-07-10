@@ -38,11 +38,14 @@ vi.mock("@/server/lib/db", () => ({
 }))
 
 vi.mock("@/server/lib/email", () => ({
-	resend: {
-		batch: {
-			send: vi.fn(),
-		},
-	},
+	sendEmail: vi.fn(),
+}))
+
+vi.mock("@/server/lib/redis", () => ({
+	createRedisKey: (...parts) => parts.join(":"),
+	redisSAdd: vi.fn(),
+	redisSIsMember: vi.fn().mockResolvedValue(false),
+	redisExpire: vi.fn(),
 }))
 
 vi.mock("@/server/lib/sentry", () => ({
@@ -79,7 +82,7 @@ import { ProSource } from "@/generated/prisma/enums"
 import { groupsDao } from "@/server/groups/groups.dao"
 import { groupNotifications } from "@/server/groups/groups.notifications"
 import { db } from "@/server/lib/db"
-import { resend } from "@/server/lib/email"
+import { sendEmail } from "@/server/lib/email"
 import { captureServerException } from "@/server/lib/sentry"
 import { problemsDao } from "@/server/problems/problems.dao"
 import { assignDailyProblemTask } from "./assign-daily-problem"
@@ -258,11 +261,9 @@ describe("trigger tasks", () => {
 	})
 
 	it("sends daily digest emails and reports per-recipient failures", async () => {
-		resend.batch.send.mockResolvedValue({
-			data: {
-				data: [{ id: "email-1" }, { error: new Error("bad recipient") }],
-			},
-			error: null,
+		sendEmail.mockImplementation(async ({ to }) => {
+			if (to === "bob@example.com") throw new Error("bad recipient")
+			return { id: "email-1" }
 		})
 
 		const result = await sendDailyDigestBatchTask.run({
@@ -290,18 +291,14 @@ describe("trigger tasks", () => {
 			],
 		})
 
-		expect(resend.batch.send).toHaveBeenCalledWith(
-			[
-				expect.objectContaining({
-					from: "PStrack <daily@pstrack.localhost>",
-					to: "alice@example.com",
-					subject: "Today's problem: Two Sum",
-				}),
-				expect.objectContaining({
-					to: "bob@example.com",
-				}),
-			],
-			{ idempotencyKey: "daily-digest:2026-06-16:0" }
+		expect(sendEmail).toHaveBeenCalledTimes(2)
+		expect(sendEmail).toHaveBeenCalledWith(
+			expect.objectContaining({
+				from: "PStrack <daily@pstrack.localhost>",
+				to: "alice@example.com",
+				subject: "Today's problem: Two Sum",
+				tag: "daily-digest",
+			})
 		)
 		expect(captureServerException).toHaveBeenCalledWith(expect.any(Error), {
 			tag: "email:daily-digest",
@@ -309,6 +306,6 @@ describe("trigger tasks", () => {
 			dateKey: "2026-06-16",
 			batchIndex: 0,
 		})
-		expect(result).toEqual({ sent: 1, failed: 1 })
+		expect(result).toEqual({ sent: 1, failed: 1, skipped: 0 })
 	})
 })

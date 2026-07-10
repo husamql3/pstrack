@@ -85,6 +85,7 @@ export const auth = betterAuth({
 							from: env.EMAIL_FROM,
 							to: user.email,
 							subject: "Welcome to PStrack",
+							tag: "welcome",
 							react: WelcomeEmail({ name: user.name }),
 						})
 					} catch (err) {

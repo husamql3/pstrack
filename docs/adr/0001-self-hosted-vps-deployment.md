@@ -1,7 +1,17 @@
 # ADR 0001 — Migrate deployment from Vercel to self-hosted VPS
 
 **Date:** 2026-06-29  
-**Status:** Accepted
+**Status:** Accepted (partially superseded — see Updates)
+
+---
+
+## Updates
+
+**2026-07-11 — what actually shipped differs from this plan:**
+
+- **Host is not Hetzner.** Production runs on a lowhosting.org VPS (`45.141.57.84`, AS212508, AMD64) — see ADR 0008 for the AMD64 correction. All "Hetzner CAX21 / ARM64" references below are historical.
+- **Redis stayed on Upstash.** The `@upstash/redis` REST client in `src/server/lib/redis.ts` was not swapped for a container-local Redis; the "Redis client" section below is not (yet) realised.
+- **Email self-hosting is specified in [ADR 0013](0013-self-hosted-email-postal.md).** Postal is deployed as its own Coolify project sending **directly** from the VPS IP (no smarthost relay), via its HTTP API with React Email rendered in-app, cut over by a per-type canary. The "Email" section below is superseded by 0013.
 
 ---
 

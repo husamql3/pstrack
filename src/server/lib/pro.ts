@@ -110,6 +110,7 @@ export const grantProFromPurchase = async (customer: PolarCustomerRef): Promise<
 			from: env.EMAIL_FROM,
 			to: user.email,
 			subject: "Your PStrack Pro is active",
+			tag: "pro-unlocked-purchase",
 			react: ProUnlockedByPurchaseEmail({
 				name: user.name,
 				dashboardUrl: `${BASE_URL}/dashboard`,

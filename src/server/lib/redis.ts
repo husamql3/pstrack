@@ -53,3 +53,17 @@ export const redisDel = async (...keys: string[]) => {
 
 	return getRedis().del(...keys)
 }
+
+export const redisSAdd = async (key: string, ...members: string[]) => {
+	if (members.length === 0) return 0
+
+	return getRedis().sadd(key, members[0], ...members.slice(1))
+}
+
+export const redisSIsMember = async (key: string, member: string): Promise<boolean> => {
+	return (await getRedis().sismember(key, member)) === 1
+}
+
+export const redisExpire = async (key: string, ttlSeconds: number) => {
+	return getRedis().expire(key, ttlSeconds)
+}
