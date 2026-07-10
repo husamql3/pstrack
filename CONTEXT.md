@@ -29,3 +29,9 @@ _Avoid_: using "badge" to mean the Pro indicator.
 
 **Premium** (problem):
 A `Problem` flagged `isPremium` — a LeetCode-premium problem that is skipped/excluded from a roadmap. Unrelated to **Pro**. The word "premium" belongs to LeetCode problems, not to the Pro entitlement.
+
+### Operations
+
+**Job run**:
+A durable record of one internal background job execution attempt for a logical time window or manual operation. It provides idempotency and an operational audit trail for Trigger.dev-dispatched work.
+_Avoid_: task run, cron log, job log

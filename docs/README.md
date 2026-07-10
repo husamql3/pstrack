@@ -19,10 +19,10 @@ A competitive programming accountability platform. Users join groups, solve one 
 | API Contract | Eden Treaty (end-to-end type safety) |
 | Auth + Payments | Better Auth + Polar plugin |
 | ORM | Prisma |
-| Database | Neon (PostgreSQL) |
+| Database | PostgreSQL on Coolify |
 | Validation | TypeBox (server) + Zod (client forms) |
 | Runtime | Bun |
-| Deployment | Vercel |
+| Deployment | Coolify + GHCR |
 | Email | Resend |
 | Background Jobs | Trigger.dev |
 | Payments | Polar ($5 one-time) |
