@@ -4,6 +4,9 @@ import { defineConfig } from "vitest/config"
 export default defineConfig({
 	plugins: [viteTsConfigPaths({ projects: ["./tsconfig.json"] })],
 	test: {
+		// Integration tests share one database and reset it between cases. Vitest
+		// project configs do not support a project-local fileParallelism setting.
+		fileParallelism: false,
 		projects: [
 			{
 				// Unit tests — all existing mock-based *.test.ts files.

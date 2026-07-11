@@ -28,6 +28,7 @@
 		"db:studio": "bunx db-studio@latest --database-url \"$DATABASE_URL\"",
 		"prisma:generate": "prisma generate",
 		"test": "vitest run",
+		"test:stress": "vitest run --project integration stress --no-file-parallelism",
 		"format": "biome check --write --unsafe .",
 		"check": "bun run biome check .",
 		"knip": "knip",

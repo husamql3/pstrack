@@ -12,6 +12,23 @@ type ApplyPointsOptions = {
 	tx?: Tx
 }
 
+type LockedUserPoints = {
+	totalPoints: number
+	isPro: boolean
+}
+
+const lockUserPoints = async (tx: Tx, userId: string): Promise<LockedUserPoints> => {
+	const rows = await tx.$queryRaw<LockedUserPoints[]>`
+		SELECT "totalPoints" AS "totalPoints", "isPro" AS "isPro"
+		FROM "user"
+		WHERE id = ${userId}
+		FOR NO KEY UPDATE
+	`
+	const user = rows[0]
+	if (!user) throw new Error(`User not found: ${userId}`)
+	return user
+}
+
 const applyPointsDeltaInTx = async (
 	tx: Tx,
 	userId: string,
@@ -19,7 +36,9 @@ const applyPointsDeltaInTx = async (
 	reason: PointReason,
 	opts: Omit<ApplyPointsOptions, "tx">
 ) => {
-	await tx.pointsHistory.create({
+	const user = await lockUserPoints(tx, userId)
+
+	const created = await tx.pointsHistory.createMany({
 		data: {
 			userId,
 			delta,
@@ -28,12 +47,12 @@ const applyPointsDeltaInTx = async (
 			userSolveId: opts.userSolveId ?? null,
 			adminNote: opts.adminNote ?? null,
 		},
+		skipDuplicates: true,
 	})
 
-	const user = await tx.user.findUniqueOrThrow({
-		where: { id: userId },
-		select: { totalPoints: true, isPro: true },
-	})
+	if (created.count === 0) {
+		return { newTotal: user.totalPoints, crossedProThreshold: false }
+	}
 
 	const newTotal = Math.max(0, user.totalPoints + delta)
 	const crossedProThreshold = !user.isPro && newTotal >= PRO_THRESHOLD
