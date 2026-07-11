@@ -268,6 +268,18 @@ export const STRESS_ENDPOINTS: StressEndpoint[] = [
 		dimensions: ["auth", "read"],
 	},
 	{
+		method: "POST",
+		path: "/api/v3/internal/jobs/:jobName",
+		module: "jobs",
+		dimensions: ["auth", "idempotency", "side-effect"],
+	},
+	{
+		method: "GET",
+		path: "/api/v3/internal/jobs/freshness",
+		module: "jobs",
+		dimensions: ["auth", "read"],
+	},
+	{
 		method: "GET",
 		path: "/api/v3/leaderboard/global",
 		module: "leaderboard",
@@ -504,6 +516,11 @@ export const STRESS_BACKGROUND_MODULES: StressBackgroundModule[] = [
 		dimensions: ["idempotency", "invariant", "side-effect"],
 	},
 	{
+		file: "dispatch-job.ts",
+		module: "trigger",
+		dimensions: ["side-effect"],
+	},
+	{
 		file: "expire-admin-pro-grants.ts",
 		module: "trigger",
 		dimensions: ["idempotency", "side-effect"],
@@ -530,11 +547,6 @@ export const STRESS_BACKGROUND_MODULES: StressBackgroundModule[] = [
 	},
 	{
 		file: "reset-today-problems.ts",
-		module: "trigger",
-		dimensions: ["idempotency", "side-effect"],
-	},
-	{
-		file: "send-daily-digest-batch.ts",
 		module: "trigger",
 		dimensions: ["idempotency", "side-effect"],
 	},
