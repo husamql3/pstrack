@@ -2,12 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest"
 
 const deliveryMocks = vi.hoisted(() => ({
 	notifyAdmin: vi.fn(async (_event: string, _payload: unknown) => {}),
-	resendBatchSend: vi.fn(
-		async (emails: unknown[], _options?: { idempotencyKey: string }) => ({
-			data: { data: emails.map(() => ({ id: "stress-email" })) },
-			error: null,
-		})
-	),
+	dispatchJob: vi.fn(async () => ({ success: true, reused: false, result: null })),
 }))
 
 vi.mock("@trigger.dev/sdk/v3", () => ({
@@ -23,11 +18,6 @@ vi.mock("@/server/lib/bot", () => ({
 }))
 
 vi.mock("@/server/lib/email", () => ({
-	resend: {
-		batch: {
-			send: deliveryMocks.resendBatchSend,
-		},
-	},
 	sendEmail: vi.fn(async () => ({ id: "stress-email" })),
 }))
 
@@ -42,6 +32,16 @@ vi.mock("@/server/lib/sentry", () => ({
 	captureServerException: vi.fn(),
 }))
 
+vi.mock("@/server/trigger/dispatch-job", () => ({
+	dispatchJob: deliveryMocks.dispatchJob,
+	dailyKey: (jobName: string, date: Date) =>
+		`${jobName}:${date.toISOString().slice(0, 10)}`,
+	hourlyKey: (jobName: string, date: Date) =>
+		`${jobName}:${date.toISOString().slice(0, 13)}`,
+	monthlyKey: (jobName: string, date: Date) =>
+		`${jobName}:${date.toISOString().slice(0, 7)}`,
+}))
+
 import { ProSource } from "@/generated/prisma/enums"
 import { assignDailyProblemTask } from "@/server/trigger/assign-daily-problem"
 import { expireAdminProGrantsTask } from "@/server/trigger/expire-admin-pro-grants"
@@ -50,7 +50,6 @@ import { markMissedTask } from "@/server/trigger/mark-missed"
 import { purgeSystemEventsTask } from "@/server/trigger/purge-system-events"
 import { resetMonthlyCountersTask } from "@/server/trigger/reset-monthly-counters"
 import { resetTodayProblemsTask } from "@/server/trigger/reset-today-problems"
-import { sendDailyDigestBatchTask } from "@/server/trigger/send-daily-digest-batch"
 import { sendWeeklyDigestTask } from "@/server/trigger/send-weekly-digest"
 import {
 	addMember,
@@ -171,12 +170,7 @@ const seedTriggerState = async () => {
 describe("Trigger module stress suite", () => {
 	beforeEach(() => {
 		deliveryMocks.notifyAdmin.mockClear()
-		deliveryMocks.resendBatchSend.mockClear()
-		Reflect.set(
-			sendDailyDigestBatchTask,
-			"batchTrigger",
-			vi.fn(async () => ({ batchId: "stress-digest-batch" }))
-		)
+		deliveryMocks.dispatchJob.mockClear()
 	})
 
 	it("keeps scheduled modules idempotent under repeated runs", async () => {
@@ -185,11 +179,11 @@ describe("Trigger module stress suite", () => {
 		const tasks = [
 			() => runStressTask(assignDailyProblemTask, { timestamp: state.today }),
 			() => runStressTask(markMissedTask, { timestamp: state.tomorrow }),
-			() => runStressTask(expireJoinRequestsTask),
-			() => runStressTask(resetMonthlyCountersTask),
-			() => runStressTask(expireAdminProGrantsTask),
-			() => runStressTask(purgeSystemEventsTask),
-			() => runStressTask(sendWeeklyDigestTask),
+			() => runStressTask(expireJoinRequestsTask, { timestamp: state.today }),
+			() => runStressTask(resetMonthlyCountersTask, { timestamp: state.today }),
+			() => runStressTask(expireAdminProGrantsTask, { timestamp: state.today }),
+			() => runStressTask(purgeSystemEventsTask, { timestamp: state.today }),
+			() => runStressTask(sendWeeklyDigestTask, { timestamp: state.today }),
 		]
 		const work = tasks.flatMap((task) => Array.from({ length: repetitions }, () => task))
 
@@ -199,34 +193,13 @@ describe("Trigger module stress suite", () => {
 
 		expectNoRejectedStressWork(results)
 		await expectCoreStressInvariants()
-		const weeklyNotifications = deliveryMocks.notifyAdmin.mock.calls.filter(
-			([event]) => event === "digest.weekly"
-		)
-		expect(weeklyNotifications).toHaveLength(repetitions)
+		expect(deliveryMocks.dispatchJob).toHaveBeenCalledTimes(tasks.length * repetitions)
 	}, 20_000)
 
-	it("keeps destructive and delivery modules bounded under repeated runs", async () => {
+	it("keeps destructive modules bounded under repeated runs", async () => {
 		await seedTriggerState()
 		const repetitions = stressRepetitions(2)
-		const digestPayload = {
-			dateKey: "2026-06-16",
-			batchIndex: 0,
-			recipients: [
-				{
-					email: "stress-trigger-user@example.com",
-					name: "Stress Trigger User",
-					groupSlug: "stress-trigger-group",
-					problemSlug: "stress-trigger-problem",
-					problemTitle: "Stress Trigger Problem",
-					difficulty: "EASY",
-					topic: "Stress",
-				},
-			],
-		}
-		const tasks = [
-			() => runStressTask(resetTodayProblemsTask),
-			() => runStressTask(sendDailyDigestBatchTask, digestPayload),
-		]
+		const tasks = [() => runStressTask(resetTodayProblemsTask)]
 		const work = tasks.flatMap((task) => Array.from({ length: repetitions }, () => task))
 
 		const results = await runConcurrent(work.length, async (index) =>
@@ -235,11 +208,6 @@ describe("Trigger module stress suite", () => {
 
 		expectNoRejectedStressWork(results)
 		await expectCoreStressInvariants()
-		expect(deliveryMocks.resendBatchSend).toHaveBeenCalledTimes(repetitions)
-		for (const [, options] of deliveryMocks.resendBatchSend.mock.calls) {
-			expect(options).toEqual({
-				idempotencyKey: "daily-digest:2026-06-16:0",
-			})
-		}
+		expect(deliveryMocks.dispatchJob).toHaveBeenCalledTimes(tasks.length * repetitions)
 	}, 20_000)
 })

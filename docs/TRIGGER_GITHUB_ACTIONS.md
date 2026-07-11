@@ -12,6 +12,15 @@ Create the token in Trigger.dev from the Personal Access Tokens page:
 
 https://cloud.trigger.dev/account/tokens
 
+Trigger.dev also needs exactly two runtime variables: `JOB_DISPATCH_URL` and
+`JOB_DISPATCH_SECRET`. Run `bun run env:sync:trigger` after adding them to the
+local production environment file. The sync command deliberately excludes all
+database credentials.
+
+For automated deploys, configure `JOB_DISPATCH_URL` as a GitHub Actions
+repository variable and `JOB_DISPATCH_SECRET` as a repository secret. The app
+must receive the same secret through Coolify.
+
 ## Production Deploy
 
 The production workflow lives at `.github/workflows/release-trigger-prod.yml`. It runs on pushes to `main` and can also be started manually with `workflow_dispatch`.
@@ -31,3 +40,18 @@ trigger deploy
 ## Version Pinning
 
 Keep `trigger.dev`, `@trigger.dev/sdk`, and `@trigger.dev/build` on the same version. Trigger.dev deploys can fail when the CLI and package versions do not match.
+
+## Freshness and reconciliation
+
+Query `GET /api/v3/internal/jobs/freshness` with the job bearer credential to
+confirm the latest successful run for every scheduled job.
+
+The skipped July 10 mark-missed window has a bounded one-day reconciliation:
+
+```sh
+bun run jobs:reconcile-mark-missed --confirm=2026-07-10
+```
+
+The command uses the fixed key `reconcile-mark-missed:2026-07-10`. Re-running it
+returns the ledger's prior result, while domain constraints prevent duplicate
+miss penalties.

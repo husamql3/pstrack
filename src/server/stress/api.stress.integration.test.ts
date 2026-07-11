@@ -3,6 +3,7 @@ import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest"
 
 const authMock = vi.hoisted(() => {
 	process.env.BOT_NOTIFY_SECRET = "stress-bot-secret"
+	process.env.JOB_DISPATCH_SECRET = "stress-job-dispatch-secret-value-1234567"
 
 	return {
 		getSession: vi.fn(),
@@ -685,6 +686,24 @@ const createEndpointScenarios = (ctx: StressContext): StressScenario[] => [
 		method: "GET",
 		path: "/api/v3/internal/bot",
 		headers: { Authorization: "Bearer stress-bot-secret" },
+		allowedStatuses: [200],
+	},
+	{
+		key: { method: "POST", path: "/api/v3/internal/jobs/:jobName" },
+		method: "POST",
+		path: "/api/v3/internal/jobs/reset-monthly-counters",
+		headers: { Authorization: "Bearer stress-job-dispatch-secret-value-1234567" },
+		body: {
+			idempotencyKey: "stress-reset-monthly-counters",
+			scheduledAt: "2026-07-11T00:00:00.000Z",
+		},
+		allowedStatuses: [200, 409],
+	},
+	{
+		key: { method: "GET", path: "/api/v3/internal/jobs/freshness" },
+		method: "GET",
+		path: "/api/v3/internal/jobs/freshness",
+		headers: { Authorization: "Bearer stress-job-dispatch-secret-value-1234567" },
 		allowedStatuses: [200],
 	},
 	{
