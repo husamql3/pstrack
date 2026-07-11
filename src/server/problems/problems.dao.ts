@@ -521,6 +521,8 @@ export const problemsDao = {
 		let skipped = 0
 
 		await db.$transaction(async (tx) => {
+			await tx.$executeRaw`SELECT pg_advisory_xact_lock(705414, 250)`
+
 			const customSlugs = new Set(
 				(
 					await tx.problem.findMany({

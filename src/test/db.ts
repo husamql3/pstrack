@@ -9,7 +9,7 @@
 import { PrismaPg } from "@prisma/adapter-pg"
 
 import { PrismaClient } from "@/generated/prisma/client"
-import type { Difficulty, GroupType } from "@/generated/prisma/enums"
+import type { Difficulty, GroupType, ProSource } from "@/generated/prisma/enums"
 
 const TEST_DATABASE_URL =
 	process.env.TEST_DATABASE_URL ??
@@ -70,10 +70,16 @@ export const createUser = async (
 		email: string
 		username: string
 		leetcodeHandle: string
+		codeforcesHandle: string | null
+		isPro: boolean
+		proSource: ProSource | null
+		role: string | null
 		currentStreak: number
 		longestStreak: number
 		totalPoints: number
 		currentStreakStartedAt: Date | null
+		pausesUsedThisMonth: number
+		verificationFailuresThisMonth: number
 	}> = {}
 ) => {
 	const id = overrides.id ?? uid()
@@ -85,10 +91,16 @@ export const createUser = async (
 			emailVerified: true,
 			username: overrides.username ?? `user_${id}`,
 			leetcodeHandle: overrides.leetcodeHandle ?? null,
+			codeforcesHandle: overrides.codeforcesHandle ?? null,
+			isPro: overrides.isPro ?? false,
+			proSource: overrides.proSource ?? null,
+			role: overrides.role ?? null,
 			currentStreak: overrides.currentStreak ?? 0,
 			longestStreak: overrides.longestStreak ?? 0,
 			totalPoints: overrides.totalPoints ?? 0,
 			currentStreakStartedAt: overrides.currentStreakStartedAt ?? null,
+			pausesUsedThisMonth: overrides.pausesUsedThisMonth ?? 0,
+			verificationFailuresThisMonth: overrides.verificationFailuresThisMonth ?? 0,
 		},
 	})
 }
@@ -122,8 +134,12 @@ export const createGroup = async (
 		type: GroupType
 		roadmap: string
 		creatorId: string
+		maxMembers: number
+		inviteCode: string | null
+		inviteExpiresAt: Date | null
 		isActive: boolean
 		isStarted: boolean
+		frozen: boolean
 	}> = {}
 ) => {
 	const id = overrides.id ?? uid()
@@ -139,8 +155,12 @@ export const createGroup = async (
 			type: (overrides.type as GroupType) ?? "PUBLIC",
 			roadmap,
 			creatorId: overrides.creatorId ?? uid(),
+			maxMembers: overrides.maxMembers ?? 30,
+			inviteCode: overrides.inviteCode ?? null,
+			inviteExpiresAt: overrides.inviteExpiresAt ?? null,
 			isActive: overrides.isActive ?? true,
 			isStarted: overrides.isStarted ?? true,
+			frozen: overrides.frozen ?? false,
 		},
 	})
 }
@@ -187,5 +207,27 @@ export const createDailyProblem = async ({
 }) => {
 	return testDb.dailyProblem.create({
 		data: { groupId, problemId, assignedDate },
+	})
+}
+
+export const addRoadmapProblem = async ({
+	roadmap = "NC250",
+	problemId,
+	position,
+	topic,
+}: {
+	roadmap?: string
+	problemId: string
+	position: number
+	topic?: string | null
+}) => {
+	const catalog = await createRoadmapCatalog({ key: roadmap })
+	return testDb.roadmapProblem.create({
+		data: {
+			roadmapId: catalog.id,
+			problemId,
+			position,
+			topic: topic ?? null,
+		},
 	})
 }

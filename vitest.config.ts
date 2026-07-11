@@ -4,8 +4,8 @@ import { defineConfig } from "vitest/config"
 export default defineConfig({
 	plugins: [viteTsConfigPaths({ projects: ["./tsconfig.json"] })],
 	test: {
-		// Integration files share one database and reset it between cases. Keep
-		// files serial so one suite cannot truncate another suite's fixtures.
+		// Integration tests share one database and reset it between cases. Vitest
+		// project configs do not support a project-local fileParallelism setting.
 		fileParallelism: false,
 		projects: [
 			{

@@ -16,6 +16,8 @@ process.env.DATABASE_URL = TEST_DATABASE_URL
 process.env.DIRECT_URL = TEST_DATABASE_URL
 process.env.NODE_ENV = "test"
 process.env.SKIP_ENV_VALIDATION = "1"
+process.env.BETTER_AUTH_URL ??= "https://pstrack.test"
+process.env.EMAIL_FROM ??= "PStrack <test@pstrack.test>"
 
 const { resetDb } = await import("./db")
 
