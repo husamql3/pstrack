@@ -45,6 +45,10 @@ const server = {
 	POLAR_PRODUCT_ID: z.string().min(1),
 	POLAR_SUCCESS_URL: z.url(),
 	POLAR_WEBHOOK_SECRET: z.string().min(1).optional(),
+	// Explicit override for the Polar API server. Defaults to NODE_ENV-based
+	// selection when unset. Vercel force-sets NODE_ENV=production, so stage
+	// sets POLAR_SERVER="sandbox" to keep payments on the sandbox catalog.
+	POLAR_SERVER: z.enum(["sandbox", "production"]).optional(),
 
 	// husam-bot
 	BOT_URL: z.string().url().optional(),
