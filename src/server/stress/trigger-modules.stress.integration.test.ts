@@ -179,11 +179,11 @@ describe("Trigger module stress suite", () => {
 		const tasks = [
 			() => runStressTask(assignDailyProblemTask, { timestamp: state.today }),
 			() => runStressTask(markMissedTask, { timestamp: state.tomorrow }),
-			() => runStressTask(expireJoinRequestsTask),
-			() => runStressTask(resetMonthlyCountersTask),
-			() => runStressTask(expireAdminProGrantsTask),
-			() => runStressTask(purgeSystemEventsTask),
-			() => runStressTask(sendWeeklyDigestTask),
+			() => runStressTask(expireJoinRequestsTask, { timestamp: state.today }),
+			() => runStressTask(resetMonthlyCountersTask, { timestamp: state.today }),
+			() => runStressTask(expireAdminProGrantsTask, { timestamp: state.today }),
+			() => runStressTask(purgeSystemEventsTask, { timestamp: state.today }),
+			() => runStressTask(sendWeeklyDigestTask, { timestamp: state.today }),
 		]
 		const work = tasks.flatMap((task) => Array.from({ length: repetitions }, () => task))
 
