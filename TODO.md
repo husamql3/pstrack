@@ -91,6 +91,38 @@ Do not spawn subagents unless the user or an invoked skill explicitly calls for 
 - Use aggregate-only evidence for reconciliation and alerts.
 - Treat a backup as unproven until an isolated restore completes successfully.
 
+### Production access available to the agent
+
+The agent can inspect and operate the production stack through two configured access
+paths. Prefer the narrowest path that matches the task and keep all outputs sanitized.
+
+1. **Coolify MCP** — use the configured Coolify MCP as the preferred semantic interface
+   for Coolify applications, services, deployments, environment-variable **names**,
+   deployment logs/status, resource configuration, and controlled redeploy/rollback
+   operations. Discover and use the MCP's actual exposed tools; do not invent tool names
+   or assume a capability that is not present in the current session. If the connector
+   is unavailable, report that fact and use the SSH path for safe inspection or ask the
+   user to reconnect it.
+2. **Production SSH alias** — connect with `ssh pstrack`. This alias is already configured
+   for the production server. Use it for host-level systemd, Docker, firewall, disk,
+   memory, package, network, backup, PostgreSQL, and mail inspection that Coolify MCP
+   does not expose.
+
+Use Coolify MCP for platform state and deployment intent; use `ssh pstrack` for host
+truth. For high-risk changes, cross-check both after the operation. Never retrieve or
+print environment values merely because either access path permits it. Production
+mutation rules, preflight, rollback, and verification requirements above apply equally
+to MCP and SSH actions.
+
+Safe SSH connectivity preflight:
+
+```sh
+ssh -o BatchMode=yes -o ConnectTimeout=10 pstrack 'hostname; uptime -p'
+```
+
+Do not replace the `pstrack` alias with a raw host address in docs, issues, commits, or
+chat output.
+
 ### Repository/worktree snapshot
 
 This is a snapshot, not a guarantee; verify with `git worktree list` and `git status`.
@@ -821,6 +853,11 @@ purpose, document it and upgrade CLI 54.20.1 to 55.0.0 or newer.
 
 These commands are examples for a fresh agent. Inspect them before running and keep
 outputs sanitized.
+
+Before shell inspection, query the configured Coolify MCP for the application,
+deployment, database, Redis, mail, and backup resource status when those tools are
+available. Compare MCP-reported deployment state with container/health evidence over
+`ssh pstrack`; neither source alone proves the full end-to-end path.
 
 ```sh
 # Repository and worktree state
