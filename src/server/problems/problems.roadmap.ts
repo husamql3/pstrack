@@ -122,10 +122,15 @@ const seedLeetCodeStudyPlanProblems = async (tx: Tx) => {
 	}
 }
 
-const syncLegacyRoadmapMemberships = async (tx: Tx) => {
+const syncLegacyRoadmapMemberships = async (
+	tx: Tx,
+	roadmapIdByKey: Map<RoadmapKey, string>
+) => {
 	for (const roadmap of legacyRoadmapCatalogSeed) {
 		const flag = legacyRoadmapFlag(roadmap.key)
 		if (!flag) continue
+		const roadmapId = roadmapIdByKey.get(roadmap.key)
+		if (!roadmapId) continue
 
 		const problems = await tx.problem.findMany({
 			where: { [flag]: true },
@@ -133,10 +138,10 @@ const syncLegacyRoadmapMemberships = async (tx: Tx) => {
 			select: { id: true, topic: true },
 		})
 
-		await tx.roadmapProblem.deleteMany({ where: { roadmapId: roadmap.id } })
+		await tx.roadmapProblem.deleteMany({ where: { roadmapId } })
 		await tx.roadmapProblem.createMany({
 			data: problems.map((problem, index) => ({
-				roadmapId: roadmap.id,
+				roadmapId,
 				problemId: problem.id,
 				position: index + 1,
 				topic: problem.topic,
@@ -146,8 +151,13 @@ const syncLegacyRoadmapMemberships = async (tx: Tx) => {
 	}
 }
 
-const syncLeetCodeStudyPlanMemberships = async (tx: Tx) => {
+const syncLeetCodeStudyPlanMemberships = async (
+	tx: Tx,
+	roadmapIdByKey: Map<RoadmapKey, string>
+) => {
 	for (const roadmap of LEETCODE_STUDY_PLAN_ROADMAPS) {
+		const roadmapId = roadmapIdByKey.get(roadmap.key)
+		if (!roadmapId) continue
 		const slugs = roadmap.problems.map((problem) => problem.slug)
 		const problems = await tx.problem.findMany({
 			where: { slug: { in: slugs } },
@@ -160,7 +170,7 @@ const syncLeetCodeStudyPlanMemberships = async (tx: Tx) => {
 			const problemId = problemIdBySlug.get(problem.slug)
 			if (!problemId) continue
 			data.push({
-				roadmapId: catalogIdFor(roadmap.key),
+				roadmapId,
 				problemId,
 				position: problem.position,
 				topic: problem.topic,
@@ -172,15 +182,17 @@ const syncLeetCodeStudyPlanMemberships = async (tx: Tx) => {
 		}
 
 		await tx.roadmapProblem.deleteMany({
-			where: { roadmapId: catalogIdFor(roadmap.key) },
+			where: { roadmapId },
 		})
 		await tx.roadmapProblem.createMany({ data, skipDuplicates: true })
 	}
 }
 
 export const syncRoadmapCatalog = async (tx: Tx) => {
+	const roadmapIdByKey = new Map<RoadmapKey, string>()
+
 	for (const roadmap of roadmapCatalogSeed) {
-		await tx.roadmapCatalog.upsert({
+		const catalog = await tx.roadmapCatalog.upsert({
 			where: { key: roadmap.key },
 			create: roadmap,
 			update: {
@@ -191,10 +203,12 @@ export const syncRoadmapCatalog = async (tx: Tx) => {
 				sortOrder: roadmap.sortOrder,
 				isActive: true,
 			},
+			select: { id: true },
 		})
+		roadmapIdByKey.set(roadmap.key, catalog.id)
 	}
 
 	await seedLeetCodeStudyPlanProblems(tx)
-	await syncLegacyRoadmapMemberships(tx)
-	await syncLeetCodeStudyPlanMemberships(tx)
+	await syncLegacyRoadmapMemberships(tx, roadmapIdByKey)
+	await syncLeetCodeStudyPlanMemberships(tx, roadmapIdByKey)
 }

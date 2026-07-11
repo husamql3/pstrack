@@ -196,11 +196,12 @@ export const groupsAdminDao = {
 		})
 		if (!existing) return { ok: false, error: "GROUP_NOT_FOUND" }
 
-		await db.$transaction(async (tx) => {
+		const deleted = await db.$transaction(async (tx) => {
 			await tx.dailyProblem.deleteMany({ where: { groupId } })
 			await tx.groupJoinRequest.deleteMany({ where: { groupId } })
 			await tx.groupMember.deleteMany({ where: { groupId } })
-			await tx.group.delete({ where: { id: groupId } })
+			const result = await tx.group.deleteMany({ where: { id: groupId } })
+			if (result.count === 0) return false
 			await adminAuditDao.log(
 				{
 					adminId,
@@ -210,8 +211,10 @@ export const groupsAdminDao = {
 				},
 				tx
 			)
+			return true
 		})
 
+		if (!deleted) return { ok: false, error: "GROUP_NOT_FOUND" }
 		return { ok: true, slug: existing.slug }
 	},
 

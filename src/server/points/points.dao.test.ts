@@ -13,13 +13,13 @@ import { db } from "@/server/lib/db"
 import { pointsDao } from "./points.dao"
 
 const tx = {
+	$queryRaw: vi.fn(),
 	pointsHistory: {
-		create: vi.fn(),
+		createMany: vi.fn(async () => ({ count: 1 })),
 		aggregate: vi.fn(),
 		findFirst: vi.fn(),
 	},
 	user: {
-		findUniqueOrThrow: vi.fn(),
 		update: vi.fn(),
 	},
 }
@@ -29,7 +29,7 @@ describe("pointsDao", () => {
 
 	describe("applyPointsDelta", () => {
 		it("writes an immutable ledger row and updates the cached total", async () => {
-			tx.user.findUniqueOrThrow.mockResolvedValue({ totalPoints: 12, isPro: false })
+			tx.$queryRaw.mockResolvedValue([{ totalPoints: 12, isPro: false }])
 
 			const result = await pointsDao.applyPointsDelta(
 				"user-1",
@@ -42,7 +42,7 @@ describe("pointsDao", () => {
 			)
 
 			expect(db.$transaction).toHaveBeenCalledOnce()
-			expect(tx.pointsHistory.create).toHaveBeenCalledWith({
+			expect(tx.pointsHistory.createMany).toHaveBeenCalledWith({
 				data: {
 					userId: "user-1",
 					delta: 10,
@@ -51,6 +51,7 @@ describe("pointsDao", () => {
 					userSolveId: "solve-1",
 					adminNote: null,
 				},
+				skipDuplicates: true,
 			})
 			expect(tx.user.update).toHaveBeenCalledWith({
 				where: { id: "user-1" },
@@ -60,7 +61,7 @@ describe("pointsDao", () => {
 		})
 
 		it("never lets a negative delta push total points below zero", async () => {
-			tx.user.findUniqueOrThrow.mockResolvedValue({ totalPoints: 2, isPro: false })
+			tx.$queryRaw.mockResolvedValue([{ totalPoints: 2, isPro: false }])
 
 			const result = await pointsDao.applyPointsDelta("user-1", -5, PointReason.PAUSE, {
 				tx,
@@ -74,7 +75,7 @@ describe("pointsDao", () => {
 		})
 
 		it("unlocks pro exactly when the user crosses the points threshold", async () => {
-			tx.user.findUniqueOrThrow.mockResolvedValue({ totalPoints: 2995, isPro: false })
+			tx.$queryRaw.mockResolvedValue([{ totalPoints: 2995, isPro: false }])
 
 			const result = await pointsDao.applyPointsDelta(
 				"user-1",
@@ -95,7 +96,7 @@ describe("pointsDao", () => {
 		})
 
 		it("does not overwrite pro source for users who are already pro", async () => {
-			tx.user.findUniqueOrThrow.mockResolvedValue({ totalPoints: 2995, isPro: true })
+			tx.$queryRaw.mockResolvedValue([{ totalPoints: 2995, isPro: true }])
 
 			const result = await pointsDao.applyPointsDelta(
 				"user-1",
@@ -115,9 +116,9 @@ describe("pointsDao", () => {
 	describe("applyMissPenalty", () => {
 		it("claws back streak bonuses before applying the missed-day penalty", async () => {
 			tx.pointsHistory.aggregate.mockResolvedValue({ _sum: { delta: 12 } })
-			tx.user.findUniqueOrThrow
-				.mockResolvedValueOnce({ totalPoints: 50, isPro: false })
-				.mockResolvedValueOnce({ totalPoints: 38, isPro: false })
+			tx.$queryRaw
+				.mockResolvedValueOnce([{ totalPoints: 50, isPro: false }])
+				.mockResolvedValueOnce([{ totalPoints: 38, isPro: false }])
 
 			await pointsDao.applyMissPenalty(tx, "user-1", {
 				userSolveId: "solve-1",
@@ -134,7 +135,7 @@ describe("pointsDao", () => {
 				},
 				_sum: { delta: true },
 			})
-			expect(tx.pointsHistory.create).toHaveBeenNthCalledWith(1, {
+			expect(tx.pointsHistory.createMany).toHaveBeenNthCalledWith(1, {
 				data: {
 					userId: "user-1",
 					delta: -12,
@@ -143,8 +144,9 @@ describe("pointsDao", () => {
 					userSolveId: "solve-1",
 					adminNote: null,
 				},
+				skipDuplicates: true,
 			})
-			expect(tx.pointsHistory.create).toHaveBeenNthCalledWith(2, {
+			expect(tx.pointsHistory.createMany).toHaveBeenNthCalledWith(2, {
 				data: {
 					userId: "user-1",
 					delta: -3,
@@ -153,6 +155,7 @@ describe("pointsDao", () => {
 					userSolveId: "solve-1",
 					adminNote: null,
 				},
+				skipDuplicates: true,
 			})
 			expect(tx.user.update).toHaveBeenLastCalledWith({
 				where: { id: "user-1" },
@@ -161,7 +164,7 @@ describe("pointsDao", () => {
 		})
 
 		it("applies only the missed-day penalty when there is no active streak", async () => {
-			tx.user.findUniqueOrThrow.mockResolvedValue({ totalPoints: 10, isPro: false })
+			tx.$queryRaw.mockResolvedValue([{ totalPoints: 10, isPro: false }])
 
 			await pointsDao.applyMissPenalty(tx, "user-1", {
 				userSolveId: "solve-1",
@@ -169,8 +172,8 @@ describe("pointsDao", () => {
 			})
 
 			expect(tx.pointsHistory.aggregate).not.toHaveBeenCalled()
-			expect(tx.pointsHistory.create).toHaveBeenCalledOnce()
-			expect(tx.pointsHistory.create).toHaveBeenCalledWith({
+			expect(tx.pointsHistory.createMany).toHaveBeenCalledOnce()
+			expect(tx.pointsHistory.createMany).toHaveBeenCalledWith({
 				data: {
 					userId: "user-1",
 					delta: -3,
@@ -179,6 +182,7 @@ describe("pointsDao", () => {
 					userSolveId: "solve-1",
 					adminNote: null,
 				},
+				skipDuplicates: true,
 			})
 			expect(tx.user.update).toHaveBeenLastCalledWith({
 				where: { id: "user-1" },

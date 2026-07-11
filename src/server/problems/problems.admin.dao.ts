@@ -46,6 +46,12 @@ const nextRoadmapIndex = async (): Promise<number> => {
 	return (max._max.roadmapIndex ?? 0) + 1
 }
 
+const isUniqueConstraintError = (err: unknown, field: string) =>
+	err instanceof Error &&
+	"code" in err &&
+	err.code === "P2002" &&
+	err.message.includes(field)
+
 const nextPositionForRoadmap = async (tx: Tx, roadmapId: string): Promise<number> => {
 	const max = await tx.roadmapProblem.aggregate({
 		where: { roadmapId },
@@ -152,36 +158,51 @@ export const problemsAdminDao = {
 		})
 		if (existing) return { ok: false, error: "SLUG_TAKEN" }
 
-		const idx = await nextRoadmapIndex()
+		let problem: AdminProblemListItem | null = null
+		for (let attempt = 0; attempt < 3; attempt++) {
+			const idx = await nextRoadmapIndex()
+			try {
+				problem = await db.$transaction(async (tx) => {
+					const created = await tx.problem.create({
+						data: {
+							slug: input.slug,
+							title: input.title,
+							difficulty: input.difficulty,
+							topic: input.topic,
+							leetcodeId: input.leetcodeId ?? null,
+							neetcode250: input.neetcode250 ?? false,
+							neetcode150: input.neetcode150 ?? false,
+							blind75: input.blind75 ?? false,
+							source: "CUSTOM",
+							roadmapIndex: idx,
+						},
+						select: adminProblemListSelect,
+					})
+					await syncProblemRoadmapMemberships(tx, created)
+					await adminAuditDao.log(
+						{
+							adminId,
+							action: "PROBLEM_CREATED",
+							target: { type: "PROBLEM", id: created.id },
+							metadata: { slug: created.slug },
+						},
+						tx
+					)
+					return created
+				})
+				break
+			} catch (err) {
+				if (isUniqueConstraintError(err, "slug")) {
+					return { ok: false, error: "SLUG_TAKEN" }
+				}
+				if (isUniqueConstraintError(err, "roadmapIndex") && attempt < 2) {
+					continue
+				}
+				throw err
+			}
+		}
 
-		const problem = await db.$transaction(async (tx) => {
-			const created = await tx.problem.create({
-				data: {
-					slug: input.slug,
-					title: input.title,
-					difficulty: input.difficulty,
-					topic: input.topic,
-					leetcodeId: input.leetcodeId ?? null,
-					neetcode250: input.neetcode250 ?? false,
-					neetcode150: input.neetcode150 ?? false,
-					blind75: input.blind75 ?? false,
-					source: "CUSTOM",
-					roadmapIndex: idx,
-				},
-				select: adminProblemListSelect,
-			})
-			await syncProblemRoadmapMemberships(tx, created)
-			await adminAuditDao.log(
-				{
-					adminId,
-					action: "PROBLEM_CREATED",
-					target: { type: "PROBLEM", id: created.id },
-					metadata: { slug: created.slug },
-				},
-				tx
-			)
-			return created
-		})
+		if (!problem) return { ok: false, error: "SLUG_TAKEN" }
 
 		return { ok: true, problem }
 	},
@@ -234,8 +255,9 @@ export const problemsAdminDao = {
 			return { ok: false, error: "HAS_DAILY_PROBLEMS" }
 		}
 
-		await db.$transaction(async (tx) => {
-			await tx.problem.delete({ where: { id } })
+		const deleted = await db.$transaction(async (tx) => {
+			const result = await tx.problem.deleteMany({ where: { id } })
+			if (result.count === 0) return false
 			await adminAuditDao.log(
 				{
 					adminId,
@@ -245,8 +267,10 @@ export const problemsAdminDao = {
 				},
 				tx
 			)
+			return true
 		})
 
+		if (!deleted) return { ok: false, error: "NOT_FOUND" }
 		return { ok: true }
 	},
 
