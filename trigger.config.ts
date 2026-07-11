@@ -12,24 +12,7 @@ const skipEnvValidationDuringIndex: BuildExtension = {
 	},
 }
 
-const SYNCED_KEYS = [
-	"DATABASE_URL",
-	"DIRECT_URL",
-	"BETTER_AUTH_SECRET",
-	"BETTER_AUTH_URL",
-	"GOOGLE_CLIENT_ID",
-	"GOOGLE_CLIENT_SECRET",
-	"GITHUB_CLIENT_ID",
-	"GITHUB_CLIENT_SECRET",
-	"RESEND_API_KEY",
-	"EMAIL_FROM",
-	"POLAR_ACCESS_TOKEN",
-	"POLAR_SUCCESS_URL",
-	"SENTRY_DSN",
-	"SENTRY_ENVIRONMENT",
-	"SENTRY_TRACES_SAMPLE_RATE",
-	"NODE_ENV",
-] as const
+const SYNCED_KEYS = ["JOB_DISPATCH_URL", "JOB_DISPATCH_SECRET"] as const
 
 export default defineConfig({
 	project: "proj_nhquzeoumjpzigemrkxj",

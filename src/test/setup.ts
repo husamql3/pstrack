@@ -8,7 +8,18 @@
 
 import { beforeEach } from "vitest"
 
-import { resetDb } from "./db"
+const TEST_DATABASE_URL =
+	process.env.TEST_DATABASE_URL ??
+	"postgresql://pstrack:pstrack@127.0.0.1:5433/pstrack?schema=public"
+
+process.env.DATABASE_URL = TEST_DATABASE_URL
+process.env.DIRECT_URL = TEST_DATABASE_URL
+process.env.NODE_ENV = "test"
+process.env.SKIP_ENV_VALIDATION = "1"
+process.env.BETTER_AUTH_URL ??= "https://pstrack.test"
+process.env.EMAIL_FROM ??= "PStrack <test@pstrack.test>"
+
+const { resetDb } = await import("./db")
 
 beforeEach(async () => {
 	await resetDb()

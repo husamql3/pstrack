@@ -28,13 +28,15 @@
 		"db:studio": "bunx db-studio@latest --database-url \"$DATABASE_URL\"",
 		"prisma:generate": "prisma generate",
 		"test": "vitest run",
+		"test:stress": "vitest run --project integration stress --no-file-parallelism",
 		"format": "biome check --write --unsafe .",
 		"check": "bun run biome check .",
 		"knip": "knip",
 		"typecheck": "prisma generate && tsc --noEmit",
 		"env:sync": "bun run scripts/sync-coolify.ts",
 		"env:sync:trigger": "bun run scripts/sync-trigger.ts",
-		"env:sync:gh": "bun run scripts/sync-gh.ts"
+		"env:sync:gh": "bun run scripts/sync-gh.ts",
+		"jobs:reconcile-mark-missed": "bun run scripts/reconcile-mark-missed.ts"
 	},
 	"portless": {
 		"name": "pstrack",

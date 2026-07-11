@@ -88,13 +88,19 @@ pstrack/
 
 ## Trigger.dev Jobs
 
+Trigger.dev owns schedules only. Each task dispatches an authenticated request
+to the app, where the job runs beside the private database and is guarded by the
+durable `JobRun` idempotency ledger.
+
 | Job | Trigger | Description |
 |---|---|---|
 | `assign-daily-problem` | Cron: midnight | Assigns next NeetCode 250 problem to all active groups |
 | `mark-missed` | Cron: midnight | Marks users missing for their primary group's previous daily problem when no solve/pause row exists |
 | `expire-join-requests` | Cron: every hour | Marks PENDING requests older than 1 day as EXPIRED |
-| `reset-monthly-pauses` | Cron: 1st of month | Resets `pausesUsedThisMonth` to 0 for all users |
-| `send-email` | Event: various | Sends transactional email via Resend |
+| `reset-monthly-counters` | Cron: 1st of month | Resets monthly pause and verification counters |
+| `expire-admin-pro-grants` | Cron: daily | Revokes expired admin-granted Pro access |
+| `purge-system-events` | Cron: monthly | Applies event and JobRun retention policies |
+| `send-weekly-digest` | Cron: Monday | Sends the weekly admin digest |
 
 ## Post-MVP Services (not in v3)
 

@@ -50,6 +50,7 @@ export const env = createEnv({
 		// husam-bot
 		BOT_URL: z.string().url().optional(),
 		BOT_NOTIFY_SECRET: z.string().min(1).optional(),
+		JOB_DISPATCH_SECRET: z.string().min(32).optional(),
 
 		// observability
 		AXIOM_TOKEN: z.string().min(1).optional(),

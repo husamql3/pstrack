@@ -18,6 +18,7 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { ProBadge } from "@/components/ui/pro-badge"
 import { Skeleton } from "@/components/ui/skeleton"
 import { HashAvatar } from "@/features/onboarding/components/hash-avatar"
 import { signOut, useSession } from "@/lib/auth-client"
@@ -78,7 +79,11 @@ export function UserMenu() {
 					{isPending ? (
 						<Skeleton className="size-4 shrink-0 rounded-full" />
 					) : (
-						<HashAvatar username={user?.username ?? initials} size={16} />
+						<HashAvatar
+							username={user?.username ?? initials}
+							size={16}
+							isPro={!!user?.isPro}
+						/>
 					)}
 					{isPending ? (
 						<Skeleton className="h-4 w-20" />
@@ -100,11 +105,18 @@ export function UserMenu() {
 						</>
 					) : (
 						<>
-							<HashAvatar username={user?.username ?? initials} size={32} />
+							<HashAvatar
+								username={user?.username ?? initials}
+								size={32}
+								isPro={!!user?.isPro}
+							/>
 							<div className="flex min-w-0 flex-col gap-0.5">
-								<span className="truncate font-medium text-foreground text-sm">
-									{user?.name ?? displayName}
-								</span>
+								<div className="flex min-w-0 items-center gap-1.5">
+									<span className="truncate font-medium text-foreground text-sm">
+										{user?.name ?? displayName}
+									</span>
+									{!!user?.isPro && <ProBadge />}
+								</div>
 								<span className="truncate text-muted-foreground text-xs">
 									{user?.email}
 								</span>

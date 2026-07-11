@@ -151,6 +151,7 @@ import { motion } from "motion/react"
 - Use `motion` for layout transitions, hero/landing flourishes, and modal/sheet entrances if the shadcn primitive doesn't already animate.
 - Most shadcn primitives ship with their own CSS-driven animations via `tw-animate-css` - don't double-animate them with `motion`.
 - Keep durations short (150–300ms for UI; 400–600ms for hero moments). No infinite ambient loops outside the landing page.
+  - **Sanctioned exception:** the Pro badge (`src/components/ui/pro-badge.tsx`, `<ProBadge>`) runs a looping shine to signal Pro status. This is the one deliberate infinite ambient loop outside the landing page — CEO-directed for Pro identity (#241). Do not add others without the same explicit sign-off.
 - **Don't install `framer-motion`, `react-spring`, or `gsap`.** `motion` covers it.
 
 ---
