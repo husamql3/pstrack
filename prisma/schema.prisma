@@ -80,12 +80,12 @@ model Group {
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
-  members       GroupMember[]
-  joinRequests  GroupJoinRequest[]
-  dailyProblems DailyProblem[]
-  pointsHistory PointsHistory[]
-  feedbacks     Feedback[]
-  roadmapCatalog RoadmapCatalog @relation(fields: [roadmap], references: [key])
+  members        GroupMember[]
+  joinRequests   GroupJoinRequest[]
+  dailyProblems  DailyProblem[]
+  pointsHistory  PointsHistory[]
+  feedbacks      Feedback[]
+  roadmapCatalog RoadmapCatalog     @relation(fields: [roadmap], references: [key])
 
   @@index([type, isActive])
   @@index([roadmap])
@@ -536,4 +536,29 @@ model SystemConfig {
   createdAt   DateTime @default(now())
 
   @@map("system_config")
+}
+
+model JobRun {
+  id             String       @id @default(cuid())
+  jobName        String
+  idempotencyKey String
+  status         JobRunStatus @default(RUNNING)
+  attempts       Int          @default(1)
+  result         Json?
+  error          String?
+  startedAt      DateTime     @default(now())
+  finishedAt     DateTime?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@unique([jobName, idempotencyKey])
+  @@index([status, startedAt])
+  @@index([createdAt])
+  @@map("job_run")
+}
+
+enum JobRunStatus {
+  RUNNING
+  SUCCEEDED
+  FAILED
 }

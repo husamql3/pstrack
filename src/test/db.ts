@@ -28,6 +28,7 @@ export const resetDb = async () => {
 	// for models without @@map, lowercase for models with @@map).
 	await testDb.$executeRawUnsafe(`
 		TRUNCATE TABLE
+			"job_run",
 			"user_badge",
 			"PointsHistory",
 			"UserSolve",

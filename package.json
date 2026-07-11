@@ -34,7 +34,8 @@
 		"typecheck": "prisma generate && tsc --noEmit",
 		"env:sync": "bun run scripts/sync-coolify.ts",
 		"env:sync:trigger": "bun run scripts/sync-trigger.ts",
-		"env:sync:gh": "bun run scripts/sync-gh.ts"
+		"env:sync:gh": "bun run scripts/sync-gh.ts",
+		"jobs:reconcile-mark-missed": "bun run scripts/reconcile-mark-missed.ts"
 	},
 	"portless": {
 		"name": "pstrack",
