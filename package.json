@@ -37,6 +37,8 @@
 		"env:sync:trigger": "bun run scripts/sync-trigger.ts",
 		"env:sync:gh": "bun run scripts/sync-gh.ts",
 		"env:sync:stage": "bun run scripts/sync-vercel.ts",
+		"env:sync:stage:dry-run": "bun run scripts/sync-vercel.ts --dry-run",
+		"smoke:stage": "bun run scripts/smoke-stage.ts",
 		"jobs:reconcile-mark-missed": "bun run scripts/reconcile-mark-missed.ts",
 		"points:reconcile": "bun run scripts/reconcile-points.ts"
 	},

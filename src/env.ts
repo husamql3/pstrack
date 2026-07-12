@@ -35,7 +35,8 @@ const server = {
 	GITHUB_CLIENT_SECRET: z.string().min(1),
 
 	// email
-	RESEND_API_KEY: z.string().min(1),
+	EMAIL_TRANSPORT: z.enum(["resend", "log"]).default("resend"),
+	RESEND_API_KEY: z.string().min(1).optional(),
 	EMAIL_FROM: z.string().default("PStrack <info@pstrack.app>"),
 
 	// payments
@@ -58,6 +59,9 @@ const server = {
 	// observability
 	AXIOM_TOKEN: z.string().min(1).optional(),
 	AXIOM_DATASET: z.string().min(1).optional(),
+
+	// deployment identity (non-secret; exposed by the health endpoint)
+	PSTRACK_ENVIRONMENT: z.enum(["development", "staging", "production"]).optional(),
 }
 
 const client = {
@@ -105,8 +109,8 @@ export const buildEnv = ({
 	runtimeEnv: Record<string, string | undefined>
 	isServer: boolean
 	skipValidation: boolean
-}) =>
-	createEnv({
+}) => {
+	const validated = createEnv({
 		server,
 		client,
 		clientPrefix: "VITE_",
@@ -114,6 +118,18 @@ export const buildEnv = ({
 		isServer,
 		skipValidation,
 	})
+
+	if (!skipValidation && isServer) {
+		if (validated.EMAIL_TRANSPORT === "resend" && !validated.RESEND_API_KEY) {
+			throw new Error("RESEND_API_KEY is required when EMAIL_TRANSPORT is resend")
+		}
+		if (validated.EMAIL_TRANSPORT === "log" && validated.RESEND_API_KEY) {
+			throw new Error("RESEND_API_KEY must be absent when EMAIL_TRANSPORT is log")
+		}
+	}
+
+	return validated
+}
 
 const isServer = typeof window === "undefined"
 

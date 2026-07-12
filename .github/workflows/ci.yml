@@ -147,6 +147,49 @@ jobs:
           if-no-files-found: error
           include-hidden-files: true
 
+  deploy-vercel-staging:
+    name: Deploy Vercel staging
+    runs-on: ubuntu-latest
+    needs: [typecheck, lint, knip, test, validate-schema, build]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/stage'
+    environment:
+      name: Staging
+      url: ${{ steps.deploy.outputs.url }}
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      PSTRACK_GIT_SHA: ${{ github.sha }}
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: ./.github/actions/setup
+      - name: Pull staging configuration
+        run: bunx vercel@55.0.0 pull --yes --environment=production
+      - name: Record staging revision
+        run: printf '%s' "$PSTRACK_GIT_SHA" | bunx vercel@55.0.0 env add PSTRACK_GIT_SHA production --force --yes
+      - name: Refresh staging configuration
+        run: bunx vercel@55.0.0 pull --yes --environment=production
+      - name: Build staging artifact
+        run: bunx vercel@55.0.0 build --prod
+      - name: Deploy staging artifact
+        id: deploy
+        run: |
+          url="$(bunx vercel@55.0.0 deploy --prebuilt --prod)"
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+      - name: Run staging smoke checks
+        env:
+          PSTRACK_STAGING_URL: ${{ steps.deploy.outputs.url }}
+          PSTRACK_CANONICAL_STAGING_URL: https://pstrack.vercel.app
+        run: bun run smoke:stage
+      - name: Upload staging evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: staging-evidence-${{ github.sha }}
+          path: staging-smoke-evidence.json
+          retention-days: 30
+          if-no-files-found: warn
+
   docker-changes:
     name: Docker change filter
     runs-on: ubuntu-latest
