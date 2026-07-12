@@ -190,9 +190,14 @@ jobs:
     runs-on: ubuntu-latest
     needs: [typecheck, lint, knip, test, validate-schema, build, docker-changes]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.docker-changes.outputs.publish == 'true'
+    outputs:
+      image_ref: ${{ steps.image.outputs.ref }}
+      image_digest: ${{ steps.build.outputs.digest }}
     permissions:
       contents: read
       packages: write
+      id-token: write
+      attestations: write
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
       - uses: ./.github/actions/setup
@@ -215,7 +220,7 @@ jobs:
         with:
           images: ${{ env.IMAGE_NAME }}
           tags: |
-            type=sha,prefix=
+            type=sha,format=long,prefix=
             type=ref,event=branch
             type=raw,value=latest,enable={{is_default_branch}}
       - name: Build and push Docker image
@@ -224,8 +229,8 @@ jobs:
           context: .
           target: runtime-prebuilt
           platforms: linux/amd64
-          provenance: false
-          sbom: false
+          provenance: true
+          sbom: true
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -234,6 +239,27 @@ jobs:
           build-args: |
             VITE_BASE_URL=${{ vars.VITE_BASE_URL }}
             VITE_SENTRY_DSN=${{ vars.VITE_SENTRY_DSN }}
+      - name: Resolve immutable image reference
+        id: image
+        run: |
+          digest="${{ steps.build.outputs.digest }}"
+          test -n "$digest" || {
+            echo "Docker build did not return an image digest" >&2
+            exit 1
+          }
+          echo "ref=${IMAGE_NAME}@${digest}" >> "$GITHUB_OUTPUT"
+          {
+            echo "image=${IMAGE_NAME}@${digest}"
+            echo "digest=${digest}"
+            echo "git_sha=${GITHUB_SHA}"
+          } > image-release.env
+      - name: Upload image release evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: image-release-${{ github.sha }}
+          path: image-release.env
+          retention-days: 30
+          if-no-files-found: error
 
   deploy-coolify:
     name: Deploy to Coolify
@@ -242,32 +268,36 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     environment: production
     steps:
-      - name: Trigger Coolify redeploy
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      - name: Deploy immutable image with Coolify
         env:
           COOLIFY_API_URL: ${{ secrets.COOLIFY_API_URL }}
           COOLIFY_API_TOKEN: ${{ secrets.COOLIFY_API_TOKEN }}
           COOLIFY_APP_UUID: ${{ secrets.COOLIFY_APP_UUID }}
+          PSTRACK_GIT_SHA: ${{ github.sha }}
+          PSTRACK_IMAGE_DIGEST: ${{ needs.publish-docker-image.outputs.image_digest }}
+          PSTRACK_IMAGE_REF: ${{ needs.publish-docker-image.outputs.image_ref }}
         run: |
-          test -n "$COOLIFY_API_URL" || {
-            echo "COOLIFY_API_URL is not set" >&2
-            exit 1
-          }
-          test -n "$COOLIFY_API_TOKEN" || {
-            echo "COOLIFY_API_TOKEN is not set" >&2
-            exit 1
-          }
-          test -n "$COOLIFY_APP_UUID" || {
-            echo "COOLIFY_APP_UUID is not set" >&2
-            exit 1
-          }
-
-          api_url="${COOLIFY_API_URL%/}"
-
-          curl --silent --fail-with-body --show-error \
-            --request GET \
-            --header "Authorization: Bearer $COOLIFY_API_TOKEN" \
-            --header "Accept: application/json" \
-            "$api_url/api/v1/deploy?uuid=$COOLIFY_APP_UUID&force=false"
+          bun run scripts/deploy-coolify.ts
+      - name: Run production smoke checks
+        env:
+          PSTRACK_PRODUCTION_URL: ${{ vars.PSTRACK_PRODUCTION_URL }}
+          PSTRACK_GIT_SHA: ${{ github.sha }}
+          PSTRACK_IMAGE_DIGEST: ${{ needs.publish-docker-image.outputs.image_digest }}
+          JOB_DISPATCH_SECRET: ${{ secrets.JOB_DISPATCH_SECRET }}
+        run: |
+          bun run scripts/smoke-prod.ts
+      - name: Upload deployment evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: deploy-evidence-${{ github.sha }}
+          path: |
+            deploy-evidence.json
+            smoke-evidence.json
+          retention-days: 30
+          if-no-files-found: warn
 
   # Trigger.dev production deployment is intentionally paused while production
   # Postgres is private to Coolify. Re-enable after Trigger.dev tasks are
