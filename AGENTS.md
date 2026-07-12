@@ -246,7 +246,7 @@ This prevents email delivery failures from blocking the user's request. Users ca
 - Activity feed (group-scoped, poll-based)
 - Resources hub
 - In-app notification inbox (Upstash Realtime + WebSocket)
-- Redis leaderboard cache (Upstash)
+- Redis leaderboard cache (self-hosted Redis, ADR 0011)
 - PostHog analytics
 - Custom roadmaps (Pro admin perk)
 - Mobile app

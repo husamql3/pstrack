@@ -6,7 +6,10 @@ staging; application production remains on Coolify.
 
 ## Isolation contract
 
-- Neon PostgreSQL and Upstash Redis use staging-only free-tier resources.
+- Neon PostgreSQL uses a staging-only free-tier project. Staging has no Redis
+  service (`REDIS_URL` unset): the approved staging-equivalent validation uses
+  an authenticated disposable Redis in CI, followed by a production canary on
+  the private Coolify network (ADR 0011 amendment, #288).
 - Google and GitHub OAuth use dedicated staging applications and callbacks.
 - Polar uses its sandbox catalog and webhook.
 - Trigger.dev uses a staging environment and staging-only dispatch secret.
@@ -38,7 +41,7 @@ Never restore or clone production data into staging.
 
 1. Disable the `deploy-vercel-staging` workflow job or its Staging environment.
 2. Remove the Vercel deployment aliases and staging environment variables.
-3. Delete the dedicated Neon and Upstash resources only after confirming their
+3. Delete the dedicated Neon resources only after confirming their
    identifiers do not match production.
 4. Delete the staging OAuth applications, Polar sandbox webhook, Trigger.dev
    environment, and staging alert rules.

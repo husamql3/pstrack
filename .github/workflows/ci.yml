@@ -74,6 +74,34 @@ jobs:
         run: bunx prisma migrate deploy
       - run: bun run test
 
+  redis-verify:
+    name: Redis verification
+    runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis:7-alpine
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+        ports:
+          - 6379:6379
+    env:
+      # The harness only needs REDIS_URL; skip the full env schema like Vitest.
+      SKIP_ENV_VALIDATION: "1"
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: ./.github/actions/setup
+      - name: Require Redis authentication
+        run: redis-cli CONFIG SET requirepass ci_redis_password
+      - name: Verify authenticated Redis behavior (TTL, sets, concurrency, reconnect)
+        run: REDIS_URL=redis://default:ci_redis_password@127.0.0.1:6379 bun run verify:redis
+      - name: Verify bounded failure when Redis is unavailable
+        run: REDIS_URL=redis://127.0.0.1:59321 bun run verify:redis --unavailable
+      - name: Verify bounded failure after an established connection is lost
+        run: REDIS_URL=redis://default:ci_redis_password@127.0.0.1:6379 bun run verify:redis --outage-after-connect
+
   validate-schema:
     name: Validate Prisma schema
     runs-on: ubuntu-latest

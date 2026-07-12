@@ -105,7 +105,7 @@ durable `JobRun` idempotency ledger.
 
 ## Post-MVP Services (not in v3)
 
-- **Upstash Redis** - leaderboard caching, rate limiting
+- **Redis** (self-hosted, Bun native client - ADR 0011) - leaderboard caching, rate limiting
 - **Upstash Realtime** - in-app notification inbox, WebSocket feed
 - **PostHog** - product analytics
 
