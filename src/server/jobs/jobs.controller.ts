@@ -27,6 +27,7 @@ const FRESHNESS_MS: Record<(typeof JOB_NAMES)[number], number> = {
 	"expire-admin-pro-grants": 26 * 60 * 60 * 1000,
 	"purge-system-events": 32 * 24 * 60 * 60 * 1000,
 	"send-weekly-digest": 8 * 24 * 60 * 60 * 1000,
+	"reconcile-points": 26 * 60 * 60 * 1000,
 	"reset-today-problems": Number.POSITIVE_INFINITY,
 	"reconcile-mark-missed": Number.POSITIVE_INFINITY,
 }

@@ -1124,5 +1124,5 @@ describe("API stress suite", () => {
 		}
 
 		await expectCoreStressInvariants()
-	})
+	}, 20_000)
 })

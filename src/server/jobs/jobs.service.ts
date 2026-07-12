@@ -7,6 +7,7 @@ import { notifyAdmin } from "@/server/lib/bot"
 import { db } from "@/server/lib/db"
 import { resend } from "@/server/lib/email"
 import { captureServerException } from "@/server/lib/sentry"
+import { auditCachedTotals } from "@/server/points/points.reconciliation"
 import { problemsDao } from "@/server/problems/problems.dao"
 import { systemEventsDao } from "@/server/system-events/system-events.dao"
 import type { JobName } from "./jobs.types"
@@ -206,6 +207,25 @@ const sendWeeklyDigest = async (scheduledAt: Date) => {
 	return { users, solves, newUsers }
 }
 
+const reconcilePoints = async () => {
+	try {
+		const result = await auditCachedTotals()
+		if (result.mismatchedUsers > 0) {
+			await notifyAdmin("points.reconciliation_drift", {
+				checkedUsers: result.checkedUsers,
+				mismatchedUsers: result.mismatchedUsers,
+				absoluteDrift: result.absoluteDrift,
+			})
+		}
+		return result
+	} catch (error) {
+		await notifyAdmin("points.reconciliation_failed", {
+			occurredAt: new Date().toISOString(),
+		})
+		throw error
+	}
+}
+
 const resetTodayProblems = async (scheduledAt: Date) => {
 	const date = utcDay(scheduledAt)
 	const dailyProblems = await db.dailyProblem.findMany({
@@ -239,6 +259,8 @@ export const executeJob = async (
 			return purgeSystemEvents()
 		case "send-weekly-digest":
 			return sendWeeklyDigest(scheduledAt)
+		case "reconcile-points":
+			return reconcilePoints()
 		case "reset-today-problems":
 			return resetTodayProblems(scheduledAt)
 		case "reconcile-mark-missed":

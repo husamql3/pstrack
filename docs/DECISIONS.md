@@ -44,4 +44,6 @@ The `client` file pulls in `node:url` and `node:path` and crashes the browser bu
 
 ## Atomic points mutation in one DAO function
 
-Every point change goes through `applyPointsDelta(userId, delta, reason, meta)`. This function writes the history row, updates `totalPoints` clamped to floor 0, checks the Pro threshold, and runs in a single transaction. Callers never compute new balances directly. The floor lives here and nowhere else.
+Every gameplay point change goes through `applyPointsDelta(userId, delta, reason, meta)`. This function writes the history row, updates `totalPoints` clamped to floor 0, checks the Pro threshold, and runs in a single transaction. Callers never compute new balances directly.
+
+The sole exception is operational cache reconciliation. Its canonical balance is an ordered replay of the immutable ledger by `(createdAt, id)`, applying the zero floor after every entry. A repair updates only `User.totalPoints` (and grants permanent points-based Pro when appropriate); it never inserts, changes, or deletes ledger entries. Repairs require an expected mismatch count and fresh verified encrypted-backup proof, and run while affected point rows are locked in a serializable transaction.

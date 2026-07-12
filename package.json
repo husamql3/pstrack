@@ -33,10 +33,12 @@
 		"check": "bun run biome check .",
 		"knip": "knip",
 		"typecheck": "prisma generate && tsc --noEmit",
-		"env:sync": "bun run scripts/sync-coolify.ts",
+		"env:sync:prod": "bun run scripts/sync-coolify.ts",
 		"env:sync:trigger": "bun run scripts/sync-trigger.ts",
 		"env:sync:gh": "bun run scripts/sync-gh.ts",
-		"jobs:reconcile-mark-missed": "bun run scripts/reconcile-mark-missed.ts"
+		"env:sync:stage": "bun run scripts/sync-vercel.ts",
+		"jobs:reconcile-mark-missed": "bun run scripts/reconcile-mark-missed.ts",
+		"points:reconcile": "bun run scripts/reconcile-points.ts"
 	},
 	"portless": {
 		"name": "pstrack",
