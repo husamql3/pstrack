@@ -135,7 +135,7 @@ export async function seedGroups() {
 			where: { email: u.email },
 			update: {},
 			create: {
-				id: crypto.randomUUID(),
+				id: `seed-user-${u.username}`,
 				name: u.name,
 				email: u.email,
 				username: u.username,
@@ -157,6 +157,7 @@ export async function seedGroups() {
 			where: { slug: g.slug },
 			update: {},
 			create: {
+				id: `seed-group-${g.slug}`,
 				slug: g.slug,
 				type: g.type as "PUBLIC" | "PRIVATE",
 				roadmap: g.roadmap,

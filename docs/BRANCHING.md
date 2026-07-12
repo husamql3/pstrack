@@ -21,4 +21,10 @@ Move changes from `stage` to `main` through a deliberate `stage` to `main` pull 
 
 ## Deployment
 
-No deployment automation is tied to `stage` yet. Coolify staging wiring will be handled separately.
+- A push to `stage` deploys the verified commit to Vercel staging at
+  `https://pstrack.vercel.app` and runs staging smoke checks.
+- A push to `main` builds an immutable OCI image and deploys it to Coolify
+  production after approval through the GitHub `Production` environment.
+- Promotion is a deliberate `stage` to `main` pull request. The Vercel and
+  Coolify runtime artifacts differ, so revision identity and both environment
+  smoke checks are the promotion evidence.

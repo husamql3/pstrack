@@ -26,6 +26,14 @@ export const resend: Resend = new Proxy({} as Resend, {
 })
 
 export const sendEmail = async (payload: CreateEmailOptions) => {
+	if (env.EMAIL_TRANSPORT === "log") {
+		logger.info(
+			{ recipientCount: Array.isArray(payload.to) ? payload.to.length : 1 },
+			"email suppressed by log transport"
+		)
+		return null
+	}
+
 	const result = await resend.emails.send(payload)
 	if (result.error) {
 		logger.error(

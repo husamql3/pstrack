@@ -74,6 +74,30 @@ describe("resolveSkipValidation", () => {
 })
 
 describe("buildEnv fail-fast", () => {
+	it("allows log-only staging without a Resend credential", () => {
+		const env = buildEnv({
+			isServer: true,
+			skipValidation: false,
+			runtimeEnv: {
+				...validServerEnv,
+				EMAIL_TRANSPORT: "log",
+				RESEND_API_KEY: undefined,
+			},
+		})
+		expect(env.EMAIL_TRANSPORT).toBe("log")
+		expect(env.RESEND_API_KEY).toBeUndefined()
+	})
+
+	it("rejects a sending credential in log-only staging", () => {
+		expect(() =>
+			buildEnv({
+				isServer: true,
+				skipValidation: false,
+				runtimeEnv: { ...validServerEnv, EMAIL_TRANSPORT: "log" },
+			})
+		).toThrow("RESEND_API_KEY must be absent when EMAIL_TRANSPORT is log")
+	})
+
 	it("throws when a required server var is missing and validation is not skipped", () => {
 		const spy = vi.spyOn(console, "error").mockImplementation(() => {})
 		expect(() =>
