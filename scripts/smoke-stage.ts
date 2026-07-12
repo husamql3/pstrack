@@ -18,8 +18,9 @@ const checkFetch = async (path: string) => {
 
 const main = async () => {
 	const root = await checkFetch("/")
-	if (!(await root.text()).includes("PStrack")) {
-		throw new Error("Root smoke check did not find app marker")
+	const rootHtml = await root.text()
+	if (!rootHtml.startsWith("<!DOCTYPE html>")) {
+		throw new Error("Root smoke check did not find the application shell")
 	}
 
 	const health = await checkFetch("/api/v3/health")

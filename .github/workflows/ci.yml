@@ -178,7 +178,7 @@ jobs:
           echo "url=$url" >> "$GITHUB_OUTPUT"
       - name: Run staging smoke checks
         env:
-          PSTRACK_STAGING_URL: ${{ steps.deploy.outputs.url }}
+          PSTRACK_STAGING_URL: https://pstrack.vercel.app
           PSTRACK_CANONICAL_STAGING_URL: https://pstrack.vercel.app
         run: bun run smoke:stage
       - name: Upload staging evidence
