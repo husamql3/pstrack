@@ -169,6 +169,10 @@ jobs:
         run: printf '%s' "$PSTRACK_GIT_SHA" | bunx vercel@55.0.0 env add PSTRACK_GIT_SHA production --force --yes
       - name: Refresh staging configuration
         run: bunx vercel@55.0.0 pull --yes --environment=production
+      - name: Clear stale outputDirectory override
+        run: |
+          tmp=$(mktemp)
+          jq '.settings.outputDirectory = null' .vercel/project.json > "$tmp" && mv "$tmp" .vercel/project.json
       - name: Build staging artifact
         run: bunx vercel@55.0.0 build --prod
       - name: Deploy staging artifact
