@@ -1,7 +1,7 @@
 import type { Prisma } from "@/generated/prisma/client"
 import { PointReason, ProSource } from "@/generated/prisma/enums"
 import { db } from "@/server/lib/db"
-import { MISSED_PENALTY, PRO_THRESHOLD } from "./points.type"
+import { MISSED_PENALTY, type PointDriftRow, PRO_THRESHOLD } from "./points.type"
 
 type Tx = Prisma.TransactionClient
 
@@ -16,6 +16,53 @@ type LockedUserPoints = {
 	totalPoints: number
 	isPro: boolean
 }
+
+const findPointDrift = (tx: Tx): Promise<PointDriftRow[]> =>
+	tx.$queryRaw<PointDriftRow[]>`
+		WITH RECURSIVE ordered AS (
+			SELECT
+				p."userId",
+				p.delta,
+				ROW_NUMBER() OVER (
+					PARTITION BY p."userId"
+					ORDER BY p."createdAt", p.id
+				) AS sequence
+			FROM "PointsHistory" p
+		), replay AS (
+			SELECT
+				ordered."userId",
+				ordered.sequence,
+				GREATEST(0, ordered.delta)::integer AS balance
+			FROM ordered
+			WHERE ordered.sequence = 1
+
+			UNION ALL
+
+			SELECT
+				ordered."userId",
+				ordered.sequence,
+				GREATEST(0, replay.balance + ordered.delta)::integer AS balance
+			FROM replay
+			JOIN ordered
+				ON ordered."userId" = replay."userId"
+				AND ordered.sequence = replay.sequence + 1
+		), final_balance AS (
+			SELECT DISTINCT ON (replay."userId")
+				replay."userId",
+				replay.balance
+			FROM replay
+			ORDER BY replay."userId", replay.sequence DESC
+		)
+		SELECT
+			u.id AS "userId",
+			u."totalPoints" AS "currentTotal",
+			COALESCE(final_balance.balance, 0)::integer AS "expectedTotal",
+			u."isPro" AS "isPro"
+		FROM "user" u
+		LEFT JOIN final_balance ON final_balance."userId" = u.id
+		WHERE u."totalPoints" <> COALESCE(final_balance.balance, 0)
+		ORDER BY u.id
+	`
 
 const lockUserPoints = async (tx: Tx, userId: string): Promise<LockedUserPoints> => {
 	const rows = await tx.$queryRaw<LockedUserPoints[]>`
@@ -72,6 +119,33 @@ const applyPointsDeltaInTx = async (
 }
 
 export const pointsDao = {
+	countUsers: (tx: Tx): Promise<number> => tx.user.count(),
+
+	findCachedTotalDrift: (tx: Tx): Promise<PointDriftRow[]> => findPointDrift(tx),
+
+	lockAllUserPoints: async (tx: Tx): Promise<void> => {
+		await tx.$queryRaw<Array<{ id: string }>>`
+			SELECT id FROM "user" ORDER BY id FOR NO KEY UPDATE
+		`
+	},
+
+	updateCachedTotal: async (
+		tx: Tx,
+		row: PointDriftRow,
+		grantsPro: boolean
+	): Promise<void> => {
+		await tx.user.update({
+			where: { id: row.userId },
+			data: {
+				totalPoints: row.expectedTotal,
+				...(grantsPro && {
+					isPro: true,
+					proSource: ProSource.POINTS_THRESHOLD,
+				}),
+			},
+		})
+	},
+
 	applyPointsDelta: async (
 		userId: string,
 		delta: number,

@@ -48,6 +48,7 @@ import { expireAdminProGrantsTask } from "@/server/trigger/expire-admin-pro-gran
 import { expireJoinRequestsTask } from "@/server/trigger/expire-join-requests"
 import { markMissedTask } from "@/server/trigger/mark-missed"
 import { purgeSystemEventsTask } from "@/server/trigger/purge-system-events"
+import { reconcilePointsTask } from "@/server/trigger/reconcile-points"
 import { resetMonthlyCountersTask } from "@/server/trigger/reset-monthly-counters"
 import { resetTodayProblemsTask } from "@/server/trigger/reset-today-problems"
 import { sendWeeklyDigestTask } from "@/server/trigger/send-weekly-digest"
@@ -183,6 +184,7 @@ describe("Trigger module stress suite", () => {
 			() => runStressTask(resetMonthlyCountersTask, { timestamp: state.today }),
 			() => runStressTask(expireAdminProGrantsTask, { timestamp: state.today }),
 			() => runStressTask(purgeSystemEventsTask, { timestamp: state.today }),
+			() => runStressTask(reconcilePointsTask, { timestamp: state.today }),
 			() => runStressTask(sendWeeklyDigestTask, { timestamp: state.today }),
 		]
 		const work = tasks.flatMap((task) => Array.from({ length: repetitions }, () => task))
