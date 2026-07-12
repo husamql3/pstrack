@@ -11,6 +11,7 @@ import { expireAdminProGrantsTask } from "./expire-admin-pro-grants"
 import { expireJoinRequestsTask } from "./expire-join-requests"
 import { markMissedTask } from "./mark-missed"
 import { purgeSystemEventsTask } from "./purge-system-events"
+import { reconcilePointsTask } from "./reconcile-points"
 import { resetMonthlyCountersTask } from "./reset-monthly-counters"
 import { resetTodayProblemsTask } from "./reset-today-problems"
 import { sendWeeklyDigestTask } from "./send-weekly-digest"
@@ -55,6 +56,7 @@ describe("Trigger job dispatchers", () => {
 			"expire-admin-pro-grants:2026-07-11",
 		],
 		[purgeSystemEventsTask, "purge-system-events", "purge-system-events:2026-07"],
+		[reconcilePointsTask, "reconcile-points", "reconcile-points:2026-07-11"],
 		[sendWeeklyDigestTask, "send-weekly-digest", "send-weekly-digest:2026-07-11"],
 	])("dispatches %s through the authenticated app endpoint", async (task, jobName, key) => {
 		await task.run({ timestamp })

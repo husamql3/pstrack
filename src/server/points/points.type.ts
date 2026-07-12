@@ -14,3 +14,18 @@ export const JOIN_GROUP_BONUS = 20
 export const PRO_THRESHOLD = 3_000
 export const STREAK_MULTIPLIER_7 = 1.2
 export const STREAK_MULTIPLIER_30 = 1.5
+
+export type PointDriftRow = {
+	userId: string
+	currentTotal: number
+	expectedTotal: number
+	isPro: boolean
+}
+
+export type PointReconciliationResult = {
+	checkedUsers: number
+	mismatchedUsers: number
+	absoluteDrift: number
+	correctedUsers: number
+	proGranted: number
+}

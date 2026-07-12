@@ -100,6 +100,7 @@ durable `JobRun` idempotency ledger.
 | `reset-monthly-counters` | Cron: 1st of month | Resets monthly pause and verification counters |
 | `expire-admin-pro-grants` | Cron: daily | Revokes expired admin-granted Pro access |
 | `purge-system-events` | Cron: monthly | Applies event and JobRun retention policies |
+| `reconcile-points` | Cron: daily at 00:30 UTC | Checks ordered-ledger/cache equality and sends aggregate-only drift alerts |
 | `send-weekly-digest` | Cron: Monday | Sends the weekly admin digest |
 
 ## Post-MVP Services (not in v3)

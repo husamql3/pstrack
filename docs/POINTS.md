@@ -36,6 +36,11 @@ Notes:
 | Verification failure - 2nd+ in month | 0 points; counter-only abuse signal. The day is penalized only if `mark-missed` later marks it `MISSED`. |
 | Floor | 0 - scores cannot go negative |
 
+Because the floor applies to every event, the ledger-derived balance is not simply
+`MAX(0, SUM(delta))`. The canonical cache invariant replays entries in
+`(createdAt, id)` order and applies `MAX(0, previousBalance + delta)` after each entry.
+The daily reconciliation job checks this invariant and reports aggregate drift only.
+
 ### Clawback Mechanics
 
 When a user misses a day and their streak breaks, the clawback retroactively reverses *all bonuses* that streak earned them. Base solve points are kept; bonuses are gone.
@@ -228,7 +233,18 @@ This function:
 3. If crossing 3,000 and `!isPro`: sets `isPro = true`, `proSource = POINTS_THRESHOLD`
 4. Runs in a single transaction
 
-Callers never compute new balances directly. The floor is enforced here and nowhere else.
+Operational reconciliation is the only exception to this mutation path. The guarded
+operator workflow first performs an aggregate dry run, prepares a fresh encrypted
+backup, and pauses for an isolated restore drill. Only then may
+`bun run points:reconcile -- --expected=<count> --apply
+--restore-proof=<backup-sha256>` repair the cache over the SSH-only database path. It
+requires the expected count to still match under lock, records aggregate `JobRun`
+evidence, and verifies the post-repair aggregate is zero. Running without an operation
+flag is read-only.
+
+Gameplay callers never compute new balances directly; the regular mutation floor is
+enforced in `applyPointsDelta`. Operational reconciliation uses only the documented
+ordered-replay exception above.
 
 ### Job Changes
 

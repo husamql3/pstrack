@@ -541,6 +541,11 @@ export const STRESS_BACKGROUND_MODULES: StressBackgroundModule[] = [
 		dimensions: ["idempotency", "side-effect"],
 	},
 	{
+		file: "reconcile-points.ts",
+		module: "trigger",
+		dimensions: ["idempotency", "invariant", "read", "side-effect"],
+	},
+	{
 		file: "reset-monthly-counters.ts",
 		module: "trigger",
 		dimensions: ["idempotency", "side-effect"],
