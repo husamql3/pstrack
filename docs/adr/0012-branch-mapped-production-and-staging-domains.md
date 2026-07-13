@@ -24,4 +24,4 @@ Promotion therefore preserves the reviewed source revision and migration set,
 then records environment-specific immutable deployment evidence. This is the
 portable parity boundary; operational procedures live in `docs/STAGING.md`.
 
-The Coolify admin dashboard uses `https://admin.pstrack.app`.
+The Coolify admin dashboard uses `https://coolify.pstrack.app`.
