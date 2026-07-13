@@ -28,7 +28,7 @@ jobs:
 
       - name: Open or update the stage -> main PR
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.PAT_TOKEN || github.token }}
           BASE: main
           HEAD: stage
         run: |
@@ -50,6 +50,8 @@ jobs:
             printf '_Opened or updated automatically from `%s`._\n' "$HEAD"
           } > pr-body.md
 
+          gh auth status
+
           existing=$(gh pr list --base "$BASE" --head "$HEAD" --state open \
             --json number --jq '.[0].number // empty')
 
@@ -57,8 +59,17 @@ jobs:
             gh pr edit "$existing" --body-file pr-body.md
             echo "Updated existing PR #${existing}"
           else
-            gh pr create --base "$BASE" --head "$HEAD" \
+            if ! create_output=$(gh pr create --base "$BASE" --head "$HEAD" \
               --title "Auto PR: stage -> main" \
-              --body-file pr-body.md
+              --body-file pr-body.md 2>&1); then
+              printf '%s\n' "$create_output"
+              if printf '%s\n' "$create_output" | grep -q "GitHub Actions is not permitted to create or approve pull requests"; then
+                {
+                  echo "::error::GitHub blocked the default GITHUB_TOKEN from creating pull requests."
+                  echo "Enable Settings -> Actions -> General -> Workflow permissions -> Allow GitHub Actions to create and approve pull requests, or add a PAT_TOKEN secret with pull request creation permissions."
+                } >&2
+              fi
+              exit 1
+            fi
             echo "Created new stage -> main PR"
           fi
