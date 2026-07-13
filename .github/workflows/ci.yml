@@ -164,11 +164,11 @@ jobs:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
       - uses: ./.github/actions/setup
       - name: Pull staging configuration
-        run: bunx vercel@55.0.0 pull --yes --environment=production
+        run: bunx vercel@56.0.0 pull --yes --environment=production
       - name: Record staging revision
-        run: printf '%s' "$PSTRACK_GIT_SHA" | bunx vercel@55.0.0 env add PSTRACK_GIT_SHA production --force --yes
+        run: printf '%s' "$PSTRACK_GIT_SHA" | bunx vercel@56.0.0 env add PSTRACK_GIT_SHA production --force --yes
       - name: Refresh staging configuration
-        run: bunx vercel@55.0.0 pull --yes --environment=production
+        run: bunx vercel@56.0.0 pull --yes --environment=production
       - name: Build staging artifact
         # Force Nitro's Vercel preset so the build emits Build Output API v3 to
         # .vercel/output/. Without this, Nitro falls back to its default
@@ -178,11 +178,11 @@ jobs:
         # setting is ignored.
         env:
           NITRO_PRESET: vercel
-        run: bunx vercel@55.0.0 build --prod
+        run: bunx vercel@56.0.0 build --prod
       - name: Deploy staging artifact
         id: deploy
         run: |
-          url="$(bunx vercel@55.0.0 deploy --prebuilt --prod)"
+          url="$(bunx vercel@56.0.0 deploy --prebuilt --prod)"
           echo "url=$url" >> "$GITHUB_OUTPUT"
       - name: Run staging smoke checks
         env:
@@ -191,6 +191,7 @@ jobs:
         run: bun run smoke:stage
       - name: Upload staging evidence
         if: always()
+        continue-on-error: true
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: staging-evidence-${{ github.sha }}
@@ -287,7 +288,10 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=registry,ref=${{ env.IMAGE_NAME }}:buildcache
-          cache-to: type=registry,ref=${{ env.IMAGE_NAME }}:buildcache,mode=max
+          # The cache is an optimization, not a release artifact. GHCR can
+          # transiently terminate cache blob uploads with EOF after the image
+          # itself has already been pushed; do not fail the release for that.
+          cache-to: type=registry,ref=${{ env.IMAGE_NAME }}:buildcache,mode=max,ignore-error=true
           build-args: |
             VITE_BASE_URL=${{ vars.VITE_BASE_URL }}
             VITE_SENTRY_DSN=${{ vars.VITE_SENTRY_DSN }}
@@ -306,7 +310,8 @@ jobs:
             echo "git_sha=${GITHUB_SHA}"
           } > image-release.env
       - name: Upload image release evidence
-        uses: actions/upload-artifact@v4
+        continue-on-error: true
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: image-release-${{ github.sha }}
           path: image-release.env
@@ -320,7 +325,7 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     environment: production
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
       - uses: ./.github/actions/setup
       - name: Deploy immutable image with Coolify
         env:
@@ -342,7 +347,8 @@ jobs:
           bun run scripts/smoke-prod.ts
       - name: Upload deployment evidence
         if: always()
-        uses: actions/upload-artifact@v4
+        continue-on-error: true
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: deploy-evidence-${{ github.sha }}
           path: |
