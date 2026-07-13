@@ -41,7 +41,7 @@ const server = {
 	// Self-hosted SMTP (Stalwart). Required when EMAIL_TRANSPORT is "smtp".
 	// Port 465 = implicit TLS, otherwise STARTTLS.
 	SMTP_HOST: z.string().min(1).optional(),
-	SMTP_PORT: z.coerce.number().int().positive().default(587),
+	SMTP_PORT: z.coerce.number().int().positive().default(465),
 	SMTP_USER: z.string().min(1).optional(),
 	SMTP_PASS: z.string().min(1).optional(),
 
