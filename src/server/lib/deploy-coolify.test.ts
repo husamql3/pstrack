@@ -1,0 +1,58 @@
+import { afterEach, describe, expect, it, vi } from "vitest"
+
+import { type CoolifyConfig, coolifyFetch } from "../../../scripts/deploy-coolify"
+
+const config: CoolifyConfig = {
+	apiUrl: "https://coolify.example.com",
+	token: "token",
+	appUuid: "app",
+	imageRef: "image@sha256:digest",
+	gitSha: "git-sha",
+	imageDigest: "sha256:digest",
+	deployedAt: "2026-07-13T00:00:00.000Z",
+	timeoutMs: 1000,
+	pollMs: 1,
+	requestAttempts: 4,
+	requestRetryMs: 1,
+}
+
+afterEach(() => {
+	vi.restoreAllMocks()
+})
+
+describe("coolifyFetch", () => {
+	it("retries a transient connection failure", async () => {
+		const fetchMock = vi
+			.spyOn(globalThis, "fetch")
+			.mockRejectedValueOnce(new TypeError("Unable to connect"))
+			.mockResolvedValueOnce(Response.json({ uuid: "deployment" }))
+
+		await expect(coolifyFetch(config, "/api/v1/applications/app")).resolves.toEqual({
+			uuid: "deployment",
+		})
+		expect(fetchMock).toHaveBeenCalledTimes(2)
+	})
+
+	it("retries a transient server response", async () => {
+		const fetchMock = vi
+			.spyOn(globalThis, "fetch")
+			.mockResolvedValueOnce(new Response("unavailable", { status: 503 }))
+			.mockResolvedValueOnce(Response.json({ status: "running" }))
+
+		await expect(coolifyFetch(config, "/api/v1/deployments/id")).resolves.toEqual({
+			status: "running",
+		})
+		expect(fetchMock).toHaveBeenCalledTimes(2)
+	})
+
+	it("does not retry a permanent client error", async () => {
+		const fetchMock = vi
+			.spyOn(globalThis, "fetch")
+			.mockResolvedValue(new Response("unauthorized", { status: 401 }))
+
+		await expect(coolifyFetch(config, "/api/v1/applications/app")).rejects.toThrow(
+			"Coolify API /api/v1/applications/app failed (401): unauthorized"
+		)
+		expect(fetchMock).toHaveBeenCalledTimes(1)
+	})
+})
