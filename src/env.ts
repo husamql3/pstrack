@@ -76,6 +76,12 @@ const client = {
 	VITE_SENTRY_TRACES_SAMPLE_RATE: z.coerce.number().min(0).max(1).default(0),
 	VITE_SENTRY_REPLAY_SESSION_SAMPLE_RATE: z.coerce.number().min(0).max(1).default(0),
 	VITE_SENTRY_REPLAY_ERROR_SAMPLE_RATE: z.coerce.number().min(0).max(1).default(0),
+	VITE_POSTHOG_ENABLED: z
+		.enum(["true", "false"])
+		.default("false")
+		.transform((value) => value === "true"),
+	VITE_POSTHOG_KEY: z.string().min(1).optional(),
+	VITE_POSTHOG_HOST: z.url().default("https://us.i.posthog.com"),
 }
 
 /**
