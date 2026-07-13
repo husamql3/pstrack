@@ -8,6 +8,18 @@ vi.mock("@/server/lib/db", () => ({
 import { db } from "@/server/lib/db"
 import { health } from "@/server/modules/health"
 
+const revision = {
+	gitSha: null,
+	imageDigest: null,
+	imageRef: null,
+	deployedAt: null,
+}
+
+const runtime = {
+	environment: null,
+	emailTransport: "resend",
+}
+
 describe("GET /health", () => {
 	afterEach(() => vi.clearAllMocks())
 
@@ -18,7 +30,7 @@ describe("GET /health", () => {
 		const body = await res.json()
 
 		expect(res.status).toBe(200)
-		expect(body).toEqual({ status: "ok", db: "ok" })
+		expect(body).toEqual({ status: "ok", db: "ok", revision, runtime })
 	})
 
 	it("returns 503 when DB throws", async () => {
@@ -28,7 +40,13 @@ describe("GET /health", () => {
 		const body = await res.json()
 
 		expect(res.status).toBe(503)
-		expect(body).toEqual({ status: "degraded", db: "error", error: "Connection refused" })
+		expect(body).toEqual({
+			status: "degraded",
+			db: "error",
+			error: "Connection refused",
+			revision,
+			runtime,
+		})
 	})
 
 	it("returns 503 on timeout", async () => {
@@ -41,7 +59,13 @@ describe("GET /health", () => {
 		const body = await res.json()
 
 		expect(res.status).toBe(503)
-		expect(body).toEqual({ status: "degraded", db: "error", error: "DB timeout" })
+		expect(body).toEqual({
+			status: "degraded",
+			db: "error",
+			error: "DB timeout",
+			revision,
+			runtime,
+		})
 
 		vi.useRealTimers()
 	})

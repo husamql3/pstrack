@@ -35,8 +35,15 @@ const server = {
 	GITHUB_CLIENT_SECRET: z.string().min(1),
 
 	// email
-	RESEND_API_KEY: z.string().min(1),
+	EMAIL_TRANSPORT: z.enum(["resend", "smtp", "log"]).default("resend"),
+	RESEND_API_KEY: z.string().min(1).optional(),
 	EMAIL_FROM: z.string().default("PStrack <info@pstrack.app>"),
+	// Self-hosted SMTP (Stalwart). Required when EMAIL_TRANSPORT is "smtp".
+	// Port 465 = implicit TLS, otherwise STARTTLS.
+	SMTP_HOST: z.string().min(1).optional(),
+	SMTP_PORT: z.coerce.number().int().positive().default(587),
+	SMTP_USER: z.string().min(1).optional(),
+	SMTP_PASS: z.string().min(1).optional(),
 
 	// payments
 	POLAR_ACCESS_TOKEN: z.string().min(1),
@@ -58,6 +65,9 @@ const server = {
 	// observability
 	AXIOM_TOKEN: z.string().min(1).optional(),
 	AXIOM_DATASET: z.string().min(1).optional(),
+
+	// deployment identity (non-secret; exposed by the health endpoint)
+	PSTRACK_ENVIRONMENT: z.enum(["development", "staging", "production"]).optional(),
 }
 
 const client = {
@@ -66,6 +76,12 @@ const client = {
 	VITE_SENTRY_TRACES_SAMPLE_RATE: z.coerce.number().min(0).max(1).default(0),
 	VITE_SENTRY_REPLAY_SESSION_SAMPLE_RATE: z.coerce.number().min(0).max(1).default(0),
 	VITE_SENTRY_REPLAY_ERROR_SAMPLE_RATE: z.coerce.number().min(0).max(1).default(0),
+	VITE_POSTHOG_ENABLED: z
+		.enum(["true", "false"])
+		.default("false")
+		.transform((value) => value === "true"),
+	VITE_POSTHOG_KEY: z.string().min(1).optional(),
+	VITE_POSTHOG_HOST: z.url().default("https://us.i.posthog.com"),
 }
 
 /**
@@ -105,8 +121,8 @@ export const buildEnv = ({
 	runtimeEnv: Record<string, string | undefined>
 	isServer: boolean
 	skipValidation: boolean
-}) =>
-	createEnv({
+}) => {
+	const validated = createEnv({
 		server,
 		client,
 		clientPrefix: "VITE_",
@@ -114,6 +130,26 @@ export const buildEnv = ({
 		isServer,
 		skipValidation,
 	})
+
+	if (!skipValidation && isServer) {
+		if (validated.EMAIL_TRANSPORT === "resend" && !validated.RESEND_API_KEY) {
+			throw new Error("RESEND_API_KEY is required when EMAIL_TRANSPORT is resend")
+		}
+		if (validated.EMAIL_TRANSPORT === "log" && validated.RESEND_API_KEY) {
+			throw new Error("RESEND_API_KEY must be absent when EMAIL_TRANSPORT is log")
+		}
+		if (
+			validated.EMAIL_TRANSPORT === "smtp" &&
+			(!validated.SMTP_HOST || !validated.SMTP_USER || !validated.SMTP_PASS)
+		) {
+			throw new Error(
+				"SMTP_HOST, SMTP_USER and SMTP_PASS are required when EMAIL_TRANSPORT is smtp"
+			)
+		}
+	}
+
+	return validated
+}
 
 const isServer = typeof window === "undefined"
 

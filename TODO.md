@@ -233,13 +233,15 @@ No child remediation issue (#279–#294) is fully resolved and closed yet.
 ### Backup recovery and retention — [#283](https://github.com/husamql3/pstrack/issues/283)
 
 - [x] Produce current encrypted hourly custom-format PostgreSQL dumps.
-- [ ] Restore the newest dump into an isolated database and verify schema, row aggregates, auth/session isolation, and points invariants.
-- [ ] Measure and record restore time and data-loss window; set final RTO/RPO.
-- [ ] Replace Git-backed backup retention with backup-native object storage in a second failure domain.
-- [ ] Enforce and test hourly/daily/monthly retention rather than relying on Git history.
-- [ ] Enable PostgreSQL point-in-time recovery or document an approved alternative.
-- [ ] Alert when the newest successful backup exceeds its freshness threshold.
-- [ ] Schedule recurring automated restore drills.
+- [ ] Restore the newest dump into an isolated database and verify schema, row aggregates, auth/session isolation, and points invariants. — _Harness `scripts/drill.sh` built + synthetically proven; awaiting the real-key drill for production evidence._
+- [ ] Measure and record restore time and data-loss window; set final RTO/RPO. — _Targets set (RPO ≤ 1h, RTO minutes) in ADR amendment; final measured numbers pending the real drill._
+- [ ] ~~Replace Git-backed backup retention with backup-native object storage in a second failure domain.~~ — **Rejected with rationale** (ADR 0006 amendment): GitHub is already off the VPS = second failure domain; the immutability gap is closed by removing force-push (append-only + guarded squash checkpoint) instead.
+- [ ] Enforce and test hourly/daily/monthly retention rather than relying on Git history. — _Append-only model + `test/prune-retention-test.py` (4-tier) passing locally; awaiting deploy of the updated backup container._
+- [ ] Enable PostgreSQL point-in-time recovery or document an approved alternative. — _Approved alternative (snapshot-only, RPO ≤ 1h) documented in ADR amendment; awaiting merge._
+- [ ] Alert when the newest successful backup exceeds its freshness threshold. — _`backup-freshness.yml` written; awaiting `BOT_URL`/`BOT_NOTIFY_SECRET` repo secrets + merge._
+- [ ] Schedule recurring automated restore drills. — _`restore-drill-reminder.yml` (monthly, keyless) written; awaiting merge._
+
+**#283 status (2026-07-12):** All tooling built on branch `fix/prove-recovery-and-retention` in `husamql3/pstrack-db-backups`; 3 local test suites green (retention, dual-recipient, synthetic drill end-to-end). App-repo change is docs-only (ADR 0006 amendment + this file). Remaining to close: (1) run the real-key drill and record sanitized evidence, (2) deploy the append-only + dual-recipient backup container via Coolify, (3) add repo secrets + merge the two workflows. No box is checked until its production evidence exists, per the completion rule.
 
 ### Production host patching and SSH — [#284](https://github.com/husamql3/pstrack/issues/284)
 
