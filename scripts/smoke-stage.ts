@@ -1,5 +1,7 @@
 import { writeFile } from "node:fs/promises"
 
+import { fetchWhenReady } from "./smoke-http"
+
 const required = (name: string) => {
 	const value = process.env[name]
 	if (!value) throw new Error(`${name} is not set`)
@@ -11,9 +13,7 @@ const canonicalUrl = required("PSTRACK_CANONICAL_STAGING_URL").replace(/\/$/, ""
 const expectedGitSha = required("PSTRACK_GIT_SHA")
 
 const checkFetch = async (path: string) => {
-	const response = await fetch(`${baseUrl}${path}`)
-	if (!response.ok) throw new Error(`${path} returned ${response.status}`)
-	return response
+	return fetchWhenReady(`${baseUrl}${path}`)
 }
 
 const main = async () => {
@@ -43,10 +43,7 @@ const main = async () => {
 		throw new Error("Anonymous auth session check returned a session")
 	}
 
-	const canonicalHealth = await fetch(`${canonicalUrl}/api/v3/health`)
-	if (!canonicalHealth.ok) {
-		throw new Error(`Canonical health returned ${canonicalHealth.status}`)
-	}
+	const canonicalHealth = await fetchWhenReady(`${canonicalUrl}/api/v3/health`)
 	const canonicalHealthBody = await canonicalHealth.json()
 	if (canonicalHealthBody.revision?.gitSha !== expectedGitSha) {
 		throw new Error(
