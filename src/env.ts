@@ -35,9 +35,15 @@ const server = {
 	GITHUB_CLIENT_SECRET: z.string().min(1),
 
 	// email
-	EMAIL_TRANSPORT: z.enum(["resend", "log"]).default("resend"),
+	EMAIL_TRANSPORT: z.enum(["resend", "smtp", "log"]).default("resend"),
 	RESEND_API_KEY: z.string().min(1).optional(),
 	EMAIL_FROM: z.string().default("PStrack <info@pstrack.app>"),
+	// Self-hosted SMTP (Stalwart). Required when EMAIL_TRANSPORT is "smtp".
+	// Port 465 = implicit TLS, otherwise STARTTLS.
+	SMTP_HOST: z.string().min(1).optional(),
+	SMTP_PORT: z.coerce.number().int().positive().default(587),
+	SMTP_USER: z.string().min(1).optional(),
+	SMTP_PASS: z.string().min(1).optional(),
 
 	// payments
 	POLAR_ACCESS_TOKEN: z.string().min(1),
@@ -125,6 +131,14 @@ export const buildEnv = ({
 		}
 		if (validated.EMAIL_TRANSPORT === "log" && validated.RESEND_API_KEY) {
 			throw new Error("RESEND_API_KEY must be absent when EMAIL_TRANSPORT is log")
+		}
+		if (
+			validated.EMAIL_TRANSPORT === "smtp" &&
+			(!validated.SMTP_HOST || !validated.SMTP_USER || !validated.SMTP_PASS)
+		) {
+			throw new Error(
+				"SMTP_HOST, SMTP_USER and SMTP_PASS are required when EMAIL_TRANSPORT is smtp"
+			)
 		}
 	}
 

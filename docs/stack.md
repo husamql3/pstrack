@@ -72,7 +72,7 @@ pstrack/
 | Database | PostgreSQL on Coolify |
 | Schema validation | TypeBox (Elysia native) |
 | Background jobs | Trigger.dev |
-| Email | Resend |
+| Email | Resend (default) or self-hosted SMTP / Stalwart — see ADR 0013 |
 | Error tracking | Sentry |
 | Payments | Polar (via Better Auth plugin) |
 | Logging | pino |

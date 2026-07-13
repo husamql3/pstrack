@@ -5,7 +5,7 @@ import { groupsDao } from "@/server/groups/groups.dao"
 import { groupNotifications } from "@/server/groups/groups.notifications"
 import { notifyAdmin } from "@/server/lib/bot"
 import { db } from "@/server/lib/db"
-import { resend } from "@/server/lib/email"
+import { sendEmail } from "@/server/lib/email"
 import { captureServerException } from "@/server/lib/sentry"
 import { auditCachedTotals } from "@/server/points/points.reconciliation"
 import { problemsDao } from "@/server/problems/problems.dao"
@@ -45,20 +45,20 @@ const sendDailyDigest = async (date: Date) => {
 			}),
 		}))
 
-		const { data, error } = await resend.batch.send(emails, {
-			idempotencyKey: `daily-digest:${dateKey}:${batchIndex}`,
-		})
-		if (error) throw error
-		data?.data.forEach((entry, index) => {
-			if ("error" in entry && entry.error) {
-				captureServerException(entry.error, {
-					tag: "email:daily-digest",
-					email: batch[index]?.email,
-					dateKey,
-					batchIndex,
-				})
-			}
-		})
+		// Send per-recipient through the configured transport (Resend / SMTP /
+		// log). A failed recipient is captured but never fails the batch.
+		await Promise.all(
+			emails.map((email) =>
+				sendEmail(email).catch((err) =>
+					captureServerException(err, {
+						tag: "email:daily-digest",
+						email: email.to,
+						dateKey,
+						batchIndex,
+					})
+				)
+			)
+		)
 		batches++
 	}
 
