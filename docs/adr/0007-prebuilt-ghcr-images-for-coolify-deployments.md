@@ -30,7 +30,7 @@ Use the last known-good digest from the retained `image-release-*` or `deploy-ev
 ```sh
 PSTRACK_ROLLBACK_IMAGE_REF='ghcr.io/husamql3/pstrack@sha256:...' \
 PSTRACK_ROLLBACK_GIT_SHA='previous-good-sha' \
-COOLIFY_API_URL='https://admin.pstrack.app' \
+COOLIFY_API_URL='https://coolify.pstrack.app' \
 COOLIFY_API_TOKEN='...' \
 COOLIFY_APP_UUID='...' \
 bun run scripts/rollback-coolify.ts
