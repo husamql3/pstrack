@@ -25,32 +25,61 @@ const createConfig = () => ({
 	deployedAt: new Date().toISOString(),
 	timeoutMs: optionalNumber("COOLIFY_DEPLOY_TIMEOUT_MS", 15 * 60 * 1000),
 	pollMs: optionalNumber("COOLIFY_DEPLOY_POLL_MS", 10 * 1000),
+	requestAttempts: optionalNumber("COOLIFY_REQUEST_ATTEMPTS", 4),
+	requestRetryMs: optionalNumber("COOLIFY_REQUEST_RETRY_MS", 1000),
 })
 
-type Config = ReturnType<typeof createConfig>
+export type CoolifyConfig = ReturnType<typeof createConfig>
 
-const coolifyFetch = async (config: Config, path: string, init?: RequestInit) => {
+const RETRYABLE_STATUSES = new Set([408, 425, 429, 500, 502, 503, 504])
+
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+
+export const coolifyFetch = async (
+	config: CoolifyConfig,
+	path: string,
+	init?: RequestInit
+) => {
 	const headers = {
 		Accept: "application/json",
 		Authorization: `Bearer ${config.token}`,
 		"Content-Type": "application/json",
 	}
-	const res = await fetch(`${config.apiUrl}${path}`, {
-		...init,
-		headers: { ...headers, ...init?.headers },
-	})
-	const text = await res.text()
-	let body: unknown = text
-	try {
-		body = text ? JSON.parse(text) : null
-	} catch {
-		body = text
+	for (let attempt = 1; attempt <= config.requestAttempts; attempt++) {
+		try {
+			const res = await fetch(`${config.apiUrl}${path}`, {
+				...init,
+				headers: { ...headers, ...init?.headers },
+			})
+			const text = await res.text()
+			let body: unknown = text
+			try {
+				body = text ? JSON.parse(text) : null
+			} catch {
+				body = text
+			}
+
+			if (res.ok) return body
+			if (!RETRYABLE_STATUSES.has(res.status) || attempt === config.requestAttempts) {
+				throw new Error(`Coolify API ${path} failed (${res.status}): ${text}`)
+			}
+			console.warn(
+				`Coolify API ${path} returned ${res.status}; retrying (${attempt}/${config.requestAttempts})`
+			)
+		} catch (error) {
+			if (error instanceof Error && error.message.startsWith("Coolify API ")) {
+				throw error
+			}
+			if (attempt === config.requestAttempts) throw error
+			console.warn(
+				`Coolify API ${path} connection failed; retrying (${attempt}/${config.requestAttempts})`
+			)
+		}
+
+		await wait(config.requestRetryMs * 2 ** (attempt - 1))
 	}
 
-	if (!res.ok) {
-		throw new Error(`Coolify API ${path} failed (${res.status}): ${text}`)
-	}
-	return body
+	throw new Error(`Coolify API ${path} exhausted retries`)
 }
 
 const readString = (body: unknown, keys: string[]) => {
@@ -81,7 +110,7 @@ const terminalStatus = (value: string) => {
 	return null
 }
 
-const patchApplication = async (config: Config) => {
+const patchApplication = async (config: CoolifyConfig) => {
 	const body = {
 		docker_registry_image_name: config.imageRef,
 		docker_registry_image_tag: "",
@@ -99,7 +128,7 @@ const patchApplication = async (config: Config) => {
 	})
 }
 
-const triggerDeployment = (config: Config) =>
+const triggerDeployment = (config: CoolifyConfig) =>
 	coolifyFetch(
 		config,
 		`/api/v1/deploy?uuid=${encodeURIComponent(config.appUuid)}&force=false`,
@@ -108,12 +137,12 @@ const triggerDeployment = (config: Config) =>
 		}
 	)
 
-const fetchDeployment = (config: Config, deploymentId: string) =>
+const fetchDeployment = (config: CoolifyConfig, deploymentId: string) =>
 	coolifyFetch(config, `/api/v1/deployments/${encodeURIComponent(deploymentId)}`, {
 		method: "GET",
 	})
 
-const pollDeployment = async (config: Config, deploymentId: string) => {
+const pollDeployment = async (config: CoolifyConfig, deploymentId: string) => {
 	const startedAt = Date.now()
 	for (;;) {
 		const body = await fetchDeployment(config, deploymentId)
