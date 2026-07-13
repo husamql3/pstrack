@@ -98,6 +98,41 @@ describe("buildEnv fail-fast", () => {
 		).toThrow("RESEND_API_KEY must be absent when EMAIL_TRANSPORT is log")
 	})
 
+	it("requires SMTP credentials when EMAIL_TRANSPORT is smtp", () => {
+		expect(() =>
+			buildEnv({
+				isServer: true,
+				skipValidation: false,
+				runtimeEnv: {
+					...validServerEnv,
+					EMAIL_TRANSPORT: "smtp",
+					RESEND_API_KEY: undefined,
+					SMTP_HOST: "mail.pstrack.app",
+					// SMTP_USER / SMTP_PASS omitted → must fail
+				},
+			})
+		).toThrow(
+			"SMTP_HOST, SMTP_USER and SMTP_PASS are required when EMAIL_TRANSPORT is smtp"
+		)
+	})
+
+	it("boots on smtp transport when SMTP credentials are present", () => {
+		const env = buildEnv({
+			isServer: true,
+			skipValidation: false,
+			runtimeEnv: {
+				...validServerEnv,
+				EMAIL_TRANSPORT: "smtp",
+				RESEND_API_KEY: undefined,
+				SMTP_HOST: "mail.pstrack.app",
+				SMTP_USER: "info@pstrack.app",
+				SMTP_PASS: "secret",
+			},
+		})
+		expect(env.EMAIL_TRANSPORT).toBe("smtp")
+		expect(env.SMTP_HOST).toBe("mail.pstrack.app")
+	})
+
 	it("throws when a required server var is missing and validation is not skipped", () => {
 		const spy = vi.spyOn(console, "error").mockImplementation(() => {})
 		expect(() =>
