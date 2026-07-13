@@ -4,7 +4,7 @@
 
 ## Correction
 
-The first implementation depended only on the default `github.token` and failed when repository settings blocked GitHub Actions from creating pull requests. The workflow now prefers `secrets.PAT_TOKEN`, falls back to `github.token`, and supports `workflow_dispatch` for manual runs.
+The first implementation depended only on the default `github.token` and failed when repository settings blocked GitHub Actions from creating pull requests. The workflow now tries `secrets.PAT_TOKEN`, falls back to `github.token`, warns when both tokens are blocked, and supports `workflow_dispatch` for manual runs.
 
 The automatic `push: stage` trigger remains enabled.
 
@@ -34,7 +34,8 @@ Chosen: **`gh`-CLI workflow, `push: stage` trigger, `PAT_TOKEN` auth, changelog 
 ## Consequences
 
 - Every push to `stage` opens or refreshes one `Auto PR: stage -> main`; pstrack CI runs on it.
-- The workflow uses `PAT_TOKEN` when present, otherwise `GITHUB_TOKEN` with explicit `pull-requests: write` permission.
+- The workflow tries `PAT_TOKEN` first, then `GITHUB_TOKEN` with explicit `pull-requests: write` permission.
+- If both tokens are blocked, the workflow emits setup guidance as a warning instead of failing every push to `stage`.
 - The workflow can be run manually from GitHub Actions.
 - The `stage → main` PR is never auto-merged; merge still requires human review.
 

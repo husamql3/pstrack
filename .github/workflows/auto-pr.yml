@@ -28,11 +28,32 @@ jobs:
 
       - name: Open or update the stage -> main PR
         env:
-          GH_TOKEN: ${{ secrets.PAT_TOKEN || github.token }}
+          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
           BASE: main
           HEAD: stage
         run: |
           set -euo pipefail
+
+          run_gh() {
+            local token="$1"
+            shift
+            GH_TOKEN="$token" gh "$@"
+          }
+
+          try_gh() {
+            local label="$1"
+            local token="$2"
+            shift 2
+
+            if [ -z "$token" ]; then
+              echo "::notice::Skipping ${label}; token is not configured."
+              return 1
+            fi
+
+            echo "Trying ${label}."
+            run_gh "$token" "$@"
+          }
 
           git fetch origin "$BASE" --quiet
 
@@ -50,26 +71,30 @@ jobs:
             printf '_Opened or updated automatically from `%s`._\n' "$HEAD"
           } > pr-body.md
 
-          gh auth status
-
-          existing=$(gh pr list --base "$BASE" --head "$HEAD" --state open \
+          pr_token="${PAT_TOKEN:-$GITHUB_TOKEN}"
+          existing=$(run_gh "$pr_token" pr list --base "$BASE" --head "$HEAD" --state open \
             --json number --jq '.[0].number // empty')
 
           if [ -n "$existing" ]; then
-            gh pr edit "$existing" --body-file pr-body.md
+            run_gh "$pr_token" pr edit "$existing" --body-file pr-body.md
             echo "Updated existing PR #${existing}"
           else
-            if ! create_output=$(gh pr create --base "$BASE" --head "$HEAD" \
+            if try_gh "PAT_TOKEN" "$PAT_TOKEN" pr create --base "$BASE" --head "$HEAD" \
               --title "Auto PR: stage -> main" \
-              --body-file pr-body.md 2>&1); then
-              printf '%s\n' "$create_output"
-              if printf '%s\n' "$create_output" | grep -q "GitHub Actions is not permitted to create or approve pull requests"; then
-                {
-                  echo "::error::GitHub blocked the default GITHUB_TOKEN from creating pull requests."
-                  echo "Enable Settings -> Actions -> General -> Workflow permissions -> Allow GitHub Actions to create and approve pull requests, or add a PAT_TOKEN secret with pull request creation permissions."
-                } >&2
-              fi
-              exit 1
+              --body-file pr-body.md; then
+              echo "Created new stage -> main PR with PAT_TOKEN"
+              exit 0
             fi
-            echo "Created new stage -> main PR"
+
+            if try_gh "GITHUB_TOKEN" "$GITHUB_TOKEN" pr create --base "$BASE" --head "$HEAD" \
+              --title "Auto PR: stage -> main" \
+              --body-file pr-body.md; then
+              echo "Created new stage -> main PR with GITHUB_TOKEN"
+              exit 0
+            fi
+
+            {
+              echo "::warning::Could not create the stage -> main PR automatically."
+              echo "Fix by either updating PAT_TOKEN with pull request creation access to husamql3/pstrack, or enabling Settings -> Actions -> General -> Workflow permissions -> Allow GitHub Actions to create and approve pull requests."
+            } >&2
           fi
