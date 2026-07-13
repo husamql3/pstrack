@@ -39,12 +39,16 @@ const getTransporter = (): Transporter => {
 	}
 	if (!transporter) {
 		// Prod skips env validation, so SMTP_PORT can arrive as a raw string — coerce.
-		const port = Number(env.SMTP_PORT) || 587
+		const port = Number(env.SMTP_PORT) || 465
 		transporter = nodemailer.createTransport({
 			host: env.SMTP_HOST,
 			port,
 			secure: port === 465, // implicit TLS on 465, STARTTLS on submission ports
 			requireTLS: port !== 465,
+			// Stalwart presents a self-signed cert on its submission port, and the
+			// app→Stalwart hop is a trusted same-host connection over the internal
+			// Docker network — so don't reject the unverified cert.
+			tls: { rejectUnauthorized: false },
 			auth: { user: env.SMTP_USER, pass: env.SMTP_PASS },
 		})
 	}

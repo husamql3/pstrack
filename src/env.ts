@@ -41,7 +41,7 @@ const server = {
 	// Self-hosted SMTP (Stalwart). Required when EMAIL_TRANSPORT is "smtp".
 	// Port 465 = implicit TLS, otherwise STARTTLS.
 	SMTP_HOST: z.string().min(1).optional(),
-	SMTP_PORT: z.coerce.number().int().positive().default(587),
+	SMTP_PORT: z.coerce.number().int().positive().default(465),
 	SMTP_USER: z.string().min(1).optional(),
 	SMTP_PASS: z.string().min(1).optional(),
 
@@ -76,12 +76,6 @@ const client = {
 	VITE_SENTRY_TRACES_SAMPLE_RATE: z.coerce.number().min(0).max(1).default(0),
 	VITE_SENTRY_REPLAY_SESSION_SAMPLE_RATE: z.coerce.number().min(0).max(1).default(0),
 	VITE_SENTRY_REPLAY_ERROR_SAMPLE_RATE: z.coerce.number().min(0).max(1).default(0),
-	VITE_POSTHOG_ENABLED: z
-		.enum(["true", "false"])
-		.default("false")
-		.transform((value) => value === "true"),
-	VITE_POSTHOG_KEY: z.string().min(1).optional(),
-	VITE_POSTHOG_HOST: z.url().default("https://us.i.posthog.com"),
 }
 
 /**
