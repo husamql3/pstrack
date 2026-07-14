@@ -91,8 +91,19 @@ const readString = (body: unknown, keys: string[]) => {
 	return null
 }
 
-const deploymentIdFrom = (body: unknown) =>
-	readString(body, ["deployment_uuid", "deploymentId", "deployment_id", "id", "uuid"])
+export const deploymentIdFrom = (body: unknown) => {
+	const keys = ["deployment_uuid", "deploymentId", "deployment_id", "id", "uuid"]
+	const directId = readString(body, keys)
+	if (directId) return directId
+	if (!body || typeof body !== "object") return null
+	const deployments = Reflect.get(body, "deployments")
+	if (!Array.isArray(deployments)) return null
+	for (const deployment of deployments) {
+		const id = readString(deployment, keys)
+		if (id) return id
+	}
+	return null
+}
 
 const statusFrom = (body: unknown) =>
 	readString(body, ["status", "state", "deployment_status"])?.toLowerCase() ?? "unknown"
