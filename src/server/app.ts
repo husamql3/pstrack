@@ -21,6 +21,7 @@ import { health } from "@/server/modules/health"
 import { og } from "@/server/modules/og"
 import { problemsAdminController } from "@/server/problems/problems.admin.controller"
 import { problemsController } from "@/server/problems/problems.controller"
+import { securityController } from "@/server/security/security.controller"
 import { usersAdminController } from "@/server/users/users.admin.controller"
 import { usersController } from "@/server/users/users.controller"
 import { logger, requestLogger } from "./lib/logger"
@@ -35,6 +36,7 @@ const api = new Elysia({ prefix: "/api/v3" })
 	.use(usersController)
 	.use(groupsController)
 	.use(problemsController)
+	.use(securityController)
 	.use(badgesController)
 	.use(feedbackController)
 	.use(internalController)

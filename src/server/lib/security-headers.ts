@@ -14,12 +14,15 @@ const CONTENT_SECURITY_POLICY_REPORT_ONLY = [
 	"worker-src 'self' blob:",
 	"manifest-src 'self'",
 	"media-src 'none'",
+	"report-uri /api/v3/security/csp-report",
+	"report-to csp-endpoint",
 ].join("; ")
 
 const SECURITY_HEADERS = {
 	"content-security-policy-report-only": CONTENT_SECURITY_POLICY_REPORT_ONLY,
 	"permissions-policy": "camera=(), microphone=(), geolocation=(), payment=(), usb=()",
 	"referrer-policy": "strict-origin-when-cross-origin",
+	"reporting-endpoints": 'csp-endpoint="/api/v3/security/csp-report"',
 	"x-content-type-options": "nosniff",
 	"x-frame-options": "DENY",
 }
