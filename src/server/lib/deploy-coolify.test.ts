@@ -1,6 +1,10 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
 
-import { type CoolifyConfig, coolifyFetch } from "../../../scripts/deploy-coolify"
+import {
+	type CoolifyConfig,
+	coolifyFetch,
+	deploymentIdFrom,
+} from "../../../scripts/deploy-coolify"
 
 const config: CoolifyConfig = {
 	apiUrl: "https://coolify.example.com",
@@ -54,5 +58,21 @@ describe("coolifyFetch", () => {
 			"Coolify API /api/v1/applications/app failed (401): unauthorized"
 		)
 		expect(fetchMock).toHaveBeenCalledTimes(1)
+	})
+})
+
+describe("deploymentIdFrom", () => {
+	it("reads the deployment UUID from Coolify's queued deployment response", () => {
+		expect(
+			deploymentIdFrom({
+				deployments: [
+					{
+						message: "Application deployment queued.",
+						resource_uuid: "app",
+						deployment_uuid: "deployment",
+					},
+				],
+			})
+		).toBe("deployment")
 	})
 })
