@@ -44,7 +44,10 @@ WORKDIR /app
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends curl \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    && groupadd --gid 10001 pstrack \
+    && useradd --uid 10001 --gid 10001 --no-create-home --home-dir /nonexistent \
+        --shell /usr/sbin/nologin pstrack
 
 COPY --from=runtime-deps /app/node_modules/@resvg ./node_modules/@resvg
 COPY .output/ ./.output/
@@ -56,6 +59,8 @@ RUN bun -e 'const { Resvg } = await import("@resvg/resvg-js"); const png = new R
 
 ENV NODE_ENV=production
 ENV PORT=3000
+ENV HOME=/nonexistent
+ENV TMPDIR=/tmp
 
 EXPOSE 3000
 
