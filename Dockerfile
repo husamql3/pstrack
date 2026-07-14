@@ -25,12 +25,20 @@ ENV VITE_BASE_URL=$VITE_BASE_URL \
 
 RUN bun run build
 
+# Install only production packages in an isolated stage so the runtime image
+# can copy the native Resvg packages that Nitro leaves external. Copying just
+# this scope keeps the otherwise self-contained .output image minimal.
+FROM oven/bun:1.3-slim AS runtime-deps
+WORKDIR /app
+
+COPY bun.lock package.json ./
+RUN bun install --frozen-lockfile --production --ignore-scripts
+
 # ── runtime-prebuilt ─────────────────────────────────────────────────────────
 # Stage used by CI: the app is already built outside Docker (.output/ present),
 # we just copy it in. Runs on Bun (ADR 0011) - the native Redis client ships
 # with the Bun runtime. oven/bun slim is Debian/glibc, so the linux-x64-gnu
-# native binaries @resvg/resvg-js traces into .output/server/node_modules
-# still load.
+# native binaries copied from runtime-deps still load.
 FROM oven/bun:1.3-slim AS runtime-prebuilt
 WORKDIR /app
 
@@ -38,7 +46,13 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends curl \
     && rm -rf /var/lib/apt/lists/*
 
+COPY --from=runtime-deps /app/node_modules/@resvg ./node_modules/@resvg
 COPY .output/ ./.output/
+
+# Regression guard for the OG route: resolution starts from the bundled
+# .output tree, so the native package must exist in the final image rather
+# than only in Bun's build cache.
+RUN bun -e 'const { Resvg } = await import("@resvg/resvg-js"); const png = new Resvg("<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1\" height=\"1\"/>").render().asPng(); if (png.length === 0) process.exit(1)'
 
 ENV NODE_ENV=production
 ENV PORT=3000

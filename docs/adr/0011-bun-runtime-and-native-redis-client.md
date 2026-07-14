@@ -19,9 +19,11 @@ used the `@upstash/redis` REST client. Issue #288 completed the decision:
   from the env schema, `.env.example`, and the staging sync allowlist.
 - The `runtime-prebuilt` Docker stage runs `oven/bun:1.3-slim` with
   `CMD ["bun", ...]`. The image is Debian/glibc, so the `linux-x64-gnu`
-  binaries traced for `@resvg/resvg-js` still load; verified by rendering
-  through `@resvg/resvg-js` under Bun on Linux and by a container smoke of
-  the built artifact (DB-backed health plus the `/api/v3/og` render).
+  `@resvg/resvg-js` binaries still load. Nitro leaves the dynamic package
+  external, so a dedicated production-dependency stage copies only the
+  `@resvg` scope into the final image and runs a build-time native-render
+  guard. This is verified again by a container smoke of the built artifact
+  (DB-backed health plus the `/api/v3/og` render).
 - The `"bun"` module is dynamically imported and marked external in both the
   Vite and Nitro rollup passes. Node-based runtimes (Vitest, the Vercel
   staging functions) still load the server bundle; only an actual Redis call
