@@ -59,6 +59,10 @@ ENV PORT=3000
 
 EXPOSE 3000
 
+# The Bun base image provides numeric UID/GID 1000. Runtime files are
+# read-only, and the application does not need privileged filesystem access.
+USER 1000:1000
+
 # Lets Coolify gate the rolling swap on real readiness: it waits for the new
 # container to report healthy before routing traffic to it and stopping the old
 # one. Without this, Coolify falls back to stop-then-start (= downtime).

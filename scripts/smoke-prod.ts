@@ -48,6 +48,16 @@ const main = async () => {
 	if (sessionBody !== null)
 		throw new Error("Anonymous auth session check returned a session")
 
+	const og = await checkFetch("/api/v3/og?title=Production%20Smoke")
+	if (og.headers.get("content-type") !== "image/png") {
+		throw new Error("OpenGraph smoke check did not return image/png")
+	}
+	const png = new Uint8Array(await og.arrayBuffer())
+	const pngSignature = [137, 80, 78, 71, 13, 10, 26, 10]
+	if (!pngSignature.every((byte, index) => png[index] === byte)) {
+		throw new Error("OpenGraph smoke check returned an invalid PNG")
+	}
+
 	if (jobSecret) {
 		const freshness = await checkFetch("/api/v3/internal/jobs/freshness", {
 			headers: { Authorization: `Bearer ${jobSecret}` },

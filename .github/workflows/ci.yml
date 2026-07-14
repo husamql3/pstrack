@@ -178,7 +178,7 @@ jobs:
   deploy-vercel-staging:
     name: Deploy Vercel staging
     runs-on: ubuntu-latest
-    needs: [typecheck, lint, knip, test, validate-schema, build]
+    needs: [typecheck, lint, knip, test, redis-verify, validate-schema, build]
     if: github.event_name == 'push' && github.ref == 'refs/heads/stage'
     environment:
       name: Staging
@@ -268,7 +268,8 @@ jobs:
   publish-docker-image:
     name: Build and push Docker image
     runs-on: ubuntu-latest
-    needs: [typecheck, lint, knip, test, validate-schema, build, docker-changes]
+    needs:
+      [typecheck, lint, knip, test, redis-verify, validate-schema, build, docker-changes]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.docker-changes.outputs.publish == 'true'
     outputs:
       image_ref: ${{ steps.image.outputs.ref }}
