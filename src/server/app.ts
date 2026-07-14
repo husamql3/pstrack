@@ -10,6 +10,7 @@ import { internalController } from "@/server/internal/internal.controller"
 import { jobsController } from "@/server/jobs/jobs.controller"
 import { leaderboardController } from "@/server/leaderboard/leaderboard.controller"
 import { auth } from "@/server/lib/auth"
+import { securityHeaders } from "@/server/lib/security-headers"
 import {
 	captureServerException,
 	initServerSentry,
@@ -20,6 +21,7 @@ import { health } from "@/server/modules/health"
 import { og } from "@/server/modules/og"
 import { problemsAdminController } from "@/server/problems/problems.admin.controller"
 import { problemsController } from "@/server/problems/problems.controller"
+import { securityController } from "@/server/security/security.controller"
 import { usersAdminController } from "@/server/users/users.admin.controller"
 import { usersController } from "@/server/users/users.controller"
 import { logger, requestLogger } from "./lib/logger"
@@ -34,6 +36,7 @@ const api = new Elysia({ prefix: "/api/v3" })
 	.use(usersController)
 	.use(groupsController)
 	.use(problemsController)
+	.use(securityController)
 	.use(badgesController)
 	.use(feedbackController)
 	.use(internalController)
@@ -53,6 +56,7 @@ const api = new Elysia({ prefix: "/api/v3" })
 
 export const app = new Elysia()
 	.use(requestLogger)
+	.use(securityHeaders)
 	.all("/api/v3/auth/*", ({ request }) => auth.handler(request), {
 		detail: { tags: ["Auth"] },
 	})

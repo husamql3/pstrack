@@ -15,7 +15,6 @@ export const sendMagicLinkEmail = async ({
 	// Gmail) don't execute JS so the one-time token isn't consumed early.
 	const redirectUrl = new URL(url)
 	redirectUrl.pathname = "/api/v3/magic-link"
-	logger.debug({ redirectUrl: redirectUrl.toString() }, "magic link redirect")
 
 	try {
 		await sendEmail({
@@ -24,15 +23,12 @@ export const sendMagicLinkEmail = async ({
 			subject: "Sign in to PStrack",
 			react: MagicLinkEmail({ url: redirectUrl.toString() }),
 		})
-	} catch (err) {
-		logger.error({ err, email }, "magic link email failed")
+	} catch {
+		logger.error({}, "magic link email failed")
 		if (env.NODE_ENV === "development") {
-			logger.warn(
-				{ err, email, url: redirectUrl.toString() },
-				"magic link email failed in development; using logged link fallback"
-			)
+			logger.warn({}, "magic link email failure suppressed in development")
 			return
 		}
-		throw err
+		throw new Error("Magic link email failed")
 	}
 }

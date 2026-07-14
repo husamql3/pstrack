@@ -40,6 +40,13 @@ export function captureServerException(
 	}
 }
 
+export function captureServerMessage(message: string, context: Record<string, unknown>) {
+	Sentry.withScope((scope) => {
+		scope.setContext("additional", context)
+		Sentry.captureMessage(message, "warning")
+	})
+}
+
 export function setServerUser(user: Pick<User, "id" | "username" | "email">) {
 	Sentry.setUser(user)
 }

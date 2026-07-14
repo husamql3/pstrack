@@ -156,7 +156,7 @@ export const usersAdminDao = {
 		userId: string,
 		input: { grant: boolean; expiresAt: Date | null; reason: string }
 	): Promise<
-		| { ok: true; user: AdminUserDetailResponse }
+		| { ok: true; user: AdminUserDetailResponse; becamePro: boolean }
 		| { ok: false; error: "USER_NOT_FOUND" | "POLAR_PRO_LOCKED" }
 	> => {
 		const user = await db.user.findUnique({
@@ -198,6 +198,6 @@ export const usersAdminDao = {
 			return next
 		})
 
-		return { ok: true, user: updated }
+		return { ok: true, user: updated, becamePro: input.grant && !user.isPro }
 	},
 }

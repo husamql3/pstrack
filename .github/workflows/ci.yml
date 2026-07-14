@@ -74,6 +74,33 @@ jobs:
         run: bunx prisma migrate deploy
       - run: bun run test
 
+  redis-verify:
+    name: Redis verification
+    runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis:7-alpine
+        command: redis-server --requirepass ci_redis_password
+        options: >-
+          --health-cmd "redis-cli -a ci_redis_password ping"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+        ports:
+          - 6379:6379
+    env:
+      # The harness only needs REDIS_URL; skip the full env schema like Vitest.
+      SKIP_ENV_VALIDATION: "1"
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: ./.github/actions/setup
+      - name: Verify authenticated Redis behavior (TTL, sets, concurrency, reconnect)
+        run: REDIS_URL=redis://default:ci_redis_password@127.0.0.1:6379 bun run verify:redis
+      - name: Verify bounded failure when Redis is unavailable
+        run: REDIS_URL=redis://127.0.0.1:59321 bun run verify:redis --unavailable
+      - name: Verify bounded failure after an established connection is lost
+        run: REDIS_URL=redis://default:ci_redis_password@127.0.0.1:6379 bun run verify:redis --outage-after-connect
+
   validate-schema:
     name: Validate Prisma schema
     runs-on: ubuntu-latest
@@ -150,7 +177,7 @@ jobs:
   deploy-vercel-staging:
     name: Deploy Vercel staging
     runs-on: ubuntu-latest
-    needs: [typecheck, lint, knip, test, validate-schema, build]
+    needs: [typecheck, lint, knip, test, redis-verify, validate-schema, build]
     if: github.event_name == 'push' && github.ref == 'refs/heads/stage'
     environment:
       name: Staging
@@ -240,7 +267,8 @@ jobs:
   publish-docker-image:
     name: Build and push Docker image
     runs-on: ubuntu-latest
-    needs: [typecheck, lint, knip, test, validate-schema, build, docker-changes]
+    needs:
+      [typecheck, lint, knip, test, redis-verify, validate-schema, build, docker-changes]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.docker-changes.outputs.publish == 'true'
     outputs:
       image_ref: ${{ steps.image.outputs.ref }}

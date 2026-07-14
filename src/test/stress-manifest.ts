@@ -202,6 +202,12 @@ export const STRESS_ENDPOINTS: StressEndpoint[] = [
 		dimensions: ["auth", "concurrency", "idempotency", "invariant"],
 	},
 	{
+		method: "POST",
+		path: "/api/v3/security/csp-report",
+		module: "security",
+		dimensions: ["fuzz", "load", "side-effect"],
+	},
+	{
 		method: "GET",
 		path: "/api/v3/badges/me",
 		module: "badges",

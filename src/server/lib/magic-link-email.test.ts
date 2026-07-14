@@ -45,13 +45,19 @@ describe("sendMagicLinkEmail", () => {
 			})
 		).resolves.toBeUndefined()
 
+		expect(mocks.loggerError).toHaveBeenCalledWith({}, "magic link email failed")
 		expect(mocks.loggerWarn).toHaveBeenCalledWith(
-			expect.objectContaining({
-				email: "user@example.com",
-				url: "https://pstrack.localhost/api/v3/magic-link?token=abc",
-			}),
-			"magic link email failed in development; using logged link fallback"
+			{},
+			"magic link email failure suppressed in development"
 		)
+		const logged = JSON.stringify([
+			...mocks.loggerDebug.mock.calls,
+			...mocks.loggerError.mock.calls,
+			...mocks.loggerWarn.mock.calls,
+		])
+		expect(logged).not.toContain("user@example.com")
+		expect(logged).not.toContain("token=abc")
+		expect(logged).not.toContain("Resend unavailable")
 	})
 
 	it("rethrows email failures outside development", async () => {
@@ -63,6 +69,7 @@ describe("sendMagicLinkEmail", () => {
 				email: "user@example.com",
 				url: "https://pstrack.localhost/api/v3/auth/magic-link/verify?token=abc",
 			})
-		).rejects.toThrow("Resend unavailable")
+		).rejects.toThrow("Magic link email failed")
+		expect(mocks.loggerError).toHaveBeenCalledWith({}, "magic link email failed")
 	})
 })

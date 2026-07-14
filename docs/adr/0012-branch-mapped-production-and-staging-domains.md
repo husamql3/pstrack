@@ -7,8 +7,11 @@ Production deploys are built from `main` and published as production GHCR images
 The existing Vercel project at `https://pstrack.vercel.app` is the staging
 environment. Its Vercel `production` target is application staging and deploys
 only from the repository's `stage` branch. It uses a dedicated Neon database,
-Upstash Redis, OAuth applications, Polar sandbox catalog, Trigger.dev
-environment, staging-tagged Sentry events, and `EMAIL_TRANSPORT=log`.
+OAuth applications, Polar sandbox catalog, Trigger.dev environment,
+staging-tagged Sentry events, and `EMAIL_TRANSPORT=log`. Staging has no Redis
+service: the Vercel Node runtime cannot run Bun's native Redis client, so
+Redis behavior is verified in CI and by production canary instead (ADR 0011
+amendment, #288).
 
 No Coolify production credential or data may be copied into Vercel. Staging
 configuration is synchronized from the ignored `.env.stage` file through an
