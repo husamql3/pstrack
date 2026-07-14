@@ -25,6 +25,14 @@ ENV VITE_BASE_URL=$VITE_BASE_URL \
 
 RUN bun run build
 
+# Nitro leaves Resvg external to the server bundle. Install production packages
+# in an isolated stage so the runtime can copy only that native dependency.
+FROM oven/bun:1.3-slim AS runtime-deps
+WORKDIR /app
+
+COPY bun.lock package.json ./
+RUN bun install --frozen-lockfile --production --ignore-scripts
+
 # ── runtime-prebuilt ─────────────────────────────────────────────────────────
 # Stage used by CI: the app is already built outside Docker (.output/ present),
 # we just copy it in. Uses node:22-slim (glibc) to match the linux-x64-gnu
@@ -39,7 +47,11 @@ RUN apt-get update \
     && useradd --uid 10001 --gid 10001 --no-create-home --home-dir /nonexistent \
         --shell /usr/sbin/nologin pstrack
 
+COPY --from=runtime-deps /app/node_modules/@resvg ./node_modules/@resvg
 COPY .output/ ./.output/
+
+# Fail the image build if the native OG renderer cannot load and produce PNG.
+RUN node --input-type=module -e 'const { Resvg } = await import("@resvg/resvg-js"); const png = new Resvg("<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1\" height=\"1\"/>").render().asPng(); if (png.length === 0) process.exit(1)'
 
 ENV NODE_ENV=production
 ENV PORT=3000

@@ -92,6 +92,10 @@ export const summarizeResourceSamples = (
 		ResourceCategory,
 		Array<{ cpuPercent: number; memoryBytes: number; pids: number }>
 	>()
+	const totalsBySample: Map<
+		ResourceCategory,
+		{ cpuPercent: number; memoryBytes: number; pids: number }
+	>[] = []
 
 	for (const sample of samples) {
 		const totals = new Map<
@@ -120,14 +124,20 @@ export const summarizeResourceSamples = (
 				totals.set("coolify-total", aggregate)
 			}
 		}
-		for (const [category, total] of totals) {
-			const values = byCategory.get(category) ?? []
-			values.push(total)
-			byCategory.set(category, values)
-		}
+		totalsBySample.push(totals)
 	}
 
-	const categories = Object.fromEntries(
+	const categories = new Set(totalsBySample.flatMap((totals) => [...totals.keys()]))
+	for (const category of categories) {
+		byCategory.set(
+			category,
+			totalsBySample.map(
+				(totals) => totals.get(category) ?? { cpuPercent: 0, memoryBytes: 0, pids: 0 }
+			)
+		)
+	}
+
+	const categorySummaries = Object.fromEntries(
 		[...byCategory.entries()].map(([category, values]) => {
 			const average = (field: "cpuPercent" | "memoryBytes" | "pids") =>
 				round(values.reduce((sum, value) => sum + value[field], 0) / values.length)
@@ -160,7 +170,7 @@ export const summarizeResourceSamples = (
 			cpuCount: options.hostCpuCount,
 			memoryBytes: options.hostMemoryBytes,
 		},
-		categories,
+		categories: categorySummaries,
 	}
 }
 

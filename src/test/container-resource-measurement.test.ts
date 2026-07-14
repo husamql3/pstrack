@@ -99,6 +99,26 @@ describe("container resource measurement", () => {
 		expect(JSON.stringify(evidence)).not.toContain("generated")
 	})
 
+	it("averages transient categories across the complete measurement window", () => {
+		const evidence = summarizeResourceSamples(
+			[[{ category: "backup", cpuPercent: 10, memoryBytes: 100, pids: 2 }], []],
+			{
+				capturedAt: "2026-07-14T18:00:00.000Z",
+				durationMs: 5000,
+				intervalMs: 5000,
+				hostCpuCount: 2,
+				hostMemoryBytes: 4_000,
+			}
+		)
+
+		expect(evidence.categories.backup).toEqual({
+			observations: 2,
+			cpuPercent: { average: 5, maximum: 10 },
+			memoryBytes: { average: 50, maximum: 100 },
+			pids: { average: 1, maximum: 2 },
+		})
+	})
+
 	it("fails closed for empty, malformed, and unmatched Docker stats", () => {
 		const categories = new Map<string, ResourceCategory>([["app-1", "app"]])
 		expect(() => parseResourceStats([], categories)).toThrow("no resource stats")
