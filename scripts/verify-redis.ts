@@ -78,6 +78,7 @@ const finish = () => {
 		process.exit(1)
 	}
 	console.log("\nAll Redis behavior checks passed")
+	process.exit(0)
 }
 
 const runUnavailableScenario = async () => {
