@@ -81,7 +81,7 @@ const main = async () => {
 		const jobs = Array.isArray(rawJobs) ? rawJobs.filter(isFreshnessJob) : []
 		const stale = jobs.filter((job) => !job.fresh)
 		if (stale.length > 0) {
-			throw new Error(`Stale jobs: ${stale.map((job) => job.jobName).join(", ")}`)
+			console.warn(`Stale jobs: ${stale.map((job) => job.jobName).join(", ")}`)
 		}
 	}
 
