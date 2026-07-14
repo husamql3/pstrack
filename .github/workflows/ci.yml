@@ -258,7 +258,7 @@ jobs:
           changed_files="$(git diff --name-only "${{ github.event.before }}" "${{ github.sha }}")"
           echo "$changed_files"
 
-          if grep -Eq '^(src/|public/|prisma/|prisma\.config\.ts$|package\.json$|bun\.lock$|Dockerfile$|\.dockerignore$|vite\.config\.ts$|tsconfig\.json$|\.github/workflows/ci\.yml$|\.github/actions/setup/action\.yml$)' <<< "$changed_files"; then
+          if grep -Eq '^(src/|public/|prisma/|prisma\.config\.ts$|package\.json$|bun\.lock$|Dockerfile$|\.dockerignore$|vite\.config\.ts$|tsconfig\.json$|scripts/deploy-coolify\.ts$|scripts/smoke-prod\.ts$|\.github/workflows/ci\.yml$|\.github/actions/setup/action\.yml$)' <<< "$changed_files"; then
             echo "publish=true" >> "$GITHUB_OUTPUT"
           else
             echo "publish=false" >> "$GITHUB_OUTPUT"
