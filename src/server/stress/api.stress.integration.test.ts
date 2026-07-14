@@ -14,6 +14,10 @@ const authMock = vi.hoisted(() => {
 	}
 })
 
+const sentryMock = vi.hoisted(() => ({
+	captureServerMessage: vi.fn(),
+}))
+
 vi.mock("@/server/lib/auth", () => ({
 	auth: {
 		api: {
@@ -40,6 +44,7 @@ vi.mock("@/server/lib/email", () => ({
 
 vi.mock("@/server/lib/sentry", () => ({
 	captureServerException: vi.fn(),
+	captureServerMessage: sentryMock.captureServerMessage,
 	initServerSentry: vi.fn(),
 	ServerSentry: { flush: vi.fn() },
 }))
@@ -600,6 +605,20 @@ const createEndpointScenarios = (ctx: StressContext): StressScenario[] => [
 		allowedStatuses: [200, 409],
 	},
 	{
+		key: { method: "POST", path: "/api/v3/security/csp-report" },
+		method: "POST",
+		path: "/api/v3/security/csp-report",
+		body: {
+			"csp-report": {
+				"blocked-uri": "inline",
+				"document-uri": "https://stress.test/dashboard",
+				"effective-directive": "script-src",
+				disposition: "report",
+			},
+		},
+		allowedStatuses: [204],
+	},
+	{
 		key: { method: "GET", path: "/api/v3/badges/me" },
 		method: "GET",
 		path: "/api/v3/badges/me",
@@ -1037,6 +1056,7 @@ describe("API stress suite", () => {
 	})
 
 	beforeEach(() => {
+		sentryMock.captureServerMessage.mockReset()
 		sessions.clear()
 		authMock.handler.mockImplementation(async () => new Response("auth"))
 		authMock.getSession.mockImplementation(async ({ headers }) => {
@@ -1101,6 +1121,109 @@ describe("API stress suite", () => {
 				return new Response("not found", { status: 404 })
 			})
 		)
+	})
+
+	it("serves report-only security headers across auth, API, and OpenGraph responses", async () => {
+		const responses = await Promise.all([
+			app.handle(new Request("https://stress.test/api/v3/auth/get-session")),
+			app.handle(new Request("https://stress.test/api/v3/openapi/json")),
+			app.handle(new Request("https://stress.test/api/v3/og/?title=Security")),
+		])
+
+		for (const response of responses) {
+			const reportOnlyPolicy = response.headers.get("content-security-policy-report-only")
+			expect(reportOnlyPolicy).toContain("default-src 'self'")
+			expect(reportOnlyPolicy).toContain("report-uri /api/v3/security/csp-report")
+			expect(reportOnlyPolicy).toContain("report-to csp-endpoint")
+			expect(response.headers.get("reporting-endpoints")).toBe(
+				'csp-endpoint="/api/v3/security/csp-report"'
+			)
+			expect(response.headers.get("content-security-policy")).toBeNull()
+			expect(response.headers.get("strict-transport-security")).toBeNull()
+			expect(response.headers.get("x-content-type-options")).toBe("nosniff")
+			expect(response.headers.get("referrer-policy")).toBe(
+				"strict-origin-when-cross-origin"
+			)
+			expect(response.headers.get("permissions-policy")).toBe(
+				"camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+			)
+			expect(response.headers.get("x-frame-options")).toBe("DENY")
+		}
+	})
+
+	it("collects CSP reports without forwarding URLs or report samples", async () => {
+		const response = await app.handle(
+			new Request("https://stress.test/api/v3/security/csp-report", {
+				method: "POST",
+				headers: { "content-type": "application/csp-report" },
+				body: JSON.stringify({
+					"csp-report": {
+						"document-uri":
+							"https://stress.test/profile/private-user?token=private-query-token",
+						"blocked-uri":
+							"https://private-service.internal/secret?token=blocked-query-token",
+						"effective-directive": "script-src-elem",
+						disposition: "report",
+						"source-file": "https://stress.test/assets/private-file.js",
+						"script-sample": "private-code-sample",
+					},
+				}),
+			})
+		)
+
+		expect(response.status).toBe(204)
+		expect(sentryMock.captureServerMessage).toHaveBeenCalledWith(
+			"Content Security Policy violation",
+			{
+				blockedResource: "https-external",
+				disposition: "report",
+				documentArea: "profile",
+				effectiveDirective: "script-src-elem",
+			}
+		)
+		const captured = JSON.stringify(sentryMock.captureServerMessage.mock.calls)
+		expect(captured).not.toContain("private-service")
+		expect(captured).not.toContain("private-user")
+		expect(captured).not.toContain("private-query-token")
+		expect(captured).not.toContain("blocked-query-token")
+		expect(captured).not.toContain("private-file")
+		expect(captured).not.toContain("private-code-sample")
+		const duplicateResponse = await app.handle(
+			new Request("https://stress.test/api/v3/security/csp-report", {
+				method: "POST",
+				headers: { "content-type": "application/csp-report" },
+				body: JSON.stringify({
+					"csp-report": {
+						"document-uri": "https://stress.test/profile/another-private-user",
+						"blocked-uri": "https://another-private-host.invalid/asset.js",
+						"effective-directive": "script-src-elem",
+						disposition: "report",
+					},
+				}),
+			})
+		)
+		expect(duplicateResponse.status).toBe(204)
+		expect(sentryMock.captureServerMessage).toHaveBeenCalledTimes(1)
+
+		sentryMock.captureServerMessage.mockImplementationOnce(() => {
+			throw new Error("telemetry unavailable")
+		})
+		const telemetryFailureResponse = await app.handle(
+			new Request("https://stress.test/api/v3/security/csp-report", {
+				method: "POST",
+				headers: { "content-type": "application/reports+json" },
+				body: JSON.stringify([
+					{
+						body: {
+							blockedURL: "inline",
+							documentURL: "https://stress.test/dashboard",
+							effectiveDirective: "script-src",
+						},
+					},
+				]),
+			})
+		)
+		expect(telemetryFailureResponse.status).toBe(204)
 	})
 
 	it("keeps every endpoint inside its allowed response envelope under representative pressure", async () => {
