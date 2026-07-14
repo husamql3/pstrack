@@ -10,6 +10,7 @@ import { internalController } from "@/server/internal/internal.controller"
 import { jobsController } from "@/server/jobs/jobs.controller"
 import { leaderboardController } from "@/server/leaderboard/leaderboard.controller"
 import { auth } from "@/server/lib/auth"
+import { securityHeaders } from "@/server/lib/security-headers"
 import {
 	captureServerException,
 	initServerSentry,
@@ -53,6 +54,7 @@ const api = new Elysia({ prefix: "/api/v3" })
 
 export const app = new Elysia()
 	.use(requestLogger)
+	.use(securityHeaders)
 	.all("/api/v3/auth/*", ({ request }) => auth.handler(request), {
 		detail: { tags: ["Auth"] },
 	})

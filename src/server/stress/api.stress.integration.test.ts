@@ -1103,6 +1103,30 @@ describe("API stress suite", () => {
 		)
 	})
 
+	it("serves report-only security headers across auth, API, and OpenGraph responses", async () => {
+		const responses = await Promise.all([
+			app.handle(new Request("https://stress.test/api/v3/auth/get-session")),
+			app.handle(new Request("https://stress.test/api/v3/openapi/json")),
+			app.handle(new Request("https://stress.test/api/v3/og/?title=Security")),
+		])
+
+		for (const response of responses) {
+			expect(response.headers.get("content-security-policy-report-only")).toContain(
+				"default-src 'self'"
+			)
+			expect(response.headers.get("content-security-policy")).toBeNull()
+			expect(response.headers.get("strict-transport-security")).toBeNull()
+			expect(response.headers.get("x-content-type-options")).toBe("nosniff")
+			expect(response.headers.get("referrer-policy")).toBe(
+				"strict-origin-when-cross-origin"
+			)
+			expect(response.headers.get("permissions-policy")).toBe(
+				"camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+			)
+			expect(response.headers.get("x-frame-options")).toBe("DENY")
+		}
+	})
+
 	it("keeps every endpoint inside its allowed response envelope under representative pressure", async () => {
 		const ctx = await seedStressContext()
 		const scenarios = createEndpointScenarios(ctx)
