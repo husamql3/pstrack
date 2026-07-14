@@ -136,9 +136,9 @@ const patchApplication = async (config: CoolifyConfig) => {
 	})
 }
 
-type CoolifyEnvironmentVariable = { uuid: string; key: string }
+type CoolifyEnvironmentVariable = { key: string }
 
-const syncDeploymentEnvironment = async (config: CoolifyConfig) => {
+export const syncDeploymentEnvironment = async (config: CoolifyConfig) => {
 	const rawExisting = await coolifyFetch(
 		config,
 		`/api/v1/applications/${config.appUuid}/envs`,
@@ -149,12 +149,11 @@ const syncDeploymentEnvironment = async (config: CoolifyConfig) => {
 				Boolean(
 					value &&
 						typeof value === "object" &&
-						typeof Reflect.get(value, "uuid") === "string" &&
 						typeof Reflect.get(value, "key") === "string"
 				)
 			)
 		: []
-	const existingByKey = new Map(existing.map((variable) => [variable.key, variable.uuid]))
+	const existingKeys = new Set(existing.map((variable) => variable.key))
 	const values = {
 		PSTRACK_GIT_SHA: config.gitSha,
 		PSTRACK_IMAGE_DIGEST: config.imageDigest,
@@ -163,23 +162,17 @@ const syncDeploymentEnvironment = async (config: CoolifyConfig) => {
 	}
 
 	for (const [key, value] of Object.entries(values)) {
-		const uuid = existingByKey.get(key)
-		await coolifyFetch(
-			config,
-			uuid
-				? `/api/v1/applications/${config.appUuid}/envs/${uuid}`
-				: `/api/v1/applications/${config.appUuid}/envs`,
-			{
-				method: uuid ? "PATCH" : "POST",
-				body: JSON.stringify({
-					key,
-					value,
-					is_buildtime: true,
-					is_runtime: true,
-					is_preview: false,
-				}),
-			}
-		)
+		const exists = existingKeys.has(key)
+		await coolifyFetch(config, `/api/v1/applications/${config.appUuid}/envs`, {
+			method: exists ? "PATCH" : "POST",
+			body: JSON.stringify({
+				key,
+				value,
+				is_buildtime: true,
+				is_runtime: true,
+				is_preview: false,
+			}),
+		})
 	}
 }
 

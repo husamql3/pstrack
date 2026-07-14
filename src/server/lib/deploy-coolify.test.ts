@@ -4,6 +4,7 @@ import {
 	type CoolifyConfig,
 	coolifyFetch,
 	deploymentIdFrom,
+	syncDeploymentEnvironment,
 } from "../../../scripts/deploy-coolify"
 
 const config: CoolifyConfig = {
@@ -74,5 +75,29 @@ describe("deploymentIdFrom", () => {
 				],
 			})
 		).toBe("deployment")
+	})
+})
+
+describe("syncDeploymentEnvironment", () => {
+	it("updates existing variables through the application env endpoint", async () => {
+		const fetchMock = vi
+			.spyOn(globalThis, "fetch")
+			.mockResolvedValueOnce(
+				Response.json([
+					{ uuid: "env-uuid", key: "PSTRACK_GIT_SHA" },
+					{ uuid: "digest-uuid", key: "PSTRACK_IMAGE_DIGEST" },
+					{ uuid: "ref-uuid", key: "PSTRACK_IMAGE_REF" },
+					{ uuid: "date-uuid", key: "PSTRACK_DEPLOYED_AT" },
+				])
+			)
+			.mockImplementation(async () => Response.json({}))
+
+		await syncDeploymentEnvironment(config)
+
+		expect(fetchMock).toHaveBeenCalledTimes(5)
+		for (const call of fetchMock.mock.calls.slice(1)) {
+			expect(call[0]).toBe("https://coolify.example.com/api/v1/applications/app/envs")
+			expect(call[1]?.method).toBe("PATCH")
+		}
 	})
 })
