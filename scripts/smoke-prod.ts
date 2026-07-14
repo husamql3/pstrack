@@ -10,11 +10,25 @@ const baseUrl = required("PSTRACK_PRODUCTION_URL").replace(/\/$/, "")
 const expectedGitSha = required("PSTRACK_GIT_SHA")
 const expectedImageDigest = required("PSTRACK_IMAGE_DIGEST")
 const jobSecret = process.env.JOB_DISPATCH_SECRET
+const TRANSIENT_STATUSES = new Set([408, 425, 429, 500, 502, 503, 504])
+const SMOKE_ATTEMPTS = 15
+const SMOKE_RETRY_MS = 2000
+
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 const checkFetch = async (path: string, init?: RequestInit) => {
-	const res = await fetch(`${baseUrl}${path}`, init)
-	if (!res.ok) throw new Error(`${path} returned ${res.status}`)
-	return res
+	for (let attempt = 1; attempt <= SMOKE_ATTEMPTS; attempt++) {
+		const res = await fetch(`${baseUrl}${path}`, init)
+		if (res.ok) return res
+		if (!TRANSIENT_STATUSES.has(res.status) || attempt === SMOKE_ATTEMPTS) {
+			throw new Error(`${path} returned ${res.status}`)
+		}
+		console.warn(
+			`${path} returned ${res.status}; retrying (${attempt}/${SMOKE_ATTEMPTS})`
+		)
+		await wait(SMOKE_RETRY_MS)
+	}
+	throw new Error(`${path} exhausted retries`)
 }
 
 const isFreshnessJob = (value: unknown): value is { jobName: string; fresh: boolean } =>
