@@ -56,38 +56,53 @@ const getTransporter = (): Transporter => {
 }
 
 const sendViaSmtp = async (payload: CreateEmailOptions) => {
-	// React Email templates are rendered to HTML + text in-app (Resend does this
-	// server-side; SMTP needs the rendered strings). `react` is always a JSX
-	// element at the call sites, but CreateEmailOptions types it as ReactNode.
-	const element = payload.react as ReactElement | undefined
-	const html = payload.html ?? (element ? await render(element) : undefined)
-	const text =
-		payload.text ?? (element ? await render(element, { plainText: true }) : undefined)
-
-	const info = await getTransporter().sendMail({
-		from: payload.from,
-		to: payload.to,
-		subject: payload.subject,
-		html,
-		text,
-		...(payload.replyTo
-			? {
-					replyTo: Array.isArray(payload.replyTo)
-						? payload.replyTo.join(", ")
-						: payload.replyTo,
-				}
-			: {}),
-	})
+	const info = await (async () => {
+		try {
+			// React Email templates are rendered to HTML + text in-app (Resend does
+			// this server-side; SMTP needs the rendered strings). Keep rendering in
+			// the same sanitizing boundary as transport execution because template
+			// errors can contain message content.
+			const element = payload.react as ReactElement | undefined
+			const html = payload.html ?? (element ? await render(element) : undefined)
+			const text =
+				payload.text ?? (element ? await render(element, { plainText: true }) : undefined)
+			return await getTransporter().sendMail({
+				from: payload.from,
+				to: payload.to,
+				subject: payload.subject,
+				html,
+				text,
+				...(payload.replyTo
+					? {
+							replyTo: Array.isArray(payload.replyTo)
+								? payload.replyTo.join(", ")
+								: payload.replyTo,
+						}
+					: {}),
+			})
+		} catch {
+			logger.error(
+				{ recipientCount: Array.isArray(payload.to) ? payload.to.length : 1 },
+				"smtp send failed"
+			)
+			throw new Error("SMTP send failed")
+		}
+	})()
 
 	if (info.rejected && info.rejected.length > 0) {
 		logger.error(
-			{ rejected: info.rejected, to: payload.to, subject: payload.subject },
+			{
+				rejectedCount: info.rejected.length,
+				recipientCount: Array.isArray(payload.to) ? payload.to.length : 1,
+			},
 			"smtp send rejected"
 		)
-		throw new Error(`SMTP rejected: ${info.rejected.join(", ")}`)
+		throw new Error(
+			`SMTP rejected ${info.rejected.length} recipient${info.rejected.length === 1 ? "" : "s"}`
+		)
 	}
 	logger.debug(
-		{ id: info.messageId, to: payload.to, subject: payload.subject },
+		{ recipientCount: Array.isArray(payload.to) ? payload.to.length : 1 },
 		"smtp send ok"
 	)
 	return { id: info.messageId }
@@ -108,16 +123,29 @@ export const sendEmail = async (payload: CreateEmailOptions) => {
 		return sendViaSmtp(payload)
 	}
 
-	const result = await resend.emails.send(payload)
+	const result = await (async () => {
+		try {
+			return await resend.emails.send(payload)
+		} catch {
+			logger.error(
+				{ recipientCount: Array.isArray(payload.to) ? payload.to.length : 1 },
+				"resend send failed"
+			)
+			throw new Error("Resend send failed")
+		}
+	})()
 	if (result.error) {
 		logger.error(
-			{ err: result.error, to: payload.to, subject: payload.subject, from: payload.from },
+			{
+				errorName: result.error.name,
+				recipientCount: Array.isArray(payload.to) ? payload.to.length : 1,
+			},
 			"resend send failed"
 		)
-		throw new Error(`Resend: ${result.error.name} - ${result.error.message}`)
+		throw new Error(`Resend send failed (${result.error.name})`)
 	}
 	logger.debug(
-		{ id: result.data?.id, to: payload.to, subject: payload.subject },
+		{ recipientCount: Array.isArray(payload.to) ? payload.to.length : 1 },
 		"resend send ok"
 	)
 	return result.data
