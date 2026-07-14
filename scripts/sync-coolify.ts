@@ -12,7 +12,6 @@ const SKIP_KEYS = new Set([
 ])
 
 type CoolifyEnv = {
-	uuid: string
 	key: string
 }
 
@@ -48,7 +47,7 @@ async function main() {
 
 	const existingRes = await coolifyFetch(`/api/v1/applications/${appUuid}/envs`)
 	const existing = (await existingRes.json()) as CoolifyEnv[]
-	const existingByKey = new Map(existing.map((env) => [env.key, env.uuid]))
+	const existingKeys = new Set(existing.map((env) => env.key))
 
 	console.log(`\nSyncing ${toSync.length} variables -> Coolify application ${appUuid}\n`)
 
@@ -57,7 +56,7 @@ async function main() {
 	let failed = 0
 
 	for (const [key, value] of toSync) {
-		const existingUuid = existingByKey.get(key)
+		const exists = existingKeys.has(key)
 		const body = JSON.stringify({
 			key,
 			value,
@@ -67,8 +66,8 @@ async function main() {
 		})
 
 		try {
-			if (existingUuid) {
-				await coolifyFetch(`/api/v1/applications/${appUuid}/envs/${existingUuid}`, {
+			if (exists) {
+				await coolifyFetch(`/api/v1/applications/${appUuid}/envs`, {
 					method: "PATCH",
 					body,
 				})
