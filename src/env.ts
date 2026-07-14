@@ -15,9 +15,7 @@ const server = {
 	DATABASE_URL: z.string().min(1),
 	DIRECT_URL: z.string().min(1),
 
-	// redis
-	UPSTASH_REDIS_REST_URL: z.string().min(1).optional(),
-	UPSTASH_REDIS_REST_TOKEN: z.string().min(1).optional(),
+	// redis (self-hosted, Bun native client - ADR 0011)
 	REDIS_URL: z.url().optional(),
 
 	// error tracking

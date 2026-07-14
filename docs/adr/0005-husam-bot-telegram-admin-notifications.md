@@ -130,8 +130,7 @@ TELEGRAM_CHAT_ID=            # chat ID to send all notifications to
 
 BOT_NOTIFY_SECRET=           # shared with PStrack
 
-UPSTASH_REDIS_REST_URL=      # for metric snapshots + milestone tracking
-UPSTASH_REDIS_REST_TOKEN=
+REDIS_URL=                   # future metric snapshots + milestone tracking
 
 VERCEL_WEBHOOK_SECRET=
 SENTRY_WEBHOOK_SECRET=

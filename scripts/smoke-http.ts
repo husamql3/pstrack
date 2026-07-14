@@ -1,6 +1,11 @@
 const defaultSleep = (milliseconds: number) =>
 	new Promise<void>((resolve) => setTimeout(resolve, milliseconds))
 
+export type SmokeFetcher = (
+	input: RequestInfo | URL,
+	init?: RequestInit
+) => Promise<Response>
+
 export const fetchWhenReady = async (
 	url: string,
 	{
@@ -9,7 +14,7 @@ export const fetchWhenReady = async (
 		retryDelayMs = 5000,
 		sleep = defaultSleep,
 	}: {
-		fetcher?: typeof fetch
+		fetcher?: SmokeFetcher
 		maxAttempts?: number
 		retryDelayMs?: number
 		sleep?: (milliseconds: number) => Promise<void>
