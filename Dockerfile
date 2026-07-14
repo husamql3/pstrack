@@ -34,12 +34,17 @@ WORKDIR /app
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends curl \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    && groupadd --gid 10001 pstrack \
+    && useradd --uid 10001 --gid 10001 --no-create-home --home-dir /nonexistent \
+        --shell /usr/sbin/nologin pstrack
 
 COPY .output/ ./.output/
 
 ENV NODE_ENV=production
 ENV PORT=3000
+ENV HOME=/nonexistent
+ENV TMPDIR=/tmp
 
 EXPOSE 3000
 
@@ -48,5 +53,7 @@ EXPOSE 3000
 # one. Without this, Coolify falls back to stop-then-start (= downtime).
 HEALTHCHECK --interval=10s --timeout=5s --start-period=30s --retries=3 \
     CMD curl -fsS http://localhost:3000/api/v3/health || exit 1
+
+USER 10001:10001
 
 CMD ["node", ".output/server/index.mjs"]
