@@ -25,6 +25,7 @@
 		"db:seed-groups": "bun run prisma/seed-groups.ts",
 		"db:seed-daily-problems": "bun run prisma/seed-daily-problems.ts",
 		"db:reset": "prisma migrate reset",
+		"db:reset:staging": "bun run scripts/reset-staging.ts",
 		"db:studio": "bunx db-studio@latest --database-url \"$DATABASE_URL\"",
 		"prisma:generate": "prisma generate",
 		"test": "vitest run",

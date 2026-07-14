@@ -54,11 +54,15 @@ export async function seedDailyProblems() {
 	const seedSlugs = groupsData.map((g) => g.slug)
 	const groups = await db.group.findMany({
 		where: { slug: { in: seedSlugs } },
+		orderBy: { slug: "asc" },
 		select: {
 			id: true,
 			slug: true,
 			roadmap: true,
-			members: { select: { id: true, userId: true, joinedAt: true } },
+			members: {
+				orderBy: { userId: "asc" },
+				select: { id: true, userId: true, joinedAt: true },
+			},
 		},
 	})
 

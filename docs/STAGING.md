@@ -24,13 +24,21 @@ This procedure destroys all staging data. Confirm the target is staging and
 obtain explicit destructive-operation approval before running it.
 
 1. Pull the Vercel staging environment into a temporary ignored file.
-2. Verify `PSTRACK_ENVIRONMENT=staging`, `EMAIL_TRANSPORT=log`, the database host
-   is the dedicated Neon staging project, and no production host is present.
-3. Run `bun run db:reset` against that environment. Prisma reapplies migrations
-   and the deterministic master seed.
-4. Run the staging smoke checks and verify only synthetic `@dev.test` seed
-   accounts are present.
-5. Delete the temporary environment file.
+2. Load the staging environment. The command compares the complete normalized
+   database identities (hostname plus database name) with repository-controlled
+   SHA-256 fingerprints; operators cannot override the approved targets.
+3. After obtaining explicit destructive-operation approval, run
+   `bun run db:reset:staging --confirm-staging-reset`. The command fails closed
+   unless both Prisma URLs match the approved Neon host, the runtime identifies
+   itself as staging, log-only email is active, and outbound email credentials
+   are absent.
+4. The command explicitly resets migrations, runs the deterministic master seed,
+   and writes aggregate-only `staging-reset-evidence.json`. A healthy result
+   requires the exact canonical 50 synthetic identities and 9 group identities,
+   creators, and membership counts, plus exactly 315 daily problems. Evidence
+   contains only aggregate mismatch counts, never account identifiers.
+5. Run the staging smoke checks, retain the sanitized evidence, and delete the
+   temporary environment file.
 
 Never restore or clone production data into staging.
 
