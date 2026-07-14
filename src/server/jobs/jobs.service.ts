@@ -52,9 +52,9 @@ const sendDailyDigest = async (date: Date) => {
 				sendEmail(email).catch((err) =>
 					captureServerException(err, {
 						tag: "email:daily-digest",
-						email: email.to,
 						dateKey,
 						batchIndex,
+						recipientCount: 1,
 					})
 				)
 			)

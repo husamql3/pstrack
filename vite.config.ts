@@ -34,6 +34,9 @@ const config = defineConfig({
 	build: {
 		reportCompressedSize: false,
 		rollupOptions: {
+			// "bun" is the runtime-provided module for the native Redis client
+			// (server-only, dynamically imported); it can never be bundled.
+			external: ["bun"],
 			onwarn(warning, warn) {
 				if (
 					warning.code === "MODULE_LEVEL_DIRECTIVE" &&
@@ -51,7 +54,10 @@ const config = defineConfig({
 		devtools(),
 		nitro({
 			rollupConfig: {
-				external: [/\.node$/, /^@resvg\/resvg-js(?:-.+)?$/],
+				// "bun" is the runtime-provided module for the native Redis client;
+				// it must never be bundled (it is dynamically imported so Node-based
+				// runtimes without Redis can still load the server bundle).
+				external: [/\.node$/, /^@resvg\/resvg-js(?:-.+)?$/, "bun"],
 			},
 			traceDeps: [
 				"@resvg/resvg-js*",

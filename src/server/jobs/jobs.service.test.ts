@@ -5,6 +5,11 @@ const mocks = vi.hoisted(() => ({
 	logSystemEvent: vi.fn(),
 	auditCachedTotals: vi.fn(),
 	notifyAdmin: vi.fn(),
+	sendEmail: vi.fn(),
+	captureServerException: vi.fn(),
+	getDailyDigestRecipients: vi.fn(),
+	assignDailyProblems: vi.fn(),
+	getDailySolveStats: vi.fn(),
 }))
 
 vi.mock("@/env", () => ({
@@ -22,14 +27,19 @@ vi.mock("@/server/groups/groups.notifications", () => ({
 }))
 vi.mock("@/server/lib/bot", () => ({ notifyAdmin: mocks.notifyAdmin }))
 vi.mock("@/server/lib/db", () => ({ db: {} }))
-vi.mock("@/server/lib/email", () => ({ resend: { batch: { send: vi.fn() } } }))
-vi.mock("@/server/lib/sentry", () => ({ captureServerException: vi.fn() }))
+vi.mock("@/server/lib/email", () => ({ sendEmail: mocks.sendEmail }))
+vi.mock("@/server/lib/sentry", () => ({
+	captureServerException: mocks.captureServerException,
+}))
 vi.mock("@/server/points/points.reconciliation", () => ({
 	auditCachedTotals: mocks.auditCachedTotals,
 }))
 vi.mock("@/server/problems/problems.dao", () => ({
 	problemsDao: {
 		markMissedForDate: mocks.markMissedForDate,
+		getDailyDigestRecipients: mocks.getDailyDigestRecipients,
+		assignDailyProblems: mocks.assignDailyProblems,
+		getDailySolveStats: mocks.getDailySolveStats,
 	},
 }))
 vi.mock("@/server/system-events/system-events.dao", () => ({
@@ -46,6 +56,7 @@ describe("app-owned jobs", () => {
 		mocks.markMissedForDate.mockResolvedValue({ missed: 2, warned: 1, removed: 0 })
 		mocks.logSystemEvent.mockResolvedValue(undefined)
 		mocks.notifyAdmin.mockResolvedValue(undefined)
+		mocks.sendEmail.mockResolvedValue(undefined)
 	})
 
 	it("reconciles only the explicitly requested missed day", async () => {
@@ -111,5 +122,40 @@ describe("app-owned jobs", () => {
 		expect(mocks.notifyAdmin).toHaveBeenCalledWith("points.reconciliation_failed", {
 			occurredAt: expect.any(String),
 		})
+	})
+
+	it("captures daily digest failures without recipient identity", async () => {
+		mocks.assignDailyProblems.mockResolvedValue({ assigned: 1 })
+		mocks.getDailyDigestRecipients.mockResolvedValue([
+			{
+				email: "recipient-sentinel@example.test",
+				name: "Recipient Sentinel",
+				groupSlug: "sentinel-group",
+				problemTitle: "Sentinel Problem",
+				difficulty: "EASY",
+				topic: "Arrays",
+				problemSlug: "sentinel-problem",
+			},
+		])
+		mocks.getDailySolveStats.mockResolvedValue({
+			totalSolves: 0,
+			activeUsers: 1,
+			newUsers: 0,
+			pausesUsed: 0,
+			handleChanges: 0,
+		})
+		mocks.sendEmail.mockRejectedValueOnce(new Error("Email send failed"))
+
+		await executeJob("assign-daily-problem", new Date("2026-07-14T00:00:00.000Z"))
+
+		expect(mocks.captureServerException).toHaveBeenCalledWith(expect.any(Error), {
+			tag: "email:daily-digest",
+			dateKey: "2026-07-14",
+			batchIndex: 0,
+			recipientCount: 1,
+		})
+		expect(JSON.stringify(mocks.captureServerException.mock.calls)).not.toContain(
+			"recipient-sentinel@example.test"
+		)
 	})
 })

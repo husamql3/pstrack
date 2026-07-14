@@ -10,6 +10,7 @@ vi.mock("@/server/lib/auth", () => ({
 
 vi.mock("@/server/lib/sentry", () => ({
 	captureServerException: vi.fn(),
+	captureServerMessage: vi.fn(),
 	initServerSentry: vi.fn(),
 	ServerSentry: { flush: vi.fn() },
 }))

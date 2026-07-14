@@ -17,6 +17,7 @@ deploy-evidence.json
 smoke-evidence.json
 staging-smoke-evidence.json
 resource-measurement-evidence.json
+staging-reset-evidence.json
 generated/
 .vercel
 

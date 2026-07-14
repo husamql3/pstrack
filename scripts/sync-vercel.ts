@@ -34,8 +34,10 @@ const STAGING_KEYS = [
 	"SENTRY_DSN",
 	"SENTRY_ENVIRONMENT",
 	"SENTRY_TRACES_SAMPLE_RATE",
-	"UPSTASH_REDIS_REST_TOKEN",
-	"UPSTASH_REDIS_REST_URL",
+	// REDIS_URL is deliberately absent: staging runs on Vercel's Node runtime,
+	// which cannot run Bun's native Redis client, and no feature requires Redis
+	// there. Redis behavior is verified by CI's harness and a production canary
+	// (#288, ADR 0011).
 	"VITE_BASE_URL",
 	"VITE_SENTRY_DSN",
 	"VITE_SENTRY_REPLAY_ERROR_SAMPLE_RATE",
