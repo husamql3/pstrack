@@ -40,6 +40,7 @@
 		"env:sync:stage": "bun run scripts/sync-vercel.ts",
 		"env:sync:stage:dry-run": "bun run scripts/sync-vercel.ts --dry-run",
 		"smoke:stage": "bun run scripts/smoke-stage.ts",
+		"verify:redis": "bun run scripts/verify-redis.ts",
 		"jobs:reconcile-mark-missed": "bun run scripts/reconcile-mark-missed.ts",
 		"points:reconcile": "bun run scripts/reconcile-points.ts"
 	},
@@ -82,7 +83,6 @@
 		"@tanstack/react-virtual": "^3.13.26",
 		"@trigger.dev/sdk": "4.4.6",
 		"@types/canvas-confetti": "^1.9.0",
-		"@upstash/redis": "^1.38.0",
 		"better-auth": "1.6.13",
 		"canvas-confetti": "^1.9.4",
 		"class-variance-authority": "^0.7.1",
@@ -119,6 +119,7 @@
 		"@biomejs/biome": "^2.4.15",
 		"@tanstack/devtools-vite": "^0.6.0",
 		"@trigger.dev/build": "4.4.6",
+		"@types/bun": "^1.3.14",
 		"@types/mdx": "^2.0.14",
 		"@types/node": "^22.19.15",
 		"@types/nodemailer": "^8.0.1",
