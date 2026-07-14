@@ -111,21 +111,65 @@ const terminalStatus = (value: string) => {
 }
 
 const patchApplication = async (config: CoolifyConfig) => {
+	const digestSeparator = config.imageRef.lastIndexOf("@")
+	const imageName =
+		digestSeparator === -1 ? config.imageRef : config.imageRef.slice(0, digestSeparator)
 	const body = {
-		docker_registry_image_name: config.imageRef,
-		docker_registry_image_tag: "",
-		environment_variables: [
-			`PSTRACK_GIT_SHA=${config.gitSha}`,
-			`PSTRACK_IMAGE_DIGEST=${config.imageDigest}`,
-			`PSTRACK_IMAGE_REF=${config.imageRef}`,
-			`PSTRACK_DEPLOYED_AT=${config.deployedAt}`,
-		],
+		docker_registry_image_name: imageName,
+		docker_registry_image_tag: config.gitSha,
 	}
 
 	return coolifyFetch(config, `/api/v1/applications/${config.appUuid}`, {
 		method: "PATCH",
 		body: JSON.stringify(body),
 	})
+}
+
+type CoolifyEnvironmentVariable = { uuid: string; key: string }
+
+const syncDeploymentEnvironment = async (config: CoolifyConfig) => {
+	const rawExisting = await coolifyFetch(
+		config,
+		`/api/v1/applications/${config.appUuid}/envs`,
+		{ method: "GET" }
+	)
+	const existing = Array.isArray(rawExisting)
+		? rawExisting.filter((value): value is CoolifyEnvironmentVariable =>
+				Boolean(
+					value &&
+						typeof value === "object" &&
+						typeof Reflect.get(value, "uuid") === "string" &&
+						typeof Reflect.get(value, "key") === "string"
+				)
+			)
+		: []
+	const existingByKey = new Map(existing.map((variable) => [variable.key, variable.uuid]))
+	const values = {
+		PSTRACK_GIT_SHA: config.gitSha,
+		PSTRACK_IMAGE_DIGEST: config.imageDigest,
+		PSTRACK_IMAGE_REF: config.imageRef,
+		PSTRACK_DEPLOYED_AT: config.deployedAt,
+	}
+
+	for (const [key, value] of Object.entries(values)) {
+		const uuid = existingByKey.get(key)
+		await coolifyFetch(
+			config,
+			uuid
+				? `/api/v1/applications/${config.appUuid}/envs/${uuid}`
+				: `/api/v1/applications/${config.appUuid}/envs`,
+			{
+				method: uuid ? "PATCH" : "POST",
+				body: JSON.stringify({
+					key,
+					value,
+					is_buildtime: true,
+					is_runtime: true,
+					is_preview: false,
+				}),
+			}
+		)
+	}
 }
 
 const triggerDeployment = (config: CoolifyConfig) =>
@@ -163,6 +207,7 @@ const pollDeployment = async (config: CoolifyConfig, deploymentId: string) => {
 export const deployCoolify = async () => {
 	const config = createConfig()
 	const patch = await patchApplication(config)
+	await syncDeploymentEnvironment(config)
 	const deployment = await triggerDeployment(config)
 	const deploymentId = deploymentIdFrom(deployment)
 	if (!deploymentId) {
