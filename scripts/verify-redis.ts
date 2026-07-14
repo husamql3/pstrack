@@ -39,6 +39,7 @@ import {
 
 const CONCURRENCY = 50
 const BOUNDED_FAILURE_LIMIT_MS = 10_000
+const OPERATION_DEADLINE_MS = 9_000
 
 let failures = 0
 
@@ -53,6 +54,24 @@ const check = (condition: boolean, label: string) => {
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
+const rejectAfter = async <TValue>(operation: Promise<TValue>): Promise<TValue> => {
+	let deadline: ReturnType<typeof setTimeout> | undefined
+
+	try {
+		return await Promise.race([
+			operation,
+			new Promise<never>((_, reject) => {
+				deadline = setTimeout(
+					() => reject(new Error("Redis operation deadline exceeded")),
+					OPERATION_DEADLINE_MS
+				)
+			}),
+		])
+	} finally {
+		if (deadline) clearTimeout(deadline)
+	}
+}
+
 const finish = () => {
 	if (failures > 0) {
 		console.error(`\n${failures} Redis behavior check(s) failed`)
@@ -64,11 +83,12 @@ const finish = () => {
 const runUnavailableScenario = async () => {
 	console.log("Unavailable Redis fails bounded and observably")
 	const startedAt = Date.now()
-	const outcome = await redisGet("pstrack:verify:unavailable").then(
+	const outcome = await rejectAfter(redisGet("pstrack:verify:unavailable")).then(
 		() => null,
 		(error: Error) => error.message
 	)
 	const elapsedMs = Date.now() - startedAt
+	await closeRedis()
 	check(outcome !== null, `helper rejected (${outcome})`)
 	check(
 		elapsedMs < BOUNDED_FAILURE_LIMIT_MS,
