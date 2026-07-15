@@ -14,10 +14,12 @@ export type SystemEventWriteInput = {
 }
 
 // AgDR-0001 — realtime-classed events forwarded to husam-bot as `system.event`.
-// Everything else (SOLVE_VERIFIED, MISS_BATCH, PAUSE_USED, *_CHANGED, and
-// JOIN_REQUEST_SENT which has its own dedicated buttoned emit) is intentionally
-// NOT forwarded here — those are ignored or rolled into the daily digest.
+// Everything else (SOLVE_VERIFIED, SOLVE_FAILED, MISS_BATCH, PAUSE_USED,
+// *_CHANGED, and JOIN_REQUEST_SENT which has its own dedicated buttoned emit) is
+// intentionally NOT forwarded here — those are ignored or rolled into a digest.
+// GROUP_CREATED joined this set as a low-volume growth signal for the beta.
 const REALTIME_EVENTS = new Set<SystemEventType>([
+	"GROUP_CREATED",
 	"GROUP_LEFT",
 	"MEMBER_REMOVED",
 	"GROUP_JOINED",
