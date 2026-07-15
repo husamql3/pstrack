@@ -82,7 +82,7 @@ export const usersAdminController = new Elysia({
 			const result = await usersAdminDao.setPro(user.id, params.id, {
 				grant: body.grant,
 				expiresAt: body.expiresAt ? new Date(body.expiresAt) : null,
-				reason: body.reason,
+				reason: body.reason ?? null,
 			})
 			if (!result.ok) {
 				if (result.error === "USER_NOT_FOUND") {
