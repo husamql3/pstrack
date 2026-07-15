@@ -228,11 +228,13 @@ export function TextEffect({
 	const baseDuration = 0.3 / speedSegment
 
 	const customStagger = hasTransition(variants?.container?.visible ?? {})
-		? (variants?.container?.visible as TargetAndTransition).transition?.staggerChildren
+		? (variants?.container?.visible as TargetAndTransition | undefined)?.transition
+				?.staggerChildren
 		: undefined
 
 	const customDelay = hasTransition(variants?.container?.visible ?? {})
-		? (variants?.container?.visible as TargetAndTransition).transition?.delayChildren
+		? (variants?.container?.visible as TargetAndTransition | undefined)?.transition
+				?.delayChildren
 		: undefined
 
 	const computedVariants = {
