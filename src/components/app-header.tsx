@@ -21,6 +21,14 @@ const NAV_LINKS = [
 	{ to: "/badges", label: "Badges", icon: IconMedal },
 ] as const
 
+// The header remounts on most navigations (each top-level route renders its
+// own AppHeader), so component state can't carry the underline position across
+// a nav. This module-level cache survives remounts within the page session —
+// the remounted underline starts at the previous tab and animates to the new
+// one, instead of sliding in from x=0 (#231). Only written from a client
+// effect, so it never leaks across SSR requests.
+let lastActiveStyle: { left: string; width: string } | null = null
+
 export function AppHeader() {
 	// Select only the pathname — a bare useRouterState() subscribes to every
 	// router state tick and re-renders the header throughout each transition.
@@ -35,7 +43,30 @@ export function AppHeader() {
 
 	const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
 	const [hoverStyle, setHoverStyle] = useState({})
+	const [activeStyle, setActiveStyle] = useState(() => lastActiveStyle)
 	const tabRefs = useRef<(HTMLDivElement | null)[]>([])
+	const underlineRef = useRef<HTMLDivElement | null>(null)
+
+	// The route commit can unmount this header mid-slide (the old instance
+	// starts animating as soon as the URL flips). While a slide is running,
+	// keep writing the underline's current ANIMATED position (offsetLeft
+	// returns the interpolated value during a transition) into the module
+	// cache — whenever the unmount lands, the next instance resumes the slide
+	// from the last painted frame instead of snapping to the target.
+	useEffect(() => {
+		if (!activeStyle) return
+		let raf = 0
+		const started = performance.now()
+		const track = () => {
+			const u = underlineRef.current
+			if (u) {
+				lastActiveStyle = { left: `${u.offsetLeft}px`, width: `${u.offsetWidth}px` }
+			}
+			if (performance.now() - started < 350) raf = requestAnimationFrame(track)
+		}
+		raf = requestAnimationFrame(track)
+		return () => cancelAnimationFrame(raf)
+	}, [activeStyle])
 
 	useEffect(() => {
 		if (hoveredIndex !== null) {
@@ -43,6 +74,29 @@ export function AppHeader() {
 			if (el) setHoverStyle({ left: `${el.offsetLeft}px`, width: `${el.offsetWidth}px` })
 		}
 	}, [hoveredIndex])
+
+	// Double rAF on purpose: the previous tab's position (restored from
+	// lastActiveStyle) must get one PAINTED frame before the update, or the
+	// browser collapses both styles into one recalc and skips the transition.
+	// On a fresh page load there's no previous position — the underline mounts
+	// directly at the active tab with nothing to animate from.
+	useEffect(() => {
+		let frame2 = 0
+		const frame1 = requestAnimationFrame(() => {
+			frame2 = requestAnimationFrame(() => {
+				const el = tabRefs.current[activeIndex]
+				if (el) {
+					const next = { left: `${el.offsetLeft}px`, width: `${el.offsetWidth}px` }
+					setActiveStyle(next)
+					lastActiveStyle = next
+				}
+			})
+		})
+		return () => {
+			cancelAnimationFrame(frame1)
+			cancelAnimationFrame(frame2)
+		}
+	}, [activeIndex])
 
 	return (
 		<header className="sticky top-0 border-border/50 border-b bg-background backdrop-blur-sm">
@@ -70,6 +124,15 @@ export function AppHeader() {
 						}}
 					/>
 
+					{/* Active underline — animates from the previous tab's position */}
+					{activeIndex >= 0 && activeStyle && (
+						<div
+							ref={underlineRef}
+							className="absolute bottom-[-14px] h-[2px] rounded-full bg-primary transition-all duration-300 ease-out"
+							style={activeStyle}
+						/>
+					)}
+
 					{/* Nav items */}
 					<div className="relative flex items-center gap-1">
 						{visibleLinks.map(({ to, label, icon: Icon }, index) => (
@@ -79,14 +142,9 @@ export function AppHeader() {
 								ref={(el) => {
 									if (el) tabRefs.current[index] = el
 								}}
-								className="relative"
 								onMouseEnter={() => setHoveredIndex(index)}
 								onMouseLeave={() => setHoveredIndex(null)}
 							>
-								{/* Active underline — static, rendered on the active item */}
-								{index === activeIndex && (
-									<div className="absolute bottom-[-14px] left-0 h-[2px] w-full rounded-full bg-primary" />
-								)}
 								<Link
 									to={to}
 									className={[

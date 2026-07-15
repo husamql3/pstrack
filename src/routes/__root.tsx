@@ -5,14 +5,14 @@ import { createRootRouteWithContext, HeadContent, Scripts } from "@tanstack/reac
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools"
 import { Analytics } from "@vercel/analytics/react"
 import { SpeedInsights } from "@vercel/speed-insights/react"
-import type { ReactNode } from "react"
+import { type ReactNode, useRef } from "react"
 import { Toaster } from "sileo"
 
 import { ErrorPage } from "@/components/error"
 import { NotFoundPage } from "@/components/not-found"
 import { Spinner } from "@/components/ui/spinner"
 import { getQueryClient } from "@/lib/query-client"
-import { sessionQueryOptions } from "@/lib/session"
+import { SESSION_QUERY_KEY, sessionQueryOptions } from "@/lib/session"
 import appCss from "../styles.css?url"
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
@@ -63,6 +63,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootDocument({ children }: { children: ReactNode }) {
 	const queryClient = getQueryClient()
+	const { session } = Route.useRouteContext()
+
+	// Seed the query cache with the SSR session during hydration. Without this
+	// the client cache starts cold and the FIRST navigation after page load
+	// refetches get-session, blocking the route transition (#231).
+	const seededSession = useRef(false)
+	if (!seededSession.current) {
+		queryClient.setQueryData(SESSION_QUERY_KEY, session)
+		seededSession.current = true
+	}
 
 	return (
 		<html suppressHydrationWarning lang="en" className="scheme-only-dark">
