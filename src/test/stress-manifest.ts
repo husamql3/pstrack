@@ -562,6 +562,11 @@ export const STRESS_BACKGROUND_MODULES: StressBackgroundModule[] = [
 		dimensions: ["idempotency", "side-effect"],
 	},
 	{
+		file: "send-hourly-digest.ts",
+		module: "trigger",
+		dimensions: ["read", "side-effect"],
+	},
+	{
 		file: "send-weekly-digest.ts",
 		module: "trigger",
 		dimensions: ["read", "side-effect"],

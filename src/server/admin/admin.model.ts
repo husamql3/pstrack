@@ -50,7 +50,7 @@ export const adminModel = new Elysia({ name: "model/admin" }).model({
 	"admin.users.proGrant": t.Object({
 		grant: t.Boolean(),
 		expiresAt: t.Optional(t.Union([t.String({ format: "date-time" }), t.Null()])),
-		reason: t.String({ minLength: 1, maxLength: 280 }),
+		reason: t.Optional(t.String({ maxLength: 280 })),
 	}),
 	"admin.users.impersonationEnded": t.Object({
 		durationMs: t.Optional(t.Integer({ minimum: 0 })),

@@ -2,7 +2,7 @@ import { timingSafeEqual } from "node:crypto"
 import { Elysia, status, t } from "elysia"
 
 import { env } from "@/env"
-import { executeJobRun, getJobFreshness } from "./job-runs.service"
+import { executeJobRun, FRESHNESS_MS, getJobFreshness } from "./job-runs.service"
 import { executeJob } from "./jobs.service"
 import { isJobName, JOB_NAMES } from "./jobs.types"
 
@@ -17,19 +17,6 @@ const isAuthorized = (request: Request) => {
 		actualBuffer.length === expectedBuffer.length &&
 		timingSafeEqual(actualBuffer, expectedBuffer)
 	)
-}
-
-const FRESHNESS_MS: Record<(typeof JOB_NAMES)[number], number> = {
-	"assign-daily-problem": 26 * 60 * 60 * 1000,
-	"mark-missed": 26 * 60 * 60 * 1000,
-	"expire-join-requests": 2 * 60 * 60 * 1000,
-	"reset-monthly-counters": 32 * 24 * 60 * 60 * 1000,
-	"expire-admin-pro-grants": 26 * 60 * 60 * 1000,
-	"purge-system-events": 32 * 24 * 60 * 60 * 1000,
-	"send-weekly-digest": 8 * 24 * 60 * 60 * 1000,
-	"reconcile-points": 26 * 60 * 60 * 1000,
-	"reset-today-problems": Number.POSITIVE_INFINITY,
-	"reconcile-mark-missed": Number.POSITIVE_INFINITY,
 }
 
 export const jobsController = new Elysia({ prefix: "/internal/jobs" })

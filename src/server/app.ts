@@ -50,7 +50,7 @@ const api = new Elysia({ prefix: "/api/v3" })
 		const { pathname } = new URL(request.url)
 		logger.error({ err: error, path: pathname }, "[api-error]")
 		console.error("[api-error]", pathname, error)
-		captureServerException(error)
+		captureServerException(error, { route: pathname, method: request.method })
 		await ServerSentry.flush(2000)
 	})
 

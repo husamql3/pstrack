@@ -6,6 +6,7 @@ export const JOB_NAMES = [
 	"expire-admin-pro-grants",
 	"purge-system-events",
 	"send-weekly-digest",
+	"send-hourly-digest",
 	"reconcile-points",
 	"reset-today-problems",
 	"reconcile-mark-missed",
