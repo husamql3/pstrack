@@ -23,7 +23,7 @@ jobs:
     name: Typecheck
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
       - uses: ./.github/actions/setup
       - run: bun run typecheck
 
@@ -31,7 +31,7 @@ jobs:
     name: Biome CI
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
       - uses: ./.github/actions/setup
       - run: bunx biome ci .
 
@@ -39,7 +39,7 @@ jobs:
     name: Knip
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
       - uses: ./.github/actions/setup
       - run: bun run knip
 
@@ -47,7 +47,7 @@ jobs:
     name: Dependency audit
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
       - uses: ./.github/actions/setup
       - run: bun run audit
 
@@ -79,7 +79,7 @@ jobs:
       # connection via TEST_DATABASE_URL provides the actual connectivity check.
       SKIP_ENV_VALIDATION: "1"
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
       - uses: ./.github/actions/setup
       - name: Apply migrations to test DB
         run: bunx prisma migrate deploy
@@ -103,7 +103,7 @@ jobs:
       # The harness only needs REDIS_URL; skip the full env schema like Vitest.
       SKIP_ENV_VALIDATION: "1"
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
       - uses: ./.github/actions/setup
       - name: Verify authenticated Redis behavior (TTL, sets, concurrency, reconnect)
         run: REDIS_URL=redis://default:ci_redis_password@127.0.0.1:6379 bun run verify:redis
@@ -133,7 +133,7 @@ jobs:
       DATABASE_URL: postgresql://pstrack:ci_test_password@127.0.0.1:5432/pstrack?schema=public
       DIRECT_URL: postgresql://pstrack:ci_test_password@127.0.0.1:5432/pstrack?schema=public
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
       - uses: ./.github/actions/setup
       - name: Generate Prisma client
         run: bunx prisma generate
@@ -148,7 +148,7 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
       - uses: ./.github/actions/setup
       - name: Build app
         run: |
@@ -199,7 +199,7 @@ jobs:
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
       PSTRACK_GIT_SHA: ${{ github.sha }}
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
       - uses: ./.github/actions/setup
       - name: Pull staging configuration
         run: bunx vercel@56.0.0 pull --yes --environment=production
@@ -243,7 +243,7 @@ jobs:
     outputs:
       publish: ${{ steps.filter.outputs.publish }}
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         with:
           fetch-depth: 0
@@ -290,7 +290,7 @@ jobs:
       id-token: write
       attestations: write
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
       - uses: ./.github/actions/setup
       - name: Download build output
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
@@ -364,7 +364,7 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     environment: production
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
       - uses: ./.github/actions/setup
       - name: Deploy immutable image with Coolify
         env:
@@ -406,7 +406,7 @@ jobs:
     needs: [typecheck, lint, test, validate-schema, build]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
         with:
           fetch-depth: 0
       - uses: ./.github/actions/setup
