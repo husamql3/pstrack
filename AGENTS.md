@@ -45,7 +45,7 @@ Pro is a **lifetime one-time purchase** via Polar ($5). No subscriptions.
 
 ## Commands
 
-Runtime is **Bun** (≥1.2.2).
+Runtime is **Bun 1.3.14**. `.bun-version`, CI, `package.json`, and Docker pin the same release.
 
 ### Develop
 
