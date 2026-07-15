@@ -68,11 +68,11 @@ pstrack/
 | API contract | Eden Treaty |
 | Auth | Better Auth + Polar plugin |
 | ORM | Prisma |
-| DB driver | @prisma/adapter-pg + pg |
+| DB driver | `@prisma/adapter-pg` for PostgreSQL; Neon adapter retained for Vercel staging |
 | Database | PostgreSQL on Coolify |
 | Schema validation | TypeBox (Elysia native) |
 | Background jobs | Trigger.dev |
-| Email | Resend (default) or self-hosted SMTP / Stalwart — see ADR 0013 |
+| Email | Stalwart SMTP production target (#289); log-only staging; Resend retained pending retirement |
 | Error tracking | Sentry |
 | Payments | Polar (via Better Auth plugin) |
 | Logging | pino |
@@ -88,9 +88,9 @@ pstrack/
 
 ## Trigger.dev Jobs
 
-Trigger.dev owns schedules only. Each task dispatches an authenticated request
-to the app, where the job runs beside the private database and is guarded by the
-durable `JobRun` idempotency ledger.
+The #279/#290 target keeps Trigger.dev schedule-only. Tasks dispatch authenticated
+requests to the app, where jobs run beside the private database and use the
+durable `JobRun` idempotency ledger; consult those issues for deployment proof.
 
 | Job | Trigger | Description |
 |---|---|---|
@@ -102,6 +102,18 @@ durable `JobRun` idempotency ledger.
 | `purge-system-events` | Cron: monthly | Applies event and JobRun retention policies |
 | `reconcile-points` | Cron: daily at 00:30 UTC | Checks ordered-ledger/cache equality and sends aggregate-only drift alerts |
 | `send-weekly-digest` | Cron: Monday | Sends the weekly admin digest |
+
+## Environment topology
+
+| Environment | Compute | Database | Redis | Email |
+|---|---|---|---|---|
+| Local | Bun/portless | local PostgreSQL | local Redis | log by default |
+| Staging (`stage`) | Vercel Node runtime | isolated Neon | absent; CI + production canary | log only |
+| Production (`main`) | Bun OCI image on Coolify | private PostgreSQL | target: private Redis; deployment proof tracked in #288 | target: private Stalwart SMTP; rollout proof tracked in #289 |
+
+The required Trigger.dev design is schedule-only authenticated HTTP dispatch
+without production database credentials; deployment proof remains on #279/#290.
+Detailed boundaries and runbooks live in [`OPERATIONS.md`](./OPERATIONS.md).
 
 ## Post-MVP Services (not in v3)
 
@@ -156,4 +168,7 @@ durable `JobRun` idempotency ledger.
 - sentry: upload source maps (SENTRY_AUTH_TOKEN)
 ```
 
-Vercel auto-deploys via its GitHub integration - no deploy job needed.
+Vercel deploys only application staging from `stage`. Production images are
+built from `main`, published to GHCR, and deployed through Coolify. See
+[`BRANCHING.md`](./BRANCHING.md), [`STAGING.md`](./STAGING.md), and
+[`OPERATIONS.md`](./OPERATIONS.md).

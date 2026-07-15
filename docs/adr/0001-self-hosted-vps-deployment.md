@@ -3,6 +3,14 @@
 **Date:** 2026-06-29  
 **Status:** Accepted
 
+> **2026-07 amendment:** The production-compute decision remains accepted, but
+> several implementation details below are historical. Production is amd64,
+> Stalwart replaced the proposed Postal service, backups run hourly, and Vercel
+> is intentionally retained as isolated application staging. ADRs 0006–0013
+> and `docs/OPERATIONS.md` supersede conflicting operational details. Managed
+> adapters/transports are removed only after their rollout and rollback gates
+> are proven; they must not be deleted merely because this ADR names a target.
+
 ---
 
 ## Context

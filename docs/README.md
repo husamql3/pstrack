@@ -23,7 +23,7 @@ A competitive programming accountability platform. Users join groups, solve one 
 | Validation | TypeBox (server) + Zod (client forms) |
 | Runtime | Bun |
 | Deployment | Coolify + GHCR |
-| Email | Resend |
+| Email | Stalwart SMTP production target (#289); log-only staging |
 | Background Jobs | Trigger.dev |
 | Payments | Polar ($5 one-time) |
 | Error Tracking | Sentry |
@@ -41,6 +41,7 @@ A competitive programming accountability platform. Users join groups, solve one 
 
 ## Docs
 
+- [Environment and Operations](./OPERATIONS.md)
 - [Stack](./stack.md)
 - [Schema](./schema.md)
 - [Features](./features.md)
