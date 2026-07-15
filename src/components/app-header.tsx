@@ -7,7 +7,7 @@ import {
 	IconUsers,
 } from "@tabler/icons-react"
 import { Link, useRouterState } from "@tanstack/react-router"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useLayoutEffect, useRef, useState } from "react"
 
 import { Skeleton } from "@/components/ui/skeleton"
 import { useSession } from "@/lib/auth-client"
@@ -45,20 +45,16 @@ export function AppHeader() {
 		}
 	}, [hoveredIndex])
 
-	useEffect(() => {
+	// Measure BEFORE paint: the header remounts on most navigations, and a
+	// post-paint effect lets the browser paint the initial left:0/width:0
+	// state first — transition-all then visibly slides the underline in from
+	// the far left (#231). With useLayoutEffect the first painted frame is
+	// already at the active tab, so only real tab-to-tab changes animate.
+	useLayoutEffect(() => {
 		const el = tabRefs.current[activeIndex]
 		if (el) {
 			setActiveStyle({ left: `${el.offsetLeft}px`, width: `${el.offsetWidth}px` })
 		}
-	}, [activeIndex])
-
-	useEffect(() => {
-		requestAnimationFrame(() => {
-			const el = tabRefs.current[activeIndex >= 0 ? activeIndex : 0]
-			if (el) {
-				setActiveStyle({ left: `${el.offsetLeft}px`, width: `${el.offsetWidth}px` })
-			}
-		})
 	}, [activeIndex])
 
 	return (
