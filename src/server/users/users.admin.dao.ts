@@ -154,7 +154,7 @@ export const usersAdminDao = {
 	setPro: async (
 		adminId: string,
 		userId: string,
-		input: { grant: boolean; expiresAt: Date | null; reason: string }
+		input: { grant: boolean; expiresAt: Date | null; reason: string | null }
 	): Promise<
 		| { ok: true; user: AdminUserDetailResponse; becamePro: boolean }
 		| { ok: false; error: "USER_NOT_FOUND" | "POLAR_PRO_LOCKED" }
@@ -179,6 +179,7 @@ export const usersAdminDao = {
 						}
 					: {
 							isPro: false,
+							proSource: null,
 							proExpiresAt: null,
 						},
 				select: adminUserDetailSelect,
