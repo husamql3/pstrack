@@ -2,7 +2,10 @@
 
 ## MVP: Email Only
 
-All notifications sent via **Resend** using **React Email** templates. No in-app inbox in v3 - that ships post-MVP alongside community features.
+Notifications are rendered with **React Email** templates. Private Stalwart SMTP
+is the production target tracked by #289, staging renders and logs metadata
+without sending, and Resend is retained until the retirement gate in
+[`OPERATIONS.md`](./OPERATIONS.md) is proven. No in-app inbox ships in v3.
 
 ## Events
 

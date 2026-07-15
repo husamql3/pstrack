@@ -6,7 +6,13 @@ Stay consistent with LeetCode — solve one problem a day, earn points, and comp
 
 ## Stack
 
-TanStack Start · Elysia · Eden Treaty · Better Auth · Prisma + Neon · Trigger.dev · Resend · Polar · Bun
+TanStack Start · Elysia · Eden Treaty · Better Auth · Prisma + PostgreSQL · Trigger.dev · Polar · Bun
+
+Production runs as a Bun container on Coolify with private PostgreSQL; private
+SMTP is the rollout target tracked by #289. Vercel is retained only for the
+isolated `stage` environment. See
+[`docs/OPERATIONS.md`](./docs/OPERATIONS.md) for environment ownership, data
+boundaries, deployment, recovery, and incident procedures.
 
 ## Develop
 
