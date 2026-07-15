@@ -37,6 +37,14 @@ type ListParams = {
 	sortDir?: "asc" | "desc"
 }
 
+const SLUG_RETRY_ATTEMPTS = 5
+
+const isUniqueConstraintError = (err: unknown, field: string) =>
+	err instanceof Error &&
+	"code" in err &&
+	err.code === "P2002" &&
+	err.message.includes(field)
+
 async function pickSlug(): Promise<string> {
 	const used = await db.group.findMany({
 		where: { slug: { in: slugsPool as string[] } },
@@ -57,39 +65,55 @@ export const groupsAdminDao = {
 			maxMembers: number
 		}
 	): Promise<AdminGroupListItem> => {
-		const slug = await pickSlug()
-		return db.$transaction(async (tx) => {
-			await tx.roadmapCatalog.findUniqueOrThrow({
-				where: { key: input.roadmap },
-				select: { id: true },
-			})
+		// pickSlug() reads used slugs before the row is committed, so two concurrent
+		// creates can select the same slug. Re-pick and retry on the unique collision.
+		for (let attempt = 0; attempt < SLUG_RETRY_ATTEMPTS; attempt++) {
+			const slug = await pickSlug()
+			try {
+				return await db.$transaction(async (tx) => {
+					await tx.roadmapCatalog.findUniqueOrThrow({
+						where: { key: input.roadmap },
+						select: { id: true },
+					})
 
-			const created = await tx.group.create({
-				data: {
-					slug,
-					type: input.type,
-					roadmap: input.roadmap,
-					maxMembers: input.maxMembers,
-					isActive: true,
-					isStarted: false,
-					creatorId: adminId,
-				},
-				select: { id: true, slug: true },
-			})
-			await adminAuditDao.log(
-				{
-					adminId,
-					action: "GROUP_CREATED",
-					target: { type: "GROUP", id: created.id },
-					metadata: { slug: created.slug, type: input.type, roadmap: input.roadmap },
-				},
-				tx
-			)
-			return tx.group.findUniqueOrThrow({
-				where: { id: created.id },
-				select: adminGroupListSelect,
-			})
-		})
+					const created = await tx.group.create({
+						data: {
+							slug,
+							type: input.type,
+							roadmap: input.roadmap,
+							maxMembers: input.maxMembers,
+							isActive: true,
+							isStarted: false,
+							creatorId: adminId,
+						},
+						select: { id: true, slug: true },
+					})
+					await adminAuditDao.log(
+						{
+							adminId,
+							action: "GROUP_CREATED",
+							target: { type: "GROUP", id: created.id },
+							metadata: {
+								slug: created.slug,
+								type: input.type,
+								roadmap: input.roadmap,
+							},
+						},
+						tx
+					)
+					return tx.group.findUniqueOrThrow({
+						where: { id: created.id },
+						select: adminGroupListSelect,
+					})
+				})
+			} catch (err) {
+				if (isUniqueConstraintError(err, "slug") && attempt < SLUG_RETRY_ATTEMPTS - 1) {
+					continue
+				}
+				throw err
+			}
+		}
+		throw new Error("Failed to allocate a unique group slug after retries.")
 	},
 
 	list: async (params: ListParams): Promise<PaginatedResponse<AdminGroupListItem>> => {
@@ -196,11 +220,12 @@ export const groupsAdminDao = {
 		})
 		if (!existing) return { ok: false, error: "GROUP_NOT_FOUND" }
 
-		await db.$transaction(async (tx) => {
+		const deleted = await db.$transaction(async (tx) => {
 			await tx.dailyProblem.deleteMany({ where: { groupId } })
 			await tx.groupJoinRequest.deleteMany({ where: { groupId } })
 			await tx.groupMember.deleteMany({ where: { groupId } })
-			await tx.group.delete({ where: { id: groupId } })
+			const result = await tx.group.deleteMany({ where: { id: groupId } })
+			if (result.count === 0) return false
 			await adminAuditDao.log(
 				{
 					adminId,
@@ -210,8 +235,10 @@ export const groupsAdminDao = {
 				},
 				tx
 			)
+			return true
 		})
 
+		if (!deleted) return { ok: false, error: "GROUP_NOT_FOUND" }
 		return { ok: true, slug: existing.slug }
 	},
 

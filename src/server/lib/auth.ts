@@ -2,7 +2,7 @@ import { dash } from "@better-auth/infra"
 import { checkout, polar, webhooks } from "@polar-sh/better-auth"
 import { betterAuth } from "better-auth"
 import { prismaAdapter } from "better-auth/adapters/prisma"
-import { admin, magicLink } from "better-auth/plugins"
+import { admin, emailOTP, magicLink } from "better-auth/plugins"
 
 import WelcomeEmail from "@/emails/welcome"
 import { env } from "@/env"
@@ -11,6 +11,7 @@ import { db } from "@/server/lib/db"
 import { sendEmail } from "@/server/lib/email"
 import { logger } from "@/server/lib/logger"
 import { sendMagicLinkEmail } from "@/server/lib/magic-link-email"
+import { sendOtpEmail } from "@/server/lib/otp-email"
 import { polarClient } from "@/server/lib/polar"
 import { grantProFromPurchase, revokeProFromRefund } from "@/server/lib/pro"
 
@@ -19,6 +20,7 @@ export const auth = betterAuth({
 	database: prismaAdapter(db, { provider: "postgresql" }),
 	secret: env.BETTER_AUTH_SECRET,
 	baseURL: env.BETTER_AUTH_URL,
+	trustedOrigins: [env.BETTER_AUTH_URL, "https://www.pstrack.app"],
 	basePath: "/api/v3/auth",
 	socialProviders: {
 		google: {
@@ -102,6 +104,20 @@ export const auth = betterAuth({
 		magicLink({
 			sendMagicLink: async ({ email, url }) => {
 				await sendMagicLinkEmail({ email, url })
+			},
+		}),
+		// Enables the change-email flow (issue #334). The core changeEmail plugin
+		// is link-based; we use OTP codes instead. verifyCurrentEmail requires the
+		// user to prove the CURRENT inbox (a code) before a code is sent to the NEW
+		// inbox — so an account move needs control of both addresses.
+		emailOTP({
+			otpLength: 6,
+			expiresIn: 300,
+			storeOTP: "hashed",
+			allowedAttempts: 3,
+			changeEmail: { enabled: true, verifyCurrentEmail: true },
+			sendVerificationOTP: async ({ email, otp, type }) => {
+				await sendOtpEmail({ email, otp, type })
 			},
 		}),
 		admin(),

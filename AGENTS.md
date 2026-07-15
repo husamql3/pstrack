@@ -45,7 +45,7 @@ Pro is a **lifetime one-time purchase** via Polar ($5). No subscriptions.
 
 ## Commands
 
-Runtime is **Bun** (≥1.2.2).
+Runtime is **Bun 1.3.14**. `.bun-version`, CI, `package.json`, and Docker pin the same release.
 
 ### Develop
 
@@ -69,7 +69,7 @@ Runtime is **Bun** (≥1.2.2).
 | `bun run test` | Vitest, single run (no watch). |
 | `bun run test -- src/path/to/file.test.ts` | Run one test file. Append `-t "name"` to filter by test name. |
 
-### Database (Prisma → Neon)
+### Database (Prisma → PostgreSQL)
 
 | Command | What it does |
 |---|---|
@@ -85,7 +85,9 @@ Runtime is **Bun** (≥1.2.2).
 
 | Command | What it does |
 |---|---|
-| `bun run env:sync` | Sync `.env` to Vercel. |
+| `bun run env:sync:prod` | Sync `.env.prod` to the Coolify production app. |
+| `bun run env:sync:stage:dry-run` | Preview the allowlisted `.env.stage` → Vercel staging sync. |
+| `bun run env:sync:stage` | Sync the allowlisted `.env.stage` to Vercel staging. |
 | `bun run env:sync:trigger` | Sync env vars to Trigger.dev. |
 | `bun run env:sync:gh` | Sync env vars to GitHub Actions secrets. |
 
@@ -108,20 +110,20 @@ Runtime is **Bun** (≥1.2.2).
 | Server          | Elysia (mounted inside TanStack Start middleware)   |
 | API contract    | Eden Treaty (end-to-end type safety, no codegen)    |
 | Auth + Payments | Better Auth + Polar plugin                          |
-| ORM             | Prisma → Neon (PostgreSQL)                          |
+| ORM             | Prisma → PostgreSQL (Coolify prod; Neon staging)    |
 | Validation      | TypeBox (server) + Zod (client forms)               |
 | UI              | ShadCN + Tailwind + Motion                          |
 | Background jobs | Trigger.dev                                         |
-| Email           | Resend + React Email                                |
+| Email           | React Email + Stalwart SMTP (Resend rollback path)  |
 | Error tracking  | Sentry                                              |
 | Avatars         | hashvatar (deterministic from username, no uploads) |
 | Runtime         | Bun                                                 |
-| Deployment      | Vercel                                              |
+| Deployment      | Coolify production; Vercel isolated staging        |
 
 ## Architecture
 
 ```
-TanStack Start (Vercel)
+TanStack Start (Coolify production / Vercel staging)
 ├── client: TanStack Router SPA
 └── server: Elysia middleware
     ├── /api/v3/auth/*  → Better Auth (+ Polar plugin)
@@ -136,7 +138,7 @@ TanStack Start's `api.$.ts` catch-all route forwards every `/api/*` request to t
 pstrack/
 ├── src/
 │   ├── components/          # Shared UI (shadcn primitives + app-level shells)
-│   ├── emails/              # React Email templates (Resend)
+│   ├── emails/              # React Email templates (transport-independent)
 │   ├── features/            # Feature modules (components + hooks per domain)
 │   ├── hooks/               # Global custom hooks
 │   ├── lib/                 # Client-side utilities, API client, query client
@@ -200,14 +202,18 @@ if (dbUser?.role !== "admin") return error(403, { error: "Admin access required"
 | `expire-join-requests` | Every hour | Marks `GroupJoinRequest` rows older than 1 day with status `PENDING` as `EXPIRED` |
 | `reset-monthly-pauses` | `0 0 1 * *` | Resets `User.pausesUsedThisMonth = 0` |
 | `reset-monthly-counters` | `0 0 1 * *` | Resets `User.verificationFailuresThisMonth = 0` |
+| `send-hourly-digest` | `0 * * * *` | Fires `digest.hourly` to the admin bot with last-hour activity + stale-job health (bot enriches with the hour's error count and skips empty hours) |
 
 `mark-missed` and `assign-daily-problem` both run at midnight UTC. The assign job runs first (sorted by `scheduleId`); `mark-missed` operates on the previous day's rows so there is no ordering conflict.
 
 See `docs/FLOWS.md` for the full Daily Solve lifecycle, and `docs/POINTS.md` for clawback mechanics.
 
-## Email Notifications (Resend)
+## Email Notifications
 
-Transactional emails use **Resend** with **React Email** templates. Templates live in `src/emails/`.
+Transactional emails use **React Email** templates from `src/emails/`. Private
+Stalwart SMTP is the production target tracked by #289, staging is log-only,
+and the Resend transport remains until its retirement gate is proven.
+See `docs/OPERATIONS.md` for environment boundaries and runbooks.
 
 Notification triggers are co-located with the resource that owns the event:
 - `src/server/groups/groups.notifications.ts` - join request, approval, rejection, expiry, removal
@@ -220,6 +226,14 @@ groupNotifications.joinRequested(groupId, userId).catch(() => {})
 ```
 
 This prevents email delivery failures from blocking the user's request. Users can opt out per category from `/settings/notifications`.
+
+## Admin Bot (husam-bot)
+
+Operator-facing telemetry goes to the external **husam-bot** Telegram service via `notifyAdmin(event, payload)` in `src/server/lib/bot.ts` (POSTs `{event, payload}` to `${BOT_URL}/api/notify` with a bearer secret; no-op when `BOT_URL` is unset). The bot validates every event against a Zod discriminated union — **there is no generic fallback, so a new event must be registered on the bot side too**, or it 400s. Contract lives in husam-bot `docs/adr/0002` + `0003`.
+
+Events fired today: `user.created`, `purchase.pro`, `purchase.pro.refunded`, `feedback.submitted`, `join.requested`, `pro.expired`, `points.reconciliation_drift`, `points.reconciliation_failed`, `digest.daily`, `digest.hourly`, `digest.weekly`, `streak.milestone`, `badge.earned`, `error.captured`, and `system.event` (a curated subset of `SystemEventType` — see AgDR-0001 in `system-events.dao.ts`).
+
+**Error tee (`error.captured`):** `captureServerException` mirrors every server-side capture to the bot in **production only**, fire-and-forget, with a redacted payload (type, truncated message, culprit frame, route, `userId`, fingerprint). The bot bounds volume with Redis-backed dedup + per-hour rate limiting, so an error storm can't flood the channel. Client/browser errors are **not** teed — they stay in Sentry.io.
 
 ## Routes Summary
 
@@ -246,7 +260,7 @@ This prevents email delivery failures from blocking the user's request. Users ca
 - Activity feed (group-scoped, poll-based)
 - Resources hub
 - In-app notification inbox (Upstash Realtime + WebSocket)
-- Redis leaderboard cache (Upstash)
+- Redis leaderboard cache (self-hosted Redis, ADR 0011)
 - PostHog analytics
 - Custom roadmaps (Pro admin perk)
 - Mobile app

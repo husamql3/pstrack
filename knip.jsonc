@@ -7,9 +7,29 @@
 		"src/server/trigger/**/*.{ts,tsx}",
 		"trigger.config.ts"
 	],
-	"ignoreDependencies": ["@prisma/client"],
+	"ignoreBinaries": ["vercel"],
+	// pino-pretty is loaded by pino via a runtime transport-target string
+	// (src/server/lib/logger.ts), so Knip can't detect the usage statically.
+	"ignoreDependencies": ["pino-pretty"],
 	"project": ["src/**/*.{ts,tsx,css}", "*.{ts,tsx}"],
 	"ignoreIssues": {
-		"src/routeTree.gen.ts": ["exports", "types"]
+		"src/routeTree.gen.ts": ["exports", "types"],
+		"src/components/admin/admin-nav.tsx": ["exports"],
+		"src/components/{animated-group,text-effect}.tsx": ["types"],
+		"src/components/ui/**": ["exports", "types"],
+		"src/features/admin/hooks/use-admin-group.ts": ["exports"],
+		"src/features/groups/hooks/**": ["exports"],
+		"src/features/home/hero.tsx": ["exports"],
+		"src/features/leaderboard/hooks/**": ["exports"],
+		"src/features/settings/**": ["exports", "types"],
+		"src/lib/{auth-client,sentry,seo}.ts": ["exports"],
+		"src/server/admin/**": ["exports", "types"],
+		"src/server/feedback/feedback.type.ts": ["exports", "types"],
+		"src/server/groups/groups.type.ts": ["exports"],
+		"src/server/leaderboard/leaderboard.type.ts": ["exports"],
+		"src/server/lib/{sentry,session}.ts": ["exports"],
+		"src/server/problems/{problems.seed,problems.type}.ts": ["exports", "types"],
+		"src/server/users/**": ["exports", "types"],
+		"src/test/{db,stress-manifest}.ts": ["exports", "types"]
 	}
 }

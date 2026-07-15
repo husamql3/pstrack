@@ -6,6 +6,7 @@ import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools"
 import { Analytics } from "@vercel/analytics/react"
 import { SpeedInsights } from "@vercel/speed-insights/react"
 import { type ReactNode, useRef } from "react"
+import { createIsomorphicFn } from "@tanstack/react-start"
 import { Toaster } from "sileo"
 
 import { ErrorPage } from "@/components/error"
@@ -106,8 +107,6 @@ function RootDocument({ children }: { children: ReactNode }) {
 						]}
 					/>
 				</QueryClientProvider>
-				<Analytics debug={false} />
-				<SpeedInsights />
 				<Scripts />
 			</body>
 		</html>

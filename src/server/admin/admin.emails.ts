@@ -7,6 +7,7 @@ import JoinExpiredEmail from "@/emails/join-expired"
 import JoinRejectedEmail from "@/emails/join-rejected"
 import JoinRequestEmail from "@/emails/join-request"
 import MagicLinkEmail from "@/emails/magic-link"
+import ProUnlockedByAdminEmail from "@/emails/pro-unlocked-by-admin"
 import ProUnlockedByPointsEmail from "@/emails/pro-unlocked-by-points"
 import RemovedFromGroupEmail from "@/emails/removed-from-group"
 import StreakMilestoneEmail from "@/emails/streak-milestone"
@@ -82,6 +83,17 @@ export const EMAIL_TEMPLATES: TemplateMeta[] = [
 		subject: () => "You unlocked PStrack Pro",
 		render: (props) => ProUnlockedByPointsEmail(cast(props)),
 		exampleProps: { name: "Alex", dashboardUrl: "https://pstrack.app/dashboard" },
+	},
+	{
+		key: "pro-unlocked-by-admin",
+		label: "Pro unlocked (admin grant)",
+		subject: () => "You're a PStrack Pro user now",
+		render: (props) => ProUnlockedByAdminEmail(cast(props)),
+		exampleProps: {
+			name: "Alex",
+			dashboardUrl: "https://pstrack.app/dashboard",
+			expiresAt: "July 30, 2026 at 12:00 PM UTC",
+		},
 	},
 	{
 		key: "join-request",

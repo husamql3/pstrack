@@ -13,6 +13,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
 import { PointReason, SolveStatus } from "@/generated/prisma/enums"
+import { auditCachedTotals } from "@/server/points/points.reconciliation"
 import {
 	FIRST_IN_GROUP_BONUS,
 	MISSED_PENALTY,
@@ -110,6 +111,16 @@ const seedHappyPath = async (assignedDate: Date) => {
 	return { user, group, problem, dailyProblem }
 }
 
+const addLedgerEntryForDailyLoop = (userId: string, delta: number, createdAt: Date) =>
+	testDb.pointsHistory.create({
+		data: {
+			userId,
+			delta,
+			reason: PointReason.ADMIN_ADJUSTMENT,
+			createdAt,
+		},
+	})
+
 // ---------------------------------------------------------------------------
 // Test: happy-path solve
 // ---------------------------------------------------------------------------
@@ -181,7 +192,7 @@ describe("verifyAndMarkSolved — happy path", () => {
 // ---------------------------------------------------------------------------
 
 describe("verifyAndMarkSolved — idempotency", () => {
-	it("calling twice produces exactly one DAILY_SOLVE and one FIRST_IN_GROUP row", async () => {
+	it("concurrent solve requests produce one base award and each bonus at most once", async () => {
 		const today = new Date(
 			Date.UTC(
 				new Date().getUTCFullYear(),
@@ -194,11 +205,9 @@ describe("verifyAndMarkSolved — idempotency", () => {
 		const submittedAtMs = today.getTime() + 2 * 60 * 60 * 1000
 		mockLeetCodeMatch(problem.slug, submittedAtMs)
 
-		await problemsDao.verifyAndMarkSolved(user.id)
-
-		// Second call — mock still returns the same submission
-		mockLeetCodeMatch(problem.slug, submittedAtMs)
-		await problemsDao.verifyAndMarkSolved(user.id)
+		await Promise.all(
+			Array.from({ length: 8 }, () => problemsDao.verifyAndMarkSolved(user.id))
+		)
 
 		const dailySolveRows = await testDb.pointsHistory.findMany({
 			where: { userId: user.id, reason: PointReason.DAILY_SOLVE },
@@ -209,6 +218,110 @@ describe("verifyAndMarkSolved — idempotency", () => {
 			where: { userId: user.id, reason: PointReason.FIRST_IN_GROUP },
 		})
 		expect(firstRows).toHaveLength(1)
+
+		const earlyBirdRows = await testDb.pointsHistory.findMany({
+			where: { userId: user.id, reason: PointReason.EARLY_BIRD },
+		})
+		expect(earlyBirdRows).toHaveLength(1)
+		await expect(auditCachedTotals()).resolves.toMatchObject({
+			mismatchedUsers: 0,
+			absoluteDrift: 0,
+		})
+	})
+})
+
+describe("points invariant across daily outcomes", () => {
+	it("keeps multiplier and first-solver bonuses aligned with the cached total", async () => {
+		const today = new Date(
+			Date.UTC(
+				new Date().getUTCFullYear(),
+				new Date().getUTCMonth(),
+				new Date().getUTCDate()
+			)
+		)
+		const { user, problem } = await seedHappyPath(today)
+		const streakStartedAt = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000)
+		await testDb.user.update({
+			where: { id: user.id },
+			data: {
+				totalPoints: 100,
+				currentStreak: 7,
+				longestStreak: 7,
+				currentStreakStartedAt: streakStartedAt,
+			},
+		})
+		await addLedgerEntryForDailyLoop(user.id, 100, streakStartedAt)
+		mockLeetCodeMatch(problem.slug, today.getTime() + 60 * 60 * 1000)
+
+		await problemsDao.verifyAndMarkSolved(user.id)
+
+		await expect(
+			testDb.pointsHistory.findFirstOrThrow({
+				where: { userId: user.id, reason: PointReason.STREAK_MULTIPLIER_BONUS },
+			})
+		).resolves.toMatchObject({ delta: 2 })
+		await expect(auditCachedTotals()).resolves.toMatchObject({
+			mismatchedUsers: 0,
+			absoluteDrift: 0,
+		})
+	})
+
+	it("keeps a pause penalty aligned with the cached total", async () => {
+		const today = new Date(
+			Date.UTC(
+				new Date().getUTCFullYear(),
+				new Date().getUTCMonth(),
+				new Date().getUTCDate()
+			)
+		)
+		const { user } = await seedHappyPath(today)
+		await testDb.user.update({ where: { id: user.id }, data: { totalPoints: 20 } })
+		await addLedgerEntryForDailyLoop(user.id, 20, new Date(today.getTime() - 1_000))
+
+		await problemsDao.pauseToday(user.id)
+
+		await expect(
+			testDb.pointsHistory.findFirstOrThrow({
+				where: { userId: user.id, reason: PointReason.PAUSE },
+			})
+		).resolves.toMatchObject({ delta: -5 })
+		await expect(auditCachedTotals()).resolves.toMatchObject({
+			mismatchedUsers: 0,
+			absoluteDrift: 0,
+		})
+	})
+
+	it("retries cleanly after an external verification failure", async () => {
+		const today = new Date(
+			Date.UTC(
+				new Date().getUTCFullYear(),
+				new Date().getUTCMonth(),
+				new Date().getUTCDate()
+			)
+		)
+		const { user, problem } = await seedHappyPath(today)
+		mockFetch.mockRejectedValueOnce(new Error("temporary LeetCode outage"))
+
+		await expect(problemsDao.verifyAndMarkSolved(user.id)).resolves.toMatchObject({
+			error: "NOT_VERIFIED",
+		})
+		await expect(testDb.userSolve.count({ where: { userId: user.id } })).resolves.toBe(0)
+		await expect(
+			testDb.pointsHistory.findMany({ where: { userId: user.id } })
+		).resolves.toEqual([
+			expect.objectContaining({
+				reason: PointReason.VERIFICATION_FAILURE_GRACE,
+				delta: 0,
+			}),
+		])
+
+		mockLeetCodeMatch(problem.slug, today.getTime() + 60 * 60 * 1000)
+		await problemsDao.verifyAndMarkSolved(user.id)
+
+		await expect(auditCachedTotals()).resolves.toMatchObject({
+			mismatchedUsers: 0,
+			absoluteDrift: 0,
+		})
 	})
 })
 
@@ -295,5 +408,84 @@ describe("markMissedForDate", () => {
 		const updatedUser = await testDb.user.findUniqueOrThrow({ where: { id: user.id } })
 		expect(updatedUser.currentStreak).toBe(0)
 		expect(updatedUser.currentStreakStartedAt).toBeNull()
+	})
+
+	it("applies one penalty and one bonus clawback under concurrent miss sweeps", async () => {
+		const yesterday = new Date(
+			Date.UTC(
+				new Date().getUTCFullYear(),
+				new Date().getUTCMonth(),
+				new Date().getUTCDate() - 1
+			)
+		)
+		const streakStartedAt = new Date(yesterday.getTime() - 7 * 24 * 60 * 60 * 1000)
+		const user = await createUser({
+			leetcodeHandle: "concurrent-miss",
+			currentStreak: 7,
+			currentStreakStartedAt: streakStartedAt,
+			totalPoints: 50,
+		})
+		const group = await createGroup({ roadmap: "NC250", isActive: true, isStarted: true })
+		const member = await addMember(group.id, user.id)
+		await testDb.groupMember.update({
+			where: { id: member.id },
+			data: { joinedAt: new Date(streakStartedAt.getTime() - 24 * 60 * 60 * 1000) },
+		})
+		const problem = await createProblem({ slug: "concurrent-missed-problem" })
+		await createDailyProblem({
+			groupId: group.id,
+			problemId: problem.id,
+			assignedDate: yesterday,
+		})
+		await testDb.pointsHistory.createMany({
+			data: [
+				{
+					userId: user.id,
+					delta: 38,
+					reason: PointReason.ADMIN_ADJUSTMENT,
+					createdAt: streakStartedAt,
+				},
+				{
+					userId: user.id,
+					delta: 10,
+					reason: PointReason.FIRST_IN_GROUP,
+					createdAt: new Date(streakStartedAt.getTime() + 1_000),
+				},
+				{
+					userId: user.id,
+					delta: 2,
+					reason: PointReason.STREAK_MULTIPLIER_BONUS,
+					createdAt: new Date(streakStartedAt.getTime() + 2_000),
+				},
+			],
+		})
+
+		const results = await Promise.all(
+			Array.from({ length: 8 }, () =>
+				problemsDao.markMissedForDate(yesterday, { evaluateWarnings: false })
+			)
+		)
+
+		expect(results.reduce((sum, result) => sum + result.missed, 0)).toBe(1)
+		await expect(
+			testDb.userSolve.count({ where: { userId: user.id, status: SolveStatus.MISSED } })
+		).resolves.toBe(1)
+		await expect(
+			testDb.pointsHistory.count({
+				where: { userId: user.id, reason: PointReason.CLAWBACK },
+			})
+		).resolves.toBe(1)
+		await expect(
+			testDb.pointsHistory.count({
+				where: { userId: user.id, reason: PointReason.MISSED_DAY },
+			})
+		).resolves.toBe(1)
+		await expect(
+			testDb.user.findUniqueOrThrow({ where: { id: user.id } })
+		).resolves.toMatchObject({ totalPoints: 35, currentStreak: 0 })
+		await expect(auditCachedTotals()).resolves.toMatchObject({
+			mismatchedUsers: 0,
+			absoluteDrift: 0,
+		})
 	})
 })

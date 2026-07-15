@@ -287,21 +287,6 @@ export const adminAdjustPointsSchema = z.object({
 })
 export type AdminAdjustPointsInput = z.infer<typeof adminAdjustPointsSchema>
 
-export const adminProGrantSchema = z.object({
-	grant: z.boolean(),
-	expiresAt: z
-		.string()
-		.datetime({ error: "Must be a valid ISO datetime" })
-		.nullable()
-		.optional(),
-	reason: z
-		.string()
-		.trim()
-		.min(1, { error: "Reason is required" })
-		.max(280, { error: "Reason must be 280 characters or fewer" }),
-})
-export type AdminProGrantInput = z.infer<typeof adminProGrantSchema>
-
 export const adminBanUserSchema = z.object({
 	banned: z.boolean(),
 	reason: z

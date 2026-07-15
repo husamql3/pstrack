@@ -141,7 +141,7 @@ One safe template. Apply the quality gate.
 - [x] Dynamic sitemap at `/sitemap.xml` — TanStack Start server route queries public groups (≥5 members, active in 30 days) + public user profiles. Static entries: `/`, `/problems`, `/groups`, `/badges`, `/about`, `/how-it-works`.
 - [x] Canonical tags on every indexable page — `createSeoHead()` in `src/lib/seo.ts` emits canonical for every route that calls it.
 - [x] Open Graph + Twitter cards — meta tags wired via `createSeoHead()`. OG image is now dynamic per-page via `/api/v3/og`.
-- [x] Vercel Analytics — `<Analytics />` added to root document shell (2026-06-10).
+- [ ] Product analytics replacement — Vercel Analytics removed during the Coolify migration.
 - [ ] 404 handling — `NotFoundPage` exists in `src/components/not-found.tsx` but not reviewed for crawler signals (proper 404 status code, useful internal links).
 - [ ] GSC + Bing Webmaster Tools verification — blocked on production domain DNS.
 
@@ -164,7 +164,7 @@ One safe template. Apply the quality gate.
 - [x] `robots.txt`, `llms.txt` live under `public/`.
 - [x] Dynamic sitemap at `/sitemap.xml` (replaces static file).
 - [x] Dynamic OG images at `/api/v3/og`.
-- [x] Vercel Analytics wired.
+- [ ] Product analytics replacement wired.
 - [x] Schema on `/`, `/about`, `/$username`.
 - [ ] GSC + Bing verification — blocked on production domain DNS.
 - [ ] Write `/about` founder-story prose (~600-1000 words total, 5 sections).
@@ -246,7 +246,7 @@ One safe template. Apply the quality gate.
 - [x] SSR all public routes — done 2026-06-10.
 - [x] Dynamic OG images via `/api/v3/og` — done 2026-06-10.
 - [x] Dynamic sitemap — done 2026-06-10.
-- [x] Vercel Analytics — done 2026-06-10.
+- [ ] Product analytics replacement — pending after the Coolify migration.
 - [x] Hero brand mention — "PStrack" now in hero body text.
 - [x] MDX infrastructure + `/how-it-works` placeholder — done 2026-06-10.
 - [ ] Write `/about` founder-story prose (5 sections, ~600-1000 words).

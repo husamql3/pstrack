@@ -5,6 +5,7 @@ import { ADMIN_LIST_LIMIT_DEFAULT } from "@/server/admin/admin.type"
 import { adminAuditDao } from "@/server/admin/admin-audit.dao"
 import { requirePlatformAdmin } from "@/server/lib/session"
 import { usersAdminDao } from "./users.admin.dao"
+import { usersAdminNotifications } from "./users.admin.notifications"
 
 export const usersAdminController = new Elysia({
 	prefix: "/admin/users",
@@ -82,7 +83,7 @@ export const usersAdminController = new Elysia({
 			const result = await usersAdminDao.setPro(user.id, params.id, {
 				grant: body.grant,
 				expiresAt: body.expiresAt ? new Date(body.expiresAt) : null,
-				reason: body.reason,
+				reason: body.reason ?? null,
 			})
 			if (!result.ok) {
 				if (result.error === "USER_NOT_FOUND") {
@@ -92,6 +93,13 @@ export const usersAdminController = new Elysia({
 					error:
 						"Cannot revoke Pro for a Polar customer. Issue a refund in Polar instead.",
 				})
+			}
+			if (result.becamePro) {
+				usersAdminNotifications.proGranted(
+					result.user.email,
+					result.user.name,
+					result.user.proExpiresAt
+				)
 			}
 			return result.user
 		},

@@ -1,10 +1,12 @@
 import { createRouter as createTanStackRouter } from "@tanstack/react-router"
 
+import { initClientPostHog } from "@/lib/posthog"
 import { getQueryClient } from "@/lib/query-client"
 import { initClientSentry } from "@/lib/sentry"
 import { routeTree } from "@/routeTree.gen"
 
 initClientSentry()
+initClientPostHog()
 
 export function getRouter() {
 	const router = createTanStackRouter({

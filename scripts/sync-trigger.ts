@@ -5,14 +5,9 @@ const TRIGGER_API = process.env.TRIGGER_API_URL ?? "https://api.trigger.dev"
 const PROJECT_REF = "proj_nhquzeoumjpzigemrkxj"
 const SLUG = "prod"
 
-// Meta-credentials and client-only vars don't belong in Trigger.dev
-const SKIP_KEYS = new Set([
-	"VERCEL_TOKEN",
-	"VERCEL_ORG_ID",
-	"VERCEL_PROJECT_ID",
-	"TRIGGER_ACCESS_TOKEN",
-	"TRIGGER_API_URL",
-])
+// Trigger.dev is only a scheduler/dispatcher. Production database and app
+// credentials must remain inside the private app network.
+const TRIGGER_KEYS = ["JOB_DISPATCH_URL", "JOB_DISPATCH_SECRET"] as const
 
 async function main() {
 	const vars = readProdEnv()
@@ -24,9 +19,7 @@ async function main() {
 	}
 
 	const variables = Object.fromEntries(
-		Object.entries(vars)
-			.filter(([key]) => !SKIP_KEYS.has(key))
-			.filter(([key]) => !key.startsWith("VITE_"))
+		TRIGGER_KEYS.flatMap((key) => (vars[key] ? [[key, vars[key]]] : []))
 	)
 
 	const keys = Object.keys(variables)

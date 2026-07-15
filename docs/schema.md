@@ -1,7 +1,8 @@
 # Database Schema
 
 ORM: **Prisma**
-Database: **Neon (PostgreSQL)**
+Database: **PostgreSQL** — private Coolify service in production; isolated Neon
+project in Vercel staging
 
 ## Design Principles
 

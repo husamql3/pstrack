@@ -133,7 +133,7 @@
 - One-time payment: $14 standard, $9 sale
 - Promo codes supported natively in Polar
 
-### 8. Email Notifications (Resend)
+### 8. Email Notifications
 
 See [notifications.md](./notifications.md) for full event list.
 

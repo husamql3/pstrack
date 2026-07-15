@@ -1,7 +1,7 @@
 import type { Prisma } from "@/generated/prisma/client"
 import { PointReason, ProSource } from "@/generated/prisma/enums"
 import { db } from "@/server/lib/db"
-import { MISSED_PENALTY, PRO_THRESHOLD } from "./points.type"
+import { MISSED_PENALTY, type PointDriftRow, PRO_THRESHOLD } from "./points.type"
 
 type Tx = Prisma.TransactionClient
 
@@ -12,6 +12,70 @@ type ApplyPointsOptions = {
 	tx?: Tx
 }
 
+type LockedUserPoints = {
+	totalPoints: number
+	isPro: boolean
+}
+
+const findPointDrift = (tx: Tx): Promise<PointDriftRow[]> =>
+	tx.$queryRaw<PointDriftRow[]>`
+		WITH RECURSIVE ordered AS (
+			SELECT
+				p."userId",
+				p.delta,
+				ROW_NUMBER() OVER (
+					PARTITION BY p."userId"
+					ORDER BY p."createdAt", p.id
+				) AS sequence
+			FROM "PointsHistory" p
+		), replay AS (
+			SELECT
+				ordered."userId",
+				ordered.sequence,
+				GREATEST(0, ordered.delta)::integer AS balance
+			FROM ordered
+			WHERE ordered.sequence = 1
+
+			UNION ALL
+
+			SELECT
+				ordered."userId",
+				ordered.sequence,
+				GREATEST(0, replay.balance + ordered.delta)::integer AS balance
+			FROM replay
+			JOIN ordered
+				ON ordered."userId" = replay."userId"
+				AND ordered.sequence = replay.sequence + 1
+		), final_balance AS (
+			SELECT DISTINCT ON (replay."userId")
+				replay."userId",
+				replay.balance
+			FROM replay
+			ORDER BY replay."userId", replay.sequence DESC
+		)
+		SELECT
+			u.id AS "userId",
+			u."totalPoints" AS "currentTotal",
+			COALESCE(final_balance.balance, 0)::integer AS "expectedTotal",
+			u."isPro" AS "isPro"
+		FROM "user" u
+		LEFT JOIN final_balance ON final_balance."userId" = u.id
+		WHERE u."totalPoints" <> COALESCE(final_balance.balance, 0)
+		ORDER BY u.id
+	`
+
+const lockUserPoints = async (tx: Tx, userId: string): Promise<LockedUserPoints> => {
+	const rows = await tx.$queryRaw<LockedUserPoints[]>`
+		SELECT "totalPoints" AS "totalPoints", "isPro" AS "isPro"
+		FROM "user"
+		WHERE id = ${userId}
+		FOR NO KEY UPDATE
+	`
+	const user = rows[0]
+	if (!user) throw new Error(`User not found: ${userId}`)
+	return user
+}
+
 const applyPointsDeltaInTx = async (
 	tx: Tx,
 	userId: string,
@@ -19,7 +83,9 @@ const applyPointsDeltaInTx = async (
 	reason: PointReason,
 	opts: Omit<ApplyPointsOptions, "tx">
 ) => {
-	await tx.pointsHistory.create({
+	const user = await lockUserPoints(tx, userId)
+
+	const created = await tx.pointsHistory.createMany({
 		data: {
 			userId,
 			delta,
@@ -28,12 +94,12 @@ const applyPointsDeltaInTx = async (
 			userSolveId: opts.userSolveId ?? null,
 			adminNote: opts.adminNote ?? null,
 		},
+		skipDuplicates: true,
 	})
 
-	const user = await tx.user.findUniqueOrThrow({
-		where: { id: userId },
-		select: { totalPoints: true, isPro: true },
-	})
+	if (created.count === 0) {
+		return { newTotal: user.totalPoints, crossedProThreshold: false }
+	}
 
 	const newTotal = Math.max(0, user.totalPoints + delta)
 	const crossedProThreshold = !user.isPro && newTotal >= PRO_THRESHOLD
@@ -53,6 +119,33 @@ const applyPointsDeltaInTx = async (
 }
 
 export const pointsDao = {
+	countUsers: (tx: Tx): Promise<number> => tx.user.count(),
+
+	findCachedTotalDrift: (tx: Tx): Promise<PointDriftRow[]> => findPointDrift(tx),
+
+	lockAllUserPoints: async (tx: Tx): Promise<void> => {
+		await tx.$queryRaw<Array<{ id: string }>>`
+			SELECT id FROM "user" ORDER BY id FOR NO KEY UPDATE
+		`
+	},
+
+	updateCachedTotal: async (
+		tx: Tx,
+		row: PointDriftRow,
+		grantsPro: boolean
+	): Promise<void> => {
+		await tx.user.update({
+			where: { id: row.userId },
+			data: {
+				totalPoints: row.expectedTotal,
+				...(grantsPro && {
+					isPro: true,
+					proSource: ProSource.POINTS_THRESHOLD,
+				}),
+			},
+		})
+	},
+
 	applyPointsDelta: async (
 		userId: string,
 		delta: number,

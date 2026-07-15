@@ -1,0 +1,32 @@
+name: Deploy Trigger.dev production tasks
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/server/trigger/**"
+      - "trigger.config.ts"
+      - "package.json"
+      - "bun.lock"
+      - ".github/workflows/release-trigger-prod.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: trigger-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: ./.github/actions/setup
+      - name: Deploy production tasks
+        env:
+          TRIGGER_ACCESS_TOKEN: ${{ secrets.TRIGGER_ACCESS_TOKEN }}
+          JOB_DISPATCH_URL: ${{ vars.JOB_DISPATCH_URL }}
+          JOB_DISPATCH_SECRET: ${{ secrets.JOB_DISPATCH_SECRET }}
+        run: bun run deploy:trigger-prod

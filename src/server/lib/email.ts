@@ -1,3 +1,6 @@
+import { render } from "@react-email/render"
+import nodemailer, { type Transporter } from "nodemailer"
+import type { ReactElement } from "react"
 import { type CreateEmailOptions, Resend } from "resend"
 
 import { env } from "@/env"
@@ -17,25 +20,132 @@ const getClient = (): Resend => {
 	return client
 }
 
-/**
- * Proxy over the lazily-created client, preserving the full call surface
- * (`resend.emails.send(...)`, `resend.batch.send(...)`) for existing consumers.
- */
-export const resend: Resend = new Proxy({} as Resend, {
+const resend: Resend = new Proxy({} as Resend, {
 	get: (_target, prop) => Reflect.get(getClient(), prop),
 })
 
-export const sendEmail = async (payload: CreateEmailOptions) => {
-	const result = await resend.emails.send(payload)
-	if (result.error) {
+// --- Self-hosted SMTP (Stalwart) ------------------------------------------
+
+let transporter: Transporter | null = null
+
+/**
+ * Build the SMTP transporter lazily, for the same import-safety reason as the
+ * Resend client above: it must never throw at import time when SMTP env is
+ * absent (CI/tests, or the `log`/`resend` transports).
+ */
+const getTransporter = (): Transporter => {
+	if (!env.SMTP_HOST || !env.SMTP_USER || !env.SMTP_PASS) {
+		throw new Error("SMTP is not configured (SMTP_HOST / SMTP_USER / SMTP_PASS)")
+	}
+	if (!transporter) {
+		// Prod skips env validation, so SMTP_PORT can arrive as a raw string — coerce.
+		const port = Number(env.SMTP_PORT) || 465
+		transporter = nodemailer.createTransport({
+			host: env.SMTP_HOST,
+			port,
+			secure: port === 465, // implicit TLS on 465, STARTTLS on submission ports
+			requireTLS: port !== 465,
+			// Stalwart presents a self-signed cert on its submission port, and the
+			// app→Stalwart hop is a trusted same-host connection over the internal
+			// Docker network — so don't reject the unverified cert.
+			tls: { rejectUnauthorized: false },
+			auth: { user: env.SMTP_USER, pass: env.SMTP_PASS },
+		})
+	}
+	return transporter
+}
+
+const sendViaSmtp = async (payload: CreateEmailOptions) => {
+	const info = await (async () => {
+		try {
+			// React Email templates are rendered to HTML + text in-app (Resend does
+			// this server-side; SMTP needs the rendered strings). Keep rendering in
+			// the same sanitizing boundary as transport execution because template
+			// errors can contain message content.
+			const element = payload.react as ReactElement | undefined
+			const html = payload.html ?? (element ? await render(element) : undefined)
+			const text =
+				payload.text ?? (element ? await render(element, { plainText: true }) : undefined)
+			return await getTransporter().sendMail({
+				from: payload.from,
+				to: payload.to,
+				subject: payload.subject,
+				html,
+				text,
+				...(payload.replyTo
+					? {
+							replyTo: Array.isArray(payload.replyTo)
+								? payload.replyTo.join(", ")
+								: payload.replyTo,
+						}
+					: {}),
+			})
+		} catch {
+			logger.error(
+				{ recipientCount: Array.isArray(payload.to) ? payload.to.length : 1 },
+				"smtp send failed"
+			)
+			throw new Error("SMTP send failed")
+		}
+	})()
+
+	if (info.rejected && info.rejected.length > 0) {
 		logger.error(
-			{ err: result.error, to: payload.to, subject: payload.subject, from: payload.from },
-			"resend send failed"
+			{
+				rejectedCount: info.rejected.length,
+				recipientCount: Array.isArray(payload.to) ? payload.to.length : 1,
+			},
+			"smtp send rejected"
 		)
-		throw new Error(`Resend: ${result.error.name} - ${result.error.message}`)
+		throw new Error(
+			`SMTP rejected ${info.rejected.length} recipient${info.rejected.length === 1 ? "" : "s"}`
+		)
 	}
 	logger.debug(
-		{ id: result.data?.id, to: payload.to, subject: payload.subject },
+		{ recipientCount: Array.isArray(payload.to) ? payload.to.length : 1 },
+		"smtp send ok"
+	)
+	return { id: info.messageId }
+}
+
+// --- Public API ------------------------------------------------------------
+
+export const sendEmail = async (payload: CreateEmailOptions) => {
+	if (env.EMAIL_TRANSPORT === "log") {
+		logger.info(
+			{ recipientCount: Array.isArray(payload.to) ? payload.to.length : 1 },
+			"email suppressed by log transport"
+		)
+		return null
+	}
+
+	if (env.EMAIL_TRANSPORT === "smtp") {
+		return sendViaSmtp(payload)
+	}
+
+	const result = await (async () => {
+		try {
+			return await resend.emails.send(payload)
+		} catch {
+			logger.error(
+				{ recipientCount: Array.isArray(payload.to) ? payload.to.length : 1 },
+				"resend send failed"
+			)
+			throw new Error("Resend send failed")
+		}
+	})()
+	if (result.error) {
+		logger.error(
+			{
+				errorName: result.error.name,
+				recipientCount: Array.isArray(payload.to) ? payload.to.length : 1,
+			},
+			"resend send failed"
+		)
+		throw new Error(`Resend send failed (${result.error.name})`)
+	}
+	logger.debug(
+		{ recipientCount: Array.isArray(payload.to) ? payload.to.length : 1 },
 		"resend send ok"
 	)
 	return result.data
