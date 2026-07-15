@@ -2,6 +2,7 @@ import { dashClient, sentinelClient } from "@better-auth/infra/client"
 import { polarClient } from "@polar-sh/better-auth"
 import {
 	adminClient,
+	emailOTPClient,
 	inferAdditionalFields,
 	magicLinkClient,
 } from "better-auth/client/plugins"
@@ -15,6 +16,7 @@ export const authClient = createAuthClient({
 	basePath: "/api/v3/auth",
 	plugins: [
 		magicLinkClient(),
+		emailOTPClient(),
 		adminClient(),
 		polarClient(),
 		inferAdditionalFields<Auth>(),

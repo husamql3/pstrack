@@ -156,8 +156,24 @@ export const notificationsFormSchema = z.object({
 
 export type NotificationsFormInput = z.infer<typeof notificationsFormSchema>
 
-export const emailFormSchema = z.object({
-	email: z.string().trim().email({ error: "Invalid email address" }),
+// ─── Change email (OTP flow) ──────────────────────────────────────────────────
+// Step 1: prove the current inbox + name the new address. Step 2: prove the new
+// inbox. Codes are 6 numeric digits (Better Auth emailOTP default otpLength).
+
+const OTP_CODE = z
+	.string()
+	.trim()
+	.regex(/^\d{6}$/, { error: "Enter the 6-digit code" })
+
+export const changeEmailRequestSchema = z.object({
+	newEmail: z.string().trim().email({ error: "Invalid email address" }),
+	currentOtp: OTP_CODE,
 })
 
-export type EmailFormInput = z.infer<typeof emailFormSchema>
+export type ChangeEmailRequestInput = z.infer<typeof changeEmailRequestSchema>
+
+export const changeEmailConfirmSchema = z.object({
+	newOtp: OTP_CODE,
+})
+
+export type ChangeEmailConfirmInput = z.infer<typeof changeEmailConfirmSchema>
