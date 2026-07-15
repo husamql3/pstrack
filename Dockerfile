@@ -1,7 +1,7 @@
 # ── builder ───────────────────────────────────────────────────────────────────
 # Optional target for building entirely inside Docker (e.g. local builds).
 # CI builds the app first and uses the runtime-prebuilt target below.
-FROM oven/bun:1.3-slim AS builder
+FROM oven/bun:1.3.14-slim AS builder
 WORKDIR /app
 
 COPY bun.lock package.json ./
@@ -28,7 +28,7 @@ RUN bun run build
 # Install only production packages in an isolated stage so the runtime image
 # can copy the native Resvg packages that Nitro leaves external. Copying just
 # this scope keeps the otherwise self-contained .output image minimal.
-FROM oven/bun:1.3-slim AS runtime-deps
+FROM oven/bun:1.3.14-slim AS runtime-deps
 WORKDIR /app
 
 COPY bun.lock package.json ./
@@ -39,7 +39,7 @@ RUN bun install --frozen-lockfile --production --ignore-scripts
 # we just copy it in. Runs on Bun (ADR 0011) - the native Redis client ships
 # with the Bun runtime. oven/bun slim is Debian/glibc, so the linux-x64-gnu
 # native binaries copied from runtime-deps still load.
-FROM oven/bun:1.3-slim AS runtime-prebuilt
+FROM oven/bun:1.3.14-slim AS runtime-prebuilt
 WORKDIR /app
 
 RUN apt-get update \

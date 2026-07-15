@@ -17,7 +17,7 @@ used the `@upstash/redis` REST client. Issue #288 completed the decision:
   retries, offline queue only across the retry window, error-level `onclose`
   logging, and close on SIGTERM. `UPSTASH_REDIS_REST_URL/TOKEN` are removed
   from the env schema, `.env.example`, and the staging sync allowlist.
-- The `runtime-prebuilt` Docker stage runs `oven/bun:1.3-slim` with
+- The `runtime-prebuilt` Docker stage runs `oven/bun:1.3.14-slim` with
   `CMD ["bun", ...]`. The image is Debian/glibc, so the `linux-x64-gnu`
   `@resvg/resvg-js` binaries still load. Nitro leaves the dynamic package
   external, so a dedicated production-dependency stage copies only the

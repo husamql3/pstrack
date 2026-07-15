@@ -41,14 +41,25 @@ jobs:
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
       - uses: ./.github/actions/setup
-      - run: bun run knip --no-exit-code
+      - run: bun run knip
+
+  audit:
+    name: Dependency audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: ./.github/actions/setup
+      - run: bun run audit
 
   test:
     name: Vitest
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        postgres: [17-alpine, 18-alpine]
     services:
       postgres:
-        image: postgres:16
+        image: postgres:${{ matrix.postgres }}
         env:
           POSTGRES_USER: pstrack
           POSTGRES_PASSWORD: pstrack
@@ -106,7 +117,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: postgres:17-alpine
+        image: postgres:18-alpine
         env:
           POSTGRES_USER: pstrack
           POSTGRES_PASSWORD: ci_test_password
@@ -177,7 +188,7 @@ jobs:
   deploy-vercel-staging:
     name: Deploy Vercel staging
     runs-on: ubuntu-latest
-    needs: [typecheck, lint, knip, test, redis-verify, validate-schema, build]
+    needs: [typecheck, lint, knip, audit, test, redis-verify, validate-schema, build]
     if: github.event_name == 'push' && github.ref == 'refs/heads/stage'
     environment:
       name: Staging
