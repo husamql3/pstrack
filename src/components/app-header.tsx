@@ -7,7 +7,7 @@ import {
 	IconUsers,
 } from "@tabler/icons-react"
 import { Link, useRouterState } from "@tanstack/react-router"
-import { useEffect, useLayoutEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 
 import { Skeleton } from "@/components/ui/skeleton"
 import { useSession } from "@/lib/auth-client"
@@ -35,7 +35,6 @@ export function AppHeader() {
 
 	const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
 	const [hoverStyle, setHoverStyle] = useState({})
-	const [activeStyle, setActiveStyle] = useState({ left: "0px", width: "0px" })
 	const tabRefs = useRef<(HTMLDivElement | null)[]>([])
 
 	useEffect(() => {
@@ -44,18 +43,6 @@ export function AppHeader() {
 			if (el) setHoverStyle({ left: `${el.offsetLeft}px`, width: `${el.offsetWidth}px` })
 		}
 	}, [hoveredIndex])
-
-	// Measure BEFORE paint: the header remounts on most navigations, and a
-	// post-paint effect lets the browser paint the initial left:0/width:0
-	// state first — transition-all then visibly slides the underline in from
-	// the far left (#231). With useLayoutEffect the first painted frame is
-	// already at the active tab, so only real tab-to-tab changes animate.
-	useLayoutEffect(() => {
-		const el = tabRefs.current[activeIndex]
-		if (el) {
-			setActiveStyle({ left: `${el.offsetLeft}px`, width: `${el.offsetWidth}px` })
-		}
-	}, [activeIndex])
 
 	return (
 		<header className="sticky top-0 border-border/50 border-b bg-background backdrop-blur-sm">
@@ -83,14 +70,6 @@ export function AppHeader() {
 						}}
 					/>
 
-					{/* Active underline */}
-					{activeIndex >= 0 && (
-						<div
-							className="absolute bottom-[-14px] h-[2px] rounded-full bg-primary transition-all duration-300 ease-out"
-							style={activeStyle}
-						/>
-					)}
-
 					{/* Nav items */}
 					<div className="relative flex items-center gap-1">
 						{visibleLinks.map(({ to, label, icon: Icon }, index) => (
@@ -100,9 +79,14 @@ export function AppHeader() {
 								ref={(el) => {
 									if (el) tabRefs.current[index] = el
 								}}
+								className="relative"
 								onMouseEnter={() => setHoveredIndex(index)}
 								onMouseLeave={() => setHoveredIndex(null)}
 							>
+								{/* Active underline — static, rendered on the active item */}
+								{index === activeIndex && (
+									<div className="absolute bottom-[-14px] left-0 h-[2px] w-full rounded-full bg-primary" />
+								)}
 								<Link
 									to={to}
 									className={[
