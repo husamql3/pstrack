@@ -10,9 +10,11 @@ import { captureServerException } from "@/server/lib/sentry"
 import { auditCachedTotals } from "@/server/points/points.reconciliation"
 import { problemsDao } from "@/server/problems/problems.dao"
 import { systemEventsDao } from "@/server/system-events/system-events.dao"
+import { getStaleJobNames } from "./job-runs.service"
 import type { JobName } from "./jobs.types"
 
 const DAY_MS = 86_400_000
+const HOUR_MS = 60 * 60 * 1000
 const CATCH_UP_DAYS = 14
 const DIGEST_BATCH_SIZE = 100
 const SYSTEM_EVENT_RETENTION_DAYS = 90
@@ -77,8 +79,32 @@ const assignDailyProblem = async (scheduledAt: Date) => {
 		newUsers: stats.newUsers,
 		pausesUsed: stats.pausesUsed,
 		handleChanges: stats.handleChanges,
+		misses: stats.misses,
+		verificationFailures: stats.verificationFailures,
 	})
 	return { ...result, ...delivery }
+}
+
+// Hourly ops pulse: last-hour app activity + stale-job health. The bot enriches
+// this with the last-hour error count (from its Redis counter) and makes the
+// final skip-empty decision, so a silent hour that still had errors is sent.
+const sendHourlyDigest = async (scheduledAt: Date) => {
+	const to = scheduledAt
+	const from = new Date(to.getTime() - HOUR_MS)
+	const stats = await problemsDao.getActivityStats(from, to)
+	const staleJobs = await getStaleJobNames(scheduledAt)
+	await notifyAdmin("digest.hourly", {
+		hourStart: from.toISOString(),
+		hourEnd: to.toISOString(),
+		solves: stats.solves,
+		activeUsers: stats.activeUsers,
+		newUsers: stats.newUsers,
+		pauses: stats.pauses,
+		misses: stats.misses,
+		verificationFailures: stats.verificationFailures,
+		staleJobs,
+	})
+	return { ...stats, staleJobs: staleJobs.length }
 }
 
 const markMissed = async (scheduledAt: Date) => {
@@ -259,6 +285,8 @@ export const executeJob = async (
 			return purgeSystemEvents()
 		case "send-weekly-digest":
 			return sendWeeklyDigest(scheduledAt)
+		case "send-hourly-digest":
+			return sendHourlyDigest(scheduledAt)
 		case "reconcile-points":
 			return reconcilePoints()
 		case "reset-today-problems":

@@ -415,47 +415,104 @@ export const problemsDao = {
 
 	getDailySolveStats: async (date: Date) => {
 		const yesterday = new Date(date.getTime() - 86_400_000)
-		const [totalSolves, solvers, newUsers, pausesUsed, handleChanges] = await Promise.all(
-			[
-				db.userSolve.count({
-					where: {
-						status: SolveStatus.SOLVED,
-						dailyProblem: { assignedDate: yesterday },
+		const [
+			totalSolves,
+			solvers,
+			newUsers,
+			pausesUsed,
+			handleChanges,
+			misses,
+			verificationFailures,
+		] = await Promise.all([
+			db.userSolve.count({
+				where: {
+					status: SolveStatus.SOLVED,
+					dailyProblem: { assignedDate: yesterday },
+				},
+			}),
+			db.userSolve.findMany({
+				where: {
+					status: SolveStatus.SOLVED,
+					dailyProblem: { assignedDate: yesterday },
+				},
+				select: { userId: true },
+				distinct: ["userId"],
+			}),
+			db.user.count({
+				where: { createdAt: { gte: yesterday, lt: date } },
+			}),
+			db.systemEventLog.count({
+				where: {
+					eventType: SystemEventType.PAUSE_USED,
+					createdAt: { gte: yesterday, lt: date },
+				},
+			}),
+			db.systemEventLog.count({
+				where: {
+					eventType: {
+						in: [SystemEventType.HANDLE_CHANGED, SystemEventType.USERNAME_CHANGED],
 					},
-				}),
-				db.userSolve.findMany({
-					where: {
-						status: SolveStatus.SOLVED,
-						dailyProblem: { assignedDate: yesterday },
-					},
-					select: { userId: true },
-					distinct: ["userId"],
-				}),
-				db.user.count({
-					where: { createdAt: { gte: yesterday, lt: date } },
-				}),
-				db.systemEventLog.count({
-					where: {
-						eventType: SystemEventType.PAUSE_USED,
-						createdAt: { gte: yesterday, lt: date },
-					},
-				}),
-				db.systemEventLog.count({
-					where: {
-						eventType: {
-							in: [SystemEventType.HANDLE_CHANGED, SystemEventType.USERNAME_CHANGED],
-						},
-						createdAt: { gte: yesterday, lt: date },
-					},
-				}),
-			]
-		)
+					createdAt: { gte: yesterday, lt: date },
+				},
+			}),
+			db.userSolve.count({
+				where: {
+					status: SolveStatus.MISSED,
+					dailyProblem: { assignedDate: yesterday },
+				},
+			}),
+			db.systemEventLog.count({
+				where: {
+					eventType: SystemEventType.SOLVE_FAILED,
+					createdAt: { gte: yesterday, lt: date },
+				},
+			}),
+		])
 		return {
 			totalSolves,
 			activeUsers: solvers.length,
 			newUsers,
 			pausesUsed,
 			handleChanges,
+			misses,
+			verificationFailures,
+		}
+	},
+
+	// Activity within an arbitrary [from, to) window — powers the hourly digest.
+	// Solves are windowed on `verifiedAt` (the moment verification succeeded);
+	// misses on `updatedAt` (set by the midnight mark-missed batch, so hourly
+	// misses read 0 outside the 00:00 tick — accurate, not a bug).
+	getActivityStats: async (from: Date, to: Date) => {
+		const [solvers, newUsers, pauses, misses, verificationFailures] = await Promise.all([
+			db.userSolve.findMany({
+				where: { status: SolveStatus.SOLVED, verifiedAt: { gte: from, lt: to } },
+				select: { userId: true },
+			}),
+			db.user.count({ where: { createdAt: { gte: from, lt: to } } }),
+			db.systemEventLog.count({
+				where: {
+					eventType: SystemEventType.PAUSE_USED,
+					createdAt: { gte: from, lt: to },
+				},
+			}),
+			db.userSolve.count({
+				where: { status: SolveStatus.MISSED, updatedAt: { gte: from, lt: to } },
+			}),
+			db.systemEventLog.count({
+				where: {
+					eventType: SystemEventType.SOLVE_FAILED,
+					createdAt: { gte: from, lt: to },
+				},
+			}),
+		])
+		return {
+			solves: solvers.length,
+			activeUsers: new Set(solvers.map((solve) => solve.userId)).size,
+			newUsers,
+			pauses,
+			misses,
+			verificationFailures,
 		}
 	},
 

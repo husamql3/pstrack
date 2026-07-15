@@ -1,9 +1,26 @@
 import { Prisma } from "@/generated/prisma/client"
 import { JobRunStatus } from "@/generated/prisma/enums"
 import { db } from "@/server/lib/db"
-import type { JobName } from "./jobs.types"
+import { JOB_NAMES, type JobName } from "./jobs.types"
 
 const STALE_RUN_MS = 15 * 60 * 1000
+
+// How long after a successful run a job is still considered "fresh". Beyond this
+// it's reported as stale by /freshness and flagged in the hourly ops digest.
+// Single source of truth shared by the freshness endpoint and getStaleJobNames.
+export const FRESHNESS_MS: Record<JobName, number> = {
+	"assign-daily-problem": 26 * 60 * 60 * 1000,
+	"mark-missed": 26 * 60 * 60 * 1000,
+	"expire-join-requests": 2 * 60 * 60 * 1000,
+	"reset-monthly-counters": 32 * 24 * 60 * 60 * 1000,
+	"expire-admin-pro-grants": 26 * 60 * 60 * 1000,
+	"purge-system-events": 32 * 24 * 60 * 60 * 1000,
+	"send-weekly-digest": 8 * 24 * 60 * 60 * 1000,
+	"send-hourly-digest": 90 * 60 * 1000,
+	"reconcile-points": 26 * 60 * 60 * 1000,
+	"reset-today-problems": Number.POSITIVE_INFINITY,
+	"reconcile-mark-missed": Number.POSITIVE_INFINITY,
+}
 
 type JobResult = Record<string, unknown>
 
@@ -107,4 +124,21 @@ export const getJobFreshness = async () => {
 		select: { jobName: true, finishedAt: true, idempotencyKey: true },
 	})
 	return rows
+}
+
+// Scheduled jobs whose last success is older than their freshness window.
+// Jobs that have never run are NOT flagged (avoids false alarms on a fresh
+// deploy before each cron's first tick); manual/on-demand jobs (Infinity
+// threshold) are excluded entirely.
+export const getStaleJobNames = async (now: Date): Promise<JobName[]> => {
+	const latest = await getJobFreshness()
+	const finishedByName = new Map(latest.map((run) => [run.jobName, run.finishedAt]))
+	const nowMs = now.getTime()
+	return JOB_NAMES.filter((jobName) => {
+		const threshold = FRESHNESS_MS[jobName]
+		if (!Number.isFinite(threshold)) return false
+		const finishedAt = finishedByName.get(jobName)
+		if (!finishedAt) return false
+		return nowMs - finishedAt.getTime() > threshold
+	})
 }
