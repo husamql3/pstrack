@@ -22,8 +22,9 @@ const NAV_LINKS = [
 ] as const
 
 export function AppHeader() {
-	const routerState = useRouterState()
-	const pathname = routerState.location.pathname
+	// Select only the pathname — a bare useRouterState() subscribes to every
+	// router state tick and re-renders the header throughout each transition.
+	const pathname = useRouterState({ select: (s) => s.location.pathname })
 	const { data: session } = useSession()
 	const isLoggedIn = !!session?.user
 

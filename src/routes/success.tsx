@@ -15,6 +15,7 @@ import { useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { ME_QUERY_KEY } from "@/features/settings/hooks/use-me"
 import { authClient } from "@/lib/auth-client"
+import { SESSION_QUERY_KEY } from "@/lib/session"
 import { cn } from "@/lib/utils"
 
 type SuccessSearch = { checkout_id?: string }
@@ -102,6 +103,7 @@ function SuccessPage() {
 	useEffect(() => {
 		void authClient.getSession({ query: { disableCookieCache: true } })
 		void queryClient.invalidateQueries({ queryKey: ME_QUERY_KEY })
+		queryClient.removeQueries({ queryKey: SESSION_QUERY_KEY })
 	}, [queryClient])
 
 	// Auto-fire brand-tinted confetti burst once on mount
