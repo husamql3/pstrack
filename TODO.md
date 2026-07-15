@@ -349,12 +349,12 @@ No child remediation issue (#279–#294) is fully resolved and closed yet.
 
 ### Architecture and legacy cleanup — [#294](https://github.com/husamql3/pstrack/issues/294)
 
-- [ ] Reconcile README, AGENTS, stack docs, runbooks, ADRs, and environment examples with the actual Coolify architecture.
-- [ ] Document local, staging, and production environment ownership and data-flow boundaries.
-- [ ] Document deploy, rollback, backup, restore, reconciliation, credential rotation, and incident procedures.
+- [ ] Reconcile README, AGENTS, stack docs, runbooks, ADRs, and environment examples with the actual Coolify architecture. — _Implemented in the PR for #294; check only after review/merge and a fresh production evidence comparison._
+- [ ] Document local, staging, and production environment ownership and data-flow boundaries. — _Implemented in `docs/OPERATIONS.md`; awaiting the same verification gate._
+- [ ] Document deploy, rollback, backup, restore, reconciliation, credential rotation, and incident procedures. — _Implemented in `docs/OPERATIONS.md`; awaiting the same verification gate._
 - [ ] Remove obsolete Vercel deployment code/config/secrets after confirming it has no remaining role.
 - [ ] Remove retired Trigger.dev database access, Upstash, Resend, and legacy Neon references after each migration completes.
-- [ ] Audit duplicated or contradictory env-sync scripts and docs.
+- [ ] Audit duplicated or contradictory env-sync scripts and docs. — _Repository audit implemented: canonical commands are `env:sync:prod|stage|trigger|gh`; check after live destination-name comparison._
 - [ ] Keep this file synchronized with issue closure and production verification.
 
 ## Local environment follow-up
@@ -364,23 +364,28 @@ No child remediation issue (#279–#294) is fully resolved and closed yet.
 - [ ] Restrict `.env` from `0644` to `0600`.
 - [ ] Add an isolated local test database/bootstrap command and document destructive reset boundaries.
 - [ ] Standardize local/CI/production PostgreSQL major versions.
-- [ ] Decide whether Vercel tooling is being retired. If retained, upgrade the local CLI from 54.20.1 to 55.0.0 or newer.
+- [x] Decide whether Vercel tooling is being retired. — _Retained for isolated application staging; see ADR 0012 and `docs/STAGING.md`._
+- [ ] Upgrade the local Vercel CLI from 54.20.1 to the current supported release.
 
-## Architecture snapshot for the next agent
+## Architecture evidence pointer
 
-### Application and deployment path
+Required boundaries and procedures live in `docs/OPERATIONS.md`; current proof
+and residual migration state live in #278 and the child issues. The diagram
+below is a target topology, not proof that every migration is deployed.
+
+### Target application and deployment path
 
 ```text
 Browser
   -> HTTPS / canonical pstrack.app origin
   -> Coolify Traefik proxy
-  -> PStrack container (TanStack Start SPA + Elysia API, Node runtime)
+  -> PStrack container (TanStack Start SPA + Elysia API, Bun runtime)
        -> private PostgreSQL 18 container through Prisma
-       -> Upstash Redis REST (migration target: private Redis)
+       -> private Redis after the #288 rollout; no cache dependency before it
        -> Better Auth + Google/GitHub/Magic Link
        -> Polar checkout/webhooks
-       -> Resend today; Stalwart migration is open in PR #277
-       -> Trigger.dev scheduled tasks today
+       -> private Stalwart SMTP; Resend remains a rollback transport pending retirement
+       -> app-owned durable jobs dispatched by Trigger.dev Cloud over authenticated HTTP
 
 Private VPS services
   -> Coolify control plane and proxy
@@ -389,10 +394,10 @@ Private VPS services
   -> Stalwart
 ```
 
-The deployed application is currently selected through the mutable `main` image
-tag. CI also publishes a SHA tag, but Coolify is not yet instructed to deploy that
-immutable tag/digest. The deploy workflow returns after triggering Coolify rather
-than polling deployment completion or running end-to-end smoke checks.
+The environment boundaries and current deploy/rollback procedures are canonical
+in `docs/OPERATIONS.md`. Migration-specific production proof remains on the
+individual remediation issues; do not infer deployment from an open PR or this
+repository snapshot.
 
 ### Core correctness invariants
 

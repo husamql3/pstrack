@@ -69,7 +69,7 @@ Runtime is **Bun** (≥1.2.2).
 | `bun run test` | Vitest, single run (no watch). |
 | `bun run test -- src/path/to/file.test.ts` | Run one test file. Append `-t "name"` to filter by test name. |
 
-### Database (Prisma → Neon)
+### Database (Prisma → PostgreSQL)
 
 | Command | What it does |
 |---|---|
@@ -85,7 +85,9 @@ Runtime is **Bun** (≥1.2.2).
 
 | Command | What it does |
 |---|---|
-| `bun run env:sync` | Sync `.env` to Vercel. |
+| `bun run env:sync:prod` | Sync `.env.prod` to the Coolify production app. |
+| `bun run env:sync:stage:dry-run` | Preview the allowlisted `.env.stage` → Vercel staging sync. |
+| `bun run env:sync:stage` | Sync the allowlisted `.env.stage` to Vercel staging. |
 | `bun run env:sync:trigger` | Sync env vars to Trigger.dev. |
 | `bun run env:sync:gh` | Sync env vars to GitHub Actions secrets. |
 
@@ -108,20 +110,20 @@ Runtime is **Bun** (≥1.2.2).
 | Server          | Elysia (mounted inside TanStack Start middleware)   |
 | API contract    | Eden Treaty (end-to-end type safety, no codegen)    |
 | Auth + Payments | Better Auth + Polar plugin                          |
-| ORM             | Prisma → Neon (PostgreSQL)                          |
+| ORM             | Prisma → PostgreSQL (Coolify prod; Neon staging)    |
 | Validation      | TypeBox (server) + Zod (client forms)               |
 | UI              | ShadCN + Tailwind + Motion                          |
 | Background jobs | Trigger.dev                                         |
-| Email           | Resend + React Email                                |
+| Email           | React Email + Stalwart SMTP (Resend rollback path)  |
 | Error tracking  | Sentry                                              |
 | Avatars         | hashvatar (deterministic from username, no uploads) |
 | Runtime         | Bun                                                 |
-| Deployment      | Vercel                                              |
+| Deployment      | Coolify production; Vercel isolated staging        |
 
 ## Architecture
 
 ```
-TanStack Start (Vercel)
+TanStack Start (Coolify production / Vercel staging)
 ├── client: TanStack Router SPA
 └── server: Elysia middleware
     ├── /api/v3/auth/*  → Better Auth (+ Polar plugin)
@@ -136,7 +138,7 @@ TanStack Start's `api.$.ts` catch-all route forwards every `/api/*` request to t
 pstrack/
 ├── src/
 │   ├── components/          # Shared UI (shadcn primitives + app-level shells)
-│   ├── emails/              # React Email templates (Resend)
+│   ├── emails/              # React Email templates (transport-independent)
 │   ├── features/            # Feature modules (components + hooks per domain)
 │   ├── hooks/               # Global custom hooks
 │   ├── lib/                 # Client-side utilities, API client, query client
@@ -205,9 +207,12 @@ if (dbUser?.role !== "admin") return error(403, { error: "Admin access required"
 
 See `docs/FLOWS.md` for the full Daily Solve lifecycle, and `docs/POINTS.md` for clawback mechanics.
 
-## Email Notifications (Resend)
+## Email Notifications
 
-Transactional emails use **Resend** with **React Email** templates. Templates live in `src/emails/`.
+Transactional emails use **React Email** templates from `src/emails/`. Private
+Stalwart SMTP is the production target tracked by #289, staging is log-only,
+and the Resend transport remains until its retirement gate is proven.
+See `docs/OPERATIONS.md` for environment boundaries and runbooks.
 
 Notification triggers are co-located with the resource that owns the event:
 - `src/server/groups/groups.notifications.ts` - join request, approval, rejection, expiry, removal
