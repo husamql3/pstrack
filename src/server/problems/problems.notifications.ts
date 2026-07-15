@@ -2,6 +2,8 @@ import BadgeEarnedEmail from "@/emails/badge-earned"
 import ProUnlockedByPointsEmail from "@/emails/pro-unlocked-by-points"
 import StreakMilestoneEmail from "@/emails/streak-milestone"
 import { env } from "@/env"
+import { BadgeType } from "@/generated/prisma/enums"
+import { notifyAdmin } from "@/server/lib/bot"
 import { db } from "@/server/lib/db"
 import { sendEmail } from "@/server/lib/email"
 import { captureServerException } from "@/server/lib/sentry"
@@ -12,6 +14,18 @@ import { captureServerException } from "@/server/lib/sentry"
 const BASE_URL = (env.BETTER_AUTH_URL ?? "https://pstrack.localhost").replace(/\/$/, "")
 
 const STREAK_MILESTONES = [7, 30, 100] as const
+
+// Rare, high-signal badges surfaced to the admin bot in realtime. Common badges
+// (STREAK_7/30, SOLVED_*, FIRST_SOLVER_1/10, CONSISTENT_30) are intentionally
+// left to roll into the daily digest, per AgDR-0001's curation principle.
+const NOTABLE_BADGES = new Set<string>([
+	BadgeType.STREAK_100,
+	BadgeType.STREAK_365,
+	BadgeType.FIRST_SOLVER_50,
+	BadgeType.NC250_COMPLETE,
+	BadgeType.NC150_COMPLETE,
+	BadgeType.BLIND75_COMPLETE,
+])
 
 export const problemNotifications = {
 	sendSolveAchievementEmails: async (
@@ -28,6 +42,18 @@ export const problemNotifications = {
 		const isStreakMilestone = (STREAK_MILESTONES as readonly number[]).includes(newStreak)
 
 		if (!crossedProThreshold && newBadges.length === 0 && !isStreakMilestone) return
+
+		// Admin-bot pings fire regardless of the user's own notification prefs —
+		// this is an operator observability channel, not a user-facing email, so
+		// it sits ahead of the notifyAchievements opt-out gate below.
+		const at = new Date().toISOString()
+		if (isStreakMilestone) {
+			void notifyAdmin("streak.milestone", { name, streak: newStreak, at })
+		}
+		const notableBadges = newBadges.filter((badge) => NOTABLE_BADGES.has(badge))
+		if (notableBadges.length > 0) {
+			void notifyAdmin("badge.earned", { name, badges: notableBadges, at })
+		}
 
 		const user = await db.user.findUnique({
 			where: { id: userId },
