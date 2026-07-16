@@ -6,6 +6,7 @@ import {
 	IconSettings,
 	IconUserCircle,
 } from "@tabler/icons-react"
+import { useQueryClient } from "@tanstack/react-query"
 import { Link, useNavigate, useRouter } from "@tanstack/react-router"
 
 import { FeedbackMenuItem } from "@/components/feedback-menu-item"
@@ -22,11 +23,13 @@ import { ProBadge } from "@/components/ui/pro-badge"
 import { Skeleton } from "@/components/ui/skeleton"
 import { HashAvatar } from "@/features/onboarding/components/hash-avatar"
 import { signOut, useSession } from "@/lib/auth-client"
+import { SESSION_QUERY_KEY } from "@/lib/session"
 
 export function UserMenu() {
 	const { data: session, isPending } = useSession()
 	const navigate = useNavigate()
 	const router = useRouter()
+	const queryClient = useQueryClient()
 
 	const user = session?.user
 	const displayName = user?.username ?? user?.name ?? user?.email ?? "User"
@@ -41,6 +44,7 @@ export function UserMenu() {
 		signOut({
 			fetchOptions: {
 				onSuccess: async () => {
+					queryClient.removeQueries({ queryKey: SESSION_QUERY_KEY })
 					await router.invalidate()
 					await navigate({ to: "/login" })
 				},

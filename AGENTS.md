@@ -202,6 +202,7 @@ if (dbUser?.role !== "admin") return error(403, { error: "Admin access required"
 | `expire-join-requests` | Every hour | Marks `GroupJoinRequest` rows older than 1 day with status `PENDING` as `EXPIRED` |
 | `reset-monthly-pauses` | `0 0 1 * *` | Resets `User.pausesUsedThisMonth = 0` |
 | `reset-monthly-counters` | `0 0 1 * *` | Resets `User.verificationFailuresThisMonth = 0` |
+| `send-hourly-digest` | `0 * * * *` | Fires `digest.hourly` to the admin bot with last-hour activity + stale-job health (bot enriches with the hour's error count and skips empty hours) |
 
 `mark-missed` and `assign-daily-problem` both run at midnight UTC. The assign job runs first (sorted by `scheduleId`); `mark-missed` operates on the previous day's rows so there is no ordering conflict.
 
@@ -225,6 +226,14 @@ groupNotifications.joinRequested(groupId, userId).catch(() => {})
 ```
 
 This prevents email delivery failures from blocking the user's request. Users can opt out per category from `/settings/notifications`.
+
+## Admin Bot (husam-bot)
+
+Operator-facing telemetry goes to the external **husam-bot** Telegram service via `notifyAdmin(event, payload)` in `src/server/lib/bot.ts` (POSTs `{event, payload}` to `${BOT_URL}/api/notify` with a bearer secret; no-op when `BOT_URL` is unset). The bot validates every event against a Zod discriminated union — **there is no generic fallback, so a new event must be registered on the bot side too**, or it 400s. Contract lives in husam-bot `docs/adr/0002` + `0003`.
+
+Events fired today: `user.created`, `purchase.pro`, `purchase.pro.refunded`, `feedback.submitted`, `join.requested`, `pro.expired`, `points.reconciliation_drift`, `points.reconciliation_failed`, `digest.daily`, `digest.hourly`, `digest.weekly`, `streak.milestone`, `badge.earned`, `error.captured`, and `system.event` (a curated subset of `SystemEventType` — see AgDR-0001 in `system-events.dao.ts`).
+
+**Error tee (`error.captured`):** `captureServerException` mirrors every server-side capture to the bot in **production only**, fire-and-forget, with a redacted payload (type, truncated message, culprit frame, route, `userId`, fingerprint). The bot bounds volume with Redis-backed dedup + per-hour rate limiting, so an error storm can't flood the channel. Client/browser errors are **not** teed — they stay in Sentry.io.
 
 ## Routes Summary
 

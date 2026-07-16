@@ -58,24 +58,27 @@ describe("Trigger job dispatchers", () => {
 		[purgeSystemEventsTask, "purge-system-events", "purge-system-events:2026-07"],
 		[reconcilePointsTask, "reconcile-points", "reconcile-points:2026-07-11"],
 		[sendWeeklyDigestTask, "send-weekly-digest", "send-weekly-digest:2026-07-11"],
-	])("dispatches %s through the authenticated app endpoint", async (task, jobName, key) => {
-		await task.run({ timestamp })
+	])(
+		"dispatches %s through the authenticated app endpoint",
+		async (task, jobName, key) => {
+			await task.run({ timestamp })
 
-		expect(fetch).toHaveBeenCalledWith(
-			`https://pstrack.test/api/v3/internal/jobs/${jobName}`,
-			expect.objectContaining({
-				method: "POST",
-				headers: {
-					"content-type": "application/json",
-					authorization: "Bearer test-job-dispatch-secret",
-				},
-				body: JSON.stringify({
-					idempotencyKey: key,
-					scheduledAt: timestamp.toISOString(),
-				}),
-			})
-		)
-	})
+			expect(fetch).toHaveBeenCalledWith(
+				`https://pstrack.test/api/v3/internal/jobs/${jobName}`,
+				expect.objectContaining({
+					method: "POST",
+					headers: {
+						"content-type": "application/json",
+						authorization: "Bearer test-job-dispatch-secret",
+					},
+					body: JSON.stringify({
+						idempotencyKey: key,
+						scheduledAt: timestamp.toISOString(),
+					}),
+				})
+			)
+		}
+	)
 
 	it("dispatches the manual reset with a daily idempotency key", async () => {
 		await resetTodayProblemsTask.run()

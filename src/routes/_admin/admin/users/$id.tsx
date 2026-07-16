@@ -1,8 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useQueryClient } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { useState } from "react"
-import { Controller, useForm } from "react-hook-form"
+import { useForm } from "react-hook-form"
 import { sileo } from "sileo"
 
 import { Badge } from "@/components/ui/badge"
@@ -27,8 +27,9 @@ import {
 	useAdminUser,
 	useAdminUserPointsHistory,
 } from "@/features/admin/hooks/use-admin-users"
+import { ProSource } from "@/generated/prisma/enums"
 import { api } from "@/lib/api"
-import { adminAdjustPointsSchema, adminProGrantSchema } from "@/server/admin/admin.type"
+import { adminAdjustPointsSchema } from "@/server/admin/admin.type"
 
 export const Route = createFileRoute("/_admin/admin/users/$id")({
 	component: AdminUserDetailPage,
@@ -97,7 +98,7 @@ function AdminUserDetailPage() {
 				</TabsContent>
 
 				<TabsContent value="pro" className="space-y-4">
-					<ProGrantForm
+					<ProStatusCard
 						userId={user.id}
 						isPro={user.isPro}
 						proSource={user.proSource ?? null}
@@ -236,7 +237,7 @@ function PointsHistoryTable({ userId }: { userId: string }) {
 	)
 }
 
-function ProGrantForm({
+function ProStatusCard({
 	userId,
 	isPro,
 	proSource,
@@ -248,34 +249,43 @@ function ProGrantForm({
 	proExpiresAt: Date | null
 }) {
 	const queryClient = useQueryClient()
-	const [grant, setGrant] = useState(!isPro)
-	const {
-		register,
-		handleSubmit,
-		control,
-		formState: { errors, isSubmitting },
-	} = useForm({
-		resolver: zodResolver(adminProGrantSchema),
-		defaultValues: { grant: !isPro, expiresAt: null, reason: "" },
+	const [expiresAt, setExpiresAt] = useState("")
+	const [reason, setReason] = useState("")
+	const polarLocked = isPro && proSource === ProSource.POLAR_PURCHASE
+
+	const proMutation = useMutation({
+		mutationFn: async (grant: boolean) => {
+			const trimmedReason = reason.trim()
+			const { error } = await api.v3.admin.users({ id: userId }).pro.post({
+				grant,
+				expiresAt: grant && expiresAt ? new Date(expiresAt).toISOString() : null,
+				...(trimmedReason ? { reason: trimmedReason } : {}),
+			})
+			if (error) {
+				const message =
+					error.value && typeof error.value === "object" && "error" in error.value
+						? String((error.value as { error: unknown }).error)
+						: "Try again"
+				throw new Error(message)
+			}
+		},
+		onSuccess: async () => {
+			setExpiresAt("")
+			setReason("")
+			await queryClient.invalidateQueries({ queryKey: ["admin", "users", userId] })
+		},
 	})
 
-	const onSubmit = handleSubmit(async (values) => {
-		const { error } = await api.v3.admin.users({ id: userId }).pro.post({
-			grant,
-			expiresAt: values.expiresAt ?? null,
-			reason: values.reason,
+	const handleToggle = (checked: boolean) => {
+		void sileo.promise(proMutation.mutateAsync(checked), {
+			loading: { title: checked ? "Granting Pro..." : "Revoking Pro..." },
+			success: { title: checked ? "Pro granted" : "Pro revoked" },
+			error: (err) => ({
+				title: checked ? "Failed to grant Pro" : "Failed to revoke Pro",
+				description: err instanceof Error ? err.message : "Try again",
+			}),
 		})
-		if (error) {
-			const message =
-				error.value && typeof error.value === "object" && "error" in error.value
-					? String((error.value as { error: unknown }).error)
-					: "Try again"
-			sileo.error({ title: "Failed", description: message })
-			return
-		}
-		sileo.success({ title: grant ? "Pro granted" : "Pro revoked" })
-		await queryClient.invalidateQueries({ queryKey: ["admin", "users", userId] })
-	})
+	}
 
 	return (
 		<Card>
@@ -292,49 +302,47 @@ function ProGrantForm({
 					/>
 				</div>
 
-				<form onSubmit={onSubmit} className="flex flex-col gap-3">
+				<div className="flex flex-col gap-3">
 					<div className="flex items-center gap-2">
-						<Switch id="grant" checked={grant} onCheckedChange={setGrant} />
-						<Label htmlFor="grant">{grant ? "Grant Pro" : "Revoke Pro"}</Label>
+						<Switch
+							id="pro-access"
+							checked={isPro}
+							onCheckedChange={handleToggle}
+							disabled={proMutation.isPending || polarLocked}
+						/>
+						<Label htmlFor="pro-access">Pro access</Label>
 					</div>
+					{polarLocked ? (
+						<p className="text-muted-foreground text-xs">
+							This user purchased Pro via Polar — revoke by issuing a refund in Polar
+							instead.
+						</p>
+					) : null}
 					<div className="flex flex-col gap-1.5">
-						<Label htmlFor="expiresAt">Expires at (optional, grants only)</Label>
-						<Controller
-							control={control}
-							name="expiresAt"
-							render={({ field }) => (
-								<Input
-									id="expiresAt"
-									type="datetime-local"
-									disabled={isSubmitting || !grant}
-									value={
-										field.value ? new Date(field.value).toISOString().slice(0, 16) : ""
-									}
-									onChange={(e) =>
-										field.onChange(
-											e.target.value ? new Date(e.target.value).toISOString() : null
-										)
-									}
-								/>
-							)}
+						<Label htmlFor="expiresAt">
+							Expires at (optional, applies when granting)
+						</Label>
+						<Input
+							id="expiresAt"
+							type="datetime-local"
+							disabled={proMutation.isPending || isPro}
+							value={expiresAt}
+							onChange={(e) => setExpiresAt(e.target.value)}
 						/>
 					</div>
 					<div className="flex flex-col gap-1.5">
-						<Label htmlFor="pro-reason">Reason</Label>
+						<Label htmlFor="pro-reason">
+							Reason (optional, recorded in the audit log)
+						</Label>
 						<Textarea
 							id="pro-reason"
 							rows={2}
-							{...register("reason")}
-							disabled={isSubmitting}
+							value={reason}
+							onChange={(e) => setReason(e.target.value)}
+							disabled={proMutation.isPending}
 						/>
-						{errors.reason ? (
-							<span className="text-destructive text-xs">{errors.reason.message}</span>
-						) : null}
 					</div>
-					<Button type="submit" disabled={isSubmitting} className="self-end">
-						{grant ? "Grant" : "Revoke"}
-					</Button>
-				</form>
+				</div>
 			</CardContent>
 		</Card>
 	)

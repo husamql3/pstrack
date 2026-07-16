@@ -23,7 +23,7 @@ jobs:
     name: Typecheck
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
       - uses: ./.github/actions/setup
       - run: bun run typecheck
 
@@ -31,7 +31,7 @@ jobs:
     name: Biome CI
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
       - uses: ./.github/actions/setup
       - run: bunx biome ci .
 
@@ -39,7 +39,7 @@ jobs:
     name: Knip
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
       - uses: ./.github/actions/setup
       - run: bun run knip
 
@@ -47,7 +47,7 @@ jobs:
     name: Dependency audit
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
       - uses: ./.github/actions/setup
       - run: bun run audit
 
@@ -79,7 +79,7 @@ jobs:
       # connection via TEST_DATABASE_URL provides the actual connectivity check.
       SKIP_ENV_VALIDATION: "1"
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
       - uses: ./.github/actions/setup
       - name: Apply migrations to test DB
         run: bunx prisma migrate deploy
@@ -103,7 +103,7 @@ jobs:
       # The harness only needs REDIS_URL; skip the full env schema like Vitest.
       SKIP_ENV_VALIDATION: "1"
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
       - uses: ./.github/actions/setup
       - name: Verify authenticated Redis behavior (TTL, sets, concurrency, reconnect)
         run: REDIS_URL=redis://default:ci_redis_password@127.0.0.1:6379 bun run verify:redis
@@ -133,7 +133,7 @@ jobs:
       DATABASE_URL: postgresql://pstrack:ci_test_password@127.0.0.1:5432/pstrack?schema=public
       DIRECT_URL: postgresql://pstrack:ci_test_password@127.0.0.1:5432/pstrack?schema=public
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
       - uses: ./.github/actions/setup
       - name: Generate Prisma client
         run: bunx prisma generate
@@ -148,7 +148,7 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
       - uses: ./.github/actions/setup
       - name: Build app
         run: |
@@ -177,7 +177,7 @@ jobs:
           bun run build
       - name: Upload build output
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: build-output
           path: .output/
@@ -199,7 +199,7 @@ jobs:
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
       PSTRACK_GIT_SHA: ${{ github.sha }}
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
       - uses: ./.github/actions/setup
       - name: Pull staging configuration
         run: bunx vercel@56.0.0 pull --yes --environment=production
@@ -230,7 +230,7 @@ jobs:
       - name: Upload staging evidence
         if: always()
         continue-on-error: true
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: staging-evidence-${{ github.sha }}
           path: staging-smoke-evidence.json
@@ -243,7 +243,7 @@ jobs:
     outputs:
       publish: ${{ steps.filter.outputs.publish }}
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         with:
           fetch-depth: 0
@@ -290,15 +290,15 @@ jobs:
       id-token: write
       attestations: write
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
       - uses: ./.github/actions/setup
       - name: Download build output
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
         with:
           name: build-output
           path: .output/
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f
+        uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9
         with:
@@ -307,7 +307,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Extract Docker metadata
         id: meta
-        uses: docker/metadata-action@c299e40c65443455700f0fdfc63efafe5b349051
+        uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302
         with:
           images: ${{ env.IMAGE_NAME }}
           tags: |
@@ -350,7 +350,7 @@ jobs:
           } > image-release.env
       - name: Upload image release evidence
         continue-on-error: true
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: image-release-${{ github.sha }}
           path: image-release.env
@@ -364,7 +364,7 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     environment: production
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
       - uses: ./.github/actions/setup
       - name: Deploy immutable image with Coolify
         env:
@@ -387,7 +387,7 @@ jobs:
       - name: Upload deployment evidence
         if: always()
         continue-on-error: true
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: deploy-evidence-${{ github.sha }}
           path: |
@@ -406,12 +406,12 @@ jobs:
     needs: [typecheck, lint, test, validate-schema, build]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
         with:
           fetch-depth: 0
       - uses: ./.github/actions/setup
       - name: Download build output
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
         with:
           name: build-output
           path: .output/
