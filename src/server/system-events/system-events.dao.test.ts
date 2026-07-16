@@ -55,4 +55,9 @@ describe("systemEventsDao.log — bot forwarding (AgDR-0001)", () => {
 		await systemEventsDao.log({ eventType: "JOIN_REQUEST_SENT" })
 		expect(notifyAdmin).not.toHaveBeenCalled()
 	})
+
+	it("does NOT notify the admin after a join request is approved", async () => {
+		await systemEventsDao.log({ eventType: "JOIN_REQUEST_APPROVED" })
+		expect(notifyAdmin).not.toHaveBeenCalled()
+	})
 })
