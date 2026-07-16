@@ -3,31 +3,22 @@ import { type QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools"
 import { createRootRouteWithContext, HeadContent, Scripts } from "@tanstack/react-router"
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools"
-import { createIsomorphicFn } from "@tanstack/react-start"
-import type { ReactNode } from "react"
+import { type ReactNode, useRef } from "react"
 import { Toaster } from "sileo"
 
 import { ErrorPage } from "@/components/error"
 import { NotFoundPage } from "@/components/not-found"
 import { Spinner } from "@/components/ui/spinner"
-import { authClient } from "@/lib/auth-client"
 import { getQueryClient } from "@/lib/query-client"
+import { SESSION_QUERY_KEY, sessionQueryOptions } from "@/lib/session"
 import appCss from "../styles.css?url"
 
-const fetchSession = createIsomorphicFn()
-	.client(async () => {
-		const { data } = await authClient.getSession()
-		return data
-	})
-	.server(async () => {
-		const { auth } = await import("@/server/lib/auth")
-		const { getRequestHeaders } = await import("@tanstack/react-start/server")
-		return await auth.api.getSession({ headers: getRequestHeaders() })
-	})
-
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-	beforeLoad: async () => {
-		const session = await fetchSession()
+	// beforeLoad re-runs on every navigation (and every hover preload). Reading
+	// the session through the query cache keeps repeat navigations off the
+	// network — the uncached fetch here was the navbar lag in #231.
+	beforeLoad: async ({ context }) => {
+		const session = await context.queryClient.ensureQueryData(sessionQueryOptions)
 		return { session }
 	},
 	head: () => ({
@@ -70,6 +61,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootDocument({ children }: { children: ReactNode }) {
 	const queryClient = getQueryClient()
+	const { session } = Route.useRouteContext()
+
+	// Seed the query cache with the SSR session during hydration. Without this
+	// the client cache starts cold and the FIRST navigation after page load
+	// refetches get-session, blocking the route transition (#231).
+	const seededSession = useRef(false)
+	if (!seededSession.current) {
+		queryClient.setQueryData(SESSION_QUERY_KEY, session)
+		seededSession.current = true
+	}
 
 	return (
 		<html suppressHydrationWarning lang="en" className="scheme-only-dark">
