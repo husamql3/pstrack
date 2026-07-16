@@ -124,12 +124,30 @@ describe("app-owned jobs", () => {
 		})
 	})
 
-	it("captures daily digest failures without recipient identity", async () => {
+	it("reports sent and failed daily digest counts without recipient identity", async () => {
 		mocks.assignDailyProblems.mockResolvedValue({ assigned: 1 })
 		mocks.getDailyDigestRecipients.mockResolvedValue([
 			{
 				email: "recipient-sentinel@example.test",
 				name: "Recipient Sentinel",
+				groupSlug: "sentinel-group",
+				problemTitle: "Sentinel Problem",
+				difficulty: "EASY",
+				topic: "Arrays",
+				problemSlug: "sentinel-problem",
+			},
+			{
+				email: "successful-recipient@example.test",
+				name: "Successful Recipient",
+				groupSlug: "sentinel-group",
+				problemTitle: "Sentinel Problem",
+				difficulty: "EASY",
+				topic: "Arrays",
+				problemSlug: "sentinel-problem",
+			},
+			{
+				email: "suppressed-recipient@example.test",
+				name: "Suppressed Recipient",
 				groupSlug: "sentinel-group",
 				problemTitle: "Sentinel Problem",
 				difficulty: "EASY",
@@ -144,9 +162,21 @@ describe("app-owned jobs", () => {
 			pausesUsed: 0,
 			handleChanges: 0,
 		})
-		mocks.sendEmail.mockRejectedValueOnce(new Error("Email send failed"))
+		mocks.sendEmail
+			.mockRejectedValueOnce(new Error("Email send failed"))
+			.mockResolvedValueOnce(undefined)
+			.mockResolvedValueOnce(null)
 
-		await executeJob("assign-daily-problem", new Date("2026-07-14T00:00:00.000Z"))
+		await expect(
+			executeJob("assign-daily-problem", new Date("2026-07-14T00:00:00.000Z"))
+		).resolves.toEqual({
+			assigned: 1,
+			recipients: 3,
+			batches: 1,
+			sent: 1,
+			failed: 1,
+			suppressed: 1,
+		})
 
 		expect(mocks.captureServerException).toHaveBeenCalledWith(expect.any(Error), {
 			tag: "email:daily-digest",
@@ -156,6 +186,14 @@ describe("app-owned jobs", () => {
 		})
 		expect(JSON.stringify(mocks.captureServerException.mock.calls)).not.toContain(
 			"recipient-sentinel@example.test"
+		)
+		expect(mocks.notifyAdmin).toHaveBeenCalledWith(
+			"digest.daily",
+			expect.objectContaining({
+				emailsSent: 1,
+				emailsFailed: 1,
+				emailsSuppressed: 1,
+			})
 		)
 	})
 })
