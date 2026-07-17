@@ -219,6 +219,45 @@ export const pointsDao = {
 		})
 	},
 
+	// Per-group miss penalty: the −3 only. Used by the multi-group mark-missed path,
+	// where the streak is broken at most once per user (see breakUserStreak) rather
+	// than per missed group.
+	applyMissPoints: async (
+		tx: Tx,
+		userId: string,
+		opts: { userSolveId?: string; groupId?: string }
+	): Promise<void> => {
+		await pointsDao.applyPointsDelta(userId, -MISSED_PENALTY, PointReason.MISSED_DAY, {
+			tx,
+			userSolveId: opts.userSolveId,
+			groupId: opts.groupId,
+		})
+	},
+
+	// Break a user's streak once: claw back streak-scoped bonuses accrued since the
+	// streak started, then reset the streak. Called at most once per user per day.
+	breakUserStreak: async (
+		tx: Tx,
+		userId: string,
+		streakStartedAt: Date | null
+	): Promise<void> => {
+		if (streakStartedAt) {
+			const bonusSum = await pointsDao.sumBonusesSinceStreakStart(
+				tx,
+				userId,
+				streakStartedAt
+			)
+			if (bonusSum > 0) {
+				await pointsDao.applyPointsDelta(userId, -bonusSum, PointReason.CLAWBACK, { tx })
+			}
+		}
+
+		await tx.user.update({
+			where: { id: userId },
+			data: { currentStreak: 0, currentStreakStartedAt: null },
+		})
+	},
+
 	hasEverJoinedGroup: async (
 		tx: Tx,
 		userId: string,
