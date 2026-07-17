@@ -594,6 +594,7 @@ const createEndpointScenarios = (ctx: StressContext): StressScenario[] => [
 		key: { method: "POST", path: "/api/v3/problems/today/solve" },
 		method: "POST",
 		path: "/api/v3/problems/today/solve",
+		body: { groupId: ctx.publicGroupId },
 		userId: ctx.user.id,
 		allowedStatuses: [200, 409],
 	},

@@ -133,12 +133,15 @@ export type MarkSolvedResult =
 			newStreak: number
 	  }
 
+// Pause is a per-day action: it pauses every one of the user's unsolved problems
+// across all their groups at once, so it returns the full per-group list rather
+// than a single group's today.
 export type PauseTodayResult =
 	| {
-			error: "NO_GROUP" | "NO_PROBLEMS" | "NOT_STARTED" | "NO_PAUSES" | "ALREADY_STARTED"
-			today: TodayProblemResponse
+			error: "NO_GROUP" | "NO_PAUSES" | "ALREADY_STARTED" | "NOTHING_TO_PAUSE"
+			todays: TodayProblemResponse[]
 	  }
-	| { error: null; today: TodayProblemResponse }
+	| { error: null; todays: TodayProblemResponse[] }
 
 export type DailyProblemRecipient = {
 	email: string

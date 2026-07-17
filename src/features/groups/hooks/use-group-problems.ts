@@ -107,8 +107,15 @@ export const useMarkTodaySolvedFromTable = (
 	const queryClient = useQueryClient()
 	return useMutation<SolveResult>({
 		mutationFn: async () => {
-			const { data, error } = await api.v3.problems.today.solve.post()
-			if (error) throw new Error(error.value?.error ?? "Could not verify solve")
+			const { data, error } = await api.v3.problems.today.solve.post({ groupId })
+			if (error) {
+				const value = error.value
+				const message =
+					value && typeof value === "object" && "error" in value
+						? String(value.error)
+						: "Could not verify solve"
+				throw new Error(message)
+			}
 			return data as SolveResult
 		},
 		onSuccess: () => {
@@ -116,6 +123,7 @@ export const useMarkTodaySolvedFromTable = (
 				queryKey: groupProblemsQueryKey(groupId, range),
 			})
 			queryClient.invalidateQueries({ queryKey: ["problems", "today"] })
+			queryClient.invalidateQueries({ queryKey: ["leaderboard"] })
 		},
 	})
 }

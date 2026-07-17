@@ -1,6 +1,18 @@
-import { IconInfoCircle, IconMedal } from "@tabler/icons-react"
+import { IconInfoCircle, IconMedal, IconPlayerPause } from "@tabler/icons-react"
 import { Link } from "@tanstack/react-router"
+import { sileo } from "sileo"
 
+import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+	AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import {
@@ -12,10 +24,13 @@ import {
 import { useUserBadges } from "@/features/badges/hooks/use-user-badges"
 import { cn } from "@/lib/utils"
 import { BADGE_CATEGORY, BADGE_LABELS } from "@/server/badges/badges.type"
+import type { TodayProblemResponse } from "@/server/problems/problems.type"
 import { useGroupTodayActivity } from "../hooks/use-group-activity"
-import { useTodayProblem } from "../hooks/use-today-problem"
+import { usePauseToday, useTodayProblems } from "../hooks/use-today-problem"
 import { GroupActivityCard } from "./group-activity-card"
 import { TodayProblemCard } from "./today-problem-card"
+
+type ReadyToday = Extract<TodayProblemResponse, { state: "READY" }>
 
 const CATEGORY_DOT: Record<string, string> = {
 	streak: "bg-amber-400",
@@ -23,12 +38,12 @@ const CATEGORY_DOT: Record<string, string> = {
 	social: "bg-purple-400",
 }
 
+const errorDescription = (err: unknown) =>
+	err instanceof Error ? err.message : "Please try again."
+
 export const DashboardPage = () => {
-	const todayQuery = useTodayProblem()
+	const todayQuery = useTodayProblems()
 	const badgesQuery = useUserBadges()
-	const groupId =
-		todayQuery.data?.state === "READY" ? todayQuery.data.group.id : undefined
-	const activityQuery = useGroupTodayActivity(groupId)
 
 	if (todayQuery.isLoading) {
 		return (
@@ -48,9 +63,9 @@ export const DashboardPage = () => {
 		)
 	}
 
-	const today = todayQuery.data
+	const todays = todayQuery.data
 
-	if (today.state === "NO_GROUP") {
+	if (todays.length === 0) {
 		return (
 			<div className="flex flex-col gap-6">
 				<DashboardHeader />
@@ -67,88 +82,49 @@ export const DashboardPage = () => {
 		)
 	}
 
-	if (today.state === "NO_PROBLEMS") {
-		return (
-			<div className="flex flex-col gap-6">
-				<DashboardHeader />
-				<section className="rounded-lg border border-border bg-background p-6">
-					<p className="font-medium text-sm">No problems have been seeded yet.</p>
-					<p className="mt-1 text-muted-foreground text-sm">
-						An admin needs to seed the roadmap before daily assignments can begin.
-					</p>
-				</section>
-			</div>
-		)
-	}
-
-	if (today.state === "NOT_STARTED") {
-		return (
-			<div className="flex flex-col gap-6">
-				<DashboardHeader />
-				<section className="rounded-lg border border-border bg-background p-6">
-					<p className="font-medium text-sm">Your group has not started yet.</p>
-					<p className="mt-1 max-w-xl text-muted-foreground text-sm">
-						{today.group.slug} is open for members, but daily problems begin after a
-						platform admin starts it and the next midnight UTC assignment runs.
-					</p>
-				</section>
-			</div>
-		)
-	}
+	// Pauses and streak/points are user-level — identical across every entry.
+	const { pausesRemaining, pausesTotal, userStats } = todays[0]
 
 	return (
 		<div className="flex flex-col gap-6">
 			<DashboardHeader />
+
 			<TooltipProvider delayDuration={200}>
-				<section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+				<section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
 					<StatCard
 						label="Current Streak"
-						value={`${today.userStats.currentStreak}d`}
+						value={`${userStats.currentStreak}d`}
 						subtitle={
-							today.userStats.currentStreak > 0 &&
-							today.userStats.currentStreak === today.userStats.longestStreak
+							userStats.currentStreak > 0 &&
+							userStats.currentStreak === userStats.longestStreak
 								? "Personal best"
-								: `Best: ${today.userStats.longestStreak}d`
+								: `Best: ${userStats.longestStreak}d`
 						}
 						highlight={
-							today.userStats.currentStreak > 0 &&
-							today.userStats.currentStreak === today.userStats.longestStreak
+							userStats.currentStreak > 0 &&
+							userStats.currentStreak === userStats.longestStreak
 						}
-						tooltip="Consecutive days you’ve solved. Misses reset it; pauses keep it alive."
+						tooltip="Consecutive days you solved at least one problem. A full no-show resets it; a pause keeps it alive."
 					/>
 					<StatCard
 						label="Total Points"
-						value={today.userStats.totalPoints.toLocaleString()}
-						subtitle="+10 today if solved"
-						tooltip="+10 per solve, +5 if first in group, −3 on miss."
+						value={userStats.totalPoints.toLocaleString()}
+						subtitle="Across all your groups"
+						tooltip="Points from solves, bonuses, and penalties across every group you're in."
 					/>
 					<StatCard
 						label="Pauses Left"
-						value={`${today.pausesRemaining}/${today.pausesTotal}`}
+						value={`${pausesRemaining}/${pausesTotal}`}
 						subtitle="this month"
-						tooltip="Skip a day without losing your streak or points. Resets monthly."
-					/>
-					<StatCard
-						label="Group Rank"
-						value={`#${today.groupRank}`}
-						subtitle={`of ${today.groupSize}`}
-						tooltip="Your position in this group, sorted by total points."
+						tooltip="Skip a whole day — across all your groups — without losing your streak. Resets monthly."
 					/>
 				</section>
 			</TooltipProvider>
 
-			<section className="grid gap-3 lg:grid-cols-3">
-				<div className="lg:col-span-2">
-					<TodayProblemCard today={today} />
-				</div>
-				<div className="lg:col-span-1">
-					<GroupActivityCard
-						groupId={today.group.id}
-						groupSlug={today.group.slug}
-						events={activityQuery.data?.events ?? []}
-						isLoading={activityQuery.isLoading}
-					/>
-				</div>
+			<section className="flex flex-col gap-3">
+				{todays.map((today, index) => (
+					<GroupTodaySection key={today.group?.id ?? `entry-${index}`} today={today} />
+				))}
 			</section>
 
 			<BadgesShelf
@@ -159,11 +135,116 @@ export const DashboardPage = () => {
 	)
 }
 
-const DashboardHeader = () => (
-	<div className="space-y-1">
-		<h1 className="font-semibold text-2xl tracking-tight">Dashboard</h1>
-	</div>
-)
+// One dashboard row per group. READY groups get the problem card + activity feed;
+// not-yet-started / unseeded groups get a compact notice.
+const GroupTodaySection = ({ today }: { today: TodayProblemResponse }) => {
+	if (today.state === "NOT_STARTED") {
+		return (
+			<section className="rounded-lg border border-border bg-background p-6">
+				<p className="font-medium text-sm">{today.group.slug} hasn't started yet.</p>
+				<p className="mt-1 max-w-xl text-muted-foreground text-sm">
+					Daily problems begin after an admin starts the group and the next midnight UTC
+					assignment runs.
+				</p>
+			</section>
+		)
+	}
+
+	if (today.state === "NO_PROBLEMS" || today.state === "NO_GROUP") {
+		return (
+			<section className="rounded-lg border border-border bg-background p-6">
+				<p className="font-medium text-sm">No problems available for this group.</p>
+				<p className="mt-1 text-muted-foreground text-sm">
+					An admin needs to seed the roadmap before daily assignments can begin.
+				</p>
+			</section>
+		)
+	}
+
+	return <ReadyGroupRow today={today} />
+}
+
+const ReadyGroupRow = ({ today }: { today: ReadyToday }) => {
+	const activityQuery = useGroupTodayActivity(today.group.id)
+
+	return (
+		<div className="grid gap-3 lg:grid-cols-3">
+			<div className="lg:col-span-2">
+				<TodayProblemCard today={today} />
+			</div>
+			<div className="lg:col-span-1">
+				<GroupActivityCard
+					groupId={today.group.id}
+					groupSlug={today.group.slug}
+					events={activityQuery.data?.events ?? []}
+					isLoading={activityQuery.isLoading}
+				/>
+			</div>
+		</div>
+	)
+}
+
+const DashboardHeader = () => {
+	const todayQuery = useTodayProblems()
+	const pauseMutation = usePauseToday()
+
+	const todays = todayQuery.data ?? []
+	const pausesRemaining = todays[0]?.pausesRemaining ?? 0
+	const solvedAny = todays.some(
+		(t) => t.state === "READY" && t.solve?.status === "SOLVED"
+	)
+	const pausableExists = todays.some((t) => t.state === "READY" && t.solve == null)
+	const canPause =
+		todays.length > 0 &&
+		pausesRemaining > 0 &&
+		!solvedAny &&
+		pausableExists &&
+		!pauseMutation.isPending
+
+	const confirmPause = async () => {
+		await sileo.promise(pauseMutation.mutateAsync(), {
+			loading: { title: "Pausing today..." },
+			success: { title: "Today is paused" },
+			error: (err: unknown) => ({
+				title: "Could not pause",
+				description: errorDescription(err),
+			}),
+		})
+	}
+
+	return (
+		<div className="flex items-center justify-between gap-4">
+			<h1 className="font-semibold text-2xl tracking-tight">Dashboard</h1>
+			{todays.length > 0 && (
+				<AlertDialog>
+					<AlertDialogTrigger asChild>
+						<Button disabled={!canPause} variant="outline" size="sm">
+							<IconPlayerPause />
+							Pause today ({pausesRemaining} left)
+						</Button>
+					</AlertDialogTrigger>
+					<AlertDialogContent>
+						<AlertDialogHeader>
+							<AlertDialogTitle>Pause today?</AlertDialogTitle>
+							<AlertDialogDescription>
+								Pausing costs <strong>-5 points</strong> but preserves your streak and
+								skips <strong>every</strong> group's problem for today. You have{" "}
+								{pausesRemaining} {pausesRemaining === 1 ? "pause" : "pauses"} remaining
+								this month.
+							</AlertDialogDescription>
+						</AlertDialogHeader>
+						<AlertDialogFooter>
+							<AlertDialogCancel>Cancel</AlertDialogCancel>
+							<AlertDialogAction onClick={confirmPause}>
+								Pause and lose 5 points
+							</AlertDialogAction>
+						</AlertDialogFooter>
+					</AlertDialogContent>
+				</AlertDialog>
+			)}
+		</div>
+	)
+}
 
 const StatCard = ({
 	label,

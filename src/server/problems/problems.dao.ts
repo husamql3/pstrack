@@ -87,6 +87,12 @@ const pauseLimitFor = (user: { isPro: boolean }) => (user.isPro ? 4 : 2)
 const INACTIVITY_WARNING_MISSES = 5
 const BATCH_SIZE = 25
 
+// Multi-group daily solving (per-group problems for users in >1 group) went live on
+// this date. mark-missed only evaluates non-primary groups for days on/after the
+// cutover — its 14-day catch-up must never retroactively mark MISSED for groups the
+// pre-multi-group code silently ignored. Set to the production deploy date.
+const MULTI_GROUP_CUTOVER_DATE = new Date("2026-07-17T00:00:00.000Z")
+
 const dailyProblemFullSelect = {
 	id: true,
 	assignedDate: true,
@@ -212,20 +218,46 @@ const ensureDailyProblem = async (groupId: string, assignedDate: Date) => {
 	}
 }
 
+const membershipGroupSelect = {
+	group: {
+		select: {
+			id: true,
+			slug: true,
+			roadmap: true,
+			isStarted: true,
+		},
+	},
+} satisfies Prisma.GroupMemberSelect
+
+type MembershipGroup = Prisma.GroupMemberGetPayload<{
+	select: typeof membershipGroupSelect
+}>["group"]
+
 const findPrimaryGroup = (userId: string) =>
 	db.groupMember.findFirst({
 		where: { userId, status: GroupMemberStatus.ACTIVE, group: { isActive: true } },
 		orderBy: { joinedAt: "asc" },
-		select: {
-			group: {
-				select: {
-					id: true,
-					slug: true,
-					roadmap: true,
-					isStarted: true,
-				},
-			},
+		select: membershipGroupSelect,
+	})
+
+const findMembershipGroup = (userId: string, groupId: string) =>
+	db.groupMember.findFirst({
+		where: {
+			userId,
+			groupId,
+			status: GroupMemberStatus.ACTIVE,
+			group: { isActive: true },
 		},
+		select: membershipGroupSelect,
+	})
+
+// All the user's active memberships, oldest-joined first — the source list for the
+// per-group dashboard. A user in N groups has N "today" problems.
+const findActiveMembershipGroups = (userId: string) =>
+	db.groupMember.findMany({
+		where: { userId, status: GroupMemberStatus.ACTIVE, group: { isActive: true } },
+		orderBy: { joinedAt: "asc" },
+		select: membershipGroupSelect,
 	})
 
 const getUserDashboardContext = async (userId: string) => {
@@ -382,6 +414,127 @@ const evaluateInactivityWarnings = async (
 	}
 
 	return { warned, removed }
+}
+
+type DashboardContext = {
+	pausesRemaining: number
+	pausesTotal: number
+	userStats: { currentStreak: number; longestStreak: number; totalPoints: number }
+}
+
+const noGroupToday = (ctx: DashboardContext): TodayProblemResponse => ({
+	state: "NO_GROUP",
+	group: null,
+	dailyProblem: null,
+	solve: null,
+	pausesRemaining: ctx.pausesRemaining,
+	pausesTotal: ctx.pausesTotal,
+	groupRank: null,
+	groupSize: null,
+	userStats: ctx.userStats,
+})
+
+// Builds the "today" payload for a single group. Shared by getTodayForUser (one
+// group) and listTodayForUser (all of the user's groups). User-level context
+// (pauses, stats) is passed in so the list variant fetches it once, not per group.
+const buildTodayForGroup = async (
+	userId: string,
+	group: MembershipGroup,
+	ctx: DashboardContext
+): Promise<TodayProblemResponse> => {
+	const { pausesRemaining, pausesTotal, userStats } = ctx
+
+	if (!group.isStarted) {
+		const { groupRank, groupSize } = await getGroupRank(group.id, userStats.totalPoints)
+		return {
+			state: "NOT_STARTED",
+			group: { id: group.id, slug: group.slug, roadmap: group.roadmap },
+			groupRoadmap: group.roadmap,
+			dailyProblem: null,
+			solve: null,
+			pausesRemaining,
+			pausesTotal,
+			groupRank,
+			groupSize,
+			userStats,
+		}
+	}
+
+	const [dailyProblem, { groupRank, groupSize }] = await Promise.all([
+		ensureDailyProblem(group.id, startOfTodayUtc()),
+		getGroupRank(group.id, userStats.totalPoints),
+	])
+
+	if (!dailyProblem) {
+		return {
+			state: "NO_PROBLEMS",
+			group: null,
+			dailyProblem: null,
+			solve: null,
+			pausesRemaining,
+			pausesTotal,
+			groupRank: null,
+			groupSize: null,
+			userStats,
+		}
+	}
+
+	const [solve, groupSolvedCount] = await Promise.all([
+		db.userSolve.findUnique({
+			where: { userId_dailyProblemId: { userId, dailyProblemId: dailyProblem.id } },
+			select: {
+				id: true,
+				status: true,
+				pointsEarned: true,
+				isFirstInGroup: true,
+				createdAt: true,
+				verifiedAt: true,
+			},
+		}),
+		db.userSolve.count({
+			where: { dailyProblemId: dailyProblem.id, status: SolveStatus.SOLVED },
+		}),
+	])
+
+	return {
+		state: "READY",
+		group: dailyProblem.group,
+		groupRoadmap: dailyProblem.group.roadmap,
+		dailyProblem: {
+			id: dailyProblem.id,
+			assignedDate: dailyProblem.assignedDate,
+			firstSolveTime: dailyProblem.firstSolveTime,
+			group: dailyProblem.group,
+			problem: dailyProblem.problem,
+		},
+		solve,
+		pausesRemaining,
+		pausesTotal,
+		groupRank,
+		groupSize,
+		groupSolvedCount,
+		userStats,
+	}
+}
+
+// Has the user already recorded a SOLVED for any group today? Drives the
+// once-per-day streak rule: the streak (and its multiplier/comeback bonuses)
+// advance only on the first solve of the day, not per group.
+const hasSolvedAnyToday = async (
+	userId: string,
+	day: Date,
+	excludeDailyProblemId?: string
+): Promise<boolean> => {
+	const row = await db.userSolve.findFirst({
+		where: {
+			userId,
+			status: SolveStatus.SOLVED,
+			dailyProblem: { assignedDate: day },
+			...(excludeDailyProblemId && { dailyProblemId: { not: excludeDailyProblemId } }),
+		},
+		select: { id: true },
+	})
+	return row !== null
 }
 
 export const problemsDao = {
@@ -616,108 +769,38 @@ export const problemsDao = {
 		return { seeded, skipped }
 	},
 
-	getTodayForUser: async (userId: string): Promise<TodayProblemResponse> => {
-		const [{ pausesRemaining, pausesTotal, userStats }, membership] = await Promise.all([
+	// Single group's today. `groupId` omitted → the user's primary (oldest) group,
+	// used internally by solve/pause when they already know the group.
+	getTodayForUser: async (
+		userId: string,
+		groupId?: string
+	): Promise<TodayProblemResponse> => {
+		const [ctx, membership] = await Promise.all([
 			getUserDashboardContext(userId),
-			findPrimaryGroup(userId),
+			groupId ? findMembershipGroup(userId, groupId) : findPrimaryGroup(userId),
 		])
 
-		if (!membership) {
-			return {
-				state: "NO_GROUP",
-				group: null,
-				dailyProblem: null,
-				solve: null,
-				pausesRemaining,
-				pausesTotal,
-				groupRank: null,
-				groupSize: null,
-				userStats,
-			}
-		}
-
-		if (!membership.group.isStarted) {
-			const { groupRank, groupSize } = await getGroupRank(
-				membership.group.id,
-				userStats.totalPoints
-			)
-			return {
-				state: "NOT_STARTED",
-				group: {
-					id: membership.group.id,
-					slug: membership.group.slug,
-					roadmap: membership.group.roadmap,
-				},
-				groupRoadmap: membership.group.roadmap,
-				dailyProblem: null,
-				solve: null,
-				pausesRemaining,
-				pausesTotal,
-				groupRank,
-				groupSize,
-				userStats,
-			}
-		}
-
-		const [dailyProblem, { groupRank, groupSize }] = await Promise.all([
-			ensureDailyProblem(membership.group.id, startOfTodayUtc()),
-			getGroupRank(membership.group.id, userStats.totalPoints),
-		])
-
-		if (!dailyProblem) {
-			return {
-				state: "NO_PROBLEMS",
-				group: null,
-				dailyProblem: null,
-				solve: null,
-				pausesRemaining,
-				pausesTotal,
-				groupRank: null,
-				groupSize: null,
-				userStats,
-			}
-		}
-
-		const [solve, groupSolvedCount] = await Promise.all([
-			db.userSolve.findUnique({
-				where: { userId_dailyProblemId: { userId, dailyProblemId: dailyProblem.id } },
-				select: {
-					id: true,
-					status: true,
-					pointsEarned: true,
-					isFirstInGroup: true,
-					createdAt: true,
-					verifiedAt: true,
-				},
-			}),
-			db.userSolve.count({
-				where: { dailyProblemId: dailyProblem.id, status: SolveStatus.SOLVED },
-			}),
-		])
-
-		return {
-			state: "READY",
-			group: dailyProblem.group,
-			groupRoadmap: dailyProblem.group.roadmap,
-			dailyProblem: {
-				id: dailyProblem.id,
-				assignedDate: dailyProblem.assignedDate,
-				firstSolveTime: dailyProblem.firstSolveTime,
-				group: dailyProblem.group,
-				problem: dailyProblem.problem,
-			},
-			solve,
-			pausesRemaining,
-			pausesTotal,
-			groupRank,
-			groupSize,
-			groupSolvedCount,
-			userStats,
-		}
+		if (!membership) return noGroupToday(ctx)
+		return buildTodayForGroup(userId, membership.group, ctx)
 	},
 
-	verifyAndMarkSolved: async (userId: string): Promise<MarkSolvedResult> => {
-		const today = await problemsDao.getTodayForUser(userId)
+	// One "today" entry per active group the user belongs to — the dashboard list.
+	// Empty array => the user is in no groups (dashboard shows the join-a-group state).
+	listTodayForUser: async (userId: string): Promise<TodayProblemResponse[]> => {
+		const [ctx, memberships] = await Promise.all([
+			getUserDashboardContext(userId),
+			findActiveMembershipGroups(userId),
+		])
+
+		if (memberships.length === 0) return []
+		return Promise.all(memberships.map((m) => buildTodayForGroup(userId, m.group, ctx)))
+	},
+
+	verifyAndMarkSolved: async (
+		userId: string,
+		groupId: string
+	): Promise<MarkSolvedResult> => {
+		const today = await problemsDao.getTodayForUser(userId, groupId)
 		if (today.state !== "READY") return { error: today.state, today }
 
 		const existing = today.solve
@@ -777,8 +860,19 @@ export const problemsDao = {
 			return { error: "NOT_VERIFIED", today }
 		}
 
+		// Streak (and its streak-scoped bonuses) advance once per day. If the user
+		// already solved another group today, this solve still earns base points,
+		// first-in-group, and early-bird — but no streak advance, multiplier, or comeback.
+		const streakAlreadyAdvancedToday = await hasSolvedAnyToday(
+			userId,
+			assignedDate,
+			dailyProblemId
+		)
+
 		const isComeback =
-			user.currentStreak === 0 ? await pointsDao.hasEverMissed(userId) : false
+			!streakAlreadyAdvancedToday && user.currentStreak === 0
+				? await pointsDao.hasEverMissed(userId)
+				: false
 
 		const baseSolvePoints =
 			problem.difficulty === Difficulty.HARD
@@ -793,14 +887,18 @@ export const problemsDao = {
 				: user.currentStreak >= 7
 					? STREAK_MULTIPLIER_7
 					: 1
-		const multiplierDelta = Math.floor(baseSolvePoints * multiplier) - baseSolvePoints
+		const multiplierDelta = streakAlreadyAdvancedToday
+			? 0
+			: Math.floor(baseSolvePoints * multiplier) - baseSolvePoints
 
 		const now = new Date()
 		const submittedAt = verifyResult.submittedAt
 		const isEarlyBird =
 			submittedAt.getTime() - assignedDate.getTime() < EARLY_BIRD_WINDOW_MS
-		const isNewStreak = user.currentStreak === 0
-		const newStreak = user.currentStreak + 1
+		const isNewStreak = !streakAlreadyAdvancedToday && user.currentStreak === 0
+		const newStreak = streakAlreadyAdvancedToday
+			? user.currentStreak
+			: user.currentStreak + 1
 		const newLongest = Math.max(newStreak, user.longestStreak)
 
 		const { crossedProThreshold, newBadges } = await db.$transaction(async (tx) => {
@@ -894,14 +992,18 @@ export const problemsDao = {
 				crossedPro ||= r4.crossedProThreshold
 			}
 
-			await tx.user.update({
-				where: { id: userId },
-				data: {
-					currentStreak: newStreak,
-					longestStreak: newLongest,
-					...(isNewStreak && { currentStreakStartedAt: now }),
-				},
-			})
+			// Only advance the streak on the first solve of the day. Later same-day
+			// group solves leave currentStreak/longestStreak untouched.
+			if (!streakAlreadyAdvancedToday) {
+				await tx.user.update({
+					where: { id: userId },
+					data: {
+						currentStreak: newStreak,
+						longestStreak: newLongest,
+						...(isNewStreak && { currentStreakStartedAt: now }),
+					},
+				})
+			}
 			await resolveActiveWarnings(
 				tx,
 				userId,
@@ -916,61 +1018,72 @@ export const problemsDao = {
 
 		return {
 			error: null,
-			today: await problemsDao.getTodayForUser(userId),
+			today: await problemsDao.getTodayForUser(userId, groupId),
 			crossedProThreshold,
 			newBadges,
 			newStreak,
 		}
 	},
 
+	// Per-day pause: takes today off across ALL of the user's groups at once for a
+	// single flat penalty and one consumed monthly pause. The streak is user-level
+	// and lenient, so a pause is only meaningful as a whole-day "I'm out".
 	pauseToday: async (userId: string): Promise<PauseTodayResult> => {
-		const today = await problemsDao.getTodayForUser(userId)
-		if (today.state !== "READY") return { error: today.state, today }
-		if (today.solve?.status === SolveStatus.PAUSED) return { error: null, today }
-		if (today.solve?.status === SolveStatus.SOLVED) {
-			return { error: "ALREADY_STARTED", today }
-		}
+		const todays = await problemsDao.listTodayForUser(userId)
+		if (todays.length === 0) return { error: "NO_GROUP", todays }
+
+		// If the user already solved any group today, the streak is already safe —
+		// pausing would only cost points. Block it.
+		const solvedAny = todays.some(
+			(t) => t.state === "READY" && t.solve?.status === SolveStatus.SOLVED
+		)
+		if (solvedAny) return { error: "ALREADY_STARTED", todays }
+
+		// Every started group whose problem is still open (no solve/pause/miss yet).
+		const pausable = todays.filter(
+			(t): t is Extract<TodayProblemResponse, { state: "READY" }> =>
+				t.state === "READY" && t.solve == null
+		)
+		if (pausable.length === 0) return { error: "NOTHING_TO_PAUSE", todays }
 
 		const { pausesRemaining } = await getUserDashboardContext(userId)
-		if (pausesRemaining <= 0) {
-			return { error: "NO_PAUSES", today }
-		}
+		if (pausesRemaining <= 0) return { error: "NO_PAUSES", todays }
 
 		await db.$transaction(async (tx) => {
-			const upserted = await tx.userSolve.upsert({
-				where: {
-					userId_dailyProblemId: {
-						userId,
-						dailyProblemId: today.dailyProblem.id,
+			let firstUpsertedId: string | undefined
+			for (const t of pausable) {
+				const upserted = await tx.userSolve.upsert({
+					where: {
+						userId_dailyProblemId: { userId, dailyProblemId: t.dailyProblem.id },
 					},
-				},
-				create: {
+					create: {
+						userId,
+						dailyProblemId: t.dailyProblem.id,
+						status: SolveStatus.PAUSED,
+					},
+					update: { status: SolveStatus.PAUSED },
+					select: { id: true },
+				})
+				if (!firstUpsertedId) firstUpsertedId = upserted.id
+				await resolveActiveWarnings(
+					tx,
 					userId,
-					dailyProblemId: today.dailyProblem.id,
-					status: SolveStatus.PAUSED,
-				},
-				update: { status: SolveStatus.PAUSED },
-				select: { id: true },
-			})
+					t.group.id,
+					WarningResolution.SOLVED_OR_PAUSED
+				)
+			}
 
 			await tx.user.update({
 				where: { id: userId },
 				data: { pausesUsedThisMonth: { increment: 1 } },
 			})
-
 			await pointsDao.applyPointsDelta(userId, -PAUSE_PENALTY, PointReason.PAUSE, {
 				tx,
-				userSolveId: upserted.id,
+				userSolveId: firstUpsertedId,
 			})
-			await resolveActiveWarnings(
-				tx,
-				userId,
-				today.group.id,
-				WarningResolution.SOLVED_OR_PAUSED
-			)
 		})
 
-		return { error: null, today: await problemsDao.getTodayForUser(userId) }
+		return { error: null, todays: await problemsDao.listTodayForUser(userId) }
 	},
 
 	markMissedForDate: async (
@@ -979,6 +1092,10 @@ export const problemsDao = {
 	) => {
 		const evaluateWarningsForDate = opts.evaluateWarnings ?? true
 		const day = startOfUtcDay(referenceDate)
+		// Before the cutover, only the primary group is evaluated (legacy behavior) so
+		// the 14-day catch-up never retroactively marks non-primary groups MISSED for
+		// days the pre-multi-group code ignored. On/after, every group counts.
+		const multiGroup = day.getTime() >= MULTI_GROUP_CUTOVER_DATE.getTime()
 
 		const memberships = await db.groupMember.findMany({
 			where: {
@@ -1003,19 +1120,32 @@ export const problemsDao = {
 		if (primaryByUser.size === 0) return { missed: 0, warned: 0, removed: 0 }
 
 		const primaryMemberships = Array.from(primaryByUser.values())
-		const groupIds = Array.from(new Set(primaryMemberships.map((m) => m.groupId)))
+		const consideredMemberships = multiGroup ? memberships : primaryMemberships
+
+		const runWarnings = async () =>
+			evaluateWarningsForDate
+				? await evaluateInactivityWarnings(primaryMemberships, day)
+				: { warned: 0, removed: 0 }
+
+		const groupIds = Array.from(new Set(consideredMemberships.map((m) => m.groupId)))
 		const dailyProblems = await db.dailyProblem.findMany({
 			where: { groupId: { in: groupIds }, assignedDate: day },
 			select: { id: true, groupId: true },
 		})
 		const dailyByGroup = new Map(dailyProblems.map((dp) => [dp.groupId, dp.id]))
 
-		const candidates: { userId: string; dailyProblemId: string }[] = []
-		for (const membership of primaryMemberships) {
+		const candidates: { userId: string; groupId: string; dailyProblemId: string }[] = []
+		for (const membership of consideredMemberships) {
 			const dpId = dailyByGroup.get(membership.groupId)
-			if (dpId) candidates.push({ userId: membership.userId, dailyProblemId: dpId })
+			if (dpId) {
+				candidates.push({
+					userId: membership.userId,
+					groupId: membership.groupId,
+					dailyProblemId: dpId,
+				})
+			}
 		}
-		if (candidates.length === 0) return { missed: 0, warned: 0, removed: 0 }
+		if (candidates.length === 0) return { missed: 0, ...(await runWarnings()) }
 
 		const userIds = Array.from(new Set(candidates.map((c) => c.userId)))
 		const dailyProblemIds = Array.from(new Set(candidates.map((c) => c.dailyProblemId)))
@@ -1023,7 +1153,7 @@ export const problemsDao = {
 		const [existingSolves, usersWithStreak] = await Promise.all([
 			db.userSolve.findMany({
 				where: { userId: { in: userIds }, dailyProblemId: { in: dailyProblemIds } },
-				select: { userId: true, dailyProblemId: true },
+				select: { userId: true, dailyProblemId: true, status: true },
 			}),
 			db.user.findMany({
 				where: { id: { in: userIds } },
@@ -1034,6 +1164,12 @@ export const problemsDao = {
 		const existingKey = new Set(
 			existingSolves.map((s) => `${s.userId}:${s.dailyProblemId}`)
 		)
+		// A user is "engaged" today if they have any non-MISSED row across their
+		// considered groups (SOLVED, PAUSED, or an in-flight/failed verification).
+		// Engagement keeps the lenient user-level streak alive — a full no-show breaks it.
+		const engagedTodayByUser = new Set(
+			existingSolves.filter((s) => s.status !== SolveStatus.MISSED).map((s) => s.userId)
+		)
 		const streakStartByUser = new Map(
 			usersWithStreak.map((u) => [u.id, u.currentStreakStartedAt])
 		)
@@ -1041,15 +1177,11 @@ export const problemsDao = {
 		const toMiss = candidates.filter(
 			(c) => !existingKey.has(`${c.userId}:${c.dailyProblemId}`)
 		)
-		if (toMiss.length === 0) {
-			const warningResult = evaluateWarningsForDate
-				? await evaluateInactivityWarnings(primaryMemberships, day)
-				: { warned: 0, removed: 0 }
-			return { missed: 0, ...warningResult }
-		}
+		if (toMiss.length === 0) return { missed: 0, ...(await runWarnings()) }
 
 		let missed = 0
-		for (const { userId, dailyProblemId } of toMiss) {
+		const missedUserIds = new Set<string>()
+		for (const { userId, groupId, dailyProblemId } of toMiss) {
 			try {
 				await db.$transaction(async (tx) => {
 					const solve = await tx.userSolve.create({
@@ -1062,12 +1194,21 @@ export const problemsDao = {
 						select: { id: true },
 					})
 
-					await pointsDao.applyMissPenalty(tx, userId, {
-						userSolveId: solve.id,
-						streakStartedAt: streakStartByUser.get(userId) ?? null,
-					})
+					if (multiGroup) {
+						// −3 per missed group; the streak is broken once per user below.
+						await pointsDao.applyMissPoints(tx, userId, {
+							userSolveId: solve.id,
+							groupId,
+						})
+					} else {
+						await pointsDao.applyMissPenalty(tx, userId, {
+							userSolveId: solve.id,
+							streakStartedAt: streakStartByUser.get(userId) ?? null,
+						})
+					}
 				})
 				missed++
+				missedUserIds.add(userId)
 			} catch (err) {
 				if (err && typeof err === "object" && "code" in err && err.code === "P2002") {
 					continue
@@ -1076,10 +1217,19 @@ export const problemsDao = {
 			}
 		}
 
-		const warningResult = evaluateWarningsForDate
-			? await evaluateInactivityWarnings(primaryMemberships, day)
-			: { warned: 0, removed: 0 }
-		return { missed, ...warningResult }
+		// Multi-group: break each user's streak at most once, and only on a full
+		// no-show (they neither solved nor paused any group today). Legacy already
+		// reset the streak inside applyMissPenalty.
+		if (multiGroup) {
+			for (const userId of missedUserIds) {
+				if (engagedTodayByUser.has(userId)) continue
+				await db.$transaction((tx) =>
+					pointsDao.breakUserStreak(tx, userId, streakStartByUser.get(userId) ?? null)
+				)
+			}
+		}
+
+		return { missed, ...(await runWarnings()) }
 	},
 
 	resetMonthlyCounters: async () => {

@@ -1,22 +1,6 @@
-import {
-	IconCircleCheck,
-	IconExternalLink,
-	IconFlame,
-	IconPlayerPause,
-} from "@tabler/icons-react"
+import { IconCircleCheck, IconExternalLink, IconFlame } from "@tabler/icons-react"
 import { sileo } from "sileo"
 
-import {
-	AlertDialog,
-	AlertDialogAction,
-	AlertDialogCancel,
-	AlertDialogContent,
-	AlertDialogDescription,
-	AlertDialogFooter,
-	AlertDialogHeader,
-	AlertDialogTitle,
-	AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -28,7 +12,7 @@ import {
 } from "@/features/problems/constants"
 import { cn } from "@/lib/utils"
 import type { TodayProblemResponse } from "@/server/problems/problems.type"
-import { useMarkTodaySolved, usePauseToday } from "../hooks/use-today-problem"
+import { useMarkTodaySolved } from "../hooks/use-today-problem"
 
 type ReadyToday = Extract<TodayProblemResponse, { state: "READY" }>
 
@@ -57,34 +41,20 @@ const errorDescription = (err: unknown) =>
 
 export const TodayProblemCard = ({ today }: { today: ReadyToday }) => {
 	const solveMutation = useMarkTodaySolved()
-	const pauseMutation = usePauseToday()
 
 	const problem = today.dailyProblem.problem
 	const solveStatus = today.solve?.status
 	const isSolved = solveStatus === "SOLVED"
+	const isPaused = solveStatus === "PAUSED"
 	const isLocked =
-		solveMutation.isPending ||
-		pauseMutation.isPending ||
-		solveStatus === "SOLVED" ||
-		solveStatus === "PAUSED"
+		solveMutation.isPending || solveStatus === "SOLVED" || solveStatus === "PAUSED"
 
 	const markSolved = async () => {
-		await sileo.promise(solveMutation.mutateAsync(), {
+		await sileo.promise(solveMutation.mutateAsync(today.group.id), {
 			loading: { title: "Validating on LeetCode..." },
-			success: { title: "Solved! +10 pts" },
+			success: { title: `Solved! +${DIFFICULTY_POINTS[problem.difficulty]} pts` },
 			error: (err: unknown) => ({
 				title: "Could not verify",
-				description: errorDescription(err),
-			}),
-		})
-	}
-
-	const confirmPause = async () => {
-		await sileo.promise(pauseMutation.mutateAsync(), {
-			loading: { title: "Pausing today..." },
-			success: { title: "Today is paused" },
-			error: (err: unknown) => ({
-				title: "Could not pause",
 				description: errorDescription(err),
 			}),
 		})
@@ -99,7 +69,7 @@ export const TodayProblemCard = ({ today }: { today: ReadyToday }) => {
 						<span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
 						<span className="relative inline-flex size-2 rounded-full bg-primary" />
 					</span>
-					<span className="font-medium text-sm">Today's problem</span>
+					<span className="font-medium text-sm">{today.group.slug}</span>
 					<span className="text-muted-foreground text-sm">· {computeTimeLeft()}</span>
 				</div>
 				<span className="text-muted-foreground text-sm">#{problem.roadmapIndex}</span>
@@ -133,32 +103,8 @@ export const TodayProblemCard = ({ today }: { today: ReadyToday }) => {
 				<div className="flex flex-wrap items-center gap-2">
 					<Button disabled={isLocked} onClick={markSolved}>
 						<IconCircleCheck />
-						Mark as Solved
+						{isPaused ? "Paused today" : isSolved ? "Solved" : "Mark as Solved"}
 					</Button>
-					<AlertDialog>
-						<AlertDialogTrigger asChild>
-							<Button disabled={isLocked || today.pausesRemaining <= 0} variant="outline">
-								<IconPlayerPause />
-								Pause today ({today.pausesRemaining} left)
-							</Button>
-						</AlertDialogTrigger>
-						<AlertDialogContent>
-							<AlertDialogHeader>
-								<AlertDialogTitle>Pause today?</AlertDialogTitle>
-								<AlertDialogDescription>
-									Pausing costs <strong>-5 points</strong> but preserves your streak. You
-									have {today.pausesRemaining}{" "}
-									{today.pausesRemaining === 1 ? "pause" : "pauses"} remaining this month.
-								</AlertDialogDescription>
-							</AlertDialogHeader>
-							<AlertDialogFooter>
-								<AlertDialogCancel>Cancel</AlertDialogCancel>
-								<AlertDialogAction onClick={confirmPause}>
-									Pause and lose 5 points
-								</AlertDialogAction>
-							</AlertDialogFooter>
-						</AlertDialogContent>
-					</AlertDialog>
 					<Button asChild variant="outline">
 						<a
 							href={`https://leetcode.com/problems/${problem.slug}/`}
