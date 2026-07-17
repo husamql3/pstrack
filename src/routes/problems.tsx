@@ -4,7 +4,7 @@ import { z } from "zod"
 
 import { AppHeader } from "@/components/app-header"
 import { RouteErrorFallback } from "@/components/route-error-fallback"
-import { useTodayProblem } from "@/features/dashboard/hooks/use-today-problem"
+import { useTodayProblems } from "@/features/dashboard/hooks/use-today-problem"
 import { FilterRow } from "@/features/problems/components/filter-row"
 import { ProblemList } from "@/features/problems/components/problem-list"
 import { ProgressDisplay } from "@/features/problems/components/progress-display"
@@ -66,8 +66,10 @@ function ProblemsPage() {
 	const { data: session } = useSession()
 	const isLoggedIn = !!session?.user
 
-	const { data: today } = useTodayProblem({ enabled: isLoggedIn })
-	const groupRoadmap = today?.state === "READY" ? today.groupRoadmap : undefined
+	const { data: todays } = useTodayProblems({ enabled: isLoggedIn })
+	// Default the roadmap tab to the user's first (primary) started group's roadmap.
+	const readyToday = todays?.find((t) => t.state === "READY")
+	const groupRoadmap = readyToday?.state === "READY" ? readyToday.groupRoadmap : undefined
 
 	useEffect(() => {
 		if (!roadmapParam && groupRoadmap && groupRoadmap !== DEFAULT_ROADMAP_KEY) {

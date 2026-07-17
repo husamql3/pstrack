@@ -46,7 +46,12 @@ vi.mock("@/server/lib/db", () => ({
 		groupMemberWarning: { create: vi.fn(), findFirst: vi.fn() },
 		problem: { count: vi.fn(), findFirst: vi.fn(), findMany: vi.fn() },
 		user: { findMany: vi.fn(), findUniqueOrThrow: vi.fn() },
-		userSolve: { count: vi.fn(), findMany: vi.fn(), findUnique: vi.fn() },
+		userSolve: {
+			count: vi.fn(),
+			findMany: vi.fn(),
+			findUnique: vi.fn(),
+			findFirst: vi.fn(),
+		},
 	},
 }))
 
@@ -274,6 +279,7 @@ describe("problemsDao", () => {
 				}))
 			)
 			pointsDao.hasEverMissed.mockResolvedValue(false)
+			db.userSolve.findFirst.mockResolvedValue(null) // no other group solved today
 			tx.userSolve.findUnique.mockResolvedValue(null) // not already solved
 			tx.userSolve.upsert.mockResolvedValue({ id: "solve-1" })
 			tx.dailyProblem.updateMany.mockResolvedValue({ count: 1 }) // winner of first-solver claim
@@ -284,7 +290,7 @@ describe("problemsDao", () => {
 			tx.groupMember.findUnique.mockResolvedValue({ id: "member-1" })
 			badgesDao.evaluateAndAward.mockResolvedValue([BadgeType.SOLVED_1])
 
-			const result = await problemsDao.verifyAndMarkSolved("user-1")
+			const result = await problemsDao.verifyAndMarkSolved("user-1", "group-1")
 
 			expect(result).toEqual({
 				error: null,
@@ -367,7 +373,7 @@ describe("problemsDao", () => {
 			vi.spyOn(problemsDao, "getTodayForUser").mockResolvedValue(premiumToday)
 			vi.stubGlobal("fetch", vi.fn())
 
-			const result = await problemsDao.verifyAndMarkSolved("user-1")
+			const result = await problemsDao.verifyAndMarkSolved("user-1", "group-1")
 
 			expect(result).toEqual({ error: "PREMIUM_SKIPPED", today: premiumToday })
 			expect(fetch).not.toHaveBeenCalled()
@@ -394,7 +400,7 @@ describe("problemsDao", () => {
 				}))
 			)
 
-			const result = await problemsDao.verifyAndMarkSolved("user-1")
+			const result = await problemsDao.verifyAndMarkSolved("user-1", "group-1")
 
 			expect(result).toEqual({ error: "NOT_VERIFIED", today: readyToday })
 			expect(tx.user.update).toHaveBeenCalledWith({
@@ -429,7 +435,7 @@ describe("problemsDao", () => {
 				}))
 			)
 
-			const result = await problemsDao.verifyAndMarkSolved("user-1")
+			const result = await problemsDao.verifyAndMarkSolved("user-1", "group-1")
 
 			expect(result).toEqual({ error: "NOT_VERIFIED", today: readyToday })
 			expect(tx.user.update).toHaveBeenCalledWith({
@@ -476,6 +482,7 @@ describe("problemsDao", () => {
 				}))
 			)
 			pointsDao.hasEverMissed.mockResolvedValue(false)
+			db.userSolve.findFirst.mockResolvedValue(null) // no other group solved today
 			tx.userSolve.findUnique.mockResolvedValue(null) // not already solved
 			tx.userSolve.upsert.mockResolvedValue({ id: "solve-1" })
 			tx.dailyProblem.updateMany.mockResolvedValue({ count: 0 }) // loser — someone else already claimed
@@ -486,7 +493,7 @@ describe("problemsDao", () => {
 			tx.groupMember.findUnique.mockResolvedValue({ id: "member-1" })
 			badgesDao.evaluateAndAward.mockResolvedValue([])
 
-			await problemsDao.verifyAndMarkSolved("user-1")
+			await problemsDao.verifyAndMarkSolved("user-1", "group-1")
 
 			// FIRST_IN_GROUP must NOT be awarded when the atomic claim returns count=0
 			const firstInGroupCall = (
@@ -537,10 +544,11 @@ describe("problemsDao", () => {
 				}))
 			)
 			pointsDao.hasEverMissed.mockResolvedValue(false)
+			db.userSolve.findFirst.mockResolvedValue(null) // no other group solved today
 			// in-transaction re-check finds the solve already SOLVED → short-circuit
 			tx.userSolve.findUnique.mockResolvedValue({ status: SolveStatus.SOLVED })
 
-			await problemsDao.verifyAndMarkSolved("user-1")
+			await problemsDao.verifyAndMarkSolved("user-1", "group-1")
 
 			// upsert must not be called — the transaction bails early
 			expect(tx.userSolve.upsert).not.toHaveBeenCalled()
@@ -551,10 +559,7 @@ describe("problemsDao", () => {
 
 	describe("pauseToday", () => {
 		it("returns NO_PAUSES without writing when the user has no pauses remaining", async () => {
-			vi.spyOn(problemsDao, "getTodayForUser").mockResolvedValue({
-				...readyToday,
-				pausesRemaining: 0,
-			})
+			vi.spyOn(problemsDao, "listTodayForUser").mockResolvedValue([{ ...readyToday }])
 			db.user.findUniqueOrThrow.mockResolvedValue({
 				isPro: false,
 				pausesUsedThisMonth: 2,
@@ -570,15 +575,15 @@ describe("problemsDao", () => {
 			expect(pointsDao.applyPointsDelta).not.toHaveBeenCalled()
 		})
 
-		it("records a pause, consumes the monthly pause, applies the pause penalty, and resolves warnings", async () => {
+		it("pauses every open group for one flat penalty, consumes a pause, and resolves warnings", async () => {
 			const updatedToday = {
 				...readyToday,
 				solve: { id: "solve-1", status: SolveStatus.PAUSED },
 				pausesRemaining: 0,
 			}
-			vi.spyOn(problemsDao, "getTodayForUser")
-				.mockResolvedValueOnce(readyToday)
-				.mockResolvedValueOnce(updatedToday)
+			vi.spyOn(problemsDao, "listTodayForUser")
+				.mockResolvedValueOnce([{ ...readyToday }])
+				.mockResolvedValueOnce([updatedToday])
 			db.user.findUniqueOrThrow.mockResolvedValue({
 				isPro: false,
 				pausesUsedThisMonth: 1,
@@ -591,7 +596,7 @@ describe("problemsDao", () => {
 
 			const result = await problemsDao.pauseToday("user-1")
 
-			expect(result).toEqual({ error: null, today: updatedToday })
+			expect(result).toEqual({ error: null, todays: [updatedToday] })
 			expect(tx.userSolve.upsert).toHaveBeenCalledWith({
 				where: {
 					userId_dailyProblemId: {

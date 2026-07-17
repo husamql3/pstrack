@@ -29,6 +29,9 @@ const sendDailyDigest = async (date: Date) => {
 	const dashboardUrl = `${env.BETTER_AUTH_URL.replace(/\/$/, "")}/dashboard`
 
 	let batches = 0
+	let sent = 0
+	let failed = 0
+	let suppressed = 0
 	for (let i = 0; i < recipients.length; i += DIGEST_BATCH_SIZE) {
 		const batch = recipients.slice(i, i + DIGEST_BATCH_SIZE)
 		const batchIndex = i / DIGEST_BATCH_SIZE
@@ -49,22 +52,30 @@ const sendDailyDigest = async (date: Date) => {
 
 		// Send per-recipient through the configured transport (Resend / SMTP /
 		// log). A failed recipient is captured but never fails the batch.
-		await Promise.all(
+		const outcomes = await Promise.all(
 			emails.map((email) =>
-				sendEmail(email).catch((err) =>
-					captureServerException(err, {
-						tag: "email:daily-digest",
-						dateKey,
-						batchIndex,
-						recipientCount: 1,
+				sendEmail(email)
+					.then((result) => (result === null ? "suppressed" : "sent"))
+					.catch((err) => {
+						captureServerException(err, {
+							tag: "email:daily-digest",
+							dateKey,
+							batchIndex,
+							recipientCount: 1,
+						})
+						return "failed"
 					})
-				)
 			)
 		)
+		for (const outcome of outcomes) {
+			if (outcome === "sent") sent++
+			else if (outcome === "failed") failed++
+			else suppressed++
+		}
 		batches++
 	}
 
-	return { recipients: recipients.length, batches }
+	return { recipients: recipients.length, batches, sent, failed, suppressed }
 }
 
 const assignDailyProblem = async (scheduledAt: Date) => {
@@ -81,6 +92,9 @@ const assignDailyProblem = async (scheduledAt: Date) => {
 		handleChanges: stats.handleChanges,
 		misses: stats.misses,
 		verificationFailures: stats.verificationFailures,
+		emailsSent: delivery.sent,
+		emailsFailed: delivery.failed,
+		emailsSuppressed: delivery.suppressed,
 	})
 	return { ...result, ...delivery }
 }

@@ -18,14 +18,26 @@ const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 const checkFetch = async (path: string, init?: RequestInit) => {
 	for (let attempt = 1; attempt <= SMOKE_ATTEMPTS; attempt++) {
-		const res = await fetch(`${baseUrl}${path}`, init)
-		if (res.ok) return res
-		if (!TRANSIENT_STATUSES.has(res.status) || attempt === SMOKE_ATTEMPTS) {
-			throw new Error(`${path} returned ${res.status}`)
+		try {
+			const res = await fetch(`${baseUrl}${path}`, init)
+			if (res.ok) return res
+			if (!TRANSIENT_STATUSES.has(res.status) || attempt === SMOKE_ATTEMPTS) {
+				throw new Error(`${path} returned ${res.status}`)
+			}
+			console.warn(
+				`${path} returned ${res.status}; retrying (${attempt}/${SMOKE_ATTEMPTS})`
+			)
+		} catch (error) {
+			// A decided HTTP failure is terminal; surface it immediately.
+			if (error instanceof Error && error.message.startsWith(`${path} returned `)) {
+				throw error
+			}
+			// Connection-level failures (ConnectionRefused, DNS, TLS, timeout) are
+			// expected while Coolify swaps containers during a rollout — the new
+			// container may not accept connections yet. Retry them like transient statuses.
+			if (attempt === SMOKE_ATTEMPTS) throw error
+			console.warn(`${path} connection failed; retrying (${attempt}/${SMOKE_ATTEMPTS})`)
 		}
-		console.warn(
-			`${path} returned ${res.status}; retrying (${attempt}/${SMOKE_ATTEMPTS})`
-		)
 		await wait(SMOKE_RETRY_MS)
 	}
 	throw new Error(`${path} exhausted retries`)
