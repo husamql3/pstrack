@@ -52,21 +52,23 @@ const sendDailyDigest = async (date: Date) => {
 
 		// Send per-recipient through the configured transport (Resend / SMTP /
 		// log). A failed recipient is captured but never fails the batch.
-		const outcomes = await Promise.all(
-			emails.map((email) =>
-				sendEmail(email)
-					.then((result) => (result === null ? "suppressed" : "sent"))
-					.catch((err) => {
-						captureServerException(err, {
-							tag: "email:daily-digest",
-							dateKey,
-							batchIndex,
-							recipientCount: 1,
-						})
-						return "failed"
-					})
-			)
-		)
+		// Sequential sends avoid exhausting SMTP connection limits when using
+		// the self-hosted Stalwart transport (Promise.all saturates the pool).
+		const outcomes: Array<"sent" | "failed" | "suppressed"> = []
+		for (const email of emails) {
+			try {
+				const result = await sendEmail(email)
+				outcomes.push(result === null ? "suppressed" : "sent")
+			} catch (err) {
+				captureServerException(err, {
+					tag: "email:daily-digest",
+					dateKey,
+					batchIndex,
+					recipientCount: 1,
+				})
+				outcomes.push("failed")
+			}
+		}
 		for (const outcome of outcomes) {
 			if (outcome === "sent") sent++
 			else if (outcome === "failed") failed++

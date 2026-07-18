@@ -12,7 +12,6 @@ import { format } from "date-fns"
 import { ProBadge } from "@/components/ui/pro-badge"
 import { Skeleton } from "@/components/ui/skeleton"
 import { HashAvatar } from "@/features/onboarding/components/hash-avatar"
-import { SolveHeatmap } from "@/features/profile/components/solve-heatmap"
 import { BadgeType } from "@/generated/prisma/enums"
 import { cn } from "@/lib/utils"
 import {
@@ -274,7 +273,6 @@ export const PublicProfile = ({ profile }: { profile: PublicProfileResponse }) =
 				</section>
 			)}
 
-			<SolveHeatmap username={username} />
 			<AchievementsSection badges={profile.badges} isPro={profile.isPro} />
 		</main>
 	)
