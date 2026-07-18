@@ -1,10 +1,12 @@
 import { IconExternalLink } from "@tabler/icons-react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { createFileRoute } from "@tanstack/react-router"
+import { useState } from "react"
 import { z } from "zod"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Skeleton } from "@/components/ui/skeleton"
 import {
 	Table,
@@ -51,6 +53,7 @@ function githubIssueUrl(
 function AdminFeedbacksPage() {
 	const search = Route.useSearch()
 	const queryClient = useQueryClient()
+	const [expandedDescription, setExpandedDescription] = useState<string | null>(null)
 
 	const { data, isLoading } = useQuery({
 		queryKey: ["admin", "feedbacks", search],
@@ -81,6 +84,18 @@ function AdminFeedbacksPage() {
 
 	return (
 		<>
+			<Dialog
+				open={expandedDescription !== null}
+				onOpenChange={(open) => !open && setExpandedDescription(null)}
+			>
+				<DialogContent className="max-w-lg">
+					<DialogHeader>
+						<DialogTitle>Feedback Description</DialogTitle>
+					</DialogHeader>
+					<p className="whitespace-pre-wrap text-sm">{expandedDescription}</p>
+				</DialogContent>
+			</Dialog>
+
 			<AdminPageHeader
 				title="Feedbacks"
 				description="Group member feedback — review and escalate to GitHub issues."
@@ -155,9 +170,17 @@ function AdminFeedbacksPage() {
 										)}
 									</TableCell>
 									<TableCell className="max-w-xs">
-										<p className="truncate text-muted-foreground text-sm">
-											{row.description ?? "—"}
-										</p>
+										{row.description ? (
+											<button
+												type="button"
+												className="block max-w-full cursor-pointer truncate text-left text-muted-foreground text-sm underline-offset-2 hover:underline"
+												onClick={() => setExpandedDescription(row.description ?? "")}
+											>
+												{row.description}
+											</button>
+										) : (
+											<span className="text-muted-foreground text-sm">—</span>
+										)}
 									</TableCell>
 									<TableCell>
 										{row.reviewed ? (
