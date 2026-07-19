@@ -6,6 +6,7 @@ const mocks = vi.hoisted(() => ({
 	auditCachedTotals: vi.fn(),
 	notifyAdmin: vi.fn(),
 	sendEmail: vi.fn(),
+	isRetryableEmailError: vi.fn(),
 	captureServerException: vi.fn(),
 	getDailyDigestRecipients: vi.fn(),
 	assignDailyProblems: vi.fn(),
@@ -27,7 +28,10 @@ vi.mock("@/server/groups/groups.notifications", () => ({
 }))
 vi.mock("@/server/lib/bot", () => ({ notifyAdmin: mocks.notifyAdmin }))
 vi.mock("@/server/lib/db", () => ({ db: {} }))
-vi.mock("@/server/lib/email", () => ({ sendEmail: mocks.sendEmail }))
+vi.mock("@/server/lib/email", () => ({
+	sendEmail: mocks.sendEmail,
+	isRetryableEmailError: mocks.isRetryableEmailError,
+}))
 vi.mock("@/server/lib/sentry", () => ({
 	captureServerException: mocks.captureServerException,
 }))
@@ -57,6 +61,9 @@ describe("app-owned jobs", () => {
 		mocks.logSystemEvent.mockResolvedValue(undefined)
 		mocks.notifyAdmin.mockResolvedValue(undefined)
 		mocks.sendEmail.mockResolvedValue(undefined)
+		mocks.isRetryableEmailError.mockImplementation(
+			(error) => error instanceof Error && error.message === "Retryable email failure"
+		)
 	})
 
 	it("reconciles only the explicitly requested missed day", async () => {
@@ -125,11 +132,31 @@ describe("app-owned jobs", () => {
 	})
 
 	it("reports sent and failed daily digest counts without recipient identity", async () => {
+		vi.useFakeTimers()
+		vi.setSystemTime(new Date("2026-07-14T00:00:00.000Z"))
 		mocks.assignDailyProblems.mockResolvedValue({ assigned: 1 })
 		mocks.getDailyDigestRecipients.mockResolvedValue([
 			{
 				email: "recipient-sentinel@example.test",
 				name: "Recipient Sentinel",
+				groupSlug: "sentinel-group",
+				problemTitle: "Sentinel Problem",
+				difficulty: "EASY",
+				topic: "Arrays",
+				problemSlug: "sentinel-problem",
+			},
+			{
+				email: "exhausted-recipient@example.test",
+				name: "Exhausted Recipient",
+				groupSlug: "sentinel-group",
+				problemTitle: "Sentinel Problem",
+				difficulty: "EASY",
+				topic: "Arrays",
+				problemSlug: "sentinel-problem",
+			},
+			{
+				email: "permanent-recipient@example.test",
+				name: "Permanent Recipient",
 				groupSlug: "sentinel-group",
 				problemTitle: "Sentinel Problem",
 				difficulty: "EASY",
@@ -162,22 +189,41 @@ describe("app-owned jobs", () => {
 			pausesUsed: 0,
 			handleChanges: 0,
 		})
-		mocks.sendEmail
-			.mockRejectedValueOnce(new Error("Email send failed"))
-			.mockResolvedValueOnce(undefined)
-			.mockResolvedValueOnce(null)
+		const attemptTimes: number[] = []
+		const attemptsByRecipient = new Map<string, number>()
+		mocks.sendEmail.mockImplementation(({ to }: { to: string }) => {
+			attemptTimes.push(Date.now())
+			const attempt = (attemptsByRecipient.get(to) ?? 0) + 1
+			attemptsByRecipient.set(to, attempt)
+			if (to === "recipient-sentinel@example.test" && attempt === 1) {
+				return Promise.reject(new Error("Retryable email failure"))
+			}
+			if (to === "exhausted-recipient@example.test") {
+				return Promise.reject(new Error("Retryable email failure"))
+			}
+			if (to === "permanent-recipient@example.test") {
+				return Promise.reject(new Error("Permanent email failure"))
+			}
+			return Promise.resolve(
+				to === "suppressed-recipient@example.test" ? null : undefined
+			)
+		})
 
-		await expect(
-			executeJob("assign-daily-problem", new Date("2026-07-14T00:00:00.000Z"))
-		).resolves.toEqual({
+		const execution = executeJob(
+			"assign-daily-problem",
+			new Date("2026-07-14T00:00:00.000Z")
+		)
+		await vi.runAllTimersAsync()
+		await expect(execution).resolves.toEqual({
 			assigned: 1,
-			recipients: 3,
+			recipients: 5,
 			batches: 1,
-			sent: 1,
-			failed: 1,
+			sent: 2,
+			failed: 2,
 			suppressed: 1,
 		})
 
+		expect(mocks.captureServerException).toHaveBeenCalledTimes(2)
 		expect(mocks.captureServerException).toHaveBeenCalledWith(expect.any(Error), {
 			tag: "email:daily-digest",
 			dateKey: "2026-07-14",
@@ -190,10 +236,18 @@ describe("app-owned jobs", () => {
 		expect(mocks.notifyAdmin).toHaveBeenCalledWith(
 			"digest.daily",
 			expect.objectContaining({
-				emailsSent: 1,
-				emailsFailed: 1,
+				emailsSent: 2,
+				emailsFailed: 2,
 				emailsSuppressed: 1,
 			})
 		)
+		expect(mocks.sendEmail).toHaveBeenCalledTimes(8)
+		expect(attemptsByRecipient.get("recipient-sentinel@example.test")).toBe(2)
+		expect(attemptsByRecipient.get("exhausted-recipient@example.test")).toBe(3)
+		expect(attemptsByRecipient.get("permanent-recipient@example.test")).toBe(1)
+		expect(
+			attemptTimes.slice(1).every((time, index) => time - attemptTimes[index] >= 300)
+		).toBe(true)
+		vi.useRealTimers()
 	})
 })

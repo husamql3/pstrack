@@ -5,7 +5,7 @@ import { groupsDao } from "@/server/groups/groups.dao"
 import { groupNotifications } from "@/server/groups/groups.notifications"
 import { notifyAdmin } from "@/server/lib/bot"
 import { db } from "@/server/lib/db"
-import { sendEmail } from "@/server/lib/email"
+import { isRetryableEmailError, sendEmail } from "@/server/lib/email"
 import { captureServerException } from "@/server/lib/sentry"
 import { auditCachedTotals } from "@/server/points/points.reconciliation"
 import { problemsDao } from "@/server/problems/problems.dao"
@@ -17,11 +17,16 @@ const DAY_MS = 86_400_000
 const HOUR_MS = 60 * 60 * 1000
 const CATCH_UP_DAYS = 14
 const DIGEST_BATCH_SIZE = 100
+const EMAIL_DISPATCH_INTERVAL_MS = 300
+const EMAIL_SEND_ATTEMPTS = 3
 const SYSTEM_EVENT_RETENTION_DAYS = 90
 const JOB_RUN_RETENTION_DAYS = 30
 
 const utcDay = (date: Date) =>
 	new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()))
+
+const sleep = (durationMs: number) =>
+	new Promise<void>((resolve) => setTimeout(resolve, durationMs))
 
 const sendDailyDigest = async (date: Date) => {
 	const recipients = await problemsDao.getDailyDigestRecipients(date)
@@ -32,6 +37,15 @@ const sendDailyDigest = async (date: Date) => {
 	let sent = 0
 	let failed = 0
 	let suppressed = 0
+	let lastAttemptStartedAt: number | undefined
+	const waitForDispatchSlot = async () => {
+		if (lastAttemptStartedAt !== undefined) {
+			const elapsed = Date.now() - lastAttemptStartedAt
+			const remaining = EMAIL_DISPATCH_INTERVAL_MS - elapsed
+			if (remaining > 0) await sleep(remaining)
+		}
+		lastAttemptStartedAt = Date.now()
+	}
 	for (let i = 0; i < recipients.length; i += DIGEST_BATCH_SIZE) {
 		const batch = recipients.slice(i, i + DIGEST_BATCH_SIZE)
 		const batchIndex = i / DIGEST_BATCH_SIZE
@@ -52,22 +66,31 @@ const sendDailyDigest = async (date: Date) => {
 
 		// Send per-recipient through the configured transport (Resend / SMTP /
 		// log). A failed recipient is captured but never fails the batch.
-		// Sequential sends avoid exhausting SMTP connection limits when using
-		// the self-hosted Stalwart transport (Promise.all saturates the pool).
+		// Pace all attempts below Stalwart's per-IP throttle and retry transient
+		// handoff failures. Only the final failed attempt is captured so one
+		// recipient cannot produce a burst of duplicate operator alerts.
 		const outcomes: Array<"sent" | "failed" | "suppressed"> = []
 		for (const email of emails) {
-			try {
-				const result = await sendEmail(email)
-				outcomes.push(result === null ? "suppressed" : "sent")
-			} catch (err) {
-				captureServerException(err, {
-					tag: "email:daily-digest",
-					dateKey,
-					batchIndex,
-					recipientCount: 1,
-				})
-				outcomes.push("failed")
+			let outcome: "sent" | "failed" | "suppressed" = "failed"
+			for (let attempt = 1; attempt <= EMAIL_SEND_ATTEMPTS; attempt++) {
+				await waitForDispatchSlot()
+				try {
+					const result = await sendEmail(email)
+					outcome = result === null ? "suppressed" : "sent"
+					break
+				} catch (err) {
+					if (!isRetryableEmailError(err) || attempt === EMAIL_SEND_ATTEMPTS) {
+						captureServerException(err, {
+							tag: "email:daily-digest",
+							dateKey,
+							batchIndex,
+							recipientCount: 1,
+						})
+						break
+					}
+				}
 			}
+			outcomes.push(outcome)
 		}
 		for (const outcome of outcomes) {
 			if (outcome === "sent") sent++
