@@ -36,7 +36,7 @@ vi.mock("@/server/lib/logger", () => ({
 	logger: { debug: mocks.debug, info: mocks.info, error: mocks.error },
 }))
 
-import { sendEmail } from "@/server/lib/email"
+import { EmailDeliveryError, sendEmail } from "@/server/lib/email"
 
 describe("sendEmail", () => {
 	beforeEach(() => {
@@ -135,6 +135,26 @@ describe("sendEmail", () => {
 		const logged = JSON.stringify(mocks.error.mock.calls)
 		expect(logged).not.toContain("sentinel")
 		expect(logged).not.toContain("private body")
+	})
+
+	it("marks temporary SMTP responses as retryable without exposing provider details", async () => {
+		mocks.env.EMAIL_TRANSPORT = "smtp"
+		mocks.sendMail.mockRejectedValueOnce(
+			Object.assign(new Error("temporary provider detail sentinel"), {
+				responseCode: 421,
+			})
+		)
+
+		const error = await sendEmail({
+			from: "PStrack <info@pstrack.app>",
+			to: "person@example.test",
+			subject: "SMTP message",
+			html: "<p>message</p>",
+		}).catch((caught) => caught)
+
+		expect(error).toBeInstanceOf(EmailDeliveryError)
+		expect(error).toMatchObject({ message: "SMTP send failed", retryable: true })
+		expect(JSON.stringify(mocks.error.mock.calls)).not.toContain("sentinel")
 	})
 
 	it("redacts errors thrown while rendering SMTP templates", async () => {
