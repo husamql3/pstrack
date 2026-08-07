@@ -28,6 +28,38 @@ const resend: Resend = new Proxy({} as Resend, {
 
 let transporter: Transporter | null = null
 
+export class EmailDeliveryError extends Error {
+	readonly retryable: boolean
+
+	constructor(message: string, retryable: boolean) {
+		super(message)
+		this.name = "EmailDeliveryError"
+		this.retryable = retryable
+	}
+}
+
+export const isRetryableEmailError = (error: unknown) =>
+	error instanceof EmailDeliveryError && error.retryable
+
+const RETRYABLE_SMTP_CODES = new Set([
+	"EAI_AGAIN",
+	"ECONNECTION",
+	"ECONNRESET",
+	"ESOCKET",
+	"ETIMEDOUT",
+])
+
+const isTransientSmtpError = (error: unknown) => {
+	if (typeof error !== "object" || error === null) return false
+	const responseCode =
+		"responseCode" in error && typeof error.responseCode === "number"
+			? error.responseCode
+			: undefined
+	if (responseCode !== undefined) return responseCode >= 400 && responseCode < 500
+	const code = "code" in error && typeof error.code === "string" ? error.code : undefined
+	return code !== undefined && RETRYABLE_SMTP_CODES.has(code)
+}
+
 /**
  * Build the SMTP transporter lazily, for the same import-safety reason as the
  * Resend client above: it must never throw at import time when SMTP env is
@@ -80,12 +112,12 @@ const sendViaSmtp = async (payload: CreateEmailOptions) => {
 						}
 					: {}),
 			})
-		} catch {
+		} catch (error) {
 			logger.error(
 				{ recipientCount: Array.isArray(payload.to) ? payload.to.length : 1 },
 				"smtp send failed"
 			)
-			throw new Error("SMTP send failed")
+			throw new EmailDeliveryError("SMTP send failed", isTransientSmtpError(error))
 		}
 	})()
 
@@ -97,8 +129,9 @@ const sendViaSmtp = async (payload: CreateEmailOptions) => {
 			},
 			"smtp send rejected"
 		)
-		throw new Error(
-			`SMTP rejected ${info.rejected.length} recipient${info.rejected.length === 1 ? "" : "s"}`
+		throw new EmailDeliveryError(
+			`SMTP rejected ${info.rejected.length} recipient${info.rejected.length === 1 ? "" : "s"}`,
+			false
 		)
 	}
 	logger.debug(

@@ -83,7 +83,8 @@ import {
 	SolveStatus,
 } from "@/generated/prisma/enums"
 import { badgesDao } from "@/server/badges/badges.dao"
-import { groupNotifications } from "@/server/groups/groups.notifications"
+// DISABLED: inactivity auto-removal + miss escalation emails (re-enable with the test below)
+// import { groupNotifications } from "@/server/groups/groups.notifications"
 import { db } from "@/server/lib/db"
 import { pointsDao } from "@/server/points/points.dao"
 import { problemsDao } from "./problems.dao"
@@ -695,6 +696,7 @@ describe("problemsDao", () => {
 			expect(pointsDao.applyMissPenalty).toHaveBeenCalledTimes(1)
 		})
 
+		/* DISABLED: inactivity auto-removal + miss escalation emails (see problems.dao.ts).
 		it("creates an inactivity warning after five consecutive misses", async () => {
 			db.groupMember.findMany.mockResolvedValue([
 				{
@@ -736,5 +738,6 @@ describe("problemsDao", () => {
 				GroupType.PUBLIC
 			)
 		})
+		*/
 	})
 })
