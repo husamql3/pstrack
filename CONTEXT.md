@@ -30,6 +30,33 @@ _Avoid_: using "badge" to mean the Pro indicator.
 **Premium** (problem):
 A `Problem` flagged `isPremium` — a LeetCode-premium problem that is skipped/excluded from a roadmap. Unrelated to **Pro**. The word "premium" belongs to LeetCode problems, not to the Pro entitlement.
 
+### Shared solutions
+
+**Shared solution**:
+A platform-wide explanation and implementation published by a user for a canonical problem after that user has a verified solve. It belongs to its author; its originating solve establishes publishing eligibility, while a group provides context but does not own or contain it.
+_Avoid_: group solution, solve post, submission
+
+An author has at most one shared solution for each canonical problem.
+Shared solutions have no private draft state; creation and revision happen only through explicit publication.
+
+**Solution reveal**:
+An explicit acknowledgement that exposes shared-solution content to a signed-in user who has not yet solved the problem. Discovering that solutions exist does not itself reveal their code or explanation.
+_Avoid_: unlock (revealing is not an entitlement or purchase), mark as solved
+
+**Solution revision**:
+An immutable snapshot of a shared solution represented as a Markdown document. Its fenced code block contains the solution code and identifies the programming language; prose before or after the block is optional. A shared solution identifies its current revision, while discussion about earlier revisions remains attached to the snapshot it addressed.
+_Avoid_: edit, version (when referring to the snapshot itself)
+
+Every solution revision contains exactly one fenced code block.
+
+**Line comment**:
+A discussion comment anchored to a line or contiguous line range in one solution revision. Its anchor never moves to a newer revision automatically.
+_Avoid_: code note, inline edit
+
+**Solution thread**:
+A discussion started by either a general comment on a shared solution or a line comment on a solution revision. Replies are chronological and flat rather than recursively nested.
+_Avoid_: nested comment tree
+
 ### Operations
 
 **Job run**:
