@@ -2,17 +2,20 @@ import type { Prisma } from "@/generated/prisma/client"
 import {
 	type BadgeType,
 	Difficulty,
-	GroupMemberRemovalReason,
+	// DISABLED: inactivity auto-removal + miss escalation emails
+	// GroupMemberRemovalReason,
 	GroupMemberStatus,
-	GroupType,
-	MemberRole,
+	// DISABLED: inactivity auto-removal + miss escalation emails
+	// GroupType,
+	// MemberRole,
 	PointReason,
 	SolveStatus,
 	SystemEventType,
 	WarningResolution,
 } from "@/generated/prisma/enums"
 import { badgesDao } from "@/server/badges/badges.dao"
-import { groupNotifications } from "@/server/groups/groups.notifications"
+// DISABLED: inactivity auto-removal + miss escalation emails
+// import { groupNotifications } from "@/server/groups/groups.notifications"
 import { db } from "@/server/lib/db"
 import { pointsDao } from "@/server/points/points.dao"
 import {
@@ -84,7 +87,8 @@ const startOfUtcDay = (d: Date) =>
 	new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()))
 
 const pauseLimitFor = (user: { isPro: boolean }) => (user.isPro ? 4 : 2)
-const INACTIVITY_WARNING_MISSES = 5
+// DISABLED: inactivity auto-removal + miss escalation emails
+// const INACTIVITY_WARNING_MISSES = 5
 const BATCH_SIZE = 25
 
 // Multi-group daily solving (per-group problems for users in >1 group) went live on
@@ -317,6 +321,9 @@ const resolveActiveWarnings = async (
 	})
 }
 
+/* DISABLED: inactivity auto-removal + miss escalation emails.
+   Re-enable by uncommenting this block, INACTIVITY_WARNING_MISSES, the runWarnings
+   call below, the imports up top, and the test in problems.dao.test.ts.
 const countConsecutiveMisses = async (
 	userId: string,
 	groupId: string,
@@ -415,6 +422,7 @@ const evaluateInactivityWarnings = async (
 
 	return { warned, removed }
 }
+*/
 
 type DashboardContext = {
 	pausesRemaining: number
@@ -1122,10 +1130,14 @@ export const problemsDao = {
 		const primaryMemberships = Array.from(primaryByUser.values())
 		const consideredMemberships = multiGroup ? memberships : primaryMemberships
 
-		const runWarnings = async () =>
-			evaluateWarningsForDate
-				? await evaluateInactivityWarnings(primaryMemberships, day)
-				: { warned: 0, removed: 0 }
+		// DISABLED: inactivity auto-removal + miss escalation emails.
+		// Escalation short-circuited to zeros; `evaluateWarningsForDate` is kept so
+		// `opts.evaluateWarnings` stays wired for re-enable. To restore, swap the body
+		// back to: evaluateWarningsForDate ? evaluateInactivityWarnings(primaryMemberships, day) : zeros.
+		const runWarnings = async () => {
+			if (evaluateWarningsForDate) return { warned: 0, removed: 0 }
+			return { warned: 0, removed: 0 }
+		}
 
 		const groupIds = Array.from(new Set(consideredMemberships.map((m) => m.groupId)))
 		const dailyProblems = await db.dailyProblem.findMany({
