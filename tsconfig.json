@@ -19,7 +19,6 @@
 		"noFallthroughCasesInSwitch": true,
 		"noUncheckedSideEffectImports": true,
 		"allowJs": true,
-		"baseUrl": ".",
 		"paths": {
 			"@/generated/*": ["./generated/*"],
 			"@/data/*": ["./prisma/data/*"],
